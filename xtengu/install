@@ -1,0 +1,34 @@
+#!/bin/sh
+##############################################################################################################
+#                                                                                                            #
+#                                          The install script which I use.                                   #
+# ---------------------------------------------------------------------------------------------------------- #
+#                                     Установочный скрипт, который я использую.                              #
+#                                                                                                            #
+##############################################################################################################
+
+make || exit 1
+
+IPATH10="/opt/X-Plane 10/Resources/plugins"
+IPATH11="/opt/X-Plane 11/Resources/plugins"
+
+if ( test -d "${IPATH10}" ); then
+    echo -n "X-Plane version 10 found, install plugin..."
+    test -d "${IPATH10}/xtengu" || mkdir "${IPATH10}/xtengu"
+    test -d "${IPATH10}/xtengu/64" || mkdir "${IPATH10}/xtengu/64"
+    cp build/libxtengu.so.1.0.0 "${IPATH10}/xtengu/64/lin.xpl"
+    chmod a-x "${IPATH10}/xtengu/64/lin.xpl"
+    echo "done."
+fi
+
+if ( test -d "${IPATH11}" ); then
+    echo -n "X-Plane version 11 found, install plugin..."
+    test -d "${IPATH11}/xtengu" || mkdir "${IPATH11}/xtengu"
+    cp build/libxtengu.so.1.0.0 "${IPATH11}/xtengu/lin.xpl"
+    chmod a-x "${IPATH11}/xtengu/lin.xpl"
+    echo "done."
+fi
+
+cp build/libxtengu.so.1.0.0 binary/lin.xpl
+chmod a-x binary/lin.xpl
+
