@@ -2,8 +2,9 @@
 
 [Описание на русском языке](README.ru.md)
 
+This is a part of [**Tengu**](https://github.com/unclesal/tengu) project. 
 Yet another lightweight C ++ wrapper for hiredis, the standard C API library
-of a remarkable in-memory data storage [Redis](https://redis.io)
+of a remarkable in-memory data storage [Redis](https://redis.io). 
 
 ## There are several [C ++ client libraries](https://redis.io/clients#c--) for the redis already. Why need "yet another"?
 
