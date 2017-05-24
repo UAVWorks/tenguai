@@ -7,7 +7,7 @@
 </p> 
 
 The **Tengu** ("heavenly dog") are a kind of mythical creatures in Japanese folklore. They helped people (sometimes).
-They saw everything and everyone knew (always). In my case this is not more than a nice word only. The purpose of 
+They saw everything and knew everyone (always). In my case this is not more than a nice word only. The purpose of 
 this project is to get to know more closely the technologies of artificial intelligence using the example of UAV. 
 Often the people mixes two different concepts, calling the term UAV of simply "unmanned" aircraft  (the lack of a 
 pilot on board). At the same time, the aircraft is piloted by a person from the ground via the radio channel with 
