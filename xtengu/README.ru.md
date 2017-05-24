@@ -2,7 +2,7 @@
 
 [English description](README.md)
 
-X-Tengu - это часть проекта [**Tengu**](https://github.com/unclesal/tengu/blob/master/README.ru.md) project.
+X-Tengu - это часть проекта [**Tengu**](https://github.com/unclesal/tengu/blob/master/README.ru.md).
 
 Предположим, Вы решили разработать свой собственный беспилотник (не правда ли, неплохое начало?).
 Либо Вы хотите разрабатывать авионику (бортовые приборы), аппаратуру ("железо") или алгоритмы 
