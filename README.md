@@ -5,3 +5,4 @@
 # The Tengu.
 
 The Tengu ("heavenly dog") are a kind of mythical creatures in Japanese folklore. They helped people (sometimes).
+They saw everything and everyone knew (always).
