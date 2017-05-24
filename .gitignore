@@ -6,3 +6,5 @@ build/*
 .kdev_include_paths
 .idea/*
 */.idea/*
+*__pycache__*
+*__pycache__/*
