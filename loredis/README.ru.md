@@ -2,7 +2,7 @@
 
 [English description](README.md)
 
-LoRedis - это часть проекта [**Тэнгу**](https://github.com/unclesal/tengu).
+LoRedis - это часть проекта [**Тэнгу**](https://github.com/unclesal/tengu/blob/master/README.ru.md).
 Еще одна "легковесная" C++ обертка для hiredis, стандартной C API библиотеки
 замечательного in-memory хранилища данных [Redis](https://redis.io)
 
