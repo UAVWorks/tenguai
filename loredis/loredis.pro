@@ -40,7 +40,7 @@ libtarget.path = $$PREFIX/lib/
 libtarget.files = libLoRedis.a
 
 libheaders.path = $$PREFIX/include/
-libheaders.files = LoRedis.h LoRedisReactor.h
+libheaders.files = src/LoRedis.h src/LoRedisReactor.h
 
 INSTALLS += libtarget libheaders
 
@@ -64,6 +64,6 @@ QT -= network core
 
 LIBS += -lhiredis -levent
 
-HEADERS = LoRedis.h 
-SOURCES = LoRedis.cpp 
+HEADERS = src/LoRedis.h 
+SOURCES = src/LoRedis.cpp 
 

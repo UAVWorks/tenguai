@@ -38,11 +38,11 @@ DEFINES += APL=0 IBM=0 LIN=1 XPLM200 XPLM210
 
 QMAKE_CXXFLAGS += -fPIC -pthread
 
-INCLUDEPATH += ../XPSDK-213/CHeaders/XPLM/ src/xpchannels
+INCLUDEPATH += ../3d_party/XPSDK-213/CHeaders/XPLM/ src/xpchannels ../loredis/src
 
 HEADERS += src/XTengu.h
 
-LIBS += -lLoRedis -levent -lhiredis
+LIBS += -lLoRedis -levent -lhiredis -L../loredis/
 
 SOURCES += src/xplane_plugin.cpp                \
         src/xpchannels/XPlaneChannel.cpp        \
