@@ -23,7 +23,7 @@ Agents can communicate with each other under certain conditions (when they "see"
 
 | The directory | Description |
 | --- | --- |
-| [LoRedis](https://github.com/unclesal/tengu/tree/master/loredis) ] C++ / Qt wrapper for Redis.IO, a mechanism for exchanging messages between agents |
+| [LoRedis](https://github.com/unclesal/tengu/tree/master/loredis) | C++ / Qt wrapper for Redis.IO, a mechanism for exchanging messages between agents |
 | [X-Tengu](https://github.com/unclesal/tengu/tree/master/xtengu) | The X-Plane plugin for simulation and modeling of aircraft's behavior in the air. |
 
 
