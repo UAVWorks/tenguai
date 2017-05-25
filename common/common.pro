@@ -40,5 +40,6 @@ LIBS += -lLoRedis -L../loredis
 
 INCLUDEPATH += ../loredis/src/
 
-HEADERS += TenguRedis.h
+HEADERS += TenguRedis.h  
+            
 SOURCES += TenguRedis.cpp 

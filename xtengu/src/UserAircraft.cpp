@@ -24,6 +24,13 @@ tengu::UserAircraft::UserAircraft()
     setChannel( new XChLeftElevator() );
     setChannel( new XChLeftRudder() );
     
+    // The global position of aircraft (WGS-84).
+    // Глобальное положение самолета (WGS-84)
+    
+    // setChannel( new XPlaneChannel("Altitude", "sim/flightmodel/position/elevation" ) );
+    // setChannel( new XPlaneChannel("Longitude", "sim/flightmodel/position/longitude" ) );
+    // setChannel( new XPlaneChannel("Latitude", "sim/flightmodel/position/latitude" ) );   
+    
     // Left wheel brake force
     // Усилие торможения левого колеса.
     
@@ -76,6 +83,8 @@ tengu::UserAircraft::UserAircraft()
     setChannel( new XPlaneChannel("PitchRate", "sim/flightmodel/position/Q" ) );
     setChannel( new XPlaneChannel("RollRate", "sim/flightmodel/position/P" ) );
     setChannel( new XPlaneChannel("YawRate", "sim/flightmodel/position/R" ) );
+    
+    setChannel( new XChRelocate(0) );
 }
 
 // ********************************************************************************************************************

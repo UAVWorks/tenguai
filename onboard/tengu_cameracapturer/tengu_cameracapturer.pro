@@ -13,8 +13,6 @@ QT += core network
 
 QMAKE_CXXFLAGS += -std=gnu++11
 
-CONFIG += qt warn_on release thread rtti
-
 MOC_DIR=build/moc
 UI_DIR=build/uic
 RCC_DIR=build/obj

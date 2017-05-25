@@ -65,6 +65,7 @@ namespace tengu {
             
             virtual void set( int value );                        
             virtual void set( float value );
+            virtual void set( QString message );
             
             float get_f();
             double get_d();

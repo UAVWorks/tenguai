@@ -1,4 +1,5 @@
 TEMPLATE = subdirs
-CONFIG += ordered
+CONFIG += ordered 
 
-SUBDIRS = tengu_cameracapturer
+SUBDIRS = tengu_taxing_speed_regulator \
+    tengu_cameracapturer  

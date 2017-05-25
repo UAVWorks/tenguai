@@ -46,6 +46,7 @@ LIBS += -lLoRedis -levent -lhiredis -L../loredis/
 
 SOURCES += src/xplane_plugin.cpp                \
         src/xpchannels/XPlaneChannel.cpp        \
+        src/xpchannels/XChRelocate.cpp          \
         src/xpchannels/XPlaneChannel_0_100.cpp  \
         src/xpchannels/XChFloatArray.cpp        \
         src/xpchannels/XChFloatArrayTwice.cpp   \

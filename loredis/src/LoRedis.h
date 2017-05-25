@@ -16,8 +16,8 @@
 #include "hiredis/async.h"
 #include "hiredis/adapters/libevent.h"
 
-#include <iostream>
-#include <thread>
+//#include <iostream>
+//#include <thread>
 
 // qt includes
 

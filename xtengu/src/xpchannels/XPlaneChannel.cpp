@@ -244,14 +244,24 @@ void tengu::XPlaneChannel::set ( float value ) {
     if ( _dataref ) {
         
         float aValue = applyRestrictions( value );  
-        xplugin__log( QString("XPlaneChannel::set(float), value=") + QString::number(value) + ", aValue=" + QString::number( aValue ) );
+        // xplugin__log( QString("XPlaneChannel::set(float), value=") + QString::number(value) + ", aValue=" + QString::number( aValue ) );
         XPLMSetDataf( _dataref, aValue );
         
     };
 
 }
 
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                          The stub to set from string value.                                      *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                          Заглушка для установки из строки.                                       *
+// *                                                                                                                  *
+// ********************************************************************************************************************
 
+void tengu::XPlaneChannel::set ( QString message ) {
+
+}
 
 // ********************************************************************************************************************
 // *                                                                                                                  *

@@ -3,7 +3,7 @@
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                                      Реализация класса цифрового pid-регулятора.                                 *
 // *                                                                                                                  *
-// * Eugene G. Sysoletin <unclesal@mail.ru>                                             Created 26 mar 2017 at 14:44  *
+// * Eugene G. Sysoletin <e.g.sysoletin@gmail.com>                                      Created 26 mar 2017 at 14:44  *
 // ********************************************************************************************************************
 
 #include "PID.h"
@@ -13,13 +13,41 @@
 // *                                                    Конструктор.                                                  *
 // *                                                                                                                  *
 // ********************************************************************************************************************
-/*
-ximi_qnx::PID::PID ( ximi_qnx::PID::coefficients_t & coefficients, float output_value ) {
-    _coeffs = coefficients;
-    _seria_to_null();
-    _set_steady_state( output_value );
+
+tengu::PID::PID ( QString section, float output_value, float min_value, float max_value ) {
+    
+    __min_value = min_value;
+    __max_value = max_value;
+    
+    CREATE_SETTINGS_ONBOARD;
+    
+    settings_onboard.beginGroup( section );
+    
+    pid_description_t descr;
+    descr.P = settings_onboard.value( "P", 1.0 ).toFloat();
+    descr.I = settings_onboard.value( "I", 0.0 ).toFloat();
+    descr.D = settings_onboard.value( "D", 0.0 ).toFloat();    
+    
+    // setting reverse of regulator
+    // установка реверса регулятора.
+    
+    descr.reverse = false;    
+    bool ok = false;
+    QString strReverse = settings_onboard.value("reverse").toString();
+    int iReverse = strReverse.toInt( & ok );
+    if ( ( strReverse.toUpper() == "TRUE" ) || ( ( ok ) && ( iReverse != 0 ) ) ) {    
+        descr.reverse = true;
+    }
+    
+    settings_onboard.endGroup();
+    
+    // Going via apply_parameters to take account reverse
+    // Идет через "принять параметры", чтобы учесть реверс.
+    
+    __apply_parameters( descr );
+    __set_steady_state( output_value );
 }
-*/
+
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
@@ -29,32 +57,41 @@ ximi_qnx::PID::PID ( ximi_qnx::PID::coefficients_t & coefficients, float output_
 
 tengu::PID::PID ( pid_description_t descr ) 
 {
-    _seria_to_null();
+    __apply_parameters( descr );
+    __set_steady_state( 0.0 );
 
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                                 Apply this parameters                                            *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                                Принять данные установки.                                         *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::PID::__apply_parameters ( tengu::PID::pid_description_t descr ) {
+    
     _params.P = descr.P;
     _params.I = descr.I;
     _params.D = descr.D;
     _params.reverse = descr.reverse;
     
-    // _coeffs.inertia = ocs.inertia;
-
-    //if ( ocs.reverse ) {
-    //    // Разумеется, "реверс" инерции не касается.
-    //    _coeffs.P = - _coeffs.P;
-    //    _coeffs.I = - _coeffs.I;
-    //    _coeffs.D = - _coeffs.D;
-    //};
-
-    _set_steady_state( 0.0 );
-
+    if ( descr.reverse ) {
+        _params.P = - _params.P;
+        _params.I = - _params.I;
+        _params.D = - _params.D;
+    };
+    
 }
+
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
 // *                        Обнуление "серии" - массива, используемого для настройки регулятора.                      *
 // *                                                                                                                  *
 // ********************************************************************************************************************
-
+/*
 void tengu::PID::_seria_to_null() {
 
     for ( int i=0; i<TUNING_SERIA_SIZE; i++ )
@@ -63,6 +100,7 @@ void tengu::PID::_seria_to_null() {
     };
 
 }
+*/
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
@@ -70,7 +108,7 @@ void tengu::PID::_seria_to_null() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::PID::_set_steady_state ( float output_value ) {
+void tengu::PID::__set_steady_state ( float output_value ) {
     
     _position = output_value;
     _velocity = 0.0;
@@ -78,7 +116,7 @@ void tengu::PID::_set_steady_state ( float output_value ) {
     // Установившийся режим: все окно интегрирования и дифференцирования заполняется 
     // теми же самыми значениями, что и на выходе регулятора.
     
-    for ( int i=0; i<XIMI_SERVOS_PID_INTEGRAL_WINDOW_SIZE; i++ ) {
+    for ( int i=0; i<PID_INTEGRAL_WINDOW_SIZE; i++ ) {
         _position_igral[i] = output_value;
         _velocity_igral[i] = 0.0;
     };
@@ -91,63 +129,72 @@ void tengu::PID::_set_steady_state ( float output_value ) {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-float tengu::PID::step ( float input_value, float max_velocity ) {
+float tengu::PID::step ( float input_value, float desired_value ) {
 
     // Весовой коэффициент от пропорциональной составляющей.
-    float error = _position - input_value;
+    float error = desired_value - input_value;
+    qDebug() << "PID::step(): input=" << input_value << ", desired=" << desired_value << ", error=" << error;
 
-    // Суммарная интегральная составляющая по окну интегрирования.
-    float position_igral_value = 0.0;
-    for ( int i=0; i<XIMI_SERVOS_PID_INTEGRAL_WINDOW_SIZE; i++ ) {
-        position_igral_value += _position_igral[i] - input_value;
-    };
-
-    // Суммарная дифференциальная составляющая.
-    float velocity_igral_value = 0.0;
-    for ( int i=0; i<XIMI_SERVOS_PID_INTEGRAL_WINDOW_SIZE; i++ ) {
-        velocity_igral_value += _velocity_igral[i];
-    };
+//    // Суммарная интегральная составляющая по окну интегрирования.
+//    float position_igral_value = 0.0;
+//    for ( int i=0; i<PID_INTEGRAL_WINDOW_SIZE; i++ ) {
+//        position_igral_value += _position_igral[i] - input_value;
+//    };
+//
+//    // Суммарная дифференциальная составляющая.
+//    float velocity_igral_value = 0.0;
+//    for ( int i=0; i<PID_INTEGRAL_WINDOW_SIZE; i++ ) {
+//        velocity_igral_value += _velocity_igral[i];
+//    };
 
     // Полученная разница, на которую изменится выход.
-    float delta = _coeffs.P * error + _coeffs.I * position_igral_value + _coeffs.D * velocity_igral_value; 
+    float delta = _params.P * error ; // + _params.I * position_igral_value + _params.D * velocity_igral_value; 
 
     // Желаемое значение выхода.
-    float wanted_position = _position + delta;
+//    float wanted_position = _position + delta;
+    _position = _position + delta;
+    qDebug() << "Delta=" << delta << "_position now=" << _position;
+    
+    if ( _position < __min_value ) _position = __min_value;
+    if ( _position > __max_value ) _position = __max_value;
+    
     // Получившаяся скорость вращения.
-    float wanted_speed = wanted_position - _position;
+//    float wanted_speed = wanted_position - _position;
+    
     // Ускорение вращения.
-    float wanted_rate = wanted_speed - _velocity_igral[0];
+//    float wanted_rate = wanted_speed - _velocity_igral[0];
+    
     // Реальное ускорение с учетом инерции.
-    wanted_rate = wanted_rate - ( wanted_rate * _coeffs.inertia );
+    // wanted_rate = wanted_rate - ( wanted_rate * _coeffs.inertia );
+    
     // Скорость.
-    _velocity = _velocity + wanted_rate;
+//    _velocity = _velocity + wanted_rate;
+    
+//    // Конструктивное ограничение по скорости.
+//    if ( max_velocity ) {
+//        if ( _velocity > max_velocity ) {
+//            _velocity = max_velocity;
+//        }; 
+//        if ( _velocity < -max_velocity ) {
+//            _velocity = -max_velocity;
+//        };
+//    };
 
-    // Конструктивное ограничение по скорости.
-    if ( max_velocity ) {
-        if ( _velocity > max_velocity ) {
-            _velocity = max_velocity;
-        }; 
-        if ( _velocity < -max_velocity ) {
-            _velocity = -max_velocity;
-        };
-    };
+//    // Пройденный путь, то есть текущая позиция..
+//    _position = _position + _velocity;
+//
+//    // Сдвигаем окна таким образом, чтобы в нулевой элемент массивов можно было
+//    // засунуть текущее значение.
+//    for ( int i=PID_INTEGRAL_WINDOW_SIZE-1; i>=1; i-- ) {
+//        _position_igral[i] = _position_igral[i-1];
+//        _velocity_igral[i] = _velocity_igral[i-1];
+//    };
+//
+//    // Нулевой элемент - это текущее значение.
+//    _position_igral[0] = _position;
+//    _velocity_igral[0] = _velocity;
 
-    // Пройденный путь, то есть текущая позиция..
-    _position = _position + _velocity;
-
-    // Сдвигаем окна таким образом, чтобы в нулевой элемент массивов можно было
-    // засунуть текущее значение.
-    for ( int i=XIMI_SERVOS_PID_INTEGRAL_WINDOW_SIZE-1; i>=1; i-- ) {
-        _position_igral[i] = _position_igral[i-1];
-        _velocity_igral[i] = _velocity_igral[i-1];
-    };
-
-    // Нулевой элемент - это текущее значение.
-    _position_igral[0] = _position;
-    _velocity_igral[0] = _velocity;
-
-    // std::cout << "in the one step: P="<<_coeffs.P <<", I="<<_coeffs.I<<", D="<<_coeffs.D<< ", dp=" << dp << ", di=" << di << ", dd=" << dd << ", delta=" << delta << ", output="<<_position<<"\n";
-
+    
     return _position;
 }
 
@@ -156,7 +203,7 @@ float tengu::PID::step ( float input_value, float max_velocity ) {
 // *                            Анализ полученного в ходе настройки регулятора массива данных.                        *
 // *                                                                                                                  *
 // ********************************************************************************************************************
-
+/*
 tengu::PID::indicators_t tengu::PID::_make_indicators ( servos_one_channel_settings_t & settings, bool with_out ) {
 
     indicators_t result;
@@ -215,18 +262,20 @@ tengu::PID::indicators_t tengu::PID::_make_indicators ( servos_one_channel_setti
 
     return result;
 }
+*/
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
 // *               Публичная функция : сделать "серию" и посчитать показатели качества регулирования.                 *
 // *                                                                                                                  *
 // ********************************************************************************************************************
-
+/*
 tengu::PID::indicators_t tengu::PID::rate_quality( servos_one_channel_settings_t & ocs ) {
     _make_seria( true, ocs );
     indicators_t indicators = _make_indicators( ocs );
     return indicators;
 }
+*/
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
@@ -234,6 +283,7 @@ tengu::PID::indicators_t tengu::PID::rate_quality( servos_one_channel_settings_t
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
+/*
 void tengu::PID::_make_seria ( bool limit, servos_one_channel_settings_t & settings, bool with_out ) {
 
     // if ( with_out ) std::cout << "--- Begin _make_seria(), P=" << _coeffs.P << ", I=" << _coeffs.I << ", D=" << _coeffs.D << "\n";
@@ -258,14 +308,14 @@ void tengu::PID::_make_seria ( bool limit, servos_one_channel_settings_t & setti
     };
 
 }
-
+*/
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
 // *                                  Принимается ли данное состояние коэффициентов?                                  *
 // *                                                                                                                  *
 // ********************************************************************************************************************
-
+/*
 bool tengu::PID::_coefficient_adopted( bool limit, float haved_deviation, servos_one_channel_settings_t & settings, bool with_out ) {
 
     _make_seria( limit, settings, with_out );
@@ -292,6 +342,7 @@ bool tengu::PID::_coefficient_adopted( bool limit, float haved_deviation, servos
     return true;
 
 }
+*/
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
@@ -299,6 +350,7 @@ bool tengu::PID::_coefficient_adopted( bool limit, float haved_deviation, servos
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
+/*
 void tengu::PID::_try_step_on_single_coefficient ( bool limit, float & coefficient, float step, float have_deviation, servos_one_channel_settings_t& settings ) {
     float old_coefficient = coefficient;
     coefficient += step;
@@ -311,6 +363,7 @@ void tengu::PID::_try_step_on_single_coefficient ( bool limit, float & coefficie
         }
     };
 }
+*/
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
@@ -318,6 +371,7 @@ void tengu::PID::_try_step_on_single_coefficient ( bool limit, float & coefficie
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
+/*
 float tengu::PID::_calculate_deviation ( bool limit, float step, float have_deviation, servos_one_channel_settings_t & settings, bool p, bool i, bool d ) {
 
     if ( p ) {
@@ -340,6 +394,7 @@ float tengu::PID::_calculate_deviation ( bool limit, float step, float have_devi
     return indicators.sq_deviation;
 
 }
+*/
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
@@ -347,6 +402,7 @@ float tengu::PID::_calculate_deviation ( bool limit, float step, float have_devi
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
+/*
 int tengu::PID::_tuning_channel_by_deviation ( bool limit, float break_difference, float & haved_deviation, servos_one_channel_settings_t& settings, bool p, bool i, bool d ) {
     float step = 2.0;
     haved_deviation = 1000.0;
@@ -374,6 +430,7 @@ int tengu::PID::_tuning_channel_by_deviation ( bool limit, float break_differenc
     };
     return TUNING_MAX_ITERATIONS;
 }
+*/
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
@@ -381,8 +438,8 @@ int tengu::PID::_tuning_channel_by_deviation ( bool limit, float break_differenc
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::PID::coefficients_t tengu::PID::coefficients() {
-    return _coeffs;
+tengu::PID::pid_description_t tengu::PID::configuration() {
+    return _params;
 }
 
 
@@ -392,6 +449,7 @@ tengu::PID::coefficients_t tengu::PID::coefficients() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
+/*
 bool tengu::PID::tuning ( servos_one_channel_settings_t & ocs ) {
     _seria_to_null();
 
@@ -426,35 +484,35 @@ bool tengu::PID::tuning ( servos_one_channel_settings_t & ocs ) {
                     // На пока это все, хотя можно было бы поиграться и с временем регулирования.
                     return true;
 
-                    /*
-                    std::cout << "End of tuning. P=" << _coeffs.P << ", I=" << _coeffs.I << ", D=" << _coeffs.D << "\n";
-                    _make_seria( true, chSettings );
-
-                    std::cout << "From Minimum to Maximum:\n";
-                    float time = 0.0;
-                    for ( int i=0; i<TUNING_SERIA_SIZE; i++ ) {
-                        float velocity = 0;
-                        if ( i >= 1 ) {
-                            velocity = _seria[i][0] - _seria[i-1][0];
-                            velocity *= SERVO_TIMER_FREQUENCY;
-                        }
-                        std::cout<< "Time=" << time << " s, position=" << _seria[i][0] << ", velocity=" << velocity << " deg/sec\n";
-                        time += ( 1.0 / (float) SERVO_TIMER_FREQUENCY );
-                    };
-
-                    std::cout << "From Maximum to Minimum\n";
-                    time = 0.0;
-                    for ( int i=0; i<TUNING_SERIA_SIZE; i++ ) {
-                        float velocity = 0;
-                        if ( i >= 1 ) {
-                            velocity = _seria[i][1] - _seria[i-1][1];
-                            velocity *= SERVO_TIMER_FREQUENCY;
-                        }
-                        std::cout<< "Time=" << time << " s, position=" << _seria[i][1] << ", velocity=" << velocity << " deg/sec\n";
-                        time += ( 1.0 / (float) SERVO_TIMER_FREQUENCY );
-                    };
-                    return true;
-                    */
+//                    
+//                    std::cout << "End of tuning. P=" << _coeffs.P << ", I=" << _coeffs.I << ", D=" << _coeffs.D << "\n";
+//                    _make_seria( true, chSettings );
+//
+//                    std::cout << "From Minimum to Maximum:\n";
+//                    float time = 0.0;
+//                    for ( int i=0; i<TUNING_SERIA_SIZE; i++ ) {
+//                        float velocity = 0;
+//                        if ( i >= 1 ) {
+//                            velocity = _seria[i][0] - _seria[i-1][0];
+//                            velocity *= SERVO_TIMER_FREQUENCY;
+//                        }
+//                       std::cout<< "Time=" << time << " s, position=" << _seria[i][0] << ", velocity=" << velocity << " deg/sec\n";
+//                        time += ( 1.0 / (float) SERVO_TIMER_FREQUENCY );
+//                    };
+//
+//                    std::cout << "From Maximum to Minimum\n";
+//                    time = 0.0;
+//                    for ( int i=0; i<TUNING_SERIA_SIZE; i++ ) {
+//                        float velocity = 0;
+//                        if ( i >= 1 ) {
+//                            velocity = _seria[i][1] - _seria[i-1][1];
+//                            velocity *= SERVO_TIMER_FREQUENCY;
+//                        }
+//                        std::cout<< "Time=" << time << " s, position=" << _seria[i][1] << ", velocity=" << velocity << " deg/sec\n";
+//                        time += ( 1.0 / (float) SERVO_TIMER_FREQUENCY );
+//                    };
+//                    return true;
+//                    
 
                 // };
             };
@@ -464,6 +522,7 @@ bool tengu::PID::tuning ( servos_one_channel_settings_t & ocs ) {
     return false;
 }
 
+*/
 
 // ********************************************************************************************************************
 // *                                                                                                                  *

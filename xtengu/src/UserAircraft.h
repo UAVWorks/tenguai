@@ -25,6 +25,7 @@
 #include "XChRightFlaperon.h"
 #include "XChRightElevator.h"
 #include "XChRightRudder.h"
+#include "XChRelocate.h"
 
 namespace tengu {
     

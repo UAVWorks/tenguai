@@ -92,7 +92,7 @@ void tengu_onboard::CameraCapturer::__openCamera() {
     
     // Settinger set( QString( ONBOARD_CONFIG_PATH ) );
     
-    SETTINGS_ONBOARD ;
+    CREATE_SETTINGS_ONBOARD ;
     settings_onboard.beginGroup( "CameraCapturer" );
     int cameraIndex = settings_onboard.value( "CameraIndex", 0 ).toInt();
     settings_onboard.endGroup();
@@ -108,7 +108,7 @@ void tengu_onboard::CameraCapturer::__openCamera() {
 
 void tengu_onboard::CameraCapturer::__setPublishChannelName() {
 
-    SETTINGS_ONBOARD;
+    CREATE_SETTINGS_ONBOARD;
     settings_onboard.beginGroup( "CameraCapturer" );
     __pubChannelName = settings_onboard.value( "PublishChannel", "" ).toString();
     

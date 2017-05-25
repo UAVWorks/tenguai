@@ -1,39 +1,16 @@
 // ********************************************************************************************************************
 // *                     Общие установки для процессов, выполняющихся непосредственно на борту.                       *
 // *                                                                                                                  *
-// * Eugene G. Sysoletin <unclesal@mail.ru>                                              created 21 apr 2017 at 18:09 *
+// * Eugene G. Sysoletin <e.g.sysoletin@gmail.com>                                       created 21 apr 2017 at 18:09 *
 // ********************************************************************************************************************
 
 #pragma once
 
-
-// Путь до конфигурационного файла (установки)
-// Файл с установками - общий для всех программ, выполняющихся на борту.
-    
-// #define ONBOARD_CONFIG_PATH         "/etc/tengu_onboard.conf"
+#include <QSettings>
 
 // Чтобы не перекрывать класс QSettings ради только одного конструктора, на все программы onboard
 // сделан макрос. Так гарантированно будет - и одно и то же имя, и один и тот же формат установочного
 // файла.
 
-#define SETTINGS_ONBOARD       QSettings settings_onboard("/etc/tengu_onboard.conf", QSettings::IniFormat)
-    
-// Секция с установками процесса съема видеоизображения tengu_cameracapturer
-
-// #define SECTION__CAMERA_CAPTURER        "CameraCapturer"
-
-// Имя параметра в установках - индекс (номер по порядку) используемой камеры.    
-
-// #define SETTINGS_NAME__CAMERA_INDEX     "CameraIndex"
-    
-// Имя параметра в установках - канал, на который происходит публикация события от данного
-// процесса. Вовсе даже не обязательно от процесса "снятия изображения с видео-камеры",
-// используется много где, общая константа.
-    
-// #define SETTINGS_NAME__PUB_CHANNEL  "PublishChannel"
-    
-// Имя параметра в установках - канал, на который подписывается данный процесс.
-
-// #define SETTINGS_NAME__SUB_CHANNEL "SubscribeChannel"
-
+#define CREATE_SETTINGS_ONBOARD       QSettings settings_onboard("/etc/tengu/onboard.conf", QSettings::IniFormat)
     

@@ -11,19 +11,26 @@
 import asyncio
 import asyncio_redis
 from enum import Enum
-import time
+import time, math
 
 
 class AircraftState( Enum ):
+
     # The state is unknown.
     # Состояние неизвестно.
     NOTHING = 0
+
     # Stay on the stand.
     # Стоит на стоянке
-    STANDS_AT_THE_PARKING = 1
+    STANDS_AT_THE_PARKING = 1,
+
+    # Debugging one of regulators
+    # Отладка одного из регуляторов.
+    DEBUG_REGULATOR = 2,
+
     # Running-up before airborning
     # Разбег (перед отрывом)
-    RUN_UP = 2
+    RUN_UP = 3
 
 
 class Message:
@@ -42,6 +49,110 @@ class XPlaneSetter:
     def __init__(self):
         self._connection = None
         self.messages = []
+
+class Regulator:
+
+    def __init__(self, section, redis ):
+        self._section = section
+        self._publisher = None
+        self._last_live = None
+        self._redis = redis
+        self._desired_value = 0
+        self._P = 0
+        self._I = 0
+        self._D = 0
+
+    @property
+    def ping(self):
+        return self._last_live
+
+    @ping.setter
+    def ping( self, value ):
+        ts = int( float(value) )
+        timestruct = time.localtime( ts )
+        rest = float(value) - ts
+        self._last_live = time.mktime( timestruct ) + rest
+
+    @property
+    def active(self):
+        current_time = time.time();
+        delta = current_time - float(self._last_live)
+        if delta < 0:
+            delta = - delta
+        return delta < 1.0
+    @active.setter
+    def active(self, v):
+        value = "0"
+        if v:
+            value = "1"
+        self.publish( "activity", value )
+
+    @property
+    def desired_value(self):
+        return self._desired_value
+    @desired_value.setter
+    def desired_value(self, v):
+        f = float( v )
+        self._desired_value = f
+        self.publish( "desired_value" , v )
+
+    @property
+    def P(self):
+        return self._P
+    @P.setter
+    def P(self, v ):
+        f = float(v)
+        self._P = f
+        self.publish( "P", v )
+
+    @property
+    def I(self):
+        return self._I
+    @I.setter
+    def I(self, v ):
+        self._I = float(v)
+        self.publish("I", v )
+
+    @property
+    def D(self):
+        return self._D
+    @D.setter
+    def D(self, v ):
+        self._D = v
+        self.publish( "D", v )
+
+    def prefix(self):
+        return "tengu.regulators." + self._section.lower() + "."
+
+    def get_subscribtion( self ):
+        result = []
+        result.append(  self.prefix() + "ping" )
+        return result
+
+    def publish(self, channel, value ):
+        if ( self._redis ):
+            m = Message( self.prefix() + channel, str(value) )
+            self._redis.messages.append( m )
+
+    def set_steady_state(self, val ):
+        f = float(val)
+        self._desired_value = val
+        m = Message( self.prefix() + "steady_state", val )
+        if self._redis:
+            self._redis.messages.append(m)
+
+    def start_debug(self, reactor ):
+        """
+        Start the debug of this regulator.
+        Старт отладки данного регулятора.
+        :param reactor:
+        :return:
+        """
+        self.set_steady_state( 0 )
+        self._debug_array = []
+        self._debug = True
+        self._debugger = reactor
+
 
 class AbstractAircraft:
 
@@ -84,6 +195,14 @@ class AbstractAircraft:
 
         # Состояние самолета.
         self._state = AircraftState.NOTHING
+        self._do_receive = True
+
+        # For the debug purposes
+        # Для целей отладки.
+
+        self._debug_array = []
+        self._debug_cycle = 0
+        self._debug = False
 
     @property
     def latitude(self):
@@ -116,6 +235,12 @@ class AbstractAircraft:
     def ground_speed(self, value ):
         gs = float( value )
         self._ground_speed = gs
+
+        if self._debug:
+            self._debug_array.append( gs )
+            print("Debug size=", len(self._debug_array ))
+            if ( len(self._debug_array) > 200 ):
+                self.debug_done()
 
     @property
     def ias(self):
@@ -200,8 +325,25 @@ class AbstractAircraft:
             msg = Message(channel, value )
             self._redis.messages.append(msg)
 
+    def relocate(self, latitude, longitude, altitude, heading ):
+        """
+        Relocate the aircraft.
+        Переместить самолет.
+        """
+        if self._redis and self._control_prefix:
+            value = str(latitude) + "," + str(longitude) + "," + str(altitude) + "," + str(heading)
+            m = Message(self._control_prefix + "relocate", value)
+            self._redis.messages.append( m )
+
     def control(self):
         pass
+
+    def debug_done(self):
+        print("AbstractAicraft::debug_done()")
+        pass
+
+    def get_subscribtion( self ):
+        return None
 
 
 class UserAircraft ( AbstractAircraft ):
@@ -209,7 +351,8 @@ class UserAircraft ( AbstractAircraft ):
     # Переходы состояний. Из какого состояния, в какое состояние и процедура отработки.
     _state_changes = {
         AircraftState.NOTHING : {
-            AircraftState.RUN_UP : "_sc_nothing_to_runup"
+            AircraftState.RUN_UP : "_sc_nothing_to_runup",
+            AircraftState.DEBUG_REGULATOR: "_sc_nothing_to_debug",
         }
     }
 
@@ -229,6 +372,7 @@ class UserAircraft ( AbstractAircraft ):
         self._left_rudder = 0
         self._right_rudder = 0
 
+        self.taxing_speed_regulator = Regulator("TaxingSpeedRegulator", redis )
 
     @property
     def parking_brake(self):
@@ -370,40 +514,142 @@ class UserAircraft ( AbstractAircraft ):
         func = getattr( self, proc )
         func()
 
+    def nm_to_ms(self, miles):
+        """
+        transfer from nautical miles to meters per second
+        преобразование морских миль в метры в секунду.
+        :param miles:
+        :return:
+        """
+        f = float( miles )
+        f = f * 0.44704
+        return f
+
+    def ms_to_nm(self, miters ):
+        """
+        Transfer from meter per second to nautical miles.
+        Преобразование из метров в секунду в морские мили.
+        :param miters:
+        :return:
+        """
+        f = float( miters ) * 1.9438612860586
+        return f
+
     def _sc_nothing_to_runup(self):
         """
         Переход из состояния "ничего" в состояние "разбег".
         :return:
         """
-        self.parking_brake = 0
-        self.left_brake = 0
-        self.right_brake = 0
-        self.throttle = 100
-        self.left_flaperon = -10
-        self.right_flaperon = -10
 
-        self.left_rudder = -7
-        self.right_rudder = -7
-        self.steering_wheel = 7
+        # Set zero position for control surfaces
+        # Установка нулевого положения управляющих поверхностей.
 
         self.left_elevator = 0
         self.right_elevator = 0
 
+        self.taxing_speed_regulator.set_steady_state( 0 )
+
+        # ground speed goint in meters per second
+        # Скорость относительно земли идет - в метрах в секунду.
+
+        self.taxing_speed_regulator.desired_value = self.nm_to_ms(40.0)
+        self.taxing_speed_regulator.active = 1
+
+        self.parking_brake = 0
+        self.left_brake = 0
+        self.right_brake = 0
+        #self.throttle = 100
+
+        self.left_flaperon = -10
+        self.right_flaperon = -10
+
+        self.taxing_speed_regulator.start_debug( self )
+
+        #self.left_rudder = -7
+        #self.right_rudder = -7
+        #self.steering_wheel = 7
+
+    def _sc_nothing_to_debug(self):
+
+        print("From NONE to DEBUG.")
+
+        self.parking_brake = 0
+        self.left_brake = 0
+        self.right_brake = 0
+        self.throttle = 0
+        self._debug = True
+
+        self.taxing_speed_regulator.desired_value = self.nm_to_ms(40.0)
+        self.taxing_speed_regulator.active = 1
+
+        # self.publish("latitude", "56.744726455")
+        # self.publish("longitude", "60.826708002")
+        # self.publish("altitude", "230.321")
+        # self.publish("heading", "254.77089")
+        # self.publish("pitch", "20")
+
+    def debug_done(self):
+
+        print("UserAircraft :: debug done. Cycle is ", str( self._debug_cycle ))
+
+        desired = self.taxing_speed_regulator.desired_value
+        print("I was desire", str(desired) )
+
+        sum = 0.0
+        for val in self._debug_array:
+            err = ( val - desired )
+            sum += err * err
+        sum = math.sqrt(sum)
+        print("СКО=", sum)
+
+        # self.publish("latitude", "56.744726455" )
+        # self.publish("longitude", "60.826708002" )
+        # self.publish("altitude", "230.321")
+        # self.publish("heading", "254.77089")
+
+        self.relocate(
+            latitude="56.744726455",
+            longitude="60.826708002",
+            altitude="230.321",
+            heading="100"
+        )
+        #heading = "254.77089"
+
+        self.taxing_speed_regulator.set_steady_state( 0 )
+        self.taxing_speed_regulator.active = 0
+        self.taxing_speed_regulator.desired_value = 0
+        self._debug = False
+
+        self.parking_brake = 100
+        self.throttle = 0
+
+        self._debug_array = []
+        self._debug_cycle += 1
+
+        # self._sc_nothing_to_debug()
+
     def control(self):
         AbstractAircraft.control( self )
-        ds = -0.01 * self._yaw_rate
-        gs = self.ground_speed
-        print("First yaw=", str(self._yaw_rate), ",ds=", str(ds) )
+        delta = -0.014 * self._yaw_rate
+        gs = self._ground_speed
         #if gs:
         #    gs = 100 * ( gs * gs )
         #    ds = ds / gs
         #print("ground speed=", str(self._ground_speed), "gs=", str(gs), "ds now=", ds )
         sw = self.steering_wheel
-        self.steering_wheel = sw + ds
+        self.steering_wheel = sw + delta
         rudder_position = self.left_rudder
-        self.left_rudder = rudder_position - ds
+        self.left_rudder = rudder_position - delta
 
-        print(" new sw=", self.steering_wheel )
+        #print(" new sw=", self.steering_wheel )
+
+    def get_subscribtion( self ):
+        result = []
+        acf_array = AbstractAircraft.get_subscribtion( self )
+        if acf_array:
+            result += acf_array
+        result += self.taxing_speed_regulator.get_subscribtion()
+        return result
 
 
 class XPlane(XPlaneSetter):
@@ -432,7 +678,8 @@ class XPlane(XPlaneSetter):
         # Create subscriber.
         self._subscriber = yield from self._connection.start_subscribe()
 
-        # Subscribe to channels.
+        # Subscribe to common aircraft's channels.
+
         subscribtion_array = []
 
         for i in range( 0, len( self._acfs ) ):
@@ -440,9 +687,19 @@ class XPlane(XPlaneSetter):
                 channel = 'xtengu.condition.acf_' + str(i) + "." + AbstractAircraft.subscribtion[ j ]
                 subscribtion_array.append( channel )
 
+        for acf in self._acfs:
+            additional_channels = acf.get_subscribtion()
+            if additional_channels:
+                subscribtion_array += additional_channels
+
         yield from self._subscriber.subscribe( subscribtion_array )
 
-        self._acfs[0].state = AircraftState.RUN_UP
+        # self._acfs[0].state = AircraftState.RUN_UP
+        #self._acfs[0].taxing_speed_regulator.P = 1
+        #self._acfs[0].taxing_speed_regulator.I = 0
+        #self._acfs[0].taxing_speed_regulator.D = 0
+
+        self._acfs[0].state = AircraftState.DEBUG_REGULATOR
 
         # Inside a while loop, wait for incoming events.
         #started = time.time()
@@ -458,20 +715,39 @@ class XPlane(XPlaneSetter):
             # -------------------------------------------------------------------------------------
 
             reply = yield from self._subscriber.next_published()
+
             # print('Received: ', repr(reply.value), 'on channel', reply.channel)
             # Находим номер канала.
-            channel = reply.channel.replace("xtengu.condition.acf_", "" )
-            pos = channel.find(".")
-            if ( pos > 0 ):
-                acf_number = int( channel[0:pos] )
-                attr = channel[pos+1:]
-                # Смотрим на самолет.
-                if acf_number < len( self._acfs ):
-                    acf = self._acfs[ acf_number ]
-                    if hasattr( acf, attr ):
-                        setattr( acf, attr, reply.value )
-                    else:
-                        print("Attribute not found, acf=", acf_number, ", attr=", attr )
+
+            found = reply.channel.find( "xtengu.condition.acf_" )
+            if found >= 0 :
+                # It was a message from some aircraft.
+                # Это было сообщение от какого-то самолета.
+                channel = reply.channel.replace("xtengu.condition.acf_", "" )
+                pos = channel.find(".")
+
+                if ( pos > 0 ):
+                    acf_number = int( channel[0:pos] )
+                    attr = channel[pos+1:]
+                    # Смотрим на самолет.
+                    if acf_number < len( self._acfs ):
+                        acf = self._acfs[ acf_number ]
+                        if acf._do_receive:
+                            if hasattr( acf, attr ):
+                                setattr( acf, attr, reply.value )
+                            else:
+                                print("Attribute not found, acf=", acf_number, ", attr=", attr )
+
+            found = reply.channel.find("tengu.regulators.")
+            if found >= 0:
+                # It was a message from regulator
+                # Это было сообщение от регулятора.
+                channel = reply.channel.replace("tengu.regulators.", "" )
+                sp = channel.split(".")
+                user_acf = self._acfs[0]
+                prefix = user_acf.taxing_speed_regulator.prefix()
+                if  prefix == "tengu.regulators." + sp[0] + ".":
+                    setattr( user_acf.taxing_speed_regulator, sp[1], reply.value )
 
             # -------------------------------------------------------------------------------------
             #

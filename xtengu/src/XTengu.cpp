@@ -30,6 +30,7 @@ tengu::XTengu::XTengu()
     // Заполнение массива самолетов.
     
     __acfs.append( new UserAircraft() );
+    
     for ( int i=1; i<TOTAL_AIRCRAFTS_COUNT; i++ ) {
         __acfs.append( new EnvironmentAircraft( i ) );
     };
@@ -114,6 +115,7 @@ void tengu::XTengu::cbDisconnected( LoRedis * redis ) {
 // ********************************************************************************************************************
 
 void tengu::XTengu::cbError ( LoRedis * redis, QString error ) {
+    Q_UNUSED( redis )
     xplugin__log( QString("--- Redis error: ") + error );
 }
 
@@ -126,6 +128,8 @@ void tengu::XTengu::cbError ( LoRedis * redis, QString error ) {
 // ********************************************************************************************************************
 
 void tengu::XTengu::cbSubscribed ( LoRedis* redis, QString channel ) {
+    Q_UNUSED( redis )
+    Q_UNUSED( channel )
 }
 
 // ********************************************************************************************************************
@@ -137,7 +141,8 @@ void tengu::XTengu::cbSubscribed ( LoRedis* redis, QString channel ) {
 // ********************************************************************************************************************
 
 void tengu::XTengu::cbUnsubscribed ( LoRedis* redis, QString channel ) {
-    
+    Q_UNUSED( redis )
+    Q_UNUSED( channel )
 }
 
 // ********************************************************************************************************************
@@ -149,7 +154,8 @@ void tengu::XTengu::cbUnsubscribed ( LoRedis* redis, QString channel ) {
 // ********************************************************************************************************************
 
 void tengu::XTengu::cbSetted ( LoRedis* redis, int status ) {
-    
+    Q_UNUSED( redis )
+    Q_UNUSED( status )
 }
 
 // ********************************************************************************************************************
@@ -162,30 +168,32 @@ void tengu::XTengu::cbSetted ( LoRedis* redis, int status ) {
 
 void tengu::XTengu::cbGotMessage ( LoRedis * redis, QString channel, QString message ) {
     
+    Q_UNUSED( redis )
+    
     if ( ! __enabled ) return;
     
     xplugin__log( QString("--- in cb: We got a message. Channel=") + channel + ", msg=" + message );
-    bool ok = false;
-    float val = message.toFloat( &ok );
-    if ( ok ) {
         
-        // Value was transformed to float. Looking for an aircraft which was subscribed on this channel.        
-        // Значение было преобразовано в число с плавающей точкой. Ищем самолет, который был подписан на этот канал.
+    // Looking for an aircraft which was subscribed on this channel.        
+    // Ищем самолет, который был подписан на этот канал.
         
-        for ( int i=0; i<__acfs.length(); i++ ) {
+    for ( int i=0; i<__acfs.length(); i++ ) {
             
-            XPlaneChannel * pch = __acfs.at(i)->getChannelSubscribedTo( channel );
+        XPlaneChannel * pch = __acfs.at(i)->getChannelSubscribedTo( channel );
             
-            if ( ( pch ) && ( pch->usable() ) ) {
-                xplugin__log( QString("We got one channel, acf=") + QString::number(i) + ", name=" + pch->getName() );
-                pch->set( val );
-            };
+        if ( ( pch ) && ( pch->usable() ) ) {
+            xplugin__log( QString("--- in cb: We got one channel, acf=") + QString::number(i) + ", name=" + pch->getName() );
+            bool ok = false;
+            float val = message.toFloat( & ok );
+            // For simple channels we set float value.
+            // Для простых каналов устанавливаем число с плавающей точкой.
+            if ( ok ) pch->set( val );
+            // If the channel is complex - let him understand it himself
+            // Если канал сложный - пусть сам разбирается.
+            else pch->set( message );
         };
-        
-    } else {
-        xplugin__log( QString("Got mesage but can't transform it to float value, channel=") 
-            + channel + ", message=" + message );
     };
+            
 }
 
 // ********************************************************************************************************************
@@ -197,7 +205,9 @@ void tengu::XTengu::cbGotMessage ( LoRedis * redis, QString channel, QString mes
 // ********************************************************************************************************************
 
 void tengu::XTengu::cbGotValue ( LoRedis* redis, QString name, QVariant value ) {
-
+    Q_UNUSED( redis )
+    Q_UNUSED( name )
+    Q_UNUSED( value )
 }
 
 // ********************************************************************************************************************
@@ -403,9 +413,11 @@ void tengu::XTengu::__init_settings() {
     __take_settings_and_subscribe( "IAS", "ias", "ias" );    
     __take_settings_and_subscribe("GroundSpeed", "ground_speed", "ground_speed" );
         
-    __take_settings_and_subscribe("Heading", "heading", "heading" );
-    __take_settings_and_subscribe("Pitch", "pitch", "pitch" );
-    __take_settings_and_subscribe("Roll", "roll", "roll" );
+    __take_settings_and_subscribe( "Heading", "heading", "heading" );
+    __take_settings_and_subscribe( "Pitch", "pitch", "pitch" );
+    __take_settings_and_subscribe( "Roll", "roll", "roll" );
+    
+    __take_settings_and_subscribe( "Relocate", "relocate", "relocate" );
         
 }
 
