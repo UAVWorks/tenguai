@@ -43,6 +43,8 @@ tengu::AbstractAgent::AbstractAgent ( QString name, QObject * parent )
     QObject::connect( __sub_redis, SIGNAL( signalConnected() ), this, SLOT( __on_sub_redis_connected() ) );
     QObject::connect( __sub_redis, SIGNAL( signalDisconnected() ), this, SLOT( __on_sub_redis_disconnected() ) );
     QObject::connect( __sub_redis, SIGNAL( signalError(QString) ), this, SLOT( __on_redis_error( QString) ) );
+    QObject::connect( __sub_redis, SIGNAL( signalSubscribed(QString) ), this, SLOT( __on_subscribed( QString ) ) );
+    QObject::connect( __sub_redis, SIGNAL( signalUnsubscribed(QString) ), this, SLOT( __on_unsubscribed( QString ) ) );
     QObject::connect( __sub_redis, SIGNAL( signalGotMessage(QString, QString) ), this, SLOT( __on_got_message( QString, QString ) ) );
     __sub_redis->connect();
     
@@ -78,7 +80,7 @@ void tengu::AbstractAgent::__on_pub_redis_connected() {
 
 void tengu::AbstractAgent::__on_sub_redis_connected() {
     __sub_redis_connected = true;
-    // __subscribe();
+    _subscribe();
 }
 
 // ********************************************************************************************************************
@@ -115,6 +117,62 @@ void tengu::AbstractAgent::__on_sub_redis_disconnected() {
 
 void tengu::AbstractAgent::__on_redis_error ( QString message ) {
     qDebug() << "AbstractRegulator::__on_error: " << message;
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                      We has been subscribed to someone channel.                                  *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                          Мы подписались на какой-то канал.                                       *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::AbstractAgent::__on_subscribed ( QString channel ) {
+    
+    for ( int i=0; i<__reactions.length(); i++ ) {
+        
+        reaction_t * r = __reactions.at(i);
+        
+        if ( r->channel == channel ) {
+            
+            bool locked = __reMutex.tryLock( 300 );
+            
+            if ( locked ) {
+                
+                r->subscribed = true;
+                __reMutex.unlock();                
+                
+            } else {
+                qDebug() << "AbstractAgent::__on_subscribed(" << channel << "), could not lock reaction's mutex.";
+            };
+            
+        };
+    };
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                   We has been unsubscribed from someone channel.                                 *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                         Нас отписали от какого-то канала.                                        *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::AbstractAgent::__on_unsubscribed ( QString channel ) {
+    
+    for ( int i=0; i<__reactions.length(); i++ ) {
+        reaction_t * r = __reactions.at(i);
+        if ( r->channel == channel ) {
+            bool locked = __reMutex.tryLock( 300 );
+            if ( locked ) {
+                r->subscribed = false;
+                r->subscribtion_applicated = false;
+                __reMutex.unlock();
+            } else {
+                qDebug() << "AbstractAgent::__on_UNsubscribed(" << channel << "), could not lock reaction's mutex.";
+            }
+        };
+    };
 }
 
 // ********************************************************************************************************************
@@ -193,6 +251,98 @@ void tengu::AbstractAgent::__on_got_message ( QString channel, QString message )
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
+// *                               Add the reaction which will be handled (processed) .                               *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                         Добавить обрабатываемую реакцию.                                         *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::AbstractAgent::addReaction ( tengu::AbstractAgent::reaction_t reaction ) {
+    
+    reaction_t * nr = new reaction_t();
+    nr->channel = reaction.channel;
+    nr->reaction = reaction.reaction;
+    nr->subscribed = false;
+    nr->subscribtion_applicated = false;
+    bool locked = __reMutex.tryLock( 300 );
+    if ( locked ) {
+        __reactions.append( nr );
+        __reMutex.unlock();
+    } else {
+        qDebug() << "AbstractAgent::addReaction(), could not lock the reaction's mutex.";
+    };    
+    
+    _subscribe();
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                      Remove the reaction from handled list.                                      *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                    Удалить реакцию из списка обрабатываемых.                                     *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::AbstractAgent::removeReaction ( tengu::AbstractAgent::reaction_t reaction ) {
+    
+    try {
+        
+        for ( int i=0; i<__reactions.length(); i++ ) {
+            reaction_t * r = __reactions.at(i);
+            if ( ( r->channel == reaction.channel ) && ( r->reaction == reaction.reaction ) ) {
+                __reactions.removeAt( i );
+                delete( r );
+                return;
+            }
+        };        
+        
+    } catch ( ... ) {
+        qDebug() << "AbstractAgent::removeReaction(), delete reaction_t struct error.";
+    }    
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                               Subscribe function.                                                *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                                Функция подписки.                                                 *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::AbstractAgent::_subscribe() {
+    
+    if ( __sub_redis_connected ) {
+        
+        bool locked = __reMutex.tryLock( 300 );
+        
+        if ( locked ) {
+            
+            for ( int i=0; i<__reactions.length(); i++ ) {
+                reaction_t * reaction = __reactions.at(i);
+                
+                // We here only look at submitting an application for a subscription, but not for the fact 
+                // of subscription itself.
+                
+                // Здесь смотрим только на подачу заявки на подписку, но не на сам факт подписки.
+                
+                if ( ! reaction->subscribtion_applicated ) {
+                    __sub_redis->subscribe( reaction->channel );
+                    reaction->subscribtion_applicated = true;
+                };
+            };
+        
+            __reMutex.unlock();
+            
+        } else {
+            // Error handler for AbstractAgent.
+            // Обработка ошибок для абстрактного агента.
+            qDebug() << "AbstractAgent::_subscribe(): could not lock the mutex.";
+        };
+    };
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
 // *                                          On the ping timer fire event.                                           *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                                               Тычок таймера пинга.                                               *
@@ -212,7 +362,9 @@ void tengu::AbstractAgent::__on_ping_timer() {
         QDateTime dt = QDateTime::currentDateTime();
         QTime time = QTime::currentTime();
         QString repr = QString::number( dt.toTime_t() ) + "." + QString::number( time.msec() );
-        // __pub_redis->publish( AbstractRegulator::prefix(_section) + "ping", repr );
+        QString channel = QString("agents.") + _name + ".ping";
+        __pub_redis->publish( channel, repr );
+        __pub_redis->set( channel, repr );
     };
     
     // In any case, it does not matter whether we are connected or not.
@@ -249,7 +401,21 @@ void tengu::AbstractAgent::__on_connect_timer() {
 // ********************************************************************************************************************
 
 tengu::AbstractAgent::~AbstractAgent() {
-
+    
+    // The reactions has been add dynamically. The destructor must free memory.
+    // Реакции были добавлены динамически. Деструктор должен освободить память.
+    
+    try {
+        
+        while ( __reactions.length() > 0 ) {
+            reaction_t * r = __reactions.at(0);
+            __reactions.removeAt( 0 );
+            delete( r );
+        };
+        
+    } catch ( ... ) {
+        qDebug() << "AbstractAgent::AbstractAgent(), clean reaction error.";
+    };
 }
 
 
