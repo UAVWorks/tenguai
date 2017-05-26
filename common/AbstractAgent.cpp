@@ -1,42 +1,31 @@
 // ********************************************************************************************************************
 // *                                                                                                                  *
-// *                                             Abstract reguator class.                                             *
+// *      The abstract agent. Any logical completed piece which can do something. Usually it is a separate process    *
+// *                                              inside operation system.                                            *
 // * ---------------------------------------------------------------------------------------------------------------- *
-// *                                          Класс абстрактного регулятора.                                          *
+// *    Абстрактный агент. Любой логически законченный кусок, который может что-то делать. Как правило - отдельный    *
+// *                                             процесс операционной системы.                                        *
 // *                                                                                                                  *
-// * Eugene G. Sysoletin <e.g.sysoletin@gmail.com>                                       Created 24 may 2017 at 10:59 *
+// * Eugene G. Sysoletin <e.g.sysoletin@gmail.com>                                       Created 26 may 2017 at 11:59 *
 // ********************************************************************************************************************
 
-#include "AbstractRegulator.h"
+#include "AbstractAgent.h"
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
-// *                                                 The constructor.                                                 *
+// *                                                    The constructor.                                              *
 // * ---------------------------------------------------------------------------------------------------------------- *
-// *                                                   Конструктор.                                                   *
+// *                                                      Конструктор.                                                *
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::AbstractRegulator::AbstractRegulator( QString section, float min_value, float max_value ) 
-    : QObject() 
+tengu::AbstractAgent::AbstractAgent ( QString name, QObject * parent ) 
+    : QObject ( parent ) 
 {
-    _section = section;
-    
-    CREATE_SETTINGS_ONBOARD;
-    settings_onboard.beginGroup( _section );
-    _output_channel = settings_onboard.value( "output_channel", "" ).toString();
-    settings_onboard.endGroup();
+    _name = name;
     
     __pub_redis_connected = false;
     __sub_redis_connected = false;
-    
-    // The PID-regulator and it's values.
-    // ПИД-регулятор и его значения.
-    
-    _pid = new PID( section, 0.0, min_value, max_value );
-    _input_value = 0.0;
-    _desired_value = 0.0;
-    __active = false;
     
     // Create publisher redis object
     // Создание публикатора редиса.
@@ -44,7 +33,7 @@ tengu::AbstractRegulator::AbstractRegulator( QString section, float min_value, f
     __pub_redis = new LoRedis();
     QObject::connect( __pub_redis, SIGNAL( signalConnected() ), this, SLOT( __on_pub_redis_connected() ) );
     QObject::connect( __pub_redis, SIGNAL( signalDisconnected() ), this, SLOT( __on_pub_redis_disconnected() ) );
-    QObject::connect( __pub_redis, SIGNAL( signalError(QString) ), this, SLOT( __on_error( QString ) ) );
+    QObject::connect( __pub_redis, SIGNAL( signalError(QString) ), this, SLOT( __on_redis_error( QString ) ) );
     __pub_redis->connect();
     
     // Create subscriber redis object
@@ -53,7 +42,7 @@ tengu::AbstractRegulator::AbstractRegulator( QString section, float min_value, f
     __sub_redis = new LoRedis();
     QObject::connect( __sub_redis, SIGNAL( signalConnected() ), this, SLOT( __on_sub_redis_connected() ) );
     QObject::connect( __sub_redis, SIGNAL( signalDisconnected() ), this, SLOT( __on_sub_redis_disconnected() ) );
-    QObject::connect( __sub_redis, SIGNAL( signalError(QString) ), this, SLOT( __on_error( QString) ) );
+    QObject::connect( __sub_redis, SIGNAL( signalError(QString) ), this, SLOT( __on_redis_error( QString) ) );
     QObject::connect( __sub_redis, SIGNAL( signalGotMessage(QString, QString) ), this, SLOT( __on_got_message( QString, QString ) ) );
     __sub_redis->connect();
     
@@ -64,8 +53,7 @@ tengu::AbstractRegulator::AbstractRegulator( QString section, float min_value, f
     __connect_timer = new QTimer();
     QObject::connect( __connect_timer, SIGNAL( timeout() ), this, SLOT( __on_connect_timer() ) );
     __connect_timer->start( 1000 );
-        
-    
+
 }
 
 // ********************************************************************************************************************
@@ -76,7 +64,7 @@ tengu::AbstractRegulator::AbstractRegulator( QString section, float min_value, f
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::AbstractRegulator::__on_pub_redis_connected() {
+void tengu::AbstractAgent::__on_pub_redis_connected() {
     __pub_redis_connected = true;
 }
 
@@ -88,9 +76,9 @@ void tengu::AbstractRegulator::__on_pub_redis_connected() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::AbstractRegulator::__on_sub_redis_connected() {
+void tengu::AbstractAgent::__on_sub_redis_connected() {
     __sub_redis_connected = true;
-    __subscribe();
+    // __subscribe();
 }
 
 // ********************************************************************************************************************
@@ -101,7 +89,7 @@ void tengu::AbstractRegulator::__on_sub_redis_connected() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::AbstractRegulator::__on_pub_redis_disconnected() {
+void tengu::AbstractAgent::__on_pub_redis_disconnected() {
     __pub_redis_connected = false;
 }
 
@@ -113,7 +101,7 @@ void tengu::AbstractRegulator::__on_pub_redis_disconnected() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::AbstractRegulator::__on_sub_redis_disconnected() {
+void tengu::AbstractAgent::__on_sub_redis_disconnected() {
     __sub_redis_connected = false;
 }
 
@@ -125,125 +113,9 @@ void tengu::AbstractRegulator::__on_sub_redis_disconnected() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::AbstractRegulator::__on_error ( QString message ) {
+void tengu::AbstractAgent::__on_redis_error ( QString message ) {
     qDebug() << "AbstractRegulator::__on_error: " << message;
 }
-
-// ********************************************************************************************************************
-// *                                                                                                                  *
-// *                                          On the ping timer fire event.                                           *
-// * ---------------------------------------------------------------------------------------------------------------- *
-// *                                               Тычок таймера пинга.                                               *
-// *                                                                                                                  *
-// ********************************************************************************************************************
-
-void tengu::AbstractRegulator::__on_ping_timer() {
-    
-    if ( __pub_redis_connected ) {
-        
-        // Publish the last live time of this regulator.
-        // Публикация последнего времени жизни этого регулятора.
-        
-        QDateTime dt = QDateTime::currentDateTime();
-        QTime time = QTime::currentTime();
-        QString repr = QString::number( dt.toTime_t() ) + "." + QString::number( time.msec() );
-        __pub_redis->publish( AbstractRegulator::prefix(_section) + "ping", repr );
-    };
-    
-    LoRedis::processEvents();
-    
-}
-
-// ********************************************************************************************************************
-// *                                                                                                                  *
-// *                                              Connection timer fired.                                             *
-// * ---------------------------------------------------------------------------------------------------------------- *
-// *                                         Срабатывание таймера соединения.                                         *
-// *                                                                                                                  *
-// ********************************************************************************************************************
-
-void tengu::AbstractRegulator::__on_connect_timer() {
-    if ( ! __pub_redis_connected ) __pub_redis->connect();
-    if ( ! __sub_redis_connected ) __sub_redis->connect();
-}
-
-// ********************************************************************************************************************
-// *                                                                                                                  *
-// *                                    Get redis prefix for this regulator's messages.                               *
-// * ---------------------------------------------------------------------------------------------------------------- *
-// *                                  Получить префикс сообщений этого регулятора в редисе.                           *
-// *                                                                                                                  *
-// ********************************************************************************************************************
-
-QString tengu::AbstractRegulator::prefix( QString section ) {
-    return ( QString("tengu.regulators.") + section.toLower() + "." );    
-}
-
-// ********************************************************************************************************************
-// *                                                                                                                  *
-// *                                   Subscribe on the common regulator's channels.                                  *
-// * ---------------------------------------------------------------------------------------------------------------- *
-// *                                      Подписка на общие каналы регуляторов.                                       *
-// *                                                                                                                  *
-// ********************************************************************************************************************
-
-void tengu::AbstractRegulator::__subscribe() {
-    
-    if ( ( __sub_redis ) && ( __sub_redis_connected ) ) {
-        
-        // The activity of this regulator.
-        // Активность этого регулятора.
-        
-        __sub_redis->subscribe( AbstractRegulator::prefix( _section ) + "activity" );
-        
-        CREATE_SETTINGS_ONBOARD;
-        settings_onboard.beginGroup( _section );
-        _input_channel = settings_onboard.value( "input_channel", "").toString();
-        _desired_channel = settings_onboard.value( "desired_channel", "" ).toString();
-        qDebug() << "Desired channel=" << _desired_channel ;
-        settings_onboard.endGroup();
-        
-        // Input value for this regulator
-        // Входное значение для этого регулятора.
-        
-        if ( _input_channel.length() > 0 )    __sub_redis->subscribe( _input_channel );
-        
-        // Desired value for this regulator.
-        // Желаемое значение для данного регулятора.
-        
-        if ( _desired_channel.length() > 0 ) __sub_redis->subscribe( _desired_channel );
-        
-        // Channels for P-I-D on-the-fly changes
-        // Каналы для установки значений P-I-D "на лету".
-        
-        __sub_redis->subscribe( AbstractRegulator::prefix( _section ) + "P" );
-        __sub_redis->subscribe( AbstractRegulator::prefix( _section ) + "I" );
-        __sub_redis->subscribe( AbstractRegulator::prefix( _section ) + "D" );
-        
-    };
-    
-}
-
-// ********************************************************************************************************************
-// *                                                                                                                  *
-// *                                          Do one step for this regulator.                                         *
-// * ---------------------------------------------------------------------------------------------------------------- *
-// *                                       Сделать один шаг данного регулятора.                                       *
-// *                                                                                                                  *
-// ********************************************************************************************************************
-
-void tengu::AbstractRegulator::__do_step() {
-        
-    if ( ( __active ) && ( _output_channel.length() > 0 ) && ( __pub_redis ) && ( __pub_redis_connected ) ) {
-        
-        float oval = _pid->step( _input_value, _desired_value );
-        qDebug() << "Publish value " << oval;
-        __pub_redis->publish( _output_channel, QString::number(oval) );
-        
-    };
-    
-}
-
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
@@ -253,8 +125,9 @@ void tengu::AbstractRegulator::__do_step() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::AbstractRegulator::__on_got_message ( QString channel, QString message ) {
-        
+void tengu::AbstractAgent::__on_got_message ( QString channel, QString message ) {
+
+    /*
     QString prefix = AbstractRegulator::prefix( _section );
     bool ok = false;
     if ( channel == prefix + "activity" ) {
@@ -315,18 +188,67 @@ void tengu::AbstractRegulator::__on_got_message ( QString channel, QString messa
     } else {
         qDebug() << "Abstract regulator::__on_got_message(), channel " << channel << " unhandled.";
     };
+    */
 }
 
-
 // ********************************************************************************************************************
 // *                                                                                                                  *
-// *                                                  The destructor.                                                 *
+// *                                          On the ping timer fire event.                                           *
 // * ---------------------------------------------------------------------------------------------------------------- *
-// *                                                     Деструктор.                                                  *
+// *                                               Тычок таймера пинга.                                               *
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::AbstractRegulator::~AbstractRegulator() {
+void tengu::AbstractAgent::__on_ping_timer() {
+    
+    if ( __pub_redis_connected ) {
+        
+        // Publish the last live time of this agent.
+        // This time allows you to conclude whether the agent is running or not
+        
+        // Публикация последнего времени жизни этого агента.
+        // Это время позволяет делать вывод, выполняется этот агент или нет.
+        
+        QDateTime dt = QDateTime::currentDateTime();
+        QTime time = QTime::currentTime();
+        QString repr = QString::number( dt.toTime_t() ) + "." + QString::number( time.msec() );
+        // __pub_redis->publish( AbstractRegulator::prefix(_section) + "ping", repr );
+    };
+    
+    // In any case, it does not matter whether we are connected or not.
+    // This is enought to call only one static class method independed of 
+    // quantity of real objects.
+    
+    // В любом случае, не имеет значения, соединены мы или нет.
+    // Достаточно просто одного вызова статической функции класса, не надо по 
+    // каждому из объектов.
+    
+    LoRedis::processEvents();
+    
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                              Connection timer fired.                                             *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                         Срабатывание таймера соединения.                                         *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::AbstractAgent::__on_connect_timer() {
+    if ( ! __pub_redis_connected ) __pub_redis->connect();
+    if ( ! __sub_redis_connected ) __sub_redis->connect();
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                                    The destructor.                                               *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                                       Деструктор.                                                *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+tengu::AbstractAgent::~AbstractAgent() {
 
 }
 

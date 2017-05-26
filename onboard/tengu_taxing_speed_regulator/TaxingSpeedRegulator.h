@@ -13,7 +13,7 @@
 #include <QThread>
 #include <QDebug>
 
-#include "../tengu_onboard_common/AbstractRegulator.h"
+#include "AbstractRegulator.h"
 
 namespace tengu {
 

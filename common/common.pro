@@ -36,10 +36,15 @@ QMAKE_CXXFLAGS += -std=gnu++11
 QT += core
 QT -= network
 
-LIBS += -lLoRedis -L../loredis
+LIBS += -lLoRedis -L../loredis -lopencv_core -lopencv_video -lopencv_highgui -lopencv_imgproc
 
 INCLUDEPATH += ../loredis/src/
 
-HEADERS += TenguRedis.h  
+HEADERS += AbstractAgent.h          \
+        AbstractRegulator.h         \
+        TenguRedis.h  
             
-SOURCES += TenguRedis.cpp 
+SOURCES += AbstractAgent.cpp        \
+        AbstractRegulator.cpp       \
+        TenguRedis.cpp 
+        

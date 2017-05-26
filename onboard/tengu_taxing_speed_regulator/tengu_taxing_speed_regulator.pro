@@ -19,16 +19,14 @@ UI_DIR=build/uic
 RCC_DIR=build/obj
 OBJECTS_DIR=build/obj
 
-LIBS += -L../../common/ -lLoRedis -L../../loredis -levent -lhiredis 
+LIBS += -L../../common -L../../loredis -ltengu_common -lLoRedis -levent -lhiredis 
+#-lopencv_core -lopencv_video -lopencv_highgui -lopencv_imgproc 
 
 INCLUDEPATH += ../../common  ../  ../../loredis/src/
 
-HEADERS += ../tengu_onboard_common/AbstractRegulator.h      \
-        TaxingSpeedRegulator.h
+HEADERS += TaxingSpeedRegulator.h
 
 SOURCES += main.cpp                                         \
-        ../tengu_onboard_common/PID.cpp                     \
-        ../tengu_onboard_common/AbstractRegulator.cpp       \
         TaxingSpeedRegulator.cpp
 
 
