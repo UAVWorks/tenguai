@@ -1,8 +1,8 @@
 // ********************************************************************************************************************
 // *                                                                                                                  *
-// *                                             Abstract reguator class.                                             *
+// *                                              Simple reguator class.                                              *
 // * ---------------------------------------------------------------------------------------------------------------- *
-// *                                          Класс абстрактного регулятора.                                          *
+// *                                            Класс простого регулятора.                                            *
 // *                                                                                                                  *
 // * Eugene G. Sysoletin <e.g.sysoletin@gmail.com>                                       Created 24 may 2017 at 10:53 *
 // ********************************************************************************************************************
@@ -15,43 +15,57 @@
 #include <QString>
 #include <QSettings>
 
-#include "AbstractAgent.h"
+#include "PrefixedAgent.h"
+#include "Constants.h"
+
+// All of regulators are on board. There is nothing to regulate on the ground.
+// Все регуляторы - они на борту. Нечего регулировать на земле-то.
+
+#include "../onboard/onboard_common.h"
 
 namespace tengu {
     
-    class AbstractRegulator : public AbstractAgent {
+    class SimpleRegulator : public PrefixedAgent {
         
         Q_OBJECT
         
         public:
             
-            AbstractRegulator( QString section, float min_value, float max_value );
-            virtual ~AbstractRegulator();
+            SimpleRegulator( QString name, float min_value = MINIMUM_CONSTRAINT, float max_value = MAXIMUM_CONSTRAINT );
+            virtual ~SimpleRegulator();
             
-            static QString prefix( QString section );
+            virtual bool usable();
             
         protected:
-            
-                        
-            QString _section;
-            QString _message_prefix;
             
             // PID * _pid;            
             
             QString _input_channel;
             float _input_value;
+            
             QString _desired_channel;
             float _desired_value;
+            
             QString _output_channel;
-                                              
+            float _output_value;
+                        
+            float _P;
+            float _I;
+            float _D;
+            
+            float _min_value;
+            float _max_value;
+            
+            // One step of regulation
+            // Один шаг регулирования.
+            
+            void _do_step();
+            
         private:
             
-            
-            bool __active;
-            
-            void __subscribe();
-            
-            void __do_step();
+            // void __subscribe();
+            void __on_input_received( QString channel, QString message );
+            void __on_desired_received( QString channel, QString message );
                         
         private slots:                                              
             

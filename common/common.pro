@@ -27,7 +27,7 @@ CONFIG += staticlib thread release rtti qt
 
 # for nullptr
 
-QMAKE_CXXFLAGS += -std=gnu++11
+QMAKE_CXXFLAGS += -std=gnu++11 -fpermissive
 
 
 # The Qt section contains nothing here except core. LoRedis itself does not directly do network 
@@ -41,10 +41,12 @@ LIBS += -lLoRedis -L../loredis -lopencv_core -lopencv_video -lopencv_highgui -lo
 INCLUDEPATH += ../loredis/src/
 
 HEADERS += AbstractAgent.h          \
-        AbstractRegulator.h         \
-        TenguRedis.h  
+        PrefixedAgent.h             \
+        SimpleRegulator.h           \
+        Summator.h                  
             
 SOURCES += AbstractAgent.cpp        \
-        AbstractRegulator.cpp       \
-        TenguRedis.cpp 
+        PrefixedAgent.cpp           \
+        SimpleRegulator.cpp         \
+        Summator.cpp                
         

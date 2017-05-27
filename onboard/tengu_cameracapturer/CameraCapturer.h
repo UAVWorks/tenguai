@@ -14,7 +14,7 @@
 #include <QCoreApplication>
 
 #include "onboard_common.h"
-#include "TenguRedis.h"
+// #include "TenguRedis.h"
 // #include "Settinger.h"
 
 using namespace cv;
@@ -65,7 +65,7 @@ namespace tengu_onboard {
              * @short Класс pub/sub.
              */
             
-            tengu::TenguRedis * __rediser;
+            // tengu::LoRedis * __rediser;
             
             /**
              * @short Наличие соединения с публикатором.

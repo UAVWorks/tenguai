@@ -16,10 +16,7 @@
 
 #include "LoRedis.h"
 #include "XPLMDataAccess.h"
-
-
-#define MINIMUM_CONSTRAINT -100500
-#define MAXIMUM_CONSTRAINT 100500
+#include "Constants.h"
 
 // The number of all possible engines.
 // Число всех возможных двигателей

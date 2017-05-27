@@ -23,30 +23,35 @@ tengu::AbstractAgent::AbstractAgent ( QString name, QObject * parent )
     : QObject ( parent ) 
 {
     _name = name;
+    __activity = false;
     
     __pub_redis_connected = false;
     __sub_redis_connected = false;
     
-    // Create publisher redis object
-    // Создание публикатора редиса.
+    // Creating redis'es objects.
+    // Создание редисовых объектов.
     
-    __pub_redis = new LoRedis();
-    QObject::connect( __pub_redis, SIGNAL( signalConnected() ), this, SLOT( __on_pub_redis_connected() ) );
-    QObject::connect( __pub_redis, SIGNAL( signalDisconnected() ), this, SLOT( __on_pub_redis_disconnected() ) );
-    QObject::connect( __pub_redis, SIGNAL( signalError(QString) ), this, SLOT( __on_redis_error( QString ) ) );
-    __pub_redis->connect();
+    _createRedises();
     
-    // Create subscriber redis object
-    // Создаем объект подписчика на редиса.
+    // Binding redis object
+    // Связка публикатора редиса.
     
-    __sub_redis = new LoRedis();
-    QObject::connect( __sub_redis, SIGNAL( signalConnected() ), this, SLOT( __on_sub_redis_connected() ) );
-    QObject::connect( __sub_redis, SIGNAL( signalDisconnected() ), this, SLOT( __on_sub_redis_disconnected() ) );
-    QObject::connect( __sub_redis, SIGNAL( signalError(QString) ), this, SLOT( __on_redis_error( QString) ) );
-    QObject::connect( __sub_redis, SIGNAL( signalSubscribed(QString) ), this, SLOT( __on_subscribed( QString ) ) );
-    QObject::connect( __sub_redis, SIGNAL( signalUnsubscribed(QString) ), this, SLOT( __on_unsubscribed( QString ) ) );
-    QObject::connect( __sub_redis, SIGNAL( signalGotMessage(QString, QString) ), this, SLOT( __on_got_message( QString, QString ) ) );
-    __sub_redis->connect();
+    QObject::connect( _pub_redis, SIGNAL( signalConnected() ), this, SLOT( __on_pub_redis_connected() ) );
+    QObject::connect( _pub_redis, SIGNAL( signalDisconnected() ), this, SLOT( __on_pub_redis_disconnected() ) );
+    QObject::connect( _pub_redis, SIGNAL( signalError(QString) ), this, SLOT( __on_redis_error( QString ) ) );
+    
+    // Binding the subscriber redis object
+    // Связка объекта подписчика на редиса.
+    
+    QObject::connect( _sub_redis, SIGNAL( signalConnected() ), this, SLOT( __on_sub_redis_connected() ) );
+    QObject::connect( _sub_redis, SIGNAL( signalDisconnected() ), this, SLOT( __on_sub_redis_disconnected() ) );
+    QObject::connect( _sub_redis, SIGNAL( signalError(QString) ), this, SLOT( __on_redis_error( QString) ) );
+    QObject::connect( _sub_redis, SIGNAL( signalSubscribed(QString) ), this, SLOT( __on_subscribed( QString ) ) );
+    QObject::connect( _sub_redis, SIGNAL( signalUnsubscribed(QString) ), this, SLOT( __on_unsubscribed( QString ) ) );
+    QObject::connect( _sub_redis, SIGNAL( signalGotMessage(QString, QString) ), this, SLOT( __on_got_message( QString, QString ) ) );
+    
+    // The timers for agent.
+    // Таймеры для этого агента.
     
     __ping_timer = new QTimer( this );
     QObject::connect( __ping_timer, SIGNAL( timeout() ), this, SLOT( __on_ping_timer() ) );
@@ -55,7 +60,38 @@ tengu::AbstractAgent::AbstractAgent ( QString name, QObject * parent )
     __connect_timer = new QTimer();
     QObject::connect( __connect_timer, SIGNAL( timeout() ), this, SLOT( __on_connect_timer() ) );
     __connect_timer->start( 1000 );
+    
+}
 
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                     Creating of redises objects. Override this procedure to change LoRedis class.                *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                   Создание объектов редиса. Перекройте эту функцию для изменения класса LoRedis.                 *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::AbstractAgent::_createRedises() {
+    _pub_redis = new LoRedis();
+    _sub_redis = new LoRedis();
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                      Public connect procedure. It should be called after full initialization.                    *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                   Публичная процедура соединения. Ее надо вызывать после полной инициализации.                   *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::AbstractAgent::connect() {
+    
+    // Connect redises if they exists.
+    // Соединение редисеров, если они есть.
+    
+    if ( _pub_redis ) _pub_redis->connect();
+    if ( _sub_redis ) _sub_redis->connect();
+    
 }
 
 // ********************************************************************************************************************
@@ -106,6 +142,31 @@ void tengu::AbstractAgent::__on_pub_redis_disconnected() {
 void tengu::AbstractAgent::__on_sub_redis_disconnected() {
     __sub_redis_connected = false;
 }
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                        Is the publisher connected to redis?                                      *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                          Соединен ли публикатор с редисом?                                       *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+bool tengu::AbstractAgent::isPublisherConnected() {
+    return __pub_redis_connected;
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                       Is the subscriber connected to redis?                                      *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                          Соединен ли подписчик с редисом?                                        *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+bool tengu::AbstractAgent::isSubscriberConnected() {
+    return __sub_redis_connected;
+}
+
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
@@ -277,6 +338,28 @@ void tengu::AbstractAgent::addReaction ( tengu::AbstractAgent::reaction_t reacti
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
+// *                             Add reaction for specified channel if it is not empty                                *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                         Добавление реакции для определенного канала, если он не пустой.                          *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::AbstractAgent::addReactionFor( QString channel, reaction_callback_t reaction) {
+    
+    if ( channel.length() > 0 ) {
+        reaction_t r;
+        r.channel = channel;
+        r.reaction = reaction;
+        r.subscribed = false;
+        r.subscribtion_applicated = false;
+        addReaction( r );
+    };
+    
+}
+
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
 // *                                      Remove the reaction from handled list.                                      *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                                    Удалить реакцию из списка обрабатываемых.                                     *
@@ -326,7 +409,7 @@ void tengu::AbstractAgent::_subscribe() {
                 // Здесь смотрим только на подачу заявки на подписку, но не на сам факт подписки.
                 
                 if ( ! reaction->subscribtion_applicated ) {
-                    __sub_redis->subscribe( reaction->channel );
+                    _sub_redis->subscribe( reaction->channel );
                     reaction->subscribtion_applicated = true;
                 };
             };
@@ -339,6 +422,42 @@ void tengu::AbstractAgent::_subscribe() {
             qDebug() << "AbstractAgent::_subscribe(): could not lock the mutex.";
         };
     };
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                             Set activity for this agent.                                         *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                       Установка активности для данного агента.                                   *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::AbstractAgent::_setActivity(bool a) {
+    __activity = a;
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                             Is this agent active?                                                *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                        Является ли данный агент активным?                                        *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+bool tengu::AbstractAgent::isActive() {
+    return __activity;
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                      Abstract agent cannot be used directly.                                     *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                              Абстрактный агент не может быть использован напрямую.                               *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+bool tengu::AbstractAgent::usable() {
+    return false;
 }
 
 // ********************************************************************************************************************
@@ -363,8 +482,8 @@ void tengu::AbstractAgent::__on_ping_timer() {
         QTime time = QTime::currentTime();
         QString repr = QString::number( dt.toTime_t() ) + "." + QString::number( time.msec() );
         QString channel = QString("agents.") + _name + ".ping";
-        __pub_redis->publish( channel, repr );
-        __pub_redis->set( channel, repr );
+        _pub_redis->publish( channel, repr );
+        _pub_redis->set( channel, repr );
     };
     
     // In any case, it does not matter whether we are connected or not.
@@ -388,8 +507,10 @@ void tengu::AbstractAgent::__on_ping_timer() {
 // ********************************************************************************************************************
 
 void tengu::AbstractAgent::__on_connect_timer() {
-    if ( ! __pub_redis_connected ) __pub_redis->connect();
-    if ( ! __sub_redis_connected ) __sub_redis->connect();
+    
+    if ( ( ! __pub_redis_connected ) && ( _pub_redis ) ) _pub_redis->connect();
+    if ( ( ! __sub_redis_connected ) && ( _sub_redis ) ) _sub_redis->connect();
+    
 }
 
 // ********************************************************************************************************************

@@ -28,6 +28,11 @@ namespace tengu {
         Q_OBJECT
         
         public:
+
+            // Callback procedure for message reaction. The parameters is a channel and a message in them.
+            // Callback-процедура реакции на сообщение. Параметры - канал и сообщение в нем.
+            
+            typedef void(* reaction_callback_t)( QString, QString );
             
             struct reaction_t {
                 
@@ -37,19 +42,64 @@ namespace tengu {
                 QString channel;
                 bool subscribtion_applicated;
                 bool subscribed;
-                void ( * reaction )( QString message );
+                reaction_callback_t reaction;
+                // void ( * reaction )( QString message );
             };
             
-            // The name must be unique around the system. The name is the same as "section" in config file.
-            //
-            // Имя должно быть уникальным в пределах системы. Одновременно "имя" - это "секция" в файле
-            // конфигурации.
+            // The name must be unique around the system. The name is the same as "section" 
+            // in config file.
+            // ------------------------------------------------------------------------------------
+            // Имя должно быть уникальным в пределах системы. Одновременно "имя" - это "секция" 
+            // в файле конфигурации.
             
             AbstractAgent ( QString name, QObject * parent = 0 );
             virtual ~AbstractAgent();
             
+            // Add reaction from reaction_t structure
+            // Добавить реакцию из структуры reaction_t
+            
             void addReaction( reaction_t reaction );
+            
+            // Add reaction for the specified channel, if it is not empty.
+            // Добавить реакцию для указанного канала, если он не пустой.
+            
+            void addReactionFor( QString channel, reaction_callback_t reaction );
+            
+            // Remove reaction from handled list
+            // Удалить реакцию из списка обрабатываемых.
+            
             void removeReaction( reaction_t reaction );
+            
+            /**
+             * @short Public connect procedure.
+             * 
+             * It should be called after full agent initialization.
+             * 
+             * Публичная процедура соединения с редисом. Ее нужно вызывать после полной 
+             * инициализации агента.
+             */
+            
+            void connect();
+            
+            bool isActive();
+            
+            // "Usable" mean "ready to work. This function should be overrided because abstract 
+            // agent is not ready to work.
+            // ------------------------------------------------------------------------------------
+            // "Usable" обозначает "готовный к работе". Фунцию нужно перекрывать, т.к. абстрактный 
+            // агент к работе не готов.
+            
+            virtual bool usable();
+            
+            // Is the publisher connected to redis?
+            // Соединен ли с редисом публикатор?
+            
+            bool isPublisherConnected();
+            
+            // Is the subscriber connected to redis?
+            // Соединен ли с редисом подписчик?
+            
+            bool isSubscriberConnected();
             
         protected:
             
@@ -57,6 +107,16 @@ namespace tengu {
             // Имя агента (хорошо бы уникальное в пределах системы).
             
             QString _name;   
+            
+            // Redis publicator and writer
+            // Редис - который публикует и записывает.
+            
+            LoRedis * _pub_redis;
+            
+            // Redis subscriber
+            // Редис - который подписчик.
+            
+            LoRedis * _sub_redis;
             
             // The subscribtion function. Call at the moment subsciber redis connection.
             // Can be overrided from descendants.
@@ -66,17 +126,14 @@ namespace tengu {
             
             virtual void _subscribe();
             
+            // Procedure to birth the redises. Can be overrided from descendants to change LoRedis class.
+            // Функция для порождения редисов, может быть перекрыта из потомков с целью изменить класс LoRedis.
+            
+            virtual void _createRedises();
+            
+            virtual void _setActivity( bool a );
+            
         private:
-            
-            // Redis publicator and writer
-            // Редис - который публикует и записывает.
-            
-            LoRedis * __pub_redis;
-            
-            // Redis subscriber
-            // Редис - который подписчик.
-            
-            LoRedis * __sub_redis;
             
             bool __pub_redis_connected;
             bool __sub_redis_connected;                        
@@ -93,6 +150,11 @@ namespace tengu {
             // Мутекс для изменения свойств реакций.
             
             QMutex __reMutex;
+            
+            // Activity of this agent.
+            // Активность данного агента.
+            
+            bool __activity;
             
             
         private slots:

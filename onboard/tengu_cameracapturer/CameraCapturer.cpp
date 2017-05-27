@@ -31,12 +31,12 @@ tengu_onboard::CameraCapturer::CameraCapturer() {
     
     qDebug() << "Create rediser...";
     __redisConnected = false;
-    __rediser = new tengu::TenguRedis();
+    // __rediser = new tengu::TenguRedis();
     QObject::connect( __rediser, SIGNAL(signalConnected()), this, SLOT( __onRedisConnect() ) );
     QObject::connect( __rediser, SIGNAL(signalDisconnected()), this, SLOT( __onRedisDisconnect() ) );    
     QObject::connect( __rediser, SIGNAL(signalError(QString)), this, SLOT( __onRedisError( QString ) ) );
     qDebug() << "Rediser created, connect it...";
-    __rediser->connect();
+    // __rediser->connect();
     qDebug() << "Constructor done.";
 }
 

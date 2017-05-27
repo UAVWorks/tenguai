@@ -24,9 +24,8 @@ LIBS += -L../../common -L../../loredis -ltengu_common -lLoRedis -levent -lhiredi
 
 INCLUDEPATH += ../../common  ../  ../../loredis/src/
 
-HEADERS += TaxingSpeedRegulator.h
+HEADERS += 
 
-SOURCES += main.cpp                                         \
-        TaxingSpeedRegulator.cpp
+SOURCES += main.cpp  
 
 

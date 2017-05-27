@@ -9,12 +9,13 @@
 // ********************************************************************************************************************
 
 #include <QCoreApplication>
-#include "TaxingSpeedRegulator.h"
+#include "SimpleRegulator.h"
 
 int main ( int argc, char * argv[] ) {
         
     QCoreApplication app( argc, argv );
-    tengu::TaxingSpeedRegulator * regulator = new tengu::TaxingSpeedRegulator();    
+    
+    tengu::SimpleRegulator * regulator = new tengu::SimpleRegulator("tengu_taxing_speed_regulator");    
     return app.exec();    
     
 };

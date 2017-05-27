@@ -38,7 +38,7 @@ DEFINES += APL=0 IBM=0 LIN=1 XPLM200 XPLM210
 
 QMAKE_CXXFLAGS += -fPIC -pthread
 
-INCLUDEPATH += ../3d_party/XPSDK-213/CHeaders/XPLM/ src/xpchannels ../loredis/src
+INCLUDEPATH += ../3d_party/XPSDK-213/CHeaders/XPLM/ src/xpchannels ../loredis/src ../common
 
 HEADERS += src/XTengu.h
 
