@@ -54,8 +54,8 @@ tengu::SimpleRegulator::SimpleRegulator( QString name, float min_value, float ma
     // Add reactions for channels ( input, output, desired value )
     // Добавление реакций для каналов ( вход, выход, желаемое значение )
     
-    addReactionFor( _input_channel, reinterpret_cast<AbstractAgent::reaction_callback_t>( & (this->__on_input_received ) ) );
-    addReactionFor( _desired_channel, reinterpret_cast<AbstractAgent::reaction_callback_t>( & (this->__on_desired_received ) ) );
+    // addReactionFor( _input_channel, reinterpret_cast<AbstractAgent::reaction_callback_t>( & (this->__on_input_received ) ) );
+    // addReactionFor( _desired_channel, reinterpret_cast<AbstractAgent::reaction_callback_t>( & (this->__on_desired_received ) ) );
 }
 
 

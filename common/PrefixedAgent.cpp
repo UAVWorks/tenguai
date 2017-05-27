@@ -26,11 +26,12 @@ tengu::PrefixedAgent::PrefixedAgent( QString prefix, QString name, QObject * par
     
     // The activity of this channel throught redis.
     // Активность данного канала через редис.
-    
+    /*
     AbstractAgent::reaction_t rActivity;
     rActivity.channel = QString(_prefix + "activity" );
     rActivity.reaction = reinterpret_cast< AbstractAgent::reaction_callback_t > ( & this->__on_activity_received );
     addReaction( rActivity );
+    */
 }
 
 // ********************************************************************************************************************
@@ -42,12 +43,14 @@ tengu::PrefixedAgent::PrefixedAgent( QString prefix, QString name, QObject * par
 // ********************************************************************************************************************
 
 void tengu::PrefixedAgent::__on_activity_received( QString channel, QString message ) {
+    /*
     Q_UNUSED( channel );
     bool a = false;
     bool ok = false;
     int i = message.toInt( & ok ) ;
     if ( (message.toUpper() == "TRUE" ) || ( ( ok ) && ( i != 0 ) ) ) a = true;
     _setActivity( a );
+    */
 }
 
 // ********************************************************************************************************************

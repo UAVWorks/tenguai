@@ -40,12 +40,18 @@ LIBS += -lLoRedis -L../loredis -lopencv_core -lopencv_video -lopencv_highgui -lo
 
 INCLUDEPATH += ../loredis/src/
 
-HEADERS += AbstractAgent.h          \
+HEADERS += AbstractAgentKernel.h    \
+        Sprout.h                    \
+        FloatSprout.h               \
+        AbstractAgent.h             \
         PrefixedAgent.h             \
         SimpleRegulator.h           \
         Summator.h                  
             
-SOURCES += AbstractAgent.cpp        \
+SOURCES += AbstractAgentKernel.cpp  \
+        Sprout.cpp                  \
+        FloatSprout.cpp             \
+        AbstractAgent.cpp           \
         PrefixedAgent.cpp           \
         SimpleRegulator.cpp         \
         Summator.cpp                

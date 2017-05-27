@@ -34,6 +34,7 @@ namespace tengu {
     class Summator : public AbstractAgent {
     
         Q_OBJECT
+        
         public:
             
             struct appendage_t {
@@ -55,3 +56,4 @@ namespace tengu {
     };
     
 };
+
