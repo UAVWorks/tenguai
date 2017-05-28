@@ -11,13 +11,22 @@
 
 QT += core gui widgets
 
-TARGET = tengu_modeller
+TARGET = build/tengu_modeller
 TEMPLATE = app
 
+MOC_DIR=build/moc
+UI_DIR=build/uic
+RCC_DIR=build/obj
+OBJECTS_DIR=build/obj
 
-SOURCES += main.cpp\
-        MainWindow.cpp
 
-HEADERS  += MainWindow.h
+HEADERS  += MainWindow.h        \
+        MainWindowLeft.h        \
+        MainWindowSchema.h      
 
-FORMS    += MainWindow.ui
+SOURCES += main.cpp             \
+        MainWindow.cpp          \
+        MainWindowLeft.cpp      \
+        MainWindowSchema.cpp    
+
+

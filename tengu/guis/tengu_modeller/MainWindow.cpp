@@ -8,7 +8,6 @@
 // ********************************************************************************************************************
 
 #include "MainWindow.h"
-#include "ui_MainWindow.h"
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
@@ -18,11 +17,37 @@
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
+tengu::MainWindow::MainWindow(QWidget *parent) 
+    : QMainWindow(parent)
 {
-    ui->setupUi(this);
+    QVBoxLayout * lay = new QVBoxLayout();
+    lay->setMargin( 0 );
+    lay->setSpacing( 0 );
+    
+    __centerWidget = new QWidget();
+    __centerWidget->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding ) );
+    __centerWidget->setMinimumSize( QSize(800, 600 ) );
+    __centerWidget->setLayout( lay );
+    
+    setCentralWidget( __centerWidget );
+    
+    __splitter = new QSplitter();
+    __splitter->setHandleWidth( 3 );
+    __splitter->setLineWidth( 2 );
+    
+    lay->addWidget( __splitter );
+    
+    __left = new MainWindowLeft();
+    __schema = new MainWindowSchema();
+    
+    __splitter->addWidget( __left );
+    __splitter->addWidget( __schema );
+    
+    // Default sizes ratio
+    // Отношения размеров по умолчанию.
+    
+    __splitter->setStretchFactor( 0, 1 );
+    __splitter->setStretchFactor( 1, 3 );
 }
 
 // ********************************************************************************************************************
@@ -33,6 +58,5 @@ MainWindow::MainWindow(QWidget *parent) :
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-MainWindow::~MainWindow() {
-    delete ui;
+tengu::MainWindow::~MainWindow() {
 }

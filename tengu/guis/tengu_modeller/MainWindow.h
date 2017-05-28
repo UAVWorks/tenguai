@@ -10,21 +10,29 @@
 #pragma once
 
 #include <QMainWindow>
+#include <QSplitter>
+#include <QLayout>
 
-namespace Ui {
-    class MainWindow;
-}
+#include "MainWindowLeft.h"
+#include "MainWindowSchema.h"
 
-class MainWindow : public QMainWindow {
+namespace tengu {
+    
+    class MainWindow : public QMainWindow {
 
-    Q_OBJECT
+        Q_OBJECT
 
-    public:
-        explicit MainWindow(QWidget *parent = 0);
-        ~MainWindow();
-
-    private:
-
-        Ui::MainWindow *ui;
+        public:
+            explicit MainWindow(QWidget *parent = 0);
+            ~MainWindow();
+            
+        private:
+        
+            QSplitter * __splitter;
+            QWidget * __centerWidget;
+            MainWindowLeft * __left;
+            MainWindowSchema * __schema;
+    };
+    
 };
 
