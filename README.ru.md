@@ -24,8 +24,8 @@
 
 | Каталог | Описание |
 | --- | --- |
-| [LoRedis](https://github.com/unclesal/tengu/tree/master/loredis) | C++ / Qt обертка для PUB/SUB механизма Redis.IO, механизм обмена сообщениями между агентами. |
-| [X-Tengu](https://github.com/unclesal/tengu/tree/master/xtengu) | Плагин для X-Plane для моделирования (симуляции) поведения самолетов в воздухе |
+| [LoRedis](https://github.com/unclesal/tengu/blob/master/tengu/loredis/README.ru.md) | C++ / Qt обертка для PUB/SUB механизма Redis.IO, механизм обмена сообщениями между агентами. |
+| [X-Tengu](https://github.com/unclesal/tengu/blob/master/simulators/xplane/xtengu/README.ru.md) | Плагин для X-Plane для моделирования (симуляции) поведения самолетов в воздухе |
 
 
     
