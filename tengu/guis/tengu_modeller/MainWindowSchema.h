@@ -10,16 +10,22 @@
 #pragma once
 
 #include <QWidget>
+#include <QGraphicsView>
+#include <QGraphicsScene>
 
 namespace tengu {
 
-    class MainWindowSchema : public QWidget {
+    class MainWindowSchema : public QGraphicsView {
         
         Q_OBJECT
         
         public:
-            MainWindowSchema( QWidget * parent = 0 );
+            
+            MainWindowSchema( QGraphicsScene * scene );
             virtual ~MainWindowSchema();
+            
+        private:
+                        
     };
 };
 

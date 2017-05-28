@@ -17,8 +17,8 @@
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::MainWindowSchema::MainWindowSchema(QWidget * parent)
-: QWidget( parent )
+tengu::MainWindowSchema::MainWindowSchema( QGraphicsScene * scene )
+: QGraphicsView( scene )
 {
 }
 

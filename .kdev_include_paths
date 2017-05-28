@@ -7,8 +7,8 @@
 /usr/include/x86_64-linux-gnu/qt5/QtWidgets/
 /usr/include/x86_64-linux-gnu/qt5/QtPositioning/
 /usr/include/x86_64-linux-gnu/qt5/QtNetwork/
-common/
-onboard/
+tengu/core/
+tengu/onboard/
 loredis/src/
-3d_party/XPSDK-213/CHeaders/XPLM/
+simulators/xplane/3d_party/XPSDK-213/CHeaders/XPLM/
 

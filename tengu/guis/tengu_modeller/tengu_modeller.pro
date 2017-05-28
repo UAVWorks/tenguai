@@ -19,6 +19,7 @@ UI_DIR=build/uic
 RCC_DIR=build/obj
 OBJECTS_DIR=build/obj
 
+INCLUDEPATH += ../../core
 
 HEADERS  += MainWindow.h        \
         MainWindowLeft.h        \
@@ -28,5 +29,7 @@ SOURCES += main.cpp             \
         MainWindow.cpp          \
         MainWindowLeft.cpp      \
         MainWindowSchema.cpp    
+
+RESOURCES += tengu_modeller.qrc
 
 
