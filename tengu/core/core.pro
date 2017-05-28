@@ -42,7 +42,6 @@ INCLUDEPATH += ../loredis/src/
 
 HEADERS += AbstractAgentKernel.h    \
         Sprout.h                    \
-        FloatSprout.h               \
         AbstractAgent.h             \
         PrefixedAgent.h             \
         SimpleRegulator.h           \
@@ -50,9 +49,8 @@ HEADERS += AbstractAgentKernel.h    \
             
 SOURCES += AbstractAgentKernel.cpp  \
         Sprout.cpp                  \
-        FloatSprout.cpp             \
         AbstractAgent.cpp           \
         PrefixedAgent.cpp           \
         SimpleRegulator.cpp         \
-        Summator.cpp                
+        Summator.cpp
         
