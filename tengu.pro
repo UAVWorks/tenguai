@@ -1,12 +1,9 @@
 TEMPLATE = subdirs
 CONFIG += ordered
 
-SUBDIRS = common        \
-    loredis             \
-    xtengu              \
-    onboard         
+SUBDIRS = tengu         \
+    simulators          
     
-onboard.depends = common
-xtengu.depends = loredis
+simulators.depends = tengu
 
 

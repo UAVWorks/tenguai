@@ -19,10 +19,10 @@ UI_DIR=build/uic
 RCC_DIR=build/obj
 OBJECTS_DIR=build/obj
 
-LIBS += -L../../common -L../../loredis -ltengu_common -lLoRedis -levent -lhiredis 
+LIBS += -L../../core -L../../loredis -ltengu_common -lLoRedis -levent -lhiredis 
 #-lopencv_core -lopencv_video -lopencv_highgui -lopencv_imgproc 
 
-INCLUDEPATH += ../../common  ../  ../../loredis/src/
+INCLUDEPATH += ../../core  ../  ../../loredis/src/
 
 HEADERS += 
 
