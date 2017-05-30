@@ -19,17 +19,15 @@ namespace tengu {
     
     class Sprout : public QObject {
         
-        Q_OBJECT
-        
+        Q_OBJECT        
         Q_PROPERTY( QVariant value READ __getValue WRITE __setValue )
-        
-        signals:
-            
-            void signalGotValue( QVariant value );
-            
+                    
         public:
             
-            Sprout( QString name, AbstractAgentKernel * owner );
+            // The name should be unique in the parent (owner) namespace.
+            // Имя лучше бы было уникальным в пределах родителя (владельца).
+            
+            Sprout( AbstractAgentKernel * owner, QString name );
             virtual ~Sprout();
             
             void setInputChannel( QString channel );
@@ -40,9 +38,8 @@ namespace tengu {
             void unsubscribed( QString channel );
             virtual bool handleMessage( QString channel, QString message );
             
-            // bool subscribed();
-            // bool subscribtion_requested();
-            
+            QString name();
+                        
         protected:
             
             bool _to_me( QString channel );
@@ -62,6 +59,11 @@ namespace tengu {
             
             QVariant __getValue();
             void __setValue( QVariant value );            
+            
+        signals:
+            
+            void signalGotValue( QVariant value );
+        
             
     };
     

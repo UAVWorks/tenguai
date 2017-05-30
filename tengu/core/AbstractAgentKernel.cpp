@@ -17,12 +17,20 @@
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::AbstractAgentKernel::AbstractAgentKernel( QString name, QObject * parent )
-    : QObject( parent )
+tengu::AbstractAgentKernel::AbstractAgentKernel( AbstractAgentKernel * parent, QString name )
+    : QObject()
 {
+    
     _name = name;
+    _parent = parent;
+    _uuid = QString("");
+    _parent_uuid = QString("");
+    _comment = QString("");
     
     __activity = false;
+    
+    _pub_redis = nullptr;
+    _sub_redis = nullptr;
     
     __pub_redis_connected = false;
     __sub_redis_connected = false;
@@ -34,7 +42,7 @@ tengu::AbstractAgentKernel::AbstractAgentKernel( QString name, QObject * parent 
     
     // Binding redis object
     // Связка публикатора редиса.
-    
+        
     QObject::connect( _pub_redis, SIGNAL( signalConnected() ), this, SLOT( __on_pub_redis_connected() ) );
     QObject::connect( _pub_redis, SIGNAL( signalDisconnected() ), this, SLOT( __on_pub_redis_disconnected() ) );
     QObject::connect( _pub_redis, SIGNAL( signalError(QString) ), this, SLOT( __on_redis_error( QString ) ) );
@@ -44,11 +52,8 @@ tengu::AbstractAgentKernel::AbstractAgentKernel( QString name, QObject * parent 
     
     QObject::connect( _sub_redis, SIGNAL( signalConnected() ), this, SLOT( __on_sub_redis_connected() ) );
     QObject::connect( _sub_redis, SIGNAL( signalDisconnected() ), this, SLOT( __on_sub_redis_disconnected() ) );
-    QObject::connect( _sub_redis, SIGNAL( signalError(QString) ), this, SLOT( __on_redis_error( QString) ) );
-    QObject::connect( _sub_redis, SIGNAL( signalSubscribed(QString) ), this, SLOT( __on_subscribed( QString ) ) );
-    QObject::connect( _sub_redis, SIGNAL( signalUnsubscribed(QString) ), this, SLOT( __on_unsubscribed( QString ) ) );
-    QObject::connect( _sub_redis, SIGNAL( signalGotMessage(QString, QString) ), this, SLOT( __on_got_message( QString, QString ) ) );
-    
+    QObject::connect( _sub_redis, SIGNAL( signalError(QString) ), this, SLOT( __on_redis_error( QString) ) );    
+  
     // The timers for agent.
     // Таймеры для этого агента.
     
@@ -58,7 +63,7 @@ tengu::AbstractAgentKernel::AbstractAgentKernel( QString name, QObject * parent 
     
     __connect_timer = new QTimer();
     QObject::connect( __connect_timer, SIGNAL( timeout() ), this, SLOT( __on_connect_timer() ) );
-    __connect_timer->start( 1000 );
+    __connect_timer->start( 1000 );        
     
 }
 
@@ -70,10 +75,14 @@ tengu::AbstractAgentKernel::AbstractAgentKernel( QString name, QObject * parent 
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
+
 void tengu::AbstractAgentKernel::_createRedises() {
+    
     _pub_redis = new LoRedis();
     _sub_redis = new LoRedis();
+    
 }
+
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
@@ -85,8 +94,10 @@ void tengu::AbstractAgentKernel::_createRedises() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
+/*
 void tengu::AbstractAgentKernel::_got_value( QString sproutName ) {
 }
+*/
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
@@ -98,8 +109,13 @@ void tengu::AbstractAgentKernel::_got_value( QString sproutName ) {
 
 void tengu::AbstractAgentKernel::__on_connect_timer() {
     
-    if ( ( ! __pub_redis_connected ) && ( _pub_redis ) ) _pub_redis->connect();
-    if ( ( ! __sub_redis_connected ) && ( _sub_redis ) ) _sub_redis->connect();
+    if ( ( ! __pub_redis_connected ) && ( _pub_redis ) ) {
+        _pub_redis->connect();
+    };
+    
+    if ( ( ! __sub_redis_connected ) && ( _sub_redis ) ) {
+        _sub_redis->connect();
+    };
     
 }
 
@@ -112,7 +128,7 @@ void tengu::AbstractAgentKernel::__on_connect_timer() {
 // ********************************************************************************************************************
 
 void tengu::AbstractAgentKernel::__on_ping_timer() {
-    
+        
     if ( __pub_redis_connected ) {
         
         // Publish the last live time of this agent.
@@ -123,12 +139,28 @@ void tengu::AbstractAgentKernel::__on_ping_timer() {
         
         QDateTime dt = QDateTime::currentDateTime();
         QTime time = QTime::currentTime();
+        
+        // Time representation with ms.
+        // Представление времени с милисекундами.
+        
         QString repr = QString::number( dt.toTime_t() ) + "." + QString::number( time.msec() );
-        QString channel = QString("agents.") + _name + ".ping";
+        
+        // If we have an UUID - we will identify using it. If UUID is empty,
+        // we will use a name of agent.
+        
+        // Если есть UUID - идентификация идет по нему. Если нет - то по имени.
+                       
+        QString channel = QString("agents.");
+        
+        if ( ! _uuid.isEmpty() ) channel += _uuid;
+        else channel += _name;
+        
+        channel += ".ping";
+        
         _pub_redis->publish( channel, repr );
         _pub_redis->set( channel, repr );
     };
-    
+        
     // In any case, it does not matter whether we are connected or not.
     // This is enought to call only one static class method independed of 
     // quantity of real objects.
@@ -136,9 +168,9 @@ void tengu::AbstractAgentKernel::__on_ping_timer() {
     // В любом случае, не имеет значения, соединены мы или нет.
     // Достаточно просто одного вызова статической функции класса, не надо по 
     // каждому из объектов.
-    
+            
     LoRedis::processEvents();
-    
+        
 }
 
 // ********************************************************************************************************************
@@ -162,8 +194,7 @@ void tengu::AbstractAgentKernel::__on_pub_redis_connected() {
 // ********************************************************************************************************************
 
 void tengu::AbstractAgentKernel::__on_sub_redis_connected() {
-    __sub_redis_connected = true;
-    // _subscribe();
+    __sub_redis_connected = true;    
 }
 
 // ********************************************************************************************************************
@@ -228,48 +259,6 @@ bool tengu::AbstractAgentKernel::isSubscriberConnected() {
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
-// *                                               Subscribe function.                                                *
-// * ---------------------------------------------------------------------------------------------------------------- *
-// *                                                Функция подписки.                                                 *
-// *                                                                                                                  *
-// ********************************************************************************************************************
-
-/*
-void tengu::AbstractAgentKernel::__subscribe() {
-    
-    if ( __sub_redis_connected ) {
-        
-        bool locked = __reMutex.tryLock( 300 );
-        
-        if ( locked ) {
-            
-            for ( int i=0; i<__reactions.length(); i++ ) {
-                reaction_t * reaction = __reactions.at(i);
-                
-                // We here only look at submitting an application for a subscription, but not for the fact 
-                // of subscription itself.
-                
-                // Здесь смотрим только на подачу заявки на подписку, но не на сам факт подписки.
-                
-                if ( ! reaction->subscribtion_applicated ) {
-                    _sub_redis->subscribe( reaction->channel );
-                    reaction->subscribtion_applicated = true;
-                };
-            };
-            
-            __reMutex.unlock();
-            
-        } else {
-            // Error handler for AbstractAgent.
-            // Обработка ошибок для абстрактного агента.
-            qDebug() << "AbstractAgent::_subscribe(): could not lock the mutex.";
-        };
-    };
-}
-*/
-
-// ********************************************************************************************************************
-// *                                                                                                                  *
 // *                                             Set activity for this agent.                                         *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                                       Установка активности для данного агента.                                   *
@@ -321,6 +310,31 @@ void tengu::AbstractAgentKernel::connect() {
     if ( _sub_redis ) _sub_redis->connect();
     
 }
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                           Add child to tree-like structure.                                      *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                       Добавить ребенка в древовидную структуру.                                  *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::AbstractAgentKernel::addChild ( tengu::AbstractAgentKernel * child ) {
+    _children.append( child );
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                                Get agent's comment.                                              *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                          Получить комментарий данного агента.                                    *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+QString tengu::AbstractAgentKernel::comment() {
+    return _comment;
+}
+
 
 // ********************************************************************************************************************
 // *                                                                                                                  *

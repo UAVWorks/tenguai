@@ -12,7 +12,7 @@
 #######################################################################################################################
 
 TEMPLATE = lib
-TARGET = tengu_common
+TARGET = tengu_core
 
 # Only for file arranging.
 
@@ -43,14 +43,19 @@ INCLUDEPATH += ../loredis/src/
 HEADERS += AbstractAgentKernel.h    \
         Sprout.h                    \
         AbstractAgent.h             \
-        PrefixedAgent.h             \
         SimpleRegulator.h           \
-        Summator.h                  
+        Summator.h                  \
+        State.h                     \
+        Processor.h                 \
+        Vehicle.h
             
 SOURCES += AbstractAgentKernel.cpp  \
         Sprout.cpp                  \
         AbstractAgent.cpp           \
-        PrefixedAgent.cpp           \
         SimpleRegulator.cpp         \
-        Summator.cpp
+        Summator.cpp                \
+        State.cpp                   \
+        Processor.cpp               \
+        Vehicle.cpp
+        
         

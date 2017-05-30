@@ -518,12 +518,15 @@ void __cb_got_value( redisAsyncContext * ctx, void * vreply, void * privdata ) {
 // ********************************************************************************************************************
 
 LoRedis::LoRedis() 
-    : QObject()
-    , _asyncContext( nullptr )
-    , __setted( false )
-    , __getted( false ) 
-    , __reactor( nullptr )
+    : QObject()    
 {     
+    __reactor = nullptr;
+    __event_base = nullptr;
+    __setted = false;
+    __getted = false;
+    
+    _asyncContext = nullptr;
+                
     __redisers.append( this );
     
     // setTerminationEnabled( true );    
@@ -554,7 +557,7 @@ LoRedis::LoRedis( LoRedisReactor * reactor )
 void LoRedis::connect( QString host, int port ) {
     
     if ( ! _asyncContext ) {
-                
+        
         __event_base = event_base_new();
         
         // event_set_fatal_callback( __cb_event_fatal );
@@ -574,8 +577,6 @@ void LoRedis::connect( QString host, int port ) {
         redisAsyncSetConnectCallback( _asyncContext, __cb_connect );
         redisAsyncSetDisconnectCallback( _asyncContext, __cb_disconnect );
 
-        // this->start();
-        
         // qDebug() << "Call event_base_dispatch...";
         //event_base_dispatch( __event_base );
         
@@ -853,11 +854,13 @@ void LoRedis::unsubscribe ( QString channel ) {
 void LoRedis::processEvents() {
     
     for ( int i=0; i<__redisers.length(); i++ ) {
+        
         LoRedis * redis = __redisers.at(i);
         if ( redis->__event_base ) {
+            
             bool locked = redis->__eMutex.tryLock( 50 );
             if ( locked ) {
-                event_base_loop( redis->__event_base, EVLOOP_NONBLOCK  );
+                event_base_loop( redis->__event_base, EVLOOP_NONBLOCK );
                 redis->__eMutex.unlock();
             }
         }

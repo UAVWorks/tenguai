@@ -28,7 +28,7 @@ namespace tengu {
         
         public:
             
-            AbstractAgentKernel( QString name, QObject * parent = 0 );
+            AbstractAgentKernel( AbstractAgentKernel * parent, QString name );
             virtual ~AbstractAgentKernel();
             
             bool isActive();
@@ -62,12 +62,25 @@ namespace tengu {
             
             virtual bool usable();
             
+            void addChild( AbstractAgentKernel * child );
+            
+            QString uuid();
+            
+            QString comment();
+            void setComment( QString comment );
+            
+            
         protected:
             
             // Agent name (should be unique around the system)
             // Имя агента (хорошо бы уникальное в пределах системы).
             
             QString _name;   
+            
+            // Any human readable comment for this agent.
+            // Любой человеко-ориентированный комментарий для агента.
+            
+            QString _comment;
             
             // Redis publicator and writer
             // Редис - который публикует и записывает.
@@ -84,12 +97,28 @@ namespace tengu {
             
             virtual void _createRedises();
             
-            virtual void _setActivity( bool a );
+            virtual void _setActivity( bool a );                        
             
             // There was got some variable from redis.
             // Было получено некоторое значение переменной из редиса.
             
-            virtual void _got_value( QString sproutName );
+            // virtual void _got_value( QString sproutName );
+            
+            // Tree-like structure of agents.
+            // Деревообразная структура агентов.
+            
+            AbstractAgentKernel * _parent;
+            QList<AbstractAgentKernel * > _children;
+            
+            // Unique (in entire system range) identifier of this agent.
+            // Уникальный (в пределах вообще всей системы) идентификатор данного агента.
+            
+            QString _uuid;
+            
+            // Tree-like structure of agents. For loading entire "tree branch" completely.
+            // Древовидная структура агентов. Для загрузки всей "ветки" дерева целиком.
+            
+            QString _parent_uuid;
             
         private:
             
@@ -98,16 +127,6 @@ namespace tengu {
             
             QTimer * __ping_timer;
             QTimer * __connect_timer;
-            
-            // List of reaction on redises messages
-            // Список реакций на сообщения от редиса.
-            
-            // QList< reaction_t * > __reactions;
-            
-            // Mutex for change reactions properties.
-            // Мутекс для изменения свойств реакций.
-            
-            // QMutex __reMutex;
             
             // Activity of this agent.
             // Активность данного агента.
@@ -123,7 +142,7 @@ namespace tengu {
             void __on_sub_redis_connected();
             void __on_pub_redis_disconnected();
             void __on_sub_redis_disconnected();
-            void __on_redis_error ( QString message );            
+            void __on_redis_error ( QString message );              
             
     };
     

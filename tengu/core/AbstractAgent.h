@@ -1,10 +1,10 @@
 // ********************************************************************************************************************
 // *                                                                                                                  *
 // *      The abstract agent. Any logical completed piece which can do something. Usually it is a separate process    *
-// *                                              inside operation system.                                            *
+// *                       inside operation system. This is "kernel" plus communication capability                    *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *    Абстрактный агент. Любой логически законченный кусок, который может что-то делать. Как правило - отдельный    *
-// *                                             процесс операционной системы.                                        *
+// *               процесс операционной системы. Представляет собой "ядро" агента плюс способность общаться.          *
 // *                                                                                                                  *
 // * Eugene G. Sysoletin <e.g.sysoletin@gmail.com>                                       Created 26 may 2017 at 11:57 *
 // ********************************************************************************************************************
@@ -29,61 +29,37 @@ namespace tengu {
         Q_OBJECT
         
         public:
-
-            // Callback procedure for message reaction. The parameters is a channel and a message in them.
-            // Callback-процедура реакции на сообщение. Параметры - канал и сообщение в нем.
             
-            // typedef void(* reaction_callback_t)( QString, QString );
-            // 
-            // struct reaction_t {
-            //     
-            //    // Channel is full redis channel, with prefix. As it must be in redis without any additions.
-            //    // Канал - это полное имя канала в редисе, вместе с префиксом. Как оно должно быть в редисе, без каких-либо добавок.
-            //    
-            //    QString channel;
-            //    bool subscribtion_applicated;
-            //    bool subscribed;
-            //    reaction_callback_t reaction;
-            //    // void ( * reaction )( QString message );
-            // };
-            
-            // The name must be unique around the system. The name is the same as "section" 
-            // in config file.
+            // The name should be unique around the system. 
             // ------------------------------------------------------------------------------------
-            // Имя должно быть уникальным в пределах системы. Одновременно "имя" - это "секция" 
-            // в файле конфигурации.
+            // Имя лучше бы было уникальным в пределах системы. 
             
-            AbstractAgent ( QString name, QObject * parent = 0 );
+            AbstractAgent ( AbstractAgentKernel * parent, QString name );
             virtual ~AbstractAgent();
-            
+                        
             // Add "the sprout", reaction to redises messages.
             // Добавить "веточку" реакции на сообщения редиса.
             
             void addSprout( Sprout * sprout );
             
-            // Add reaction for the specified channel, if it is not empty.
-            // Добавить реакцию для указанного канала, если он не пустой.
+            // Activity channel, especially channel for change agent activity.
+            // Установка канала активности, специально выделенного для управления активностью агента.
             
-            // void addReactionFor( QString channel, reaction_callback_t reaction );
-            
-            // Remove reaction from handled list
-            // Удалить реакцию из списка обрабатываемых.
-            
-            // void removeReaction( reaction_t reaction );
-            
+            void setActivityChannel( QString activityChannel );
+                        
             
         protected:
+            
+            QString _activityChannel;            
             
             
         private:
             
-            QList <Sprout * > __sprouts;
+            // QList <Sprout * > __sprouts;
+            QMap < QString, Sprout * > __sprouts;
             
-            // The subscribtion function. Call at the moment subsciber redis connection.
-            // Can be overrided from descendants.
-            
+            // The subscribtion function. Call at the moment subsciber redis connection.            
             // Функция подписки. Вызывается на момент соединения подписчика редиса.
-            // Может быть перекрыта из потомков.
             
             void __subscribe();
             
@@ -93,6 +69,7 @@ namespace tengu {
             void __on_got_message( QString channel, QString messaage );
             void __on_subscribed( QString channel );
             void __on_unsubscribed( QString channel );
+            void __on_activity_channel_message( QVariant value );
             
     };
     

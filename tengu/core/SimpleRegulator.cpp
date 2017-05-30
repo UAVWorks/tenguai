@@ -17,8 +17,8 @@
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::SimpleRegulator::SimpleRegulator( QString name, float min_value, float max_value ) 
-    : PrefixedAgent( QString("tengu.regulators.") + name + ".", name ) 
+tengu::SimpleRegulator::SimpleRegulator( AbstractAgentKernel * parent, QString name, float min_value, float max_value ) 
+    : AbstractAgent( parent, name ) 
 {
 
     // The PID-regulator and it's values.
@@ -28,15 +28,22 @@ tengu::SimpleRegulator::SimpleRegulator( QString name, float min_value, float ma
     _I = 0.0;
     _D = 0.0;
     
+    _inputChannel = QString("");
     _input_value = 0.0;
+    
+    _desiredChannel = QString("");
     _desired_value = 0.0;
+    
+    _outputChannel = QString("");
     _output_value = 0.0;
+    
     _min_value = min_value;
     _max_value = max_value;
     
     // The settings is more preferred that the values from mongodb.
     // Установки - более предпочтительны для канала, чем значения из монги.
     
+    /*
     CREATE_SETTINGS_ONBOARD;
     settings_onboard.beginGroup( _name );
     _output_channel = settings_onboard.value( "output_channel", "" ).toString();
@@ -50,12 +57,33 @@ tengu::SimpleRegulator::SimpleRegulator( QString name, float min_value, float ma
     float d = settings_onboard.value("D", "").toFloat( & ok );
     if ( ok ) _D = d;
     settings_onboard.endGroup();
+    */
     
     // Add reactions for channels ( input, output, desired value )
     // Добавление реакций для каналов ( вход, выход, желаемое значение )
     
     // addReactionFor( _input_channel, reinterpret_cast<AbstractAgent::reaction_callback_t>( & (this->__on_input_received ) ) );
     // addReactionFor( _desired_channel, reinterpret_cast<AbstractAgent::reaction_callback_t>( & (this->__on_desired_received ) ) );
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                               Set input value channel.                                           *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                        Установить канал для входного значения.                                   *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::SimpleRegulator::setInputChannel ( QString channel ) {
+    
+    if ( ! channel.isEmpty() ) {
+        _inputChannel = channel;
+        Sprout * iSprout = new Sprout(this, "INPUT");
+        iSprout->setInputChannel( channel );
+        QObject::connect( iSprout, SIGNAL(signalGotValue(QVariant)), this, SLOT( __on_input_received( QVariant ) ) );
+        addSprout( iSprout );
+    };
+    
 }
 
 
@@ -127,11 +155,13 @@ void tengu::AbstractRegulator::_subscribe() {
 // ********************************************************************************************************************
 
 bool tengu::SimpleRegulator::usable() {
-    return ( ( _input_channel.length() > 0 ) 
-        && ( _output_channel.length() > 0 ) 
-        && ( _desired_channel.length() > 0 ) 
+    
+    return ( ( _inputChannel.length() > 0 ) 
+        && ( _outputChannel.length() > 0 ) 
+        && ( _desiredChannel.length() > 0 ) 
         && ( isPublisherConnected() ) 
     );
+    
 }
 
 
@@ -164,12 +194,11 @@ void tengu::SimpleRegulator::_do_step() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::SimpleRegulator::__on_input_received( QString channel, QString message ) {
-    Q_UNUSED( channel );
-    bool ok = false;
-    float val = message.toFloat( & ok );
-    if ( ok ) _input_value = val;
+void tengu::SimpleRegulator::__on_input_received( QVariant value ) {
+    
+    _input_value = value.toFloat();
     _do_step();
+    
 }
 
 // ********************************************************************************************************************
@@ -180,12 +209,11 @@ void tengu::SimpleRegulator::__on_input_received( QString channel, QString messa
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::SimpleRegulator::__on_desired_received( QString channel, QString message ) {
-    Q_UNUSED( channel );
-    bool ok = false;
-    float val = message.toFloat( & ok );
-    if ( ok ) _desired_value = val;
+void tengu::SimpleRegulator::__on_desired_received( QVariant value ) {
+    
+    _desired_value = value.toFloat();
     _do_step();
+    
 }
 
 

@@ -19,16 +19,19 @@
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::AbstractAgent::AbstractAgent ( QString name, QObject * parent ) 
-    : AbstractAgentKernel ( name, parent ) 
-{
+tengu::AbstractAgent::AbstractAgent ( AbstractAgentKernel * parent, QString name ) 
+    : AbstractAgentKernel ( parent, name ) 
+{    
+    _activityChannel = QString("");
+
     // Additional reaction for subscriber
     if ( _sub_redis ) {
+        
         QObject::connect( _sub_redis, SIGNAL( signalConnected() ), this, SLOT( __on_subscriber_connected() ) );
         QObject::connect( _sub_redis, SIGNAL( signalSubscribed( QString ) ), this, SLOT( __on_subscribed( QString ) ) );
         QObject::connect( _sub_redis, SIGNAL( signalUnsubscribed( QString ) ), this, SLOT( __on_unsubscribed( QString ) ) );
         QObject::connect( _sub_redis, SIGNAL( signalGotMessage( QString, QString ) ), this, SLOT( __on_got_message( QString, QString ) ) );
-    };
+    };    
 }
 
 // ********************************************************************************************************************
@@ -53,8 +56,8 @@ void tengu::AbstractAgent::__on_subscriber_connected() {
 
 void tengu::AbstractAgent::__on_subscribed ( QString channel ) {
     
-    for ( int i=0; i<__sprouts.length(); i++ ) {
-        __sprouts.at(i)->subscribed( channel );
+    foreach ( Sprout * sprout, __sprouts ) {
+        sprout->subscribed( channel );
     };
     
 }
@@ -69,8 +72,8 @@ void tengu::AbstractAgent::__on_subscribed ( QString channel ) {
 
 void tengu::AbstractAgent::__on_unsubscribed ( QString channel ) {
     
-    for ( int i=0; i<__sprouts.length(); i++ ) {
-        __sprouts.at(i)->unsubscribed( channel );
+    foreach ( Sprout * sprout, __sprouts ) {
+        sprout->unsubscribed( channel );
     };
 }
 
@@ -85,15 +88,34 @@ void tengu::AbstractAgent::__on_unsubscribed ( QString channel ) {
 void tengu::AbstractAgent::__on_got_message ( QString channel, QString message ) {
     
     bool handled = false;
-    for ( int i=0; i<__sprouts.length(); i++ ) {
     
-        bool res = __sprouts.at(i)->handleMessage( channel, message );
+    foreach ( Sprout * sprout, __sprouts ) {
+        bool res = sprout->handleMessage( channel, message );
         if ( res ) handled = true;
-    };
+    }    
     
     if ( ! handled ) {
         qDebug() << "AbstractAgent::__on_got_message(" << channel << ") was not handled.";
     }
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                           Got message from activity channel.                                     *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                        Получено сообщение из канала активности.                                  *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::AbstractAgent::__on_activity_channel_message ( QVariant value ) {
+    
+    bool ok = false;
+    QString msg = value.toString();
+    int i = msg.toInt( & ok );
+    if ( ( ok ) && ( i != 0 ) ) _setActivity( true );
+    else if ( msg.toUpper() == "TRUE" ) _setActivity( true );
+    else _setActivity( value.toBool() );
+    
 }
 
 // ********************************************************************************************************************
@@ -105,9 +127,11 @@ void tengu::AbstractAgent::__on_got_message ( QString channel, QString message )
 // ********************************************************************************************************************
 
 void tengu::AbstractAgent::__subscribe() {
-    for ( int i=0; i<__sprouts.length(); i++ ) {
-        __sprouts.at(i)->subscribe();
+    
+    foreach ( Sprout * sprout, __sprouts) {
+        sprout->subscribe();
     };
+    
 }
 
 // ********************************************************************************************************************
@@ -119,60 +143,29 @@ void tengu::AbstractAgent::__subscribe() {
 // ********************************************************************************************************************
 
 void tengu::AbstractAgent::addSprout ( tengu::Sprout * sprout ) {
-    __sprouts.append( sprout );
+    __sprouts[ sprout->name() ] = sprout ;
     __subscribe();
 }
 
-
 // ********************************************************************************************************************
 // *                                                                                                                  *
-// *                             Add reaction for specified channel if it is not empty                                *
+// *                                                Set activity channel                                              *
 // * ---------------------------------------------------------------------------------------------------------------- *
-// *                         Добавление реакции для определенного канала, если он не пустой.                          *
+// *                                             Установка канала активности.                                         *
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-/*
-void tengu::AbstractAgent::addReactionFor( QString channel, reaction_callback_t reaction) {
+void tengu::AbstractAgent::setActivityChannel ( QString activityChannel ) {
     
-    if ( channel.length() > 0 ) {
-        reaction_t r;
-        r.channel = channel;
-        r.reaction = reaction;
-        r.subscribed = false;
-        r.subscribtion_applicated = false;
-        addReaction( r );
+    if ( ! activityChannel.isEmpty() ) {
+        _activityChannel = activityChannel;
+        Sprout * aSprout = new Sprout( this, "Activity" );
+        aSprout->setInputChannel( activityChannel );
+        QObject::connect( aSprout, SIGNAL( signalGotValue( QVariant ) ), this, SLOT( __on_activity_channel_message( QVariant ) ) );
+        addSprout( aSprout );
     };
     
 }
-*/
-
-// ********************************************************************************************************************
-// *                                                                                                                  *
-// *                                      Remove the reaction from handled list.                                      *
-// * ---------------------------------------------------------------------------------------------------------------- *
-// *                                    Удалить реакцию из списка обрабатываемых.                                     *
-// *                                                                                                                  *
-// ********************************************************************************************************************
-/*
-void tengu::AbstractAgent::removeReaction ( tengu::AbstractAgent::reaction_t reaction ) {
-    
-    try {
-        
-        for ( int i=0; i<__reactions.length(); i++ ) {
-            reaction_t * r = __reactions.at(i);
-            if ( ( r->channel == reaction.channel ) && ( r->reaction == reaction.reaction ) ) {
-                __reactions.removeAt( i );
-                delete( r );
-                return;
-            }
-        };        
-        
-    } catch ( ... ) {
-        qDebug() << "AbstractAgent::removeReaction(), delete reaction_t struct error.";
-    }    
-}
-*/
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
@@ -184,21 +177,6 @@ void tengu::AbstractAgent::removeReaction ( tengu::AbstractAgent::reaction_t rea
 
 tengu::AbstractAgent::~AbstractAgent() {
     
-    // The reactions has been add dynamically. The destructor must free memory.
-    // Реакции были добавлены динамически. Деструктор должен освободить память.
-    /*
-    try {
-        
-        while ( __reactions.length() > 0 ) {
-            reaction_t * r = __reactions.at(0);
-            __reactions.removeAt( 0 );
-            delete( r );
-        };
-        
-    } catch ( ... ) {
-        qDebug() << "AbstractAgent::AbstractAgent(), clean reaction error.";
-    };
-    */
 }
 
 

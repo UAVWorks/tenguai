@@ -9,6 +9,6 @@
 /usr/include/x86_64-linux-gnu/qt5/QtNetwork/
 tengu/core/
 tengu/onboard/
-loredis/src/
+tengu/loredis/src/
 simulators/xplane/3d_party/XPSDK-213/CHeaders/XPLM/
 

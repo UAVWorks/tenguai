@@ -42,7 +42,7 @@ namespace tengu {
                 float coefficient;
             };
             
-            Summator( QString name, QObject * parent = 0 );
+            Summator( AbstractAgentKernel * parent, QString name );
             ~Summator();
             
             void addInputChannel( appendage_t channel );
