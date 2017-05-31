@@ -17,8 +17,8 @@
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::SimpleRegulator::SimpleRegulator( AbstractAgentKernel * parent, QString name, float min_value, float max_value ) 
-    : AbstractAgent( parent, name ) 
+tengu::SimpleRegulator::SimpleRegulator( AbstractAgentKernel * parent, QString systemName, float min_value, float max_value ) 
+    : AbstractAgent( parent, systemName ) 
 {
 
     // The PID-regulator and it's values.

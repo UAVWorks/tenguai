@@ -17,8 +17,8 @@
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::State::State ( AbstractAgentKernel * parent, QString name ) 
-    : AbstractAgent ( parent, name ) 
+tengu::State::State ( AbstractAgentKernel * parent, QString systemName ) 
+    : AbstractAgent ( parent, systemName ) 
 {
 
 }

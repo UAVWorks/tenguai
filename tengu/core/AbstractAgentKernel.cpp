@@ -17,15 +17,16 @@
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::AbstractAgentKernel::AbstractAgentKernel( AbstractAgentKernel * parent, QString name )
+tengu::AbstractAgentKernel::AbstractAgentKernel( AbstractAgentKernel * parent, QString systemName )
     : QObject()
 {
     
-    _name = name;
+    _system_name = systemName;
     _parent = parent;
     _uuid = QString("");
     _parent_uuid = QString("");
     _comment = QString("");
+    _subProcessPath = QString("");
     
     __activity = false;
     
@@ -153,7 +154,7 @@ void tengu::AbstractAgentKernel::__on_ping_timer() {
         QString channel = QString("agents.");
         
         if ( ! _uuid.isEmpty() ) channel += _uuid;
-        else channel += _name;
+        else channel += _system_name;
         
         channel += ".ping";
         
@@ -335,6 +336,17 @@ QString tengu::AbstractAgentKernel::comment() {
     return _comment;
 }
 
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                Path for process to provide this agent as a separate process in the operation system.             *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *     Путь для процесса, который предоставляет данного агента как отдельный процесс в операционной системе.        *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+QString tengu::AbstractAgentKernel::subProcessPath() {
+    return _subProcessPath;
+}
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
@@ -344,7 +356,17 @@ QString tengu::AbstractAgentKernel::comment() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::AbstractAgentKernel::~AbstractAgentKernel()
-{
+tengu::AbstractAgentKernel::~AbstractAgentKernel() {
+    try {
+        while ( _children.length() > 0 ) {
+            AbstractAgentKernel * child = _children.at(0);
+            delete( child );
+            _children.removeAt( 0 );
+        };
+    } catch ( std::exception & e ) {
+        qDebug() << "AbstractAgent::~AbstractAgent(): " << e.what();
+    } catch ( ... ) {
+        qDebug() << "AbstractAgent::~AbstractAgent(): unhandled exception";
+    };
 }
 

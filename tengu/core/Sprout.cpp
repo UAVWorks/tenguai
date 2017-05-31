@@ -19,10 +19,10 @@
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::Sprout::Sprout( AbstractAgentKernel * owner, QString name )
+tengu::Sprout::Sprout( AbstractAgentKernel * owner, QString systemName )
     : QObject()
 {
-    __name = name;
+    __system_name = systemName;
     __owner = owner;
     __subscribed = false;
     __subscribtion_requested = false;
@@ -177,8 +177,8 @@ bool tengu::Sprout::handleMessage( QString channel, QString value ) {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-QString tengu::Sprout::name() {
-    return __name;
+QString tengu::Sprout::systemName() {
+    return __system_name;
 }
 
 // ********************************************************************************************************************

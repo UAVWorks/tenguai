@@ -27,7 +27,7 @@ namespace tengu {
             // The name should be unique in the parent (owner) namespace.
             // Имя лучше бы было уникальным в пределах родителя (владельца).
             
-            Sprout( AbstractAgentKernel * owner, QString name );
+            Sprout( AbstractAgentKernel * owner, QString systemName );
             virtual ~Sprout();
             
             void setInputChannel( QString channel );
@@ -38,7 +38,7 @@ namespace tengu {
             void unsubscribed( QString channel );
             virtual bool handleMessage( QString channel, QString message );
             
-            QString name();
+            QString systemName();
                         
         protected:
             
@@ -46,7 +46,7 @@ namespace tengu {
             
         private:
             
-            QString __name;
+            QString __system_name;
             QVariant __value;
             
             bool __subscribed;

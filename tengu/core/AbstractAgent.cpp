@@ -19,8 +19,8 @@
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::AbstractAgent::AbstractAgent ( AbstractAgentKernel * parent, QString name ) 
-    : AbstractAgentKernel ( parent, name ) 
+tengu::AbstractAgent::AbstractAgent ( AbstractAgentKernel * parent, QString systemName ) 
+    : AbstractAgentKernel ( parent, systemName ) 
 {    
     _activityChannel = QString("");
 
@@ -143,7 +143,7 @@ void tengu::AbstractAgent::__subscribe() {
 // ********************************************************************************************************************
 
 void tengu::AbstractAgent::addSprout ( tengu::Sprout * sprout ) {
-    __sprouts[ sprout->name() ] = sprout ;
+    __sprouts[ sprout->systemName() ] = sprout ;
     __subscribe();
 }
 

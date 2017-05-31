@@ -28,7 +28,7 @@ namespace tengu {
         
         public:
             
-            AbstractAgentKernel( AbstractAgentKernel * parent, QString name );
+            AbstractAgentKernel( AbstractAgentKernel * parent, QString systenName );
             virtual ~AbstractAgentKernel();
             
             bool isActive();
@@ -69,19 +69,31 @@ namespace tengu {
             QString comment();
             void setComment( QString comment );
             
+            // The agent can be provided either as object in memory
+            // or separate process in the operation system for 
+            // resource savings.
+            
+            // Агент может быть обеспечен как порождением его класса,
+            // так и отдельным процессом в операционной системе для
+            // экономии ресурсов.
+            
+            virtual QString subProcessPath();
+            
             
         protected:
             
             // Agent name (should be unique around the system)
             // Имя агента (хорошо бы уникальное в пределах системы).
             
-            QString _name;   
+            QString _system_name;   
             
             // Any human readable comment for this agent.
             // Любой человеко-ориентированный комментарий для агента.
             
             QString _comment;
             
+            QString _subProcessPath;
+                        
             // Redis publicator and writer
             // Редис - который публикует и записывает.
             

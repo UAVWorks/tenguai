@@ -19,8 +19,8 @@
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::Processor::Processor ( tengu::AbstractAgentKernel * parent, QString name ) 
-    : AbstractAgent ( parent, name )
+tengu::Processor::Processor ( tengu::AbstractAgentKernel * parent, QString systemName ) 
+    : AbstractAgent ( parent, systemName )
 {
     
     _setActivity( false );
@@ -49,9 +49,9 @@ bool tengu::Processor::_loadConfig ( QString fileName ) {
             _uuid = uuid;
         };
         
-        QString name = settings.value("name", "").toString();
+        QString name = settings.value("system_name", "").toString();
         if ( ! name.isEmpty() ) {
-            _name = name;
+            _system_name = name;
         };
         
         QString comment = settings.value("comment", "").toString();
@@ -87,13 +87,13 @@ bool tengu::Processor::configCorrect( bool say ) {
         return false;
     };
     
-    if ( _name.isEmpty() ) {
-        if ( say ) qDebug() << tr("Processor::configCorrect() : name is empty");
+    if ( _system_name.isEmpty() ) {
+        if ( say ) qDebug() << tr("Processor::configCorrect() : system_name is empty");
         return false;
     };
     
-    if ( ( _name.contains(' ')) || ( _name.contains('\t') ) ) {
-        if ( say ) qDebug() << tr("Processor::configCorrect() : name should not contains a space or a tab characters.");
+    if ( ( _system_name.contains(' ')) || ( _system_name.contains('\t') ) ) {
+        if ( say ) qDebug() << tr("Processor::configCorrect() : system name should not contains a whitespace or a tab characters.");
         return false;
     };
     
@@ -160,6 +160,86 @@ tengu::Processor::execution_mode_t tengu::Processor::executionMode() {
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
+// *                                  Create a separate child's (subagent's) process.                                 *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                          Создание отдельного дочернего (зависимого агентского) процесса.                         *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::Processor::_startSubagentProcess( AbstractAgentKernel * child ) {
+    subagent_process_t subagent;
+    subagent.child = child;
+    subagent.state = AST_WAIT_STARTING;
+    subagent.process = new QProcess();
+    QObject::connect( subagent.process, SIGNAL( started() ), this, SLOT( __on_subprocess_started() ) );
+    QObject::connect( subagent.process, SIGNAL( errorOccured( QProcess::ProcessError) ), this, SLOT( __on_subprocess_error( QProcess::ProcessError ) ) );
+    QObject::connect( subagent.process, SIGNAL( finished( int, QProcess::ExitStatus ) ), this, SLOT( __on_subprocess_finished( int, QProcess::ExitStatus ) ) );
+    subagent.process->start( child->subProcessPath() );    
+    _subagents.append( subagent );
+    
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                             A subprocess was started.                                            *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                               Подпроцесс - стартовал.                                            *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::Processor::__on_subprocess_started() {
+
+    qDebug() << "Processor::__on_subprocess_started";
+    QProcess * sender = qobject_cast< QProcess * > ( QObject::sender() );
+    for ( int i=0; i<_subagents.length(); i++ ) {
+        subagent_process_t sa = _subagents.at(i);
+        if ( sa.process == sender ) {
+            qDebug() << "Object found.";
+            sa.state = AST_RUNNING;
+            _subagents.replace( i, sa );
+            break;
+        }
+    };
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                             A subprocess has any error.                                          *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                            У подпроцесса возникла ошибка.                                        *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::Processor::__on_subprocess_error(QProcess::ProcessError error) {
+    qDebug() << "Processor::__on_subprocess_error: " << error ;
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                             A subprocess was finished.                                           *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                       Подпроцесс - завершил свое выполнение.                                     *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::Processor::__on_subprocess_finished(int exitCode, QProcess::ExitStatus exitStatus) {
+    
+    qDebug() << "Processor::__on_subprocess_finished, exitCode=" << exitCode << ", status=" << exitStatus;
+    QProcess * sender = qobject_cast< QProcess * > ( QObject::sender() );
+    for ( int i=0; i<_subagents.length(); i++ ) {
+        subagent_process_t sa = _subagents.at( i );
+        if ( sa.process == sender ) {
+            delete( sa.process );
+            _subagents.removeAt( i );
+            break;
+        }
+    };
+    
+}
+
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
 // *                                                   The destructor.                                                *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                                                      Деструктор.                                                 *
@@ -167,5 +247,17 @@ tengu::Processor::execution_mode_t tengu::Processor::executionMode() {
 // ********************************************************************************************************************
 
 tengu::Processor::~Processor() {
-
+    
+    for ( int i=0; i<_subagents.length(); i++ ) {
+        
+        subagent_process_t subagent = _subagents.at(i);
+        
+        if ( ( subagent.process->state() == QProcess::Starting ) || ( subagent.process->state() == QProcess::Running ) ) {        
+            subagent.process->terminate();
+        };
+        
+        delete ( subagent.process );
+        
+    };
+    
 }

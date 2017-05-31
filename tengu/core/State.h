@@ -20,7 +20,7 @@ namespace tengu {
         
         public:
             
-            State( AbstractAgentKernel * parent, QString name );
+            State( AbstractAgentKernel * parent, QString systemName );
             virtual ~State();
             
         private:

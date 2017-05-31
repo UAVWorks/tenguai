@@ -17,8 +17,8 @@
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::Summator::Summator( AbstractAgentKernel * parent, QString name ) 
-    : AbstractAgent( parent, name )
+tengu::Summator::Summator( AbstractAgentKernel * parent, QString systemName ) 
+    : AbstractAgent( parent, systemName )
 {
 }
 

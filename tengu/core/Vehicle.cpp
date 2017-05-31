@@ -19,8 +19,8 @@
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::Vehicle::Vehicle ( tengu::AbstractAgentKernel * parent, QString name ) 
-    : Processor ( parent, name )
+tengu::Vehicle::Vehicle ( tengu::AbstractAgentKernel * parent, QString systemName ) 
+    : Processor ( parent, systemName )
 {
     
     _vehicleType = VT_NONE;
