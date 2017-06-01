@@ -22,10 +22,13 @@
 #include <QPixmap>
 #include <QDebug>
 #include <QSettings>
+#include <QRect>
 
 #include "MainWindowLeft.h"
 #include "MainWindowSchema.h"
+#include "MainWindowRight.h"
 #include "Constants.h"
+#include "../guis.h"
 
 namespace tengu {
     
@@ -39,10 +42,14 @@ namespace tengu {
             
         private:
         
-            QSplitter * __left_schema_splitter;
+            // Horizontal splitter for main window's elements.
+            // Горизонтальный сплиттер для элементов главного окна.
+            QSplitter * __hSplitter;
+            
             QWidget * __centerWidget;
             MainWindowLeft * __left;
             MainWindowSchema * __schema;
+            MainWindowRight * __right;
             QGraphicsScene * __canvas;
             
             QToolBar * __toolbar_buttons;
@@ -58,6 +65,7 @@ namespace tengu {
             void __restoreSettings();
             
             void closeEvent( QCloseEvent * event );
+            void showEvent( QShowEvent * event );
             
         private slots:
             

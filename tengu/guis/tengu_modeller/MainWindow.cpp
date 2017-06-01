@@ -35,25 +35,25 @@ tengu::MainWindow::MainWindow(QWidget *parent)
     
     setCentralWidget( __centerWidget );
     
-    __left_schema_splitter = new QSplitter();
-    __left_schema_splitter->setHandleWidth( 3 );
-    __left_schema_splitter->setLineWidth( 2 );
+    __hSplitter = new QSplitter();
+    __hSplitter->setHandleWidth( SPLITTERS_HANDLE_WIDTH );
+    __hSplitter->setLineWidth( SPLITTERS_LINE_WIDTH );
     
-    lay->addWidget( __left_schema_splitter );
+    lay->addWidget( __hSplitter );
     
     __canvas = new QGraphicsScene();
     __left = new MainWindowLeft();
     __schema = new MainWindowSchema( __canvas );
+    __right = new MainWindowRight();
     
-    __left_schema_splitter->addWidget( __left );
-    __left_schema_splitter->addWidget( __schema );
+    __hSplitter->addWidget( __left );
+    __hSplitter->addWidget( __schema );
+    __hSplitter->addWidget( __right );
             
     __createActions();
     __createMainMenu();
     __createToolBar();
     __createStatusBar();
-    
-    __restoreSettings();    
     
 }
 
@@ -160,34 +160,49 @@ void tengu::MainWindow::__restoreSettings() {
         this->setGeometry( mainWindowGeometry );
     };
     
-    // The sizes of splitter ( left piece width of screen ).
-    // Размеры сплиттера (ширина левой части экрана).
+    // The sizes of splitter ( the width of left and right pieces of screen ).
+    // Размеры сплиттера (ширина левой и правой частей экрана).
     
+    QList<int> splitterSizes;    
     int lw = s.value("LeftWidth", -1 ).toInt();
-    if ( ( lw > 0 ) && ( lw < size().width() ) ) {
-        
-        // Somewhat exists in the settings. And sizes seems correctly.
-        // Что-то в установках было. И оно было вменябельным по размерам.
-        
-        QList<int> sizes;
-        sizes.append( lw );
-        sizes.append( size().width() - lw );
-        __left_schema_splitter->setSizes( sizes );
-        
-    } else {
-        
-        // There was nothing about splitter in the settings.
-        
-        // Не было ничего в установках по поводу сплиттера.
-        // Отношения размеров по умолчанию.
+    int rw = s.value("RightWidth", -1 ).toInt();
+    if ( ( lw < 0 ) || ( lw > size().width() ) ) lw = size().width() / 5;
+    if ( ( rw < 0 ) || ( rw > size().width() ) ) rw = size().width() / 5;
     
-        __left_schema_splitter->setStretchFactor( 0, 1 );
-        __left_schema_splitter->setStretchFactor( 1, 5 );
-
-    }
+    splitterSizes.append( lw );
+    splitterSizes.append( size().width() - lw - rw );
+    splitterSizes.append( rw );
+    __hSplitter->setSizes( splitterSizes );
     
+    // The heights of right part of the screen (where agent's properties is).
+    // Высоты правой части экрана (где свойства агента).
+    
+    QList<int> rs;
+    int rTop  = s.value( "AgentsPropertiesHeight", -1 ).toInt();
+    if ( ( rTop <= 0 ) || (rTop > size().height() ) ) rTop = 3 * size().height() / 4;
+    rs.append( rTop );
+    
+    int rBottom = s.value( "RightBottomHeight", -1 ).toInt();
+    if ( ( rBottom <= 0 ) || (rBottom > size().height() ) ) rBottom = size().height() / 4;
+    rs.append( rBottom );
+    
+    __right->setComponentsHeight( rs );    
+        
     s.endGroup();
     
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                               Show main window event.                                            *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                           Событие появления окна на экране.                                      *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindow::showEvent( QShowEvent * event ) {
+    __restoreSettings();
+    QMainWindow::showEvent( event );    
 }
 
 // ********************************************************************************************************************
@@ -203,21 +218,18 @@ void tengu::MainWindow::closeEvent ( QCloseEvent* event ) {
     QWidget::closeEvent ( event );
     
     
-    // QList<int> sizes = __left_schema_splitter->sizes();
-    
     QSettings s ( TENGU_ORGANIZATION, TENGU_MODELLER_APPLICATION );
     
     s.beginGroup("MainWindow");
+    
     s.setValue("MainWindowGeometry", geometry() );
     
-    s.setValue("LeftWidth", __left->size().width() );
+    s.setValue( "LeftWidth", __left->size().width() );
+    s.setValue( "RightWidth", __right->size().width() );
     
-//    s.beginWriteArray("LeftSchemaSplitter");    
-//    for ( int i=0; i<sizes.length(); i++ ) {
-//        s.setArrayIndex( i );
-//        s.setValue("pos", sizes.at(i) );
-//    };  
-//    s.endArray();
+    QPair<int,int> right = __right->getComponentsHeights();
+    s.setValue( "AgentsPropertiesHeight", right.first );
+    s.setValue( "RightBottomHeight", right.second );
     
     s.endGroup();
     

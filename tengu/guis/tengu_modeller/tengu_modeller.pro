@@ -21,13 +21,19 @@ OBJECTS_DIR=build/obj
 
 INCLUDEPATH += ../../core
 
-HEADERS  += MainWindow.h        \
-        MainWindowLeft.h        \
+HEADERS  += MainWindow.h            \
+        MainWindowLeft.h            \
+        AgentPropertyModel.h        \
+        AgentPropertyView.h         \
+        MainWindowRight.h           \
         MainWindowSchema.h      
 
-SOURCES += main.cpp             \
-        MainWindow.cpp          \
-        MainWindowLeft.cpp      \
+SOURCES += main.cpp                 \
+        MainWindow.cpp              \
+        MainWindowLeft.cpp          \
+        AgentPropertyModel.cpp      \
+        AgentPropertyView.cpp       \
+        MainWindowRight.cpp         \
         MainWindowSchema.cpp    
 
 RESOURCES += tengu_modeller.qrc
