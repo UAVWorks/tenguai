@@ -16,13 +16,18 @@
 #include <QList>
 
 #include "AgentPropertyView.h"
+#include "AgentPropertyModel.h"
+#include "GUIModel.h"
 #include "../guis.h"
 
 namespace tengu {
 
     class MainWindowRight : public QWidget {
+        
         Q_OBJECT
+        
         public:
+            
             MainWindowRight ( QWidget * parent = 0 );
             ~MainWindowRight();
             
@@ -34,11 +39,17 @@ namespace tengu {
             // Set components height after restore window's settings.
             // Установить высоты компонентов после восстановления установок окна.
             
-            void setComponentsHeight( QList<int> h);
+            void setComponentsHeight( QList<int> h);   
+            
+            // Set MVC-model for properties window.
+            // Установка MVC-модели для окна свойств.
+            
+            void setPropertiesDataModel( AgentPropertyModel * model );
             
         private:
+            
             QSplitter * __splitter;
-            AgentPropertyView * __agentsView;
+            AgentPropertyView * __properties;
             QWidget * __down;
     };
     

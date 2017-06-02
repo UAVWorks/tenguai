@@ -19,7 +19,7 @@
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::Vehicle::Vehicle ( tengu::AbstractAgentKernel * parent, QString systemName ) 
+tengu::Vehicle::Vehicle ( tengu::AbstractAgent * parent, QString systemName ) 
     : Processor ( parent, systemName )
 {
     

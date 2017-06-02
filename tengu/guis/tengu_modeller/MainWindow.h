@@ -24,6 +24,9 @@
 #include <QSettings>
 #include <QRect>
 
+#include "AbstractAgent.h"
+#include "GUIModel.h"
+#include "AgentPropertyModel.h"
 #include "MainWindowLeft.h"
 #include "MainWindowSchema.h"
 #include "MainWindowRight.h"
@@ -63,6 +66,19 @@ namespace tengu {
             QAction * __actionQuit;
             
             void __restoreSettings();
+            
+            // The model (a set of an agents)
+            // Модель (как множество агентов)
+            
+            GUIModel * __model;
+            
+            // MVC-model for editing property of current (selected) agent or state.
+            // MVC-модель редактирования свойств текущего (выбранного) агента или состояния.
+            
+            AgentPropertyModel * __agentPropertyModel;
+            
+            // Overrided widget's functions
+            // Перекрытые функции виджита.
             
             void closeEvent( QCloseEvent * event );
             void showEvent( QShowEvent * event );

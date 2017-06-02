@@ -28,8 +28,8 @@ tengu::MainWindowRight::MainWindowRight(QWidget * parent)
     __splitter->setHandleWidth( SPLITTERS_HANDLE_WIDTH );
     __splitter->setLineWidth( SPLITTERS_LINE_WIDTH );
     lay->addWidget( __splitter );
-    __agentsView = new AgentPropertyView();
-    __splitter->addWidget( __agentsView );
+    __properties = new AgentPropertyView();
+    __splitter->addWidget( __properties );
     
     // for temporary use only
     // просто для времянки
@@ -48,7 +48,7 @@ tengu::MainWindowRight::MainWindowRight(QWidget * parent)
 
 QPair<int, int> tengu::MainWindowRight::getComponentsHeights() {
     QPair<int, int> result;
-    result.first = __agentsView->size().height();
+    result.first = __properties->size().height();
     result.second = __down->size().height();
     return result;
 }
@@ -61,8 +61,21 @@ QPair<int, int> tengu::MainWindowRight::getComponentsHeights() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::MainWindowRight::setComponentsHeight(QList<int> h) {
+void tengu::MainWindowRight::setComponentsHeight( QList<int> h ) {
     __splitter->setSizes( h );
+}
+
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                    Set MVC-model for property editing window.                                    *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                              Установка MVC-модели для окна редактирования свойств.                               *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindowRight::setPropertiesDataModel( AgentPropertyModel * model ) {
+    __properties->setModel( model );
 }
 
 // ********************************************************************************************************************

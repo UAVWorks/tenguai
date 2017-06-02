@@ -20,7 +20,7 @@
 
 
 TEMPLATE = lib
-TARGET = LoRedis
+TARGET = build/LoRedis
 
 # Only for file arranging.
 
@@ -44,9 +44,11 @@ libheaders.files = src/LoRedis.h src/LoRedisReactor.h
 
 INSTALLS += libtarget libheaders
 
-# We want statically linked library. But we need thread support due endless libevent dispatch loop.
+# We want shared linked library. But we need thread support too. 
 
-CONFIG += staticlib thread release rtti qt
+CONFIG += shared thread release rtti qt
+
+#staticlib
 
 # for nullptr
 
@@ -57,7 +59,7 @@ QMAKE_CXXFLAGS += -std=gnu++11
 # functions and does not have any GUIs.
 
 QT += core
-QT -= network core
+QT -= network
 
 # To build this static library, you need libhiredis-dev and libevent-dev installed
 # on your host.

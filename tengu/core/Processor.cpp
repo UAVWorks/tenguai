@@ -19,7 +19,7 @@
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::Processor::Processor ( tengu::AbstractAgentKernel * parent, QString systemName ) 
+tengu::Processor::Processor ( tengu::AbstractAgent * parent, QString systemName ) 
     : AbstractAgent ( parent, systemName )
 {
     

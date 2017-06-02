@@ -12,7 +12,7 @@
 #######################################################################################################################
 
 TEMPLATE = lib
-TARGET = tengu_core
+TARGET = build/tengu_core
 
 # Only for file arranging.
 
@@ -23,11 +23,13 @@ OBJECTS_DIR=build/obj
 
 # We want statically linked library. But we need thread support due endless libevent dispatch loop.
 
-CONFIG += staticlib thread release rtti qt
+CONFIG += shared thread release rtti qt
 
 # for nullptr
 
-QMAKE_CXXFLAGS += -std=gnu++11 -fpermissive
+QMAKE_CXXFLAGS += -std=gnu++11 
+
+#-fpermissive
 
 
 # The Qt section contains nothing here except core. LoRedis itself does not directly do network 
@@ -36,9 +38,11 @@ QMAKE_CXXFLAGS += -std=gnu++11 -fpermissive
 QT += core
 QT -= network
 
-LIBS += -lLoRedis -L../loredis -lopencv_core -lopencv_video -lopencv_highgui -lopencv_imgproc
+LIBS += -lLoRedis -L../loredis/build 
 
-INCLUDEPATH += ../loredis/src/
+#-lopencv_core -lopencv_video -lopencv_highgui -lopencv_imgproc
+
+INCLUDEPATH += ../loredis/src
 
 HEADERS += AbstractAgentKernel.h    \
         Sprout.h                    \

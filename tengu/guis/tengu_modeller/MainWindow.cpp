@@ -24,6 +24,9 @@ tengu::MainWindow::MainWindow(QWidget *parent)
     setWindowTitle( tr("Tengu modeller") );
     setWindowIcon( QIcon( QPixmap(":tengu_32.png") ) );
     
+    __model = new GUIModel( nullptr, tr("The Model") );
+    __agentPropertyModel = new AgentPropertyModel( __model );
+    
     QVBoxLayout * lay = new QVBoxLayout();
     lay->setMargin( 0 );
     lay->setSpacing( 0 );
@@ -45,6 +48,8 @@ tengu::MainWindow::MainWindow(QWidget *parent)
     __left = new MainWindowLeft();
     __schema = new MainWindowSchema( __canvas );
     __right = new MainWindowRight();
+    
+    __right->setPropertiesDataModel( __agentPropertyModel );
     
     __hSplitter->addWidget( __left );
     __hSplitter->addWidget( __schema );

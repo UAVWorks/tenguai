@@ -19,8 +19,8 @@
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::AbstractAgent::AbstractAgent ( AbstractAgentKernel * parent, QString systemName ) 
-    : AbstractAgentKernel ( parent, systemName ) 
+tengu::AbstractAgent::AbstractAgent ( AbstractAgent * parent, QString systemName ) 
+    : AbstractAgentKernel ( (AbstractAgentKernel * ) parent, systemName ) 
 {    
     _activityChannel = QString("");
 

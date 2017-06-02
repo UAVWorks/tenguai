@@ -17,7 +17,7 @@
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::SimpleRegulator::SimpleRegulator( AbstractAgentKernel * parent, QString systemName, float min_value, float max_value ) 
+tengu::SimpleRegulator::SimpleRegulator( AbstractAgent * parent, QString systemName, float min_value, float max_value ) 
     : AbstractAgent( parent, systemName ) 
 {
 
