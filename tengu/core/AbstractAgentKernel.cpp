@@ -28,13 +28,15 @@ tengu::AbstractAgentKernel::AbstractAgentKernel( AbstractAgentKernel * parent, Q
     _comment = QString("");
     _subProcessPath = QString("");
     
-    __activity = false;
-    
     _pub_redis = nullptr;
     _sub_redis = nullptr;
     
     __pub_redis_connected = false;
     __sub_redis_connected = false;
+    
+    _prefiousAgents = QList < AbstractAgentKernel * > ();
+    _nextAgents = QList < AbstractAgentKernel * > ();
+    _children = QList < AbstractAgentKernel * > ();
     
     // Creating redis'es objects.
     // Создание редисовых объектов.
@@ -256,30 +258,6 @@ bool tengu::AbstractAgentKernel::isPublisherConnected() {
 
 bool tengu::AbstractAgentKernel::isSubscriberConnected() {
     return __sub_redis_connected;
-}
-
-// ********************************************************************************************************************
-// *                                                                                                                  *
-// *                                             Set activity for this agent.                                         *
-// * ---------------------------------------------------------------------------------------------------------------- *
-// *                                       Установка активности для данного агента.                                   *
-// *                                                                                                                  *
-// ********************************************************************************************************************
-
-void tengu::AbstractAgentKernel::_setActivity(bool a) {
-    __activity = a;
-}
-
-// ********************************************************************************************************************
-// *                                                                                                                  *
-// *                                             Is this agent active?                                                *
-// * ---------------------------------------------------------------------------------------------------------------- *
-// *                                        Является ли данный агент активным?                                        *
-// *                                                                                                                  *
-// ********************************************************************************************************************
-
-bool tengu::AbstractAgentKernel::isActive() {
-    return __activity;
 }
 
 // ********************************************************************************************************************

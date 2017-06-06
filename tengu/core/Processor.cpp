@@ -23,7 +23,7 @@ tengu::Processor::Processor ( tengu::AbstractAgent * parent, QString systemName 
     : AbstractAgent ( parent, systemName )
 {
     
-    _setActivity( false );
+    // _setActivity( false );
     _execution_mode = EM_UNKNOWN;
     _configLoaded = _loadConfig( QString( PROCESSOR_CONFIG_FILE ) );    
         

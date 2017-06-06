@@ -31,8 +31,6 @@ namespace tengu {
             AbstractAgentKernel( AbstractAgentKernel * parent, QString systenName );
             virtual ~AbstractAgentKernel();
             
-            bool isActive();
-            
             /**
              * @short Public connect procedure.
              * 
@@ -109,18 +107,22 @@ namespace tengu {
             
             virtual void _createRedises();
             
-            virtual void _setActivity( bool a );                        
-            
             // There was got some variable from redis.
             // Было получено некоторое значение переменной из редиса.
             
             // virtual void _got_value( QString sproutName );
             
-            // Tree-like structure of agents.
-            // Деревообразная структура агентов.
+            // Tree-like ("the space" or "the volume", 3d) structure of agents.
+            // Деревообразная ("объемная", 3d) структура агентов.
             
             AbstractAgentKernel * _parent;
             QList<AbstractAgentKernel * > _children;
+            
+            // Line-like (flat, 2d, by time flow) structure of agents.
+            // Линейная (плоская, 2d, по времени) структура агентов.
+            
+            QList<AbstractAgentKernel * > _prefiousAgents;
+            QList<AbstractAgentKernel * > _nextAgents;
             
             // Unique (in entire system range) identifier of this agent.
             // Уникальный (в пределах вообще всей системы) идентификатор данного агента.
@@ -139,11 +141,6 @@ namespace tengu {
             
             QTimer * __ping_timer;
             QTimer * __connect_timer;
-            
-            // Activity of this agent.
-            // Активность данного агента.
-            
-            bool __activity;
             
         private slots:
             

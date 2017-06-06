@@ -45,12 +45,24 @@ namespace tengu {
             // Activity channel, especially channel for change agent activity.
             // Установка канала активности, специально выделенного для управления активностью агента.
             
-            void setActivityChannel( QString activityChannel );
+            // void setActivityChannel( QString activityChannel );
                         
+            bool isActive();
             
         protected:
             
-            QString _activityChannel;            
+            // Output channel name to display real activity of this agent.
+            // Имя выходного канала для отображения реальной активности агента.
+            
+            QString _oActivityChannel;
+            
+            // Input channel name for setting focus for this agent.
+            // Имя входного канала для установки фокуса данного агента.
+            
+            QString _iFocusChannel;
+            
+            
+            // virtual void _setActivity( bool a );                        
             
             
         private:
@@ -63,13 +75,28 @@ namespace tengu {
             
             void __subscribe();
             
+            // The focus of this channel.
+            // Фокус данного канала.
+            
+            bool __focus;
+            
+            // Activity of this agent.
+            // Активность данного агента.
+            
+            bool __activity;
+            
+            // The function which performed to make decision about activity of this channel (before real work)
+            // Функция, которая выполняется для решения об установке активности (перед началом реальной работы)
+            
+            virtual void __tryActivate();
+            
         private slots:
             
             void __on_subscriber_connected();
             void __on_got_message( QString channel, QString messaage );
             void __on_subscribed( QString channel );
             void __on_unsubscribed( QString channel );
-            void __on_activity_channel_message( QVariant value );
+            // void __on_activity_channel_message( QVariant value );
             
     };
     
