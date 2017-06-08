@@ -7,7 +7,7 @@
 // * Eugene G. Sysoletin <e.g.sysoletin@gmail.com>                                       Created 08 jun 2017 at 09:00 *
 // ********************************************************************************************************************
 
-#include "AbstractAgentWidget.h"
+#include "AbstractAgentItem.h"
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
@@ -17,7 +17,7 @@
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::AbstractAgentWidget::AbstractAgentWidget(AbstractAgent * agent, QGraphicsItem* parent) 
+tengu::AbstractAgentItem::AbstractAgentItem(AbstractAgent * agent, QGraphicsItem* parent) 
     : QGraphicsObject( parent )
 {
     _agent = agent;
@@ -31,7 +31,7 @@ tengu::AbstractAgentWidget::AbstractAgentWidget(AbstractAgent * agent, QGraphics
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-QRectF tengu::AbstractAgentWidget::boundingRect() const {
+QRectF tengu::AbstractAgentItem::boundingRect() const {
     return QRectF(0, 0, 20, 20);
 }
 
@@ -43,7 +43,7 @@ QRectF tengu::AbstractAgentWidget::boundingRect() const {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::AbstractAgentWidget::paint( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) {
+void tengu::AbstractAgentItem::paint( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) {
     painter->drawRoundedRect(-10, -10, 20, 20, 5, 5);
 }
 
@@ -55,7 +55,7 @@ void tengu::AbstractAgentWidget::paint( QPainter * painter, const QStyleOptionGr
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::AbstractAgentWidget::~AbstractAgentWidget() {
+tengu::AbstractAgentItem::~AbstractAgentItem() {
 }
 
 

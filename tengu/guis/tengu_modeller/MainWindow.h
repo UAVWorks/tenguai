@@ -33,7 +33,7 @@
 #include "Constants.h"
 #include "../guis.h"
 
-#include "widgets/AbstractAgentWidget.h"
+#include "VehicleItem.h"
 
 namespace tengu {
     
@@ -57,7 +57,7 @@ namespace tengu {
             MainWindowRight * __right;
             QGraphicsScene * __canvas;
             
-            QToolBar * __toolbar_buttons;
+            QToolBar * __toolbar_file;
             QToolBar * __toolbar_elements_library;
             
             void __createMainMenu();

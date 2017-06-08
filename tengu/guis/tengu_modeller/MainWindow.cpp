@@ -45,9 +45,18 @@ tengu::MainWindow::MainWindow(QWidget *parent)
     lay->addWidget( __hSplitter );
     
     __canvas = new QGraphicsScene();
-    AbstractAgentWidget * w = new AbstractAgentWidget( __topModel );
-    __canvas->addItem( w );
     
+    /*
+    VehicleItem * w = new VehicleItem( new Vehicle( nullptr, "Vehicle") );
+    __canvas->addItem( w );
+    w->setX( -20 );
+    w->setY( 50 );
+    AbstractAgentItem * a = new AbstractAgentItem( __topModel );
+    __canvas->addItem( a );
+    a->setX( 20 );
+    a->setY( -50 );
+    */
+        
     __left = new MainWindowLeft();
     __schema = new MainWindowSchema( __canvas );
     __right = new MainWindowRight();
@@ -121,8 +130,12 @@ void tengu::MainWindow::__createStatusBar() {
 
 void tengu::MainWindow::__createToolBar() {
     
-    __toolbar_buttons = new QToolBar();
-    addToolBar( Qt::TopToolBarArea, __toolbar_buttons );
+    __toolbar_file = new QToolBar();
+    
+    addToolBar( Qt::TopToolBarArea, __toolbar_file );
+    QToolBar * tb1 = new QToolBar();
+    addToolBar( Qt::TopToolBarArea, tb1 );
+    
     
     addToolBarBreak();
     

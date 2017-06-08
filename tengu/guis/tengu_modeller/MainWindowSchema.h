@@ -14,6 +14,9 @@
 #include <QGraphicsScene>
 #include <QWheelEvent>
 #include <QDebug>
+#include <QMouseEvent>
+#include <QGLFormat>
+#include <QPoint>
 
 namespace tengu {
 
@@ -34,6 +37,11 @@ namespace tengu {
 #endif
             
         private:
+            
+            void mouseMoveEvent( QMouseEvent * event );
+            QPoint __scaleCenter;
+            
+            // float __scaleFactor;
                         
     };
 };

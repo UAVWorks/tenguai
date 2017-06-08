@@ -10,7 +10,7 @@
 #######################################################################################################################
 
 CONFIG += qt release thread rtti
-QT += core gui widgets
+QT += core gui widgets opengl
 
 QMAKE_CXXFLAGS += -std=gnu++11 
 
@@ -22,11 +22,12 @@ UI_DIR=build/uic
 RCC_DIR=build/obj
 OBJECTS_DIR=build/obj
 
-INCLUDEPATH += ../../core ../../loredis/src
+INCLUDEPATH += items ../../core ../../loredis/src
 
 LIBS += -lLoRedis -L../../loredis/build -ltengu_core -L../../core/build -lhiredis -levent
 
-HEADERS  += widgets/AbstractAgentWidget.h   \ 
+HEADERS  += items/AbstractAgentItem.h       \ 
+        items/VehicleItem.h                 \
         MainWindow.h                        \
         MainWindowLeft.h                    \
         AgentPropertyModel.h                \
@@ -36,7 +37,8 @@ HEADERS  += widgets/AbstractAgentWidget.h   \
         MainWindowSchema.h      
 
 SOURCES += main.cpp                         \
-        widgets/AbstractAgentWidget.cpp     \
+        items/AbstractAgentItem.cpp         \
+        items/VehicleItem.cpp               \
         MainWindow.cpp                      \
         MainWindowLeft.cpp                  \
         AgentPropertyModel.cpp              \

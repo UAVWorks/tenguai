@@ -22,6 +22,6 @@ QT += core
 QT -= network core
 
 INCLUDEPATH += ../../core ../../loredis/src
-LIBS += -L../../core -ltengu_core -L../../loredis -lLoRedis -levent -lpthread -lhiredis
+LIBS += -L../../core/build -ltengu_core -L../../loredis/build -lLoRedis -levent -lpthread -lhiredis
 
 SOURCES = main.cpp

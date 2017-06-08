@@ -42,7 +42,7 @@ INCLUDEPATH += ../3d_party/XPSDK-213/CHeaders/XPLM/  src/xpchannels ../../../ten
 
 HEADERS += src/XTengu.h
 
-LIBS += -lLoRedis -levent -lhiredis -L../../../tengu/loredis
+LIBS += -lLoRedis -levent -lhiredis -L../../../tengu/loredis/build
 
 SOURCES += src/xplane_plugin.cpp                \
         src/xpchannels/XPlaneChannel.cpp        \

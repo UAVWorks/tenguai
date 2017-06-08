@@ -18,16 +18,17 @@
 
 namespace tengu {
 
-    class AbstractAgentWidget : public QGraphicsObject {
+    class AbstractAgentItem : public QGraphicsObject {
         Q_OBJECT
         public:
-            AbstractAgentWidget( AbstractAgent * agent, QGraphicsItem * parent = Q_NULLPTR );
-            virtual ~AbstractAgentWidget();
+            AbstractAgentItem( AbstractAgent * agent, QGraphicsItem * parent = Q_NULLPTR );
+            virtual ~AbstractAgentItem();
         
             void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = Q_NULLPTR);
             QRectF boundingRect() const;
             
         protected:
+            
             AbstractAgent * _agent;
             
         private:
