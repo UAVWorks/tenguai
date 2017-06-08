@@ -33,6 +33,8 @@
 #include "Constants.h"
 #include "../guis.h"
 
+#include "widgets/AbstractAgentWidget.h"
+
 namespace tengu {
     
     class MainWindow : public QMainWindow {
@@ -67,10 +69,10 @@ namespace tengu {
             
             void __restoreSettings();
             
-            // The model (a set of an agents)
-            // Модель (как множество агентов)
+            // The top model (a set of an agents)
+            // Самая верхняя модель (как множество агентов)
             
-            GUIModel * __model;
+            GUIModel * __topModel;
             
             // MVC-model for editing property of current (selected) agent or state.
             // MVC-модель редактирования свойств текущего (выбранного) агента или состояния.

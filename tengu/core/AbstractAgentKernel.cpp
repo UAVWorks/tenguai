@@ -21,7 +21,14 @@ tengu::AbstractAgentKernel::AbstractAgentKernel( AbstractAgentKernel * parent, Q
     : QObject()
 {
     
+    // Remove whitespace and tabulation symbols from system name.
+    // Удаление символов пробела и табуляции из системного имени.
     _system_name = systemName;
+    if ( ( _system_name.contains(' ') ) || ( _system_name.contains('\t') ) ) {    
+        qDebug() << "AbstractAgentKernel::AbstractAgentKernel(). System name = '" + _system_name + "'. Will be modified.";
+        _system_name = _system_name.remove(' ').remove('\t');
+        qDebug() << "... new system name = '" + _system_name + "'";
+    };
     _parent = parent;
     _uuid = QString("");
     _parent_uuid = QString("");

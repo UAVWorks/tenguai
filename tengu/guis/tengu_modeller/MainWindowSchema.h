@@ -12,6 +12,8 @@
 #include <QWidget>
 #include <QGraphicsView>
 #include <QGraphicsScene>
+#include <QWheelEvent>
+#include <QDebug>
 
 namespace tengu {
 
@@ -23,6 +25,13 @@ namespace tengu {
             
             MainWindowSchema( QGraphicsScene * scene );
             virtual ~MainWindowSchema();
+
+            // mouse wheel event
+            // событие колесика мышки
+            
+#ifndef QT_NO_WHEELEVENT
+            void wheelEvent( QWheelEvent * event );
+#endif
             
         private:
                         

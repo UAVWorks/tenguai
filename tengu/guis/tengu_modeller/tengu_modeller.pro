@@ -26,21 +26,23 @@ INCLUDEPATH += ../../core ../../loredis/src
 
 LIBS += -lLoRedis -L../../loredis/build -ltengu_core -L../../core/build -lhiredis -levent
 
-HEADERS  += MainWindow.h            \
-        MainWindowLeft.h            \
-        AgentPropertyModel.h        \
-        AgentPropertyView.h         \
-        GUIModel.h                  \
-        MainWindowRight.h           \
+HEADERS  += widgets/AbstractAgentWidget.h   \ 
+        MainWindow.h                        \
+        MainWindowLeft.h                    \
+        AgentPropertyModel.h                \
+        AgentPropertyView.h                 \
+        GUIModel.h                          \
+        MainWindowRight.h                   \
         MainWindowSchema.h      
 
-SOURCES += main.cpp                 \
-        MainWindow.cpp              \
-        MainWindowLeft.cpp          \
-        AgentPropertyModel.cpp      \
-        AgentPropertyView.cpp       \
-        GUIModel.cpp                \
-        MainWindowRight.cpp         \
+SOURCES += main.cpp                         \
+        widgets/AbstractAgentWidget.cpp     \
+        MainWindow.cpp                      \
+        MainWindowLeft.cpp                  \
+        AgentPropertyModel.cpp              \
+        AgentPropertyView.cpp               \
+        GUIModel.cpp                        \
+        MainWindowRight.cpp                 \
         MainWindowSchema.cpp    
 
 RESOURCES += tengu_modeller.qrc
