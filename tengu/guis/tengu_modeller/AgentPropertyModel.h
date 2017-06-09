@@ -13,7 +13,8 @@
 #include <QAbstractItemModel>
 #include <QModelIndex>
 
-#include "WorkSpace.h"
+// #include "WorkSpace.h"
+#include "AbstractAgent.h"
 
 namespace tengu {
 
@@ -23,7 +24,7 @@ namespace tengu {
         
         public:
             
-            AgentPropertyModel( WorkSpace * workspace = nullptr );
+            AgentPropertyModel();
             virtual ~AgentPropertyModel();
             
             int columnCount(const QModelIndex & parent = QModelIndex() ) const;
@@ -32,9 +33,14 @@ namespace tengu {
             QModelIndex parent( const QModelIndex & child ) const;
             QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
             
+            void setAgent( AbstractAgent * agent );
+            
         private:
             
-            WorkSpace * __workspace;
+            // WorkSpace * __workspace;
+            AbstractAgent * __agent;
+            int __rows;
+            int __columns;
     };
 };
 

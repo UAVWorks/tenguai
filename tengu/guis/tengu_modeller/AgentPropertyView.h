@@ -10,6 +10,7 @@
 #pragma once
 
 #include <QTableView>
+#include <QHeaderView>
 
 namespace tengu {
 

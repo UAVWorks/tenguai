@@ -36,6 +36,7 @@ tengu::MainWindowSchema::MainWindowSchema( QGraphicsScene * scene )
     __leftMouseButtonPressed = false;
     
     __createMenus();
+    __mouseAtSchemaPos = QPoint( 0, 0 );
     
     // __scaleFactor = 1.0;
 }
@@ -156,6 +157,23 @@ void tengu::MainWindowSchema::mouseReleaseEvent ( QMouseEvent * event ) {
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
+// *                                          Mouse double click event handler.                                       *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                           Событие двойного щелчка мыши.                                          *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindowSchema::mouseDoubleClickEvent ( QMouseEvent* event ) {
+    QGraphicsView::mouseDoubleClickEvent ( event );
+    QGraphicsItem * item = itemAt( event->pos() );
+    if ( item ) {
+        emit signalItemDoubleClicked( (AbstractAgentItem * ) item );
+    };
+}
+
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
 // *                                              Mouse move event handler.                                           *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                                         Обработчик события перемещения мыши.                                     *
@@ -166,6 +184,7 @@ void tengu::MainWindowSchema::mouseMoveEvent ( QMouseEvent * event ) {
     // __scaleCenter = event->pos();
     // qDebug() << "MainWindowSchema::mouseMove()";
     QGraphicsView::mouseMoveEvent ( event );
+    __mouseAtSchemaPos = mapToScene( event->pos() ).toPoint();
 }
 
 // ********************************************************************************************************************

@@ -26,7 +26,7 @@
 | --- | --- |
 | [LoRedis](https://github.com/unclesal/tengu/blob/master/tengu/loredis/README.ru.md) | C++ / Qt обертка для PUB/SUB механизма Redis.IO, механизм обмена сообщениями между агентами. |
 | [X-Tengu](https://github.com/unclesal/tengu/blob/master/simulators/xplane/xtengu/README.ru.md) | Плагин для X-Plane для моделирования (симуляции) поведения самолетов в воздухе. |
-| [Modeller](https://github.com/unclesal/tengu/blob/master/tengu/guis/tengu_modeller/README.ru.md) | **(в разработке)** Графический инструмент для работы с моделями ИИ. |
+| [Modeller](https://github.com/unclesal/tengu/blob/master/tengu/guis/tengu_modeller/README.ru.md) | **(в разработке)** Графический инструмент для работы с моделями искусственного интеллекта. |
 
     
 

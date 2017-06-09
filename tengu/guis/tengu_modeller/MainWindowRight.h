@@ -46,6 +46,8 @@ namespace tengu {
             
             void setPropertiesDataModel( AgentPropertyModel * model );
             
+            // void updateProperties();
+            
         private:
             
             QSplitter * __splitter;

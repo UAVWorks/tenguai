@@ -10,7 +10,8 @@
 #######################################################################################################################
 
 CONFIG += qt release thread rtti
-QT += core gui widgets opengl
+QT += core gui widgets 
+#opengl
 
 QMAKE_CXXFLAGS += -std=gnu++11 
 

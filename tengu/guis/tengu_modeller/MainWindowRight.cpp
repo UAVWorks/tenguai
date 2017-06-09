@@ -28,7 +28,13 @@ tengu::MainWindowRight::MainWindowRight(QWidget * parent)
     __splitter->setHandleWidth( SPLITTERS_HANDLE_WIDTH );
     __splitter->setLineWidth( SPLITTERS_LINE_WIDTH );
     lay->addWidget( __splitter );
+    
+    // QWidget * propWrapper = new QWidget();
+    // QHBoxLayout * propLay = new QHBoxLayout();
+    // propWrapper->setLayout( propLay );
     __properties = new AgentPropertyView();
+    __properties->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding );
+    // propLay->addWidget( __properties );
     __splitter->addWidget( __properties );
     
     // for temporary use only
@@ -78,6 +84,18 @@ void tengu::MainWindowRight::setPropertiesDataModel( AgentPropertyModel * model 
     __properties->setModel( model );
 }
 
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                                Update properties view.                                           *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                              Обновить вид окна свойств.                                          *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+/*
+void tengu::MainWindowRight::updateProperties() {
+    __properties->update();
+}
+*/
 // ********************************************************************************************************************
 // *                                                                                                                  *
 // *                                                   The destructor.                                                *

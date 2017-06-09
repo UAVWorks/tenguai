@@ -25,7 +25,7 @@ tengu::MainWindow::MainWindow(QWidget *parent)
     setWindowIcon( QIcon( QPixmap(":tengu_32.png") ) );
     
     __workSpace = new WorkSpace( "TheTopWorkspace");
-    __agentPropertyModel = new AgentPropertyModel( __workSpace );
+    __agentPropertyModel = new AgentPropertyModel();
     
     QVBoxLayout * lay = new QVBoxLayout();
     lay->setMargin( 0 );
@@ -161,8 +161,36 @@ void tengu::MainWindow::__createToolBar() {
 
 void tengu::MainWindow::__createSchema() {
     __schema = new MainWindowSchema( __scene );
-    QObject::connect( __schema, SIGNAL(signalItemPressed(AbstractAgentItem*)), this, SLOT( __on_schema_item_pressed ( AbstractAgentItem * ) ) );
+    QObject::connect( __schema, SIGNAL( signalItemPressed( AbstractAgentItem * )), this, SLOT( __on_schema_item_pressed ( AbstractAgentItem * ) ) );
+    QObject::connect( __schema, SIGNAL( signalItemDoubleClicked( AbstractAgentItem * )), this, SLOT( __on_schema_item_double_clicked( AbstractAgentItem * ) ) );
 }
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                              Some element was (once or single) clicked on the schema.                            *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                         На схеме был нажат какой-то элемент.                                     *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindow::__on_schema_item_pressed ( tengu::AbstractAgentItem * item ) {
+    qDebug() << "MainWindow:: on schema item pressed.";
+    AbstractAgent * agent = item->agent();
+    __agentPropertyModel->setAgent( agent );
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                     Some element was double clicked on the schema.                               *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                       На элементе схемы был двойной щелчок мыши.                                 *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindow::__on_schema_item_double_clicked ( tengu::AbstractAgentItem* item ) {
+
+}
+
 
 // ********************************************************************************************************************
 // *                                                                                                                  *

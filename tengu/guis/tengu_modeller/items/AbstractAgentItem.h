@@ -32,6 +32,7 @@ namespace tengu {
         
             void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = Q_NULLPTR);
             QRectF boundingRect() const;
+            AbstractAgent * agent();
             
         protected:
             

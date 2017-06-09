@@ -17,10 +17,12 @@
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::AgentPropertyModel::AgentPropertyModel( WorkSpace * workspace )
-    : QAbstractItemModel( (QObject * ) workspace )
+tengu::AgentPropertyModel::AgentPropertyModel()
+    : QAbstractItemModel()
 {
-    __workspace = workspace;
+    // __workspace = workspace;
+    __rows = 0;
+    __columns = 0;
 }
 
 // ********************************************************************************************************************
@@ -32,7 +34,7 @@ tengu::AgentPropertyModel::AgentPropertyModel( WorkSpace * workspace )
 // ********************************************************************************************************************
 
 int tengu::AgentPropertyModel::columnCount(const QModelIndex & parent ) const {
-    return 2;
+    return __columns;
 }
 
 // ********************************************************************************************************************
@@ -72,7 +74,7 @@ QModelIndex tengu::AgentPropertyModel::parent( const QModelIndex & child ) const
 // ********************************************************************************************************************
 
 int tengu::AgentPropertyModel::rowCount( const QModelIndex & parent ) const {
-    return 2;
+    return __rows;
 };
 
 // ********************************************************************************************************************
@@ -87,6 +89,24 @@ QVariant tengu::AgentPropertyModel::data(const QModelIndex & index, int role ) c
 
     
 }
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                          Set appropriate agent for data model.                                   *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                  Установка соответствующего агента для модели данных.                            *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::AgentPropertyModel::setAgent ( tengu::AbstractAgent * agent ) {
+        
+    __agent = agent;
+    __columns = 3;
+    __rows = 3;
+    emit layoutChanged();
+    
+}
+
 
 // ********************************************************************************************************************
 // *                                                                                                                  *

@@ -20,6 +20,12 @@
 tengu::AgentPropertyView::AgentPropertyView(QWidget * parent) 
     : QTableView( parent )
 {
+    horizontalHeader()->hide();
+    verticalHeader()->hide();
+    
+    QHeaderView * vh = verticalHeader();
+    vh->setSectionResizeMode(QHeaderView::Fixed);
+    vh->setDefaultSectionSize( 16 );    
 }
 
 // ********************************************************************************************************************

@@ -90,7 +90,10 @@ namespace tengu {
             
         private slots:
             
-            void __on_quit_request();            
+            void __on_quit_request();  
+            
+            void __on_schema_item_pressed( AbstractAgentItem * item );
+            void __on_schema_item_double_clicked( AbstractAgentItem * item );
                         
             
     };

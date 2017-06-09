@@ -15,11 +15,13 @@
 #include <QWheelEvent>
 #include <QDebug>
 #include <QMouseEvent>
-#include <QGLFormat>
+// #include <QGLFormat>
 #include <QPoint>
 #include <QMenu>
 #include <QAction>
 #include <QPixmap>
+
+#include "AbstractAgentItem.h"
 
 namespace tengu {
 
@@ -30,6 +32,7 @@ namespace tengu {
         signals:
             
             void signalItemPressed( AbstractAgentItem * item );
+            void signalItemDoubleClicked( AbstractAgentItem * item );
         
         public:
             
@@ -48,6 +51,7 @@ namespace tengu {
             void mousePressEvent( QMouseEvent * event );
             void mouseReleaseEvent( QMouseEvent * event );
             void mouseMoveEvent( QMouseEvent * event );   
+            void mouseDoubleClickEvent(QMouseEvent * event);
             void contextMenuEvent( QContextMenuEvent * event );
             
             bool __leftMouseButtonPressed;
@@ -59,6 +63,8 @@ namespace tengu {
             void __createMenus();
             
             QPoint __scaleCenter;
+            
+            QPoint __mouseAtSchemaPos;
             
             // float __scaleFactor;
             
