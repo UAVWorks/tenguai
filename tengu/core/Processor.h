@@ -65,7 +65,7 @@ namespace tengu {
             
         public:
             
-            Processor ( AbstractAgent * parent, QString systemName );
+            Processor ( QString systemName );
             virtual ~Processor();
             
             // The config file was found and loaded.

@@ -24,8 +24,8 @@ tengu::MainWindow::MainWindow(QWidget *parent)
     setWindowTitle( tr("Tengu modeller") );
     setWindowIcon( QIcon( QPixmap(":tengu_32.png") ) );
     
-    __topModel = new GUIModel( nullptr, "TheTopModel");
-    __agentPropertyModel = new AgentPropertyModel( __topModel );
+    __workSpace = new WorkSpace( "TheTopWorkspace");
+    __agentPropertyModel = new AgentPropertyModel( __workSpace );
     
     QVBoxLayout * lay = new QVBoxLayout();
     lay->setMargin( 0 );
@@ -44,7 +44,15 @@ tengu::MainWindow::MainWindow(QWidget *parent)
     
     lay->addWidget( __hSplitter );
     
-    __canvas = new QGraphicsScene();
+    __scene = new QGraphicsScene();
+    
+    
+    Task * t = new Task("Task");
+    TaskItem * i = new TaskItem( t );
+    i->setX( 10 );
+    i->setY( 10 );
+    __scene->addItem( i );
+    
     
     /*
     VehicleItem * w = new VehicleItem( new Vehicle( nullptr, "Vehicle") );
@@ -58,7 +66,8 @@ tengu::MainWindow::MainWindow(QWidget *parent)
     */
         
     __left = new MainWindowLeft();
-    __schema = new MainWindowSchema( __canvas );
+    __createSchema();
+    
     __right = new MainWindowRight();
     
     __right->setPropertiesDataModel( __agentPropertyModel );
@@ -135,12 +144,24 @@ void tengu::MainWindow::__createToolBar() {
     addToolBar( Qt::TopToolBarArea, __toolbar_file );
     QToolBar * tb1 = new QToolBar();
     addToolBar( Qt::TopToolBarArea, tb1 );
-    
-    
+        
     addToolBarBreak();
     
     __toolbar_elements_library = new QToolBar();
     addToolBar( Qt::TopToolBarArea, __toolbar_elements_library );
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                           The constructor of model's schama (graphical view of the model).                       *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                               Конструктор схемы (графического представления модели).                             *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindow::__createSchema() {
+    __schema = new MainWindowSchema( __scene );
+    QObject::connect( __schema, SIGNAL(signalItemPressed(AbstractAgentItem*)), this, SLOT( __on_schema_item_pressed ( AbstractAgentItem * ) ) );
 }
 
 // ********************************************************************************************************************

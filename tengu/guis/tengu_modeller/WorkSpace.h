@@ -1,30 +1,25 @@
 // ********************************************************************************************************************
 // *                                                                                                                  *
-// *                                              The State for some agent.                                           *
+// *      The top level for modelling of a system: a set of agents and it's states for graphics representation.       *
 // * ---------------------------------------------------------------------------------------------------------------- *
-// *                                            Состояние некоторого агента.                                          *
+// *    Верхний уровень моделирования системы: множество агентов и их состояний для графического представления.       *
 // *                                                                                                                  *
-// * Eugene G. Sysoletin <e.g.sysoletin@gmail.com>                                       Created 29 may 2017 at 07:18 *
+// * Eugene G. Sysoletin <e.g.sysoletin@gmail.com>                                       Created 02 jun 2017 at 16:47 *
 // ********************************************************************************************************************
 
 #pragma once
 
-#include <QList>
 #include "AbstractAgent.h"
 
 namespace tengu {
 
-    class State : public AbstractAgent {
-        
+    class WorkSpace : public AbstractAgent {
+    
         Q_OBJECT
-        
         public:
-            
-            State( QString systemName );
-            virtual ~State();
-            
-        private:
-            
+            WorkSpace( QString systemName );
+            virtual ~WorkSpace();
     };
     
-};
+}; // namespace tengu
+

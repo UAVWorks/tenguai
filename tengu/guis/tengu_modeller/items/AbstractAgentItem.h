@@ -12,15 +12,21 @@
 #include <QGraphicsObject>
 #include <QGraphicsItem>
 #include <QPainter>
+#include <QPen>
+#include <QColor>
 #include <QRectF>
+#include <QDebug>
 
 #include "AbstractAgent.h"
 
 namespace tengu {
 
     class AbstractAgentItem : public QGraphicsObject {
+        
         Q_OBJECT
+        
         public:
+            
             AbstractAgentItem( AbstractAgent * agent, QGraphicsItem * parent = Q_NULLPTR );
             virtual ~AbstractAgentItem();
         
@@ -30,8 +36,15 @@ namespace tengu {
         protected:
             
             AbstractAgent * _agent;
+            QRectF _boundRect;
+            
+            // void mousePressEvent( QGraphicsSceneMouseEvent * event );
+            // void mouseReleaseEvent(QGraphicsSceneMouseEvent * event);
+            // void mouseMoveEvent(QGraphicsSceneMouseEvent * event);
             
         private:
+            
+            bool __mousePressed;
     };
 };
 

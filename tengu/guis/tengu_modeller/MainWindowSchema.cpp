@@ -20,7 +20,9 @@
 tengu::MainWindowSchema::MainWindowSchema( QGraphicsScene * scene )
 : QGraphicsView( scene )
 {
-    setViewport(new QGLWidget( QGLFormat(QGL::SampleBuffers)) );
+    // This is not good idea.
+    // Не очень хорошая идея.
+    // setViewport(new QGLWidget( QGLFormat(QGL::SampleBuffers)) );
     
     // Scale center is center of view by default, will be changed by first mouse move event.
     // Центр масштабирования - это по умолчанию центр виджита. Будет изменен первым же движением мыши.
@@ -31,8 +33,45 @@ tengu::MainWindowSchema::MainWindowSchema( QGraphicsScene * scene )
     // Виджит принимает события от мыши даже если ни одна из кнопок не была нажата.
     
     setMouseTracking( true );
+    __leftMouseButtonPressed = false;
+    
+    __createMenus();
     
     // __scaleFactor = 1.0;
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                               The menu's constructor.                                            *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                                   Конструктор меню.                                              *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindowSchema::__createMenus() {
+    
+    __contextMenu = new QMenu( this );
+    
+    __contextMenu__create = new QMenu( tr("Create") );
+    __contextMenu__create->setIcon( QIcon( QPixmap(":bricks_16.png") ) );
+    
+    __actionCreateTask = new QAction( QIcon(QPixmap("page_gear_16.png")), QString("Task"), this );
+    QObject::connect( __actionCreateTask, SIGNAL( triggered()), this, SLOT( __on_action_create_task() ) );
+    __contextMenu__create->addAction( __actionCreateTask );
+    
+    __contextMenu->addMenu( __contextMenu__create );
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                             Slot: we want create a task.                                         *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                           Слот: мы хотим создать задачу.                                         *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindowSchema::__on_action_create_task() {
+    qDebug() << "Мы хотим создать задачу";
 }
 
 // ********************************************************************************************************************
@@ -51,7 +90,6 @@ void tengu::MainWindowSchema::wheelEvent(QWheelEvent* event) {
     // QPointF view_center = mapToScene( __scaleCenter );    
     // centerOn( view_center );
     
-    qDebug() << "Wheel at " << __scaleCenter;
     // centerOn( 0.0, 0.0 );
     // scrollContentsBy( 100, 100 );
     
@@ -77,6 +115,47 @@ void tengu::MainWindowSchema::wheelEvent(QWheelEvent* event) {
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
+// *                                                Mouse press event handler.                                        *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                             Обработчик события нажатия мыши.                                     *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindowSchema::mousePressEvent ( QMouseEvent * event ) {
+    
+    QGraphicsView::mousePressEvent( event );
+    
+    if ( event->buttons() & Qt::LeftButton ) {
+        qDebug() << "MainWindowSchema::mousePressEvent()";
+        __leftMouseButtonPressed = true;
+    };
+    
+    QGraphicsItem * item = itemAt( event->pos());
+    
+    if ( item ) {
+        emit signalItemPressed( ( AbstractAgentItem * ) item );
+    };
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                              Mouse release event handler.                                        *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                          Обработчик события отпускания мыши.                                     *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindowSchema::mouseReleaseEvent ( QMouseEvent * event ) {
+    
+    if ( Qt::LeftButton & event->buttons() ) {    
+        qDebug() << "MainWindowSchema::mouse release event";    
+        __leftMouseButtonPressed = false;    
+    };
+    QGraphicsView::mouseReleaseEvent ( event );
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
 // *                                              Mouse move event handler.                                           *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                                         Обработчик события перемещения мыши.                                     *
@@ -84,8 +163,37 @@ void tengu::MainWindowSchema::wheelEvent(QWheelEvent* event) {
 // ********************************************************************************************************************
 
 void tengu::MainWindowSchema::mouseMoveEvent ( QMouseEvent * event ) {
-    __scaleCenter = event->pos();
+    // __scaleCenter = event->pos();
+    // qDebug() << "MainWindowSchema::mouseMove()";
     QGraphicsView::mouseMoveEvent ( event );
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                              Context menu event handler                                          *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                         Обработчик событий контекстного меню.                                    *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindowSchema::contextMenuEvent ( QContextMenuEvent* event ) {
+    
+    QGraphicsView::contextMenuEvent ( event );    
+    
+    qDebug() << "Context menu event handler";
+    QGraphicsItem * item = itemAt( event->pos());
+    
+    if ( item ) {
+        qDebug() << "have item under mouse";
+        // __contextMenu__create->hide();
+        // __contextMenu__create->setEnabled( false );
+        
+    } else {
+        __contextMenu->exec( event->globalPos() );
+        qDebug() << "Have NOT item, free";
+        // __contextMenu__create->show();
+        // __contextMenu__create->setEnabled( true );        
+    };
 }
 
 

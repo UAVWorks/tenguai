@@ -2,6 +2,9 @@
 <qresource>
     <file alias="door_open_16.png">images/door_open_16.png</file>
     <file alias="tengu_32.png">images/tengu_32.png</file>
+    <file alias="cog_32.png">images/cog_32.png</file>
+    <file alias="bricks_16.png">images/bricks_16.png</file>
+    <file alias="page_gear_16.png">images/page_gear_16.png</file>
     <file alias="Falcon_256.png">images/Falcon-256.png</file>
 </qresource>
 </RCC>

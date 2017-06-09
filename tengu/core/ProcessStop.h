@@ -1,30 +1,28 @@
 // ********************************************************************************************************************
 // *                                                                                                                  *
-// *                                              The State for some agent.                                           *
+// *                           The stop process point. They can be several within on process.                         *
 // * ---------------------------------------------------------------------------------------------------------------- *
-// *                                            Состояние некоторого агента.                                          *
+// *                   Точка останова процесса. Их может быть несколько в пределах одного процесса.                   *
 // *                                                                                                                  *
-// * Eugene G. Sysoletin <e.g.sysoletin@gmail.com>                                       Created 29 may 2017 at 07:18 *
+// * Eugene G. Sysoletin <e.g.sysoletin@gmail.com>                                       Created 09 jun 2017 at 10:44 *
 // ********************************************************************************************************************
 
 #pragma once
 
-#include <QList>
 #include "AbstractAgent.h"
 
 namespace tengu {
 
-    class State : public AbstractAgent {
+    class ProcessStop : public AbstractAgent {
         
         Q_OBJECT
         
         public:
             
-            State( QString systemName );
-            virtual ~State();
-            
-        private:
+            ProcessStop ( QString systemName );
+            virtual ~ProcessStop();
             
     };
     
 };
+

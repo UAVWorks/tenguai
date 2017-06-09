@@ -47,19 +47,29 @@ INCLUDEPATH += ../loredis/src
 HEADERS += AbstractAgentKernel.h    \
         Sprout.h                    \
         AbstractAgent.h             \
+        ORer.h                      \
+        ANDor.h                     \
+        Task.h                      \
         SimpleRegulator.h           \
-        Summator.h                  \
-        State.h                     \
+        Summator.h                  \        
+        Process.h                   \
+        ProcessStart.h              \
+        ProcessStop.h               \
         Processor.h                 \
+        State.h                     \        
         Vehicle.h
             
 SOURCES += AbstractAgentKernel.cpp  \
         Sprout.cpp                  \
         AbstractAgent.cpp           \
+        ORer.cpp                    \
+        ANDor.cpp                   \
+        Task.cpp                    \
         SimpleRegulator.cpp         \
         Summator.cpp                \
-        State.cpp                   \
+        Process.cpp                 \
+        ProcessStart.cpp            \
+        ProcessStop.cpp             \
         Processor.cpp               \
+        State.cpp                   \        
         Vehicle.cpp
-        
-        

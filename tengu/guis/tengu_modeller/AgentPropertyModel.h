@@ -13,7 +13,7 @@
 #include <QAbstractItemModel>
 #include <QModelIndex>
 
-#include "GUIModel.h"
+#include "WorkSpace.h"
 
 namespace tengu {
 
@@ -23,7 +23,7 @@ namespace tengu {
         
         public:
             
-            AgentPropertyModel( GUIModel * parent = nullptr );
+            AgentPropertyModel( WorkSpace * workspace = nullptr );
             virtual ~AgentPropertyModel();
             
             int columnCount(const QModelIndex & parent = QModelIndex() ) const;
@@ -34,7 +34,7 @@ namespace tengu {
             
         private:
             
-            GUIModel * __model;
+            WorkSpace * __workspace;
     };
 };
 

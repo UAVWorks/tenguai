@@ -1,30 +1,28 @@
 // ********************************************************************************************************************
 // *                                                                                                                  *
-// *                                              The State for some agent.                                           *
+// *                       The start point for process. There should be only one within the process.                  *
 // * ---------------------------------------------------------------------------------------------------------------- *
-// *                                            Состояние некоторого агента.                                          *
+// *                          Точка старта процесса. Должна быть только одна в пределах процесса.                     *
 // *                                                                                                                  *
-// * Eugene G. Sysoletin <e.g.sysoletin@gmail.com>                                       Created 29 may 2017 at 07:18 *
+// * Eugene G. Sysoletin <e.g.sysoletin@gmail.com>                                       Created 09 jun 2017 at 10:38 *
 // ********************************************************************************************************************
 
-#pragma once
+#pragma once 
 
-#include <QList>
 #include "AbstractAgent.h"
 
 namespace tengu {
-
-    class State : public AbstractAgent {
+    
+    class ProcessStart : public AbstractAgent {
         
         Q_OBJECT
         
         public:
             
-            State( QString systemName );
-            virtual ~State();
-            
-        private:
+            ProcessStart ( QString systemName );
+            virtual ~ProcessStart();
             
     };
     
 };
+

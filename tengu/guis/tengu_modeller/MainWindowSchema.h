@@ -17,12 +17,19 @@
 #include <QMouseEvent>
 #include <QGLFormat>
 #include <QPoint>
+#include <QMenu>
+#include <QAction>
+#include <QPixmap>
 
 namespace tengu {
 
     class MainWindowSchema : public QGraphicsView {
         
         Q_OBJECT
+        
+        signals:
+            
+            void signalItemPressed( AbstractAgentItem * item );
         
         public:
             
@@ -38,10 +45,26 @@ namespace tengu {
             
         private:
             
-            void mouseMoveEvent( QMouseEvent * event );
+            void mousePressEvent( QMouseEvent * event );
+            void mouseReleaseEvent( QMouseEvent * event );
+            void mouseMoveEvent( QMouseEvent * event );   
+            void contextMenuEvent( QContextMenuEvent * event );
+            
+            bool __leftMouseButtonPressed;
+            
+            QMenu * __contextMenu;
+            QMenu * __contextMenu__create;
+            QAction * __actionCreateTask;
+            
+            void __createMenus();
+            
             QPoint __scaleCenter;
             
             // float __scaleFactor;
+            
+        private slots:
+            
+            void __on_action_create_task();            
                         
     };
 };

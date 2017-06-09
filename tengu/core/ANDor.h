@@ -1,30 +1,29 @@
 // ********************************************************************************************************************
 // *                                                                                                                  *
-// *                                              The State for some agent.                                           *
+// *                The agent which will be waiting the availability of all his inputs after activity.                *
 // * ---------------------------------------------------------------------------------------------------------------- *
-// *                                            Состояние некоторого агента.                                          *
+// *                    Агент, который будет ждать наличия всех входов после получения активности.                    *
 // *                                                                                                                  *
-// * Eugene G. Sysoletin <e.g.sysoletin@gmail.com>                                       Created 29 may 2017 at 07:18 *
+// * Eugene G. Sysoletin <e.g.sysoletin@gmail.com>                                       Created 09 jun 2017 at 10:02 *
 // ********************************************************************************************************************
 
 #pragma once
 
-#include <QList>
 #include "AbstractAgent.h"
 
 namespace tengu {
 
-    class State : public AbstractAgent {
+    class ANDor : public AbstractAgent {
         
         Q_OBJECT
         
         public:
             
-            State( QString systemName );
-            virtual ~State();
-            
-        private:
+            ANDor ( QString systemName );
+            virtual ~ANDor();
             
     };
     
 };
+
+

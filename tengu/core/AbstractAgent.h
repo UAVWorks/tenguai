@@ -34,7 +34,7 @@ namespace tengu {
             // ------------------------------------------------------------------------------------
             // Имя лучше бы было уникальным в пределах системы. 
             
-            AbstractAgent ( AbstractAgent * parent, QString systemName );
+            AbstractAgent ( QString systemName );
             virtual ~AbstractAgent();
                         
             // Add "the sprout", reaction to redises messages.

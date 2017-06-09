@@ -25,7 +25,8 @@
 #include <QRect>
 
 #include "AbstractAgent.h"
-#include "GUIModel.h"
+#include "WorkSpace.h"
+#include "Task.h"
 #include "AgentPropertyModel.h"
 #include "MainWindowLeft.h"
 #include "MainWindowSchema.h"
@@ -34,6 +35,7 @@
 #include "../guis.h"
 
 #include "VehicleItem.h"
+#include "TaskItem.h"
 
 namespace tengu {
     
@@ -55,12 +57,13 @@ namespace tengu {
             MainWindowLeft * __left;
             MainWindowSchema * __schema;
             MainWindowRight * __right;
-            QGraphicsScene * __canvas;
+            QGraphicsScene * __scene;
             
             QToolBar * __toolbar_file;
             QToolBar * __toolbar_elements_library;
             
             void __createMainMenu();
+            void __createSchema();
             void __createActions();
             void __createToolBar();
             void __createStatusBar();
@@ -72,7 +75,7 @@ namespace tengu {
             // The top model (a set of an agents)
             // Самая верхняя модель (как множество агентов)
             
-            GUIModel * __topModel;
+            WorkSpace * __workSpace;
             
             // MVC-model for editing property of current (selected) agent or state.
             // MVC-модель редактирования свойств текущего (выбранного) агента или состояния.

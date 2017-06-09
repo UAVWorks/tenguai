@@ -17,10 +17,10 @@
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::AgentPropertyModel::AgentPropertyModel( GUIModel * parent )
-    : QAbstractItemModel( (QObject * ) parent )
+tengu::AgentPropertyModel::AgentPropertyModel( WorkSpace * workspace )
+    : QAbstractItemModel( (QObject * ) workspace )
 {
-    __model = parent;
+    __workspace = workspace;
 }
 
 // ********************************************************************************************************************

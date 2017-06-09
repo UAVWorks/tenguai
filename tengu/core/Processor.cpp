@@ -19,8 +19,8 @@
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::Processor::Processor ( tengu::AbstractAgent * parent, QString systemName ) 
-    : AbstractAgent ( parent, systemName )
+tengu::Processor::Processor ( QString systemName ) 
+    : AbstractAgent ( systemName )
 {
     
     // _setActivity( false );

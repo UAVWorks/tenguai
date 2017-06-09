@@ -19,8 +19,8 @@
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::AbstractAgent::AbstractAgent ( AbstractAgent * parent, QString systemName ) 
-    : AbstractAgentKernel ( (AbstractAgentKernel * ) parent, systemName ) 
+tengu::AbstractAgent::AbstractAgent ( QString systemName ) 
+    : AbstractAgentKernel ( systemName ) 
 {    
     _oActivityChannel = QString("");
     _iFocusChannel = QString("");

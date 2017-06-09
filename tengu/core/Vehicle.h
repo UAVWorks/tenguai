@@ -35,7 +35,7 @@ namespace tengu {
                 VT_QUADROCOPTER     = 30
             };
             
-            Vehicle ( AbstractAgent * parent, QString systemName );
+            Vehicle ( QString systemName );
             virtual ~Vehicle();
             
             vehicle_types_h vehicleType();

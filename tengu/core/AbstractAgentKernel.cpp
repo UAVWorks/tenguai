@@ -17,7 +17,7 @@
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::AbstractAgentKernel::AbstractAgentKernel( AbstractAgentKernel * parent, QString systemName )
+tengu::AbstractAgentKernel::AbstractAgentKernel( QString systemName )
     : QObject()
 {
     
@@ -29,7 +29,7 @@ tengu::AbstractAgentKernel::AbstractAgentKernel( AbstractAgentKernel * parent, Q
         _system_name = _system_name.remove(' ').remove('\t');
         qDebug() << "... new system name = '" + _system_name + "'";
     };
-    _parent = parent;
+    _parent = nullptr;
     _uuid = QString("");
     _parent_uuid = QString("");
     _comment = QString("");
@@ -331,6 +331,18 @@ QString tengu::AbstractAgentKernel::comment() {
 
 QString tengu::AbstractAgentKernel::subProcessPath() {
     return _subProcessPath;
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                           Get system name of this agent.                                         *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                        Получить системное имя этого агента.                                      *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+QString tengu::AbstractAgentKernel::systemName() {
+    return _system_name;
 }
 
 // ********************************************************************************************************************

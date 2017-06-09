@@ -26,24 +26,26 @@ INCLUDEPATH += items ../../core ../../loredis/src
 
 LIBS += -lLoRedis -L../../loredis/build -ltengu_core -L../../core/build -lhiredis -levent
 
-HEADERS  += items/AbstractAgentItem.h       \ 
+HEADERS  += items/AbstractAgentItem.h       \
+        items/TaskItem.h                    \
         items/VehicleItem.h                 \
         MainWindow.h                        \
         MainWindowLeft.h                    \
         AgentPropertyModel.h                \
         AgentPropertyView.h                 \
-        GUIModel.h                          \
+        WorkSpace.h                         \
         MainWindowRight.h                   \
         MainWindowSchema.h      
 
 SOURCES += main.cpp                         \
         items/AbstractAgentItem.cpp         \
+        items/TaskItem.cpp                  \
         items/VehicleItem.cpp               \
         MainWindow.cpp                      \
         MainWindowLeft.cpp                  \
         AgentPropertyModel.cpp              \
         AgentPropertyView.cpp               \
-        GUIModel.cpp                        \
+        WorkSpace.cpp                       \
         MainWindowRight.cpp                 \
         MainWindowSchema.cpp    
 

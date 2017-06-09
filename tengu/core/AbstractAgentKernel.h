@@ -28,7 +28,7 @@ namespace tengu {
         
         public:
             
-            AbstractAgentKernel( AbstractAgentKernel * parent, QString systenName );
+            AbstractAgentKernel( QString systenName );
             virtual ~AbstractAgentKernel();
             
             /**
@@ -63,6 +63,11 @@ namespace tengu {
             void addChild( AbstractAgentKernel * child );
             
             QString uuid();
+            
+            // Get system name of this agent.
+            // Вернуть системное имя агента.
+            
+            QString systemName();
             
             QString comment();
             void setComment( QString comment );

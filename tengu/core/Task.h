@@ -1,10 +1,10 @@
 // ********************************************************************************************************************
 // *                                                                                                                  *
-// *      The top level for modelling of a system: a set of agents and it's states for graphics representation.       *
+// *                       The task. The agent which can calculate something using QJSEngine.                         *
 // * ---------------------------------------------------------------------------------------------------------------- *
-// *    Верхний уровень моделирования системы: множество агентов и их состояний для графического представления.       *
+// *                    Задача. Агент, который может что-нибудь вычислять, используя QJSEngine.                       *
 // *                                                                                                                  *
-// * Eugene G. Sysoletin <e.g.sysoletin@gmail.com>                                       Created 02 jun 2017 at 16:47 *
+// * Eugene G. Sysoletin <e.g.sysoletin@gmail.com>                                       Created 09 jun 2017 at 09:38 *
 // ********************************************************************************************************************
 
 #pragma once
@@ -12,14 +12,17 @@
 #include "AbstractAgent.h"
 
 namespace tengu {
-
-    class GUIModel : public AbstractAgent {
     
+    class Task : public AbstractAgent {
         Q_OBJECT
         public:
-            GUIModel( AbstractAgent * parent, QString systemName );
-            virtual ~GUIModel();
+            
+            Task( QString systemName );
+            virtual ~Task();
+            
+        protected:
+        private:
     };
     
-}; // namespace tengu
+};
 

@@ -17,7 +17,7 @@
 
 #include "AgentPropertyView.h"
 #include "AgentPropertyModel.h"
-#include "GUIModel.h"
+#include "WorkSpace.h"
 #include "../guis.h"
 
 namespace tengu {
