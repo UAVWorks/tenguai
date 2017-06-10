@@ -13,8 +13,8 @@
 #include <QAbstractItemModel>
 #include <QModelIndex>
 
-// #include "WorkSpace.h"
-#include "AbstractAgent.h"
+#include "AbstractAgentItem.h"
+#include "TaskItem.h"
 
 namespace tengu {
 
@@ -33,12 +33,12 @@ namespace tengu {
             QModelIndex parent( const QModelIndex & child ) const;
             QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
             
-            void setAgent( AbstractAgent * agent );
+            void setItem( AbstractAgentItem * agent );
             
         private:
             
             // WorkSpace * __workspace;
-            AbstractAgent * __agent;
+            AbstractAgentItem * __item;
             int __rows;
             int __columns;
     };

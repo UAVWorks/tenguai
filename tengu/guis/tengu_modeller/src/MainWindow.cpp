@@ -38,6 +38,7 @@ tengu::MainWindow::MainWindow(QWidget *parent)
     
     setCentralWidget( __centerWidget );
     
+    
     __hSplitter = new QSplitter();
     __hSplitter->setHandleWidth( SPLITTERS_HANDLE_WIDTH );
     __hSplitter->setLineWidth( SPLITTERS_LINE_WIDTH );
@@ -53,7 +54,6 @@ tengu::MainWindow::MainWindow(QWidget *parent)
     i->setY( 10 );
     __schemaScene->addItem( i );
     
-    
     /*
     VehicleItem * w = new VehicleItem( new Vehicle( nullptr, "Vehicle") );
     __canvas->addItem( w );
@@ -64,13 +64,13 @@ tengu::MainWindow::MainWindow(QWidget *parent)
     a->setX( 20 );
     a->setY( -50 );
     */
-        
+
     __left = new MainWindowLeft();
     __createSchemaView();
     
     __right = new MainWindowRight();
     
-    __right->setPropertiesDataModel( __agentPropertyModel );
+    __right->propertyView->setModel( __agentPropertyModel );
     
     __hSplitter->addWidget( __left );
     __hSplitter->addWidget( __schemaView );
@@ -79,7 +79,7 @@ tengu::MainWindow::MainWindow(QWidget *parent)
     __createActions();
     __createMainMenu();
     __createToolBar();
-    __createStatusBar();
+    __createStatusBar();    
     
 }
 
@@ -183,8 +183,11 @@ void tengu::MainWindow::__on_schema_item_pressed ( tengu::AbstractAgentItem * it
     
     // Synchronizе properties of the selected agent
     // Синхронизация свойств выбранного агента.
-    AbstractAgent * agent = item->agent();
-    __agentPropertyModel->setAgent( agent );
+    
+    // AbstractAgent * agent = item->agent();
+    __agentPropertyModel->setItem( item );
+    __right->propertyView->adjustColumnWidth();
+    
 }
 
 // ********************************************************************************************************************

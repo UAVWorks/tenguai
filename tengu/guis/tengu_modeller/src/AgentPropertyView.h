@@ -11,6 +11,8 @@
 
 #include <QTableView>
 #include <QHeaderView>
+#include <QResizeEvent>
+#include <QDebug>
 
 namespace tengu {
 
@@ -22,6 +24,12 @@ namespace tengu {
             
             AgentPropertyView( QWidget * parent = nullptr );
             ~AgentPropertyView();
+            void adjustColumnWidth();
+            
+        private:
+
+            void resizeEvent(QResizeEvent * event);            
+            
     };
 };
 

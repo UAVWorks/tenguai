@@ -32,10 +32,10 @@ tengu::MainWindowRight::MainWindowRight(QWidget * parent)
     // QWidget * propWrapper = new QWidget();
     // QHBoxLayout * propLay = new QHBoxLayout();
     // propWrapper->setLayout( propLay );
-    __properties = new AgentPropertyView();
-    __properties->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding );
+    propertyView = new AgentPropertyView();
+    propertyView->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding );
     // propLay->addWidget( __properties );
-    __splitter->addWidget( __properties );
+    __splitter->addWidget( propertyView );
     
     // for temporary use only
     // просто для времянки
@@ -54,7 +54,7 @@ tengu::MainWindowRight::MainWindowRight(QWidget * parent)
 
 QPair<int, int> tengu::MainWindowRight::getComponentsHeights() {
     QPair<int, int> result;
-    result.first = __properties->size().height();
+    result.first = propertyView->size().height();
     result.second = __down->size().height();
     return result;
 }
@@ -79,11 +79,11 @@ void tengu::MainWindowRight::setComponentsHeight( QList<int> h ) {
 // *                              Установка MVC-модели для окна редактирования свойств.                               *
 // *                                                                                                                  *
 // ********************************************************************************************************************
-
+/*
 void tengu::MainWindowRight::setPropertiesDataModel( AgentPropertyModel * model ) {
     __properties->setModel( model );
 }
-
+*/
 // ********************************************************************************************************************
 // *                                                                                                                  *
 // *                                                Update properties view.                                           *

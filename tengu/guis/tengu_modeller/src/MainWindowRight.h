@@ -44,14 +44,15 @@ namespace tengu {
             // Set MVC-model for properties window.
             // Установка MVC-модели для окна свойств.
             
-            void setPropertiesDataModel( AgentPropertyModel * model );
+            // void setPropertiesDataModel( AgentPropertyModel * model );
             
             // void updateProperties();
             
+            AgentPropertyView * propertyView;
+            
         private:
             
-            QSplitter * __splitter;
-            AgentPropertyView * __properties;
+            QSplitter * __splitter;            
             QWidget * __down;
     };
     
