@@ -49,6 +49,8 @@ namespace tengu {
                         
             bool isActive();
             
+            bool isFocused();
+            
         protected:
             
             // Output channel name to display real activity of this agent.

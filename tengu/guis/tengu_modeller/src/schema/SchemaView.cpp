@@ -7,7 +7,7 @@
 // * Eugene G. Sysoletin <e.g.sysoletin@gmail.com>                                       Created 28 may 2017 at 15:48 *
 // ********************************************************************************************************************
 
-#include "MainWindowSchema.h"
+#include "SchemaView.h"
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
@@ -17,8 +17,8 @@
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::MainWindowSchema::MainWindowSchema( QGraphicsScene * scene )
-: QGraphicsView( scene )
+tengu::SchemaView::SchemaView( QGraphicsScene * scene )
+    : QGraphicsView( scene )
 {
     // This is not good idea.
     // Не очень хорошая идея.
@@ -49,7 +49,7 @@ tengu::MainWindowSchema::MainWindowSchema( QGraphicsScene * scene )
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::MainWindowSchema::__createMenus() {
+void tengu::SchemaView::__createMenus() {
     
     __contextMenu = new QMenu( this );
     
@@ -71,7 +71,7 @@ void tengu::MainWindowSchema::__createMenus() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::MainWindowSchema::__on_action_create_task() {
+void tengu::SchemaView::__on_action_create_task() {
     qDebug() << "Мы хотим создать задачу";
 }
 
@@ -84,7 +84,7 @@ void tengu::MainWindowSchema::__on_action_create_task() {
 // ********************************************************************************************************************
 
 #ifndef QT_NO_WHEELEVENT
-void tengu::MainWindowSchema::wheelEvent(QWheelEvent* event) {
+void tengu::SchemaView::wheelEvent(QWheelEvent* event) {
     
     // _view->centerOn(target_scene_pos);        
   
@@ -101,9 +101,9 @@ void tengu::MainWindowSchema::wheelEvent(QWheelEvent* event) {
     // centerOn( mapToScene( view_center.toPoint()));
     
     if (event->delta() > 0) {
-        scale( 0.8, 0.8 );
+        scale( 1.2, 1.2 );
     } else {
-        scale(1.2, 1.2 );
+        scale( 0.8, 0.8 );
     }
     
     // centerOn( 1000.0, 1000.0 );
@@ -122,20 +122,23 @@ void tengu::MainWindowSchema::wheelEvent(QWheelEvent* event) {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::MainWindowSchema::mousePressEvent ( QMouseEvent * event ) {
+void tengu::SchemaView::mousePressEvent ( QMouseEvent * event ) {
     
     QGraphicsView::mousePressEvent( event );
     
     if ( event->buttons() & Qt::LeftButton ) {
-        qDebug() << "MainWindowSchema::mousePressEvent()";
+        qDebug() << "SchemaView::mousePressEvent()";
         __leftMouseButtonPressed = true;
-    };
+        
+        QGraphicsItem * item = itemAt( event->pos());
+        bool controlPressed = event->modifiers() & Qt::ControlModifier;
     
-    QGraphicsItem * item = itemAt( event->pos());
+        if ( item ) {
+            emit signalItemPressed( ( AbstractAgentItem * ) item, controlPressed );
+        };
+        
+    };    
     
-    if ( item ) {
-        emit signalItemPressed( ( AbstractAgentItem * ) item );
-    };
 }
 
 // ********************************************************************************************************************
@@ -146,10 +149,10 @@ void tengu::MainWindowSchema::mousePressEvent ( QMouseEvent * event ) {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::MainWindowSchema::mouseReleaseEvent ( QMouseEvent * event ) {
+void tengu::SchemaView::mouseReleaseEvent ( QMouseEvent * event ) {
     
     if ( Qt::LeftButton & event->buttons() ) {    
-        qDebug() << "MainWindowSchema::mouse release event";    
+        qDebug() << "SchemaView::mouse release event";    
         __leftMouseButtonPressed = false;    
     };
     QGraphicsView::mouseReleaseEvent ( event );
@@ -163,11 +166,12 @@ void tengu::MainWindowSchema::mouseReleaseEvent ( QMouseEvent * event ) {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::MainWindowSchema::mouseDoubleClickEvent ( QMouseEvent* event ) {
+void tengu::SchemaView::mouseDoubleClickEvent ( QMouseEvent* event ) {
     QGraphicsView::mouseDoubleClickEvent ( event );
     QGraphicsItem * item = itemAt( event->pos() );
+    bool controlPressed = event->modifiers() & Qt::ControlModifier;
     if ( item ) {
-        emit signalItemDoubleClicked( (AbstractAgentItem * ) item );
+        emit signalItemDoubleClicked( (AbstractAgentItem * ) item, controlPressed );
     };
 }
 
@@ -180,9 +184,9 @@ void tengu::MainWindowSchema::mouseDoubleClickEvent ( QMouseEvent* event ) {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::MainWindowSchema::mouseMoveEvent ( QMouseEvent * event ) {
+void tengu::SchemaView::mouseMoveEvent ( QMouseEvent * event ) {
     // __scaleCenter = event->pos();
-    // qDebug() << "MainWindowSchema::mouseMove()";
+    // qDebug() << "SchemaView::mouseMove()";
     QGraphicsView::mouseMoveEvent ( event );
     __mouseAtSchemaPos = mapToScene( event->pos() ).toPoint();
 }
@@ -195,7 +199,7 @@ void tengu::MainWindowSchema::mouseMoveEvent ( QMouseEvent * event ) {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::MainWindowSchema::contextMenuEvent ( QContextMenuEvent* event ) {
+void tengu::SchemaView::contextMenuEvent ( QContextMenuEvent* event ) {
     
     QGraphicsView::contextMenuEvent ( event );    
     
@@ -224,5 +228,5 @@ void tengu::MainWindowSchema::contextMenuEvent ( QContextMenuEvent* event ) {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::MainWindowSchema::~MainWindowSchema() {
+tengu::SchemaView::~SchemaView() {
 }

@@ -29,7 +29,8 @@
 #include "Task.h"
 #include "AgentPropertyModel.h"
 #include "MainWindowLeft.h"
-#include "MainWindowSchema.h"
+#include "SchemaView.h"
+#include "SchemaScene.h"
 #include "MainWindowRight.h"
 #include "Constants.h"
 #include "../guis.h"
@@ -55,15 +56,15 @@ namespace tengu {
             
             QWidget * __centerWidget;
             MainWindowLeft * __left;
-            MainWindowSchema * __schema;
+            SchemaView * __schemaView;
             MainWindowRight * __right;
-            QGraphicsScene * __scene;
+            SchemaScene * __schemaScene;
             
             QToolBar * __toolbar_file;
             QToolBar * __toolbar_elements_library;
             
             void __createMainMenu();
-            void __createSchema();
+            void __createSchemaView();
             void __createActions();
             void __createToolBar();
             void __createStatusBar();
@@ -92,8 +93,8 @@ namespace tengu {
             
             void __on_quit_request();  
             
-            void __on_schema_item_pressed( AbstractAgentItem * item );
-            void __on_schema_item_double_clicked( AbstractAgentItem * item );
+            void __on_schema_item_pressed( AbstractAgentItem * item, bool controlPressed );
+            void __on_schema_item_double_clicked( AbstractAgentItem * item, bool controlPressed );
                         
             
     };

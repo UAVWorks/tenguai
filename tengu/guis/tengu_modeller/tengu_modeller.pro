@@ -23,32 +23,34 @@ UI_DIR=build/uic
 RCC_DIR=build/obj
 OBJECTS_DIR=build/obj
 
-INCLUDEPATH += items ../../core ../../loredis/src
+INCLUDEPATH += src src/schema ../../core ../../loredis/src
 
 LIBS += -lLoRedis -L../../loredis/build -ltengu_core -L../../core/build -lhiredis -levent
 
-HEADERS  += items/AbstractAgentItem.h       \
-        items/TaskItem.h                    \
-        items/VehicleItem.h                 \
-        MainWindow.h                        \
-        MainWindowLeft.h                    \
-        AgentPropertyModel.h                \
-        AgentPropertyView.h                 \
-        WorkSpace.h                         \
-        MainWindowRight.h                   \
-        MainWindowSchema.h      
+HEADERS  += src/schema/AbstractAgentItem.h  \
+        src/schema/TaskItem.h               \
+        src/schema/VehicleItem.h            \
+        src/MainWindow.h                    \
+        src/MainWindowLeft.h                \
+        src/AgentPropertyModel.h            \
+        src/AgentPropertyView.h             \
+        src/WorkSpace.h                     \
+        src/MainWindowRight.h               \
+        src/schema/SchemaScene.h            \
+        src/schema/SchemaView.h      
 
-SOURCES += main.cpp                         \
-        items/AbstractAgentItem.cpp         \
-        items/TaskItem.cpp                  \
-        items/VehicleItem.cpp               \
-        MainWindow.cpp                      \
-        MainWindowLeft.cpp                  \
-        AgentPropertyModel.cpp              \
-        AgentPropertyView.cpp               \
-        WorkSpace.cpp                       \
-        MainWindowRight.cpp                 \
-        MainWindowSchema.cpp    
+SOURCES += src/main.cpp                     \
+        src/schema/AbstractAgentItem.cpp    \
+        src/schema/TaskItem.cpp             \
+        src/schema/VehicleItem.cpp          \
+        src/MainWindow.cpp                  \
+        src/MainWindowLeft.cpp              \
+        src/AgentPropertyModel.cpp          \
+        src/AgentPropertyView.cpp           \
+        src/WorkSpace.cpp                   \
+        src/MainWindowRight.cpp             \
+        src/schema/SchemaScene.cpp          \
+        src/schema/SchemaView.cpp
 
 RESOURCES += tengu_modeller.qrc
 

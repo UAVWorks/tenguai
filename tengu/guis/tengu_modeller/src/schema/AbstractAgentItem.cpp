@@ -21,8 +21,11 @@ tengu::AbstractAgentItem::AbstractAgentItem(AbstractAgent * agent, QGraphicsItem
     : QGraphicsObject( parent )
 {
     _agent = agent;
-    _boundRect = QRectF(0, 0, 20, 20);
+    _boundingRect = QRectF(0, 0, 20, 20);
+    _selected = false;
+    
     __mousePressed = false;
+    
     // setAcceptHoverEvents( true );
     // setAcceptTouchEvents( true );
 }
@@ -36,7 +39,7 @@ tengu::AbstractAgentItem::AbstractAgentItem(AbstractAgent * agent, QGraphicsItem
 // ********************************************************************************************************************
 
 QRectF tengu::AbstractAgentItem::boundingRect() const {
-    return _boundRect;
+    return _boundingRect;
 }
 
 // ********************************************************************************************************************
@@ -48,7 +51,7 @@ QRectF tengu::AbstractAgentItem::boundingRect() const {
 // ********************************************************************************************************************
 
 void tengu::AbstractAgentItem::paint( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) {
-    painter->drawRect(  _boundRect );
+    painter->drawRect(  _boundingRect );
 }
 
 // ********************************************************************************************************************
@@ -63,6 +66,32 @@ tengu::AbstractAgent* tengu::AbstractAgentItem::agent() {
     return _agent;
 }
 
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                              Set this agent selection.                                           *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                        Установка выбранности данного агента.                                     *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::AbstractAgentItem::setSelected ( bool selection ) {
+    _selected = selection;
+    update();
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                    Make R-G-B constituent of color to some brighter.                             *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                     Сделать R-G-B составляющую цвета чуть поярче.                                *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+int tengu::AbstractAgentItem::_brighter ( int color ) {
+    color += color / 5;
+    if ( color > 255 ) color = 255;
+    return color;
+}
 
 // ********************************************************************************************************************
 // *                                                                                                                  *

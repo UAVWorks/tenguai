@@ -44,14 +44,14 @@ tengu::MainWindow::MainWindow(QWidget *parent)
     
     lay->addWidget( __hSplitter );
     
-    __scene = new QGraphicsScene();
+    __schemaScene = new SchemaScene();
     
     
     Task * t = new Task("Task");
     TaskItem * i = new TaskItem( t );
     i->setX( 10 );
     i->setY( 10 );
-    __scene->addItem( i );
+    __schemaScene->addItem( i );
     
     
     /*
@@ -66,14 +66,14 @@ tengu::MainWindow::MainWindow(QWidget *parent)
     */
         
     __left = new MainWindowLeft();
-    __createSchema();
+    __createSchemaView();
     
     __right = new MainWindowRight();
     
     __right->setPropertiesDataModel( __agentPropertyModel );
     
     __hSplitter->addWidget( __left );
-    __hSplitter->addWidget( __schema );
+    __hSplitter->addWidget( __schemaView );
     __hSplitter->addWidget( __right );
             
     __createActions();
@@ -159,10 +159,10 @@ void tengu::MainWindow::__createToolBar() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::MainWindow::__createSchema() {
-    __schema = new MainWindowSchema( __scene );
-    QObject::connect( __schema, SIGNAL( signalItemPressed( AbstractAgentItem * )), this, SLOT( __on_schema_item_pressed ( AbstractAgentItem * ) ) );
-    QObject::connect( __schema, SIGNAL( signalItemDoubleClicked( AbstractAgentItem * )), this, SLOT( __on_schema_item_double_clicked( AbstractAgentItem * ) ) );
+void tengu::MainWindow::__createSchemaView() {
+    __schemaView = new SchemaView( __schemaScene );
+    QObject::connect( __schemaView, SIGNAL( signalItemPressed( AbstractAgentItem *, bool )), this, SLOT( __on_schema_item_pressed ( AbstractAgentItem *, bool ) ) );
+    QObject::connect( __schemaView, SIGNAL( signalItemDoubleClicked( AbstractAgentItem *, bool )), this, SLOT( __on_schema_item_double_clicked( AbstractAgentItem *, bool ) ) );
 }
 
 // ********************************************************************************************************************
@@ -173,8 +173,16 @@ void tengu::MainWindow::__createSchema() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::MainWindow::__on_schema_item_pressed ( tengu::AbstractAgentItem * item ) {
-    qDebug() << "MainWindow:: on schema item pressed.";
+void tengu::MainWindow::__on_schema_item_pressed ( tengu::AbstractAgentItem * item, bool controlPressed ) {
+    qDebug() << "MainWindow:: on schema item pressed. ctrl=" << controlPressed;
+    
+    // Selecting of the agent.
+    // Выбор агента.
+    
+    item->setSelected( true );
+    
+    // Synchronizе properties of the selected agent
+    // Синхронизация свойств выбранного агента.
     AbstractAgent * agent = item->agent();
     __agentPropertyModel->setAgent( agent );
 }
@@ -187,7 +195,7 @@ void tengu::MainWindow::__on_schema_item_pressed ( tengu::AbstractAgentItem * it
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::MainWindow::__on_schema_item_double_clicked ( tengu::AbstractAgentItem* item ) {
+void tengu::MainWindow::__on_schema_item_double_clicked ( tengu::AbstractAgentItem * item, bool controlPressed ) {
 
 }
 

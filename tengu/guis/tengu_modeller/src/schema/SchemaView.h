@@ -25,27 +25,23 @@
 
 namespace tengu {
 
-    class MainWindowSchema : public QGraphicsView {
+    class SchemaView : public QGraphicsView {
         
         Q_OBJECT
         
         signals:
             
-            void signalItemPressed( AbstractAgentItem * item );
-            void signalItemDoubleClicked( AbstractAgentItem * item );
+            void signalItemPressed( AbstractAgentItem * item, bool controlPressed );
+            void signalItemDoubleClicked( AbstractAgentItem * item, bool controlPressed );
         
         public:
             
-            MainWindowSchema( QGraphicsScene * scene );
-            virtual ~MainWindowSchema();
+            SchemaView( QGraphicsScene * scene );
+            virtual ~SchemaView();
 
             // mouse wheel event
             // событие колесика мышки
-            
-#ifndef QT_NO_WHEELEVENT
-            void wheelEvent( QWheelEvent * event );
-#endif
-            
+                        
         private:
             
             void mousePressEvent( QMouseEvent * event );
@@ -53,6 +49,10 @@ namespace tengu {
             void mouseMoveEvent( QMouseEvent * event );   
             void mouseDoubleClickEvent(QMouseEvent * event);
             void contextMenuEvent( QContextMenuEvent * event );
+            
+#ifndef QT_NO_WHEELEVENT
+            void wheelEvent( QWheelEvent * event );
+#endif
             
             bool __leftMouseButtonPressed;
             

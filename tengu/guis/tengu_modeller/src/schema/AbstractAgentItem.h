@@ -16,6 +16,7 @@
 #include <QColor>
 #include <QRectF>
 #include <QDebug>
+#include <QLinearGradient>
 
 #include "AbstractAgent.h"
 
@@ -34,10 +35,19 @@ namespace tengu {
             QRectF boundingRect() const;
             AbstractAgent * agent();
             
+            // Select this agent (to visual distinguish)
+            // Выбрать агента (для визуального отличия)
+            
+            void setSelected( bool selection );
+            
         protected:
             
             AbstractAgent * _agent;
-            QRectF _boundRect;
+            QRectF _boundingRect;
+            
+            int _brighter( int color );
+            
+            bool _selected;
             
             // void mousePressEvent( QGraphicsSceneMouseEvent * event );
             // void mouseReleaseEvent(QGraphicsSceneMouseEvent * event);
