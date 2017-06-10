@@ -29,6 +29,7 @@ LIBS += -lLoRedis -L../../loredis/build -ltengu_core -L../../core/build -lhiredi
 
 HEADERS  += src/schema/AbstractAgentItem.h  \
         src/schema/TaskItem.h               \
+        src/schema/SproutItem.h             \
         src/schema/VehicleItem.h            \
         src/MainWindow.h                    \
         src/MainWindowLeft.h                \
@@ -42,6 +43,7 @@ HEADERS  += src/schema/AbstractAgentItem.h  \
 SOURCES += src/main.cpp                     \
         src/schema/AbstractAgentItem.cpp    \
         src/schema/TaskItem.cpp             \
+        src/schema/SproutItem.cpp           \
         src/schema/VehicleItem.cpp          \
         src/MainWindow.cpp                  \
         src/MainWindowLeft.cpp              \

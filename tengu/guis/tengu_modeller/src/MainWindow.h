@@ -35,9 +35,6 @@
 #include "Constants.h"
 #include "../guis.h"
 
-#include "VehicleItem.h"
-#include "TaskItem.h"
-
 namespace tengu {
     
     class MainWindow : public QMainWindow {

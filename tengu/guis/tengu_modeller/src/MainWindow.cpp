@@ -54,6 +54,12 @@ tengu::MainWindow::MainWindow(QWidget *parent)
     i->setY( 10 );
     __schemaScene->addItem( i );
     
+    Sprout * s = new Sprout(t, "Sprout");
+    SproutItem * si = new SproutItem( s );
+    si->setX( 10 );
+    si->setY( -80 );
+    __schemaScene->addItem( si );
+    
     /*
     VehicleItem * w = new VehicleItem( new Vehicle( nullptr, "Vehicle") );
     __canvas->addItem( w );

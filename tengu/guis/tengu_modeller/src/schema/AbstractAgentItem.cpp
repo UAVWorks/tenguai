@@ -95,6 +95,49 @@ int tengu::AbstractAgentItem::_brighter ( int color ) {
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
+// *                                         Get border's color for process diagrams.                                 *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                       Получить цвет границ для диаграмм процессов.                               *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+QColor tengu::AbstractAgentItem::_processDiagram_borderColor() {
+    
+    QColor bgColor = ORDINAR_BORDER_COLOR;
+    if ( _selected ) bgColor = ORDINAR_SELECTED_BORDER_COLOR;
+    
+    if ( agent()->isFocused() ) {
+        if ( _selected ) bgColor = FOCUSED_SELECTED_BORDER_COLOR;
+        else bgColor = FOCUSED_BORDER_COLOR;
+    };
+    
+    if ( agent()->isActive() ) {
+        if ( _selected ) bgColor = ACTIVE_SELECTED_BORDER_COLOR;
+        else bgColor = ACTIVE_BORDER_COLOR;
+    };
+    
+    return bgColor;
+    
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                       Get the "pen" for painting borders of elements of process diagram.                         *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                   Получить "карандаш" для рисования границ элементов на диаграммах процессов.                    *
+// *                                                                                                                  * 
+// ********************************************************************************************************************
+
+QPen tengu::AbstractAgentItem::_processDiagram_borderPen() {
+    QPen pen;
+    pen.setWidth( 3 );
+    pen.setStyle( Qt::SolidLine );
+    pen.setColor( _processDiagram_borderColor() );
+    return pen;
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
 // *                                               Mouse press event handler.                                         *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                                            Обработчик события нажатия мышки.                                     *

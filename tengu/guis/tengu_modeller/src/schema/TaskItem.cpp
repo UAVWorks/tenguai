@@ -93,24 +93,7 @@ void tengu::TaskItem::paint ( QPainter * painter, const QStyleOptionGraphicsItem
     //                                            Границы
     // --------------------------------------------------------------------------------------------
     
-    QColor bgColor = ORDINAR_BORDER_COLOR;
-    if ( _selected ) bgColor = ORDINAR_SELECTED_BORDER_COLOR;
-    
-    if ( agent()->isFocused() ) {
-        if ( _selected ) bgColor = FOCUSED_SELECTED_BORDER_COLOR;
-        else bgColor = FOCUSED_BORDER_COLOR;
-    };
-    
-    if ( agent()->isActive() ) {
-        if ( _selected ) bgColor = ACTIVE_SELECTED_BORDER_COLOR;
-        else bgColor = ACTIVE_BORDER_COLOR;
-    };
-    
-    QPen pen;
-    pen.setStyle( Qt::SolidLine );
-    pen.setColor( bgColor );
-    pen.setWidth( 3 );
-    
+    QPen pen = _processDiagram_borderPen();
     pixPainter.setPen( pen );
     
     // Rectangle, but throught lines to avoid broken angles in rectangle.
