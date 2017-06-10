@@ -180,7 +180,8 @@ void tengu::MainWindow::__createSchemaView() {
 // ********************************************************************************************************************
 
 void tengu::MainWindow::__on_schema_item_pressed ( tengu::AbstractAgentItem * item, bool controlPressed ) {
-    qDebug() << "MainWindow:: on schema item pressed. ctrl=" << controlPressed;
+    
+    if ( ! controlPressed ) __schemaScene->unselectAll();
     
     // Selecting of the agent.
     // Выбор агента.
@@ -190,7 +191,6 @@ void tengu::MainWindow::__on_schema_item_pressed ( tengu::AbstractAgentItem * it
     // Synchronizе properties of the selected agent
     // Синхронизация свойств выбранного агента.
     
-    // AbstractAgent * agent = item->agent();
     __agentPropertyModel->setItem( item );
     __right->propertyView->adjustColumnWidth();
     

@@ -10,7 +10,10 @@
 #pragma once
 
 #include <QGraphicsScene>
+#include <QList>
+#include <QGraphicsItem>
 
+#include "AbstractAgentItem.h"
 #include "VehicleItem.h"
 #include "TaskItem.h"
 #include "SproutItem.h"
@@ -25,6 +28,8 @@ namespace tengu {
             
             SchemaScene ( QObject* parent = 0 );
             virtual ~SchemaScene();
+            
+            void unselectAll();
             
     };
     

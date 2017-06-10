@@ -15,6 +15,7 @@
 
 #include "AbstractAgentItem.h"
 #include "TaskItem.h"
+#include "SproutItem.h"
 
 namespace tengu {
 

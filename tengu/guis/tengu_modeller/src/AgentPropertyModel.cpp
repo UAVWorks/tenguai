@@ -102,18 +102,22 @@ QVariant tengu::AgentPropertyModel::data(const QModelIndex & index, int role ) c
 void tengu::AgentPropertyModel::setItem ( tengu::AbstractAgentItem * item ) {
 
     __item = item;
+    __columns = 0;
+    __rows = 0;
     
     // From top to bottom on the inheritance.
     // Сверху вниз по наследованию.
     
-    TaskItem * taskItem = qobject_cast< TaskItem * >( item );
-    if ( taskItem ) {
-        
+    TaskItem * taskItem = qobject_cast<TaskItem*>( item );
+    SproutItem * sproutItem = qobject_cast<SproutItem*>( item );
+    if ( taskItem ) {        
         // It was a Task class representation.
-        // Это было представление класса Task.
-        
+        // Это было представление класса Task.        
         __columns = 2;
         __rows = 10;        
+    } else if ( sproutItem ) {
+        __columns = 2;
+        __rows = 8;
     };
     
     

@@ -60,6 +60,8 @@ namespace tengu {
             
             void setSelected( bool selection );
             
+            bool isSelected();
+            
         protected:
             
             AbstractAgent * _agent;
@@ -73,6 +75,9 @@ namespace tengu {
             // Получить цвет границ для диаграммы процессов.
             
             QColor _processDiagram_borderColor();
+            QColor _processDiagram_shadowColor();
+            QColor _processDiagram_darkFillColor();
+            QColor _processDiagram_brightFillColor();
             
             QPen _processDiagram_borderPen();
             
