@@ -17,8 +17,8 @@
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::State::State ( QString systemName ) 
-    : AbstractAgent ( systemName ) 
+tengu::State::State () 
+    : AbstractAgent () 
 {
 
 }

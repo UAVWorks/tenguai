@@ -17,20 +17,19 @@
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::AbstractAgentKernel::AbstractAgentKernel( QString systemName )
+tengu::AbstractAgentKernel::AbstractAgentKernel()
     : QObject()
 {
     
-    // Remove whitespace and tabulation symbols from system name.
-    // Удаление символов пробела и табуляции из системного имени.
-    _system_name = systemName;
-    if ( ( _system_name.contains(' ') ) || ( _system_name.contains('\t') ) ) {    
-        qDebug() << "AbstractAgentKernel::AbstractAgentKernel(). System name = '" + _system_name + "'. Will be modified.";
-        _system_name = _system_name.remove(' ').remove('\t');
-        qDebug() << "... new system name = '" + _system_name + "'";
-    };
+    _name = QString("");
+    
     _parent = nullptr;
-    _uuid = QString("");
+    
+    // Temporary. You always can set it by setUUID().
+    // Времянка. Вы всегда его можете переставить через setUUID().
+    
+    _uuid = QUuid::createUuid().toString();
+    
     _parent_uuid = QString("");
     _comment = QString("");
     _subProcessPath = QString("");
@@ -139,7 +138,7 @@ void tengu::AbstractAgentKernel::__on_connect_timer() {
 
 void tengu::AbstractAgentKernel::__on_ping_timer() {
         
-    if ( __pub_redis_connected ) {
+    if ( ( __pub_redis_connected ) && ( ! _uuid.isEmpty() ) ) {
         
         // Publish the last live time of this agent.
         // This time allows you to conclude whether the agent is running or not
@@ -155,17 +154,10 @@ void tengu::AbstractAgentKernel::__on_ping_timer() {
         
         QString repr = QString::number( dt.toTime_t() ) + "." + QString::number( time.msec() );
         
-        // If we have an UUID - we will identify using it. If UUID is empty,
-        // we will use a name of agent.
-        
-        // Если есть UUID - идентификация идет по нему. Если нет - то по имени.
+        // If we have an UUID - we will identify using it.        
+        // Если есть UUID - идентификация идет по нему. 
                        
-        QString channel = QString("agents.");
-        
-        if ( ! _uuid.isEmpty() ) channel += _uuid;
-        else channel += _system_name;
-        
-        channel += ".ping";
+        QString channel = QString("agents.") + _uuid + ".ping";
         
         _pub_redis->publish( channel, repr );
         _pub_redis->set( channel, repr );
@@ -323,6 +315,18 @@ QString tengu::AbstractAgentKernel::comment() {
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
+// *                                            Set comment for this agent.                                           *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                       Установить комментарий данного агента.                                     *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::AbstractAgentKernel::setComment ( QString comment ) {
+    _comment = comment;
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
 // *                Path for process to provide this agent as a separate process in the operation system.             *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *     Путь для процесса, который предоставляет данного агента как отдельный процесс в операционной системе.        *
@@ -335,15 +339,52 @@ QString tengu::AbstractAgentKernel::subProcessPath() {
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
-// *                                           Get system name of this agent.                                         *
+// *                                             Get name of this agent.                                              *
 // * ---------------------------------------------------------------------------------------------------------------- *
-// *                                        Получить системное имя этого агента.                                      *
+// *                                            Получить имя этого агента.                                            *
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-QString tengu::AbstractAgentKernel::systemName() {
-    return _system_name;
+QString tengu::AbstractAgentKernel::name() {
+    return _name;
 }
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                              Set name of this agent.                                             *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                           Установить имя данного агента.                                         *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::AbstractAgentKernel::setName ( QString name ) {
+    _name = name;
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                             Return UUID of this agent.                                           *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                            Вернуть UUID данного агента.                                          *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+QString tengu::AbstractAgentKernel::uuid() {
+    return _uuid;
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                               Set this agent uuid                                                *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                          Установить uuid данного агента.                                         *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::AbstractAgentKernel::setUUID ( QString uuid ) {
+    _uuid = uuid;
+}
+
 
 // ********************************************************************************************************************
 // *                                                                                                                  *

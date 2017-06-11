@@ -65,7 +65,7 @@ namespace tengu {
             
         public:
             
-            Processor ( QString systemName );
+            Processor ();
             virtual ~Processor();
             
             // The config file was found and loaded.

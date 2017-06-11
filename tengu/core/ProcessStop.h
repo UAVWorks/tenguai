@@ -19,7 +19,7 @@ namespace tengu {
         
         public:
             
-            ProcessStop ( QString systemName );
+            ProcessStop ();
             virtual ~ProcessStop();
             
     };

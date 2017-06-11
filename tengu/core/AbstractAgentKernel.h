@@ -15,6 +15,7 @@
 #include <QTimer>
 #include <QTime>
 #include <QDateTime>
+#include <QUuid>
 
 #include "LoRedis.h"
 
@@ -26,9 +27,12 @@ namespace tengu {
         
         Q_OBJECT
         
+        Q_PROPERTY( QString name READ name WRITE setName )
+        Q_PROPERTY( QString uuid READ uuid WRITE setUUID )
+        
         public:
             
-            AbstractAgentKernel( QString systenName );
+            AbstractAgentKernel();
             virtual ~AbstractAgentKernel();
             
             /**
@@ -62,12 +66,18 @@ namespace tengu {
             
             void addChild( AbstractAgentKernel * child );
             
+            // true, really unique identifier for this object
+            // Действительно уникальный идентификатор для данного объекта.
+            
             QString uuid();
+            void setUUID( QString uuid );            
             
-            // Get system name of this agent.
-            // Вернуть системное имя агента.
+            // The name of this agent.
+            // Имя агента.
             
-            QString systemName();
+            QString name();
+            void setName( QString name );
+            
             
             QString comment();
             void setComment( QString comment );
@@ -85,10 +95,10 @@ namespace tengu {
             
         protected:
             
-            // Agent name (should be unique around the system)
-            // Имя агента (хорошо бы уникальное в пределах системы).
+            // Agent name
+            // Имя агента
             
-            QString _system_name;   
+            QString _name;
             
             // Any human readable comment for this agent.
             // Любой человеко-ориентированный комментарий для агента.

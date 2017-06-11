@@ -18,6 +18,8 @@
 #include <QRectF>
 #include <QDebug>
 #include <QLinearGradient>
+#include <QList>
+#include <QPair>
 
 #include "AbstractAgent.h"
 
@@ -61,6 +63,11 @@ namespace tengu {
             void setSelected( bool selection );
             
             bool isSelected();
+            
+            // Properties list. The pair of string. First is name of element, second is value of element.
+            // Список свойств. Пара строк. Первая - имя элемента, вторая - его значение.
+            
+            virtual QList<QPair<QString,QString>> properties();
             
         protected:
             

@@ -17,8 +17,8 @@
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::WorkSpace::WorkSpace( QString systemName )
-    : AbstractAgent( systemName )
+tengu::WorkSpace::WorkSpace()
+    : AbstractAgent()
 {
 }
 

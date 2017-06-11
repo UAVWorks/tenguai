@@ -17,8 +17,8 @@
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::ORer::ORer ( QString systemName ) 
-    : AbstractAgent ( systemName ) 
+tengu::ORer::ORer () 
+    : AbstractAgent () 
 {
 
 }

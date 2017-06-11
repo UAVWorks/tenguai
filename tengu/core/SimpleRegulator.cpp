@@ -17,8 +17,8 @@
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::SimpleRegulator::SimpleRegulator( QString systemName, float min_value, float max_value ) 
-    : AbstractAgent( systemName ) 
+tengu::SimpleRegulator::SimpleRegulator(float min_value, float max_value ) 
+    : AbstractAgent() 
 {
 
     // The PID-regulator and it's values.
@@ -78,7 +78,7 @@ void tengu::SimpleRegulator::setInputChannel ( QString channel ) {
     
     if ( ! channel.isEmpty() ) {
         _inputChannel = channel;
-        Sprout * iSprout = new Sprout(this, "INPUT");
+        Sprout * iSprout = new Sprout();
         iSprout->setInputChannel( channel );
         QObject::connect( iSprout, SIGNAL(signalGotValue(QVariant)), this, SLOT( __on_input_received( QVariant ) ) );
         addSprout( iSprout );

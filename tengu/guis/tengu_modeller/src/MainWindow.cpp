@@ -24,7 +24,7 @@ tengu::MainWindow::MainWindow(QWidget *parent)
     setWindowTitle( tr("Tengu modeller") );
     setWindowIcon( QIcon( QPixmap(":tengu_32.png") ) );
     
-    __workSpace = new WorkSpace( "TheTopWorkspace");
+    __workSpace = new WorkSpace();
     __agentPropertyModel = new AgentPropertyModel();
     
     QVBoxLayout * lay = new QVBoxLayout();
@@ -48,13 +48,14 @@ tengu::MainWindow::MainWindow(QWidget *parent)
     __schemaScene = new SchemaScene();
     
     
-    Task * t = new Task("Task");
-    TaskItem * i = new TaskItem( t );
+    Task * task = new Task();
+    task->setName( "The task" );
+    TaskItem * i = new TaskItem( task );
     i->setX( 10 );
     i->setY( 10 );
     __schemaScene->addItem( i );
     
-    Sprout * s = new Sprout(t, "Sprout");
+    Sprout * s = new Sprout( task );
     SproutItem * si = new SproutItem( s );
     si->setX( 10 );
     si->setY( -80 );

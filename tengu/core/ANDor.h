@@ -19,7 +19,7 @@ namespace tengu {
         
         public:
             
-            ANDor ( QString systemName );
+            ANDor ();
             virtual ~ANDor();
             
     };

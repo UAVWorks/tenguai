@@ -19,8 +19,8 @@
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::Processor::Processor ( QString systemName ) 
-    : AbstractAgent ( systemName )
+tengu::Processor::Processor () 
+    : AbstractAgent ()
 {
     
     // _setActivity( false );
@@ -51,7 +51,7 @@ bool tengu::Processor::_loadConfig ( QString fileName ) {
         
         QString name = settings.value("system_name", "").toString();
         if ( ! name.isEmpty() ) {
-            _system_name = name;
+            _name = name;
         };
         
         QString comment = settings.value("comment", "").toString();
@@ -87,15 +87,17 @@ bool tengu::Processor::configCorrect( bool say ) {
         return false;
     };
     
-    if ( _system_name.isEmpty() ) {
+    if ( _name.isEmpty() ) {
         if ( say ) qDebug() << tr("Processor::configCorrect() : system_name is empty");
         return false;
     };
     
-    if ( ( _system_name.contains(' ')) || ( _system_name.contains('\t') ) ) {
+    /*
+    if ( ( _name.contains(' ')) || ( _system_name.contains('\t') ) ) {
         if ( say ) qDebug() << tr("Processor::configCorrect() : system name should not contains a whitespace or a tab characters.");
         return false;
     };
+    */
     
     if ( _execution_mode == EM_UNKNOWN ) {
         if ( say ) qDebug() << tr("Processor::configCorrect() : execution mode unknown.");

@@ -22,7 +22,7 @@ int main( int argc, char * argv[] ) {
     // Create "vehicle"
     // Порождение "самоходки".
     
-    tengu::Vehicle vehicle( "" );
+    tengu::Vehicle vehicle;
     
     
     // Check "vehicle's" configuration parameters.

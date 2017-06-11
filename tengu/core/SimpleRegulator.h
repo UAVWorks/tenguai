@@ -32,7 +32,7 @@ namespace tengu {
         public:
             
             
-            SimpleRegulator( QString systemName, float min_value = MINIMUM_CONSTRAINT, float max_value = MAXIMUM_CONSTRAINT );
+            SimpleRegulator( float min_value = MINIMUM_CONSTRAINT, float max_value = MAXIMUM_CONSTRAINT );
             virtual ~SimpleRegulator();
             
             void setInputChannel( QString channel );

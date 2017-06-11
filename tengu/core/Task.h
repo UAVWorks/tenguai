@@ -17,7 +17,7 @@ namespace tengu {
         Q_OBJECT
         public:
             
-            Task( QString systemName );
+            Task();
             virtual ~Task();
             
         protected:

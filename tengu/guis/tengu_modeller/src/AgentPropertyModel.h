@@ -12,6 +12,8 @@
 #include <QObject>
 #include <QAbstractItemModel>
 #include <QModelIndex>
+#include <QList>
+#include <QPair>
 
 #include "AbstractAgentItem.h"
 #include "TaskItem.h"
@@ -38,10 +40,8 @@ namespace tengu {
             
         private:
             
-            // WorkSpace * __workspace;
             AbstractAgentItem * __item;
-            int __rows;
-            int __columns;
+            QList<QPair<QString, QString> > __properties;
     };
 };
 

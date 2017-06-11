@@ -17,8 +17,8 @@
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::Summator::Summator( QString systemName ) 
-    : AbstractAgent( systemName )
+tengu::Summator::Summator() 
+    : AbstractAgent()
 {
 }
 

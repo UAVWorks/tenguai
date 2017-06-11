@@ -19,8 +19,8 @@
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::Vehicle::Vehicle ( QString systemName ) 
-    : Processor ( systemName )
+tengu::Vehicle::Vehicle () 
+    : Processor ()
 {
     
     _vehicleType = VT_NONE;

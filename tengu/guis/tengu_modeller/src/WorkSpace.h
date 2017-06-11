@@ -17,7 +17,7 @@ namespace tengu {
     
         Q_OBJECT
         public:
-            WorkSpace( QString systemName );
+            WorkSpace();
             virtual ~WorkSpace();
     };
     

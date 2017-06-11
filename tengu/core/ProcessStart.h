@@ -19,7 +19,7 @@ namespace tengu {
         
         public:
             
-            ProcessStart ( QString systemName );
+            ProcessStart ();
             virtual ~ProcessStart();
             
     };

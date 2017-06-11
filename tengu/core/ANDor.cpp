@@ -17,8 +17,8 @@
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::ANDor::ANDor ( QString systemName ) 
-    : AbstractAgent ( systemName )
+tengu::ANDor::ANDor () 
+    : AbstractAgent ()
 {
 
 }

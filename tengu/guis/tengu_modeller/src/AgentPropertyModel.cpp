@@ -20,10 +20,8 @@
 tengu::AgentPropertyModel::AgentPropertyModel()
     : QAbstractItemModel()
 {
-    // __workspace = workspace;
-    __rows = 0;
-    __columns = 0;
     __item = nullptr;
+    __properties = QList<QPair<QString, QString>>();
 }
 
 // ********************************************************************************************************************
@@ -35,8 +33,20 @@ tengu::AgentPropertyModel::AgentPropertyModel()
 // ********************************************************************************************************************
 
 int tengu::AgentPropertyModel::columnCount(const QModelIndex & parent ) const {
-    return __columns;
+    return 2;
 }
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                      Return the row count for this model element.                                *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                    Вернуть число строк для данного элемента модели.                              *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+int tengu::AgentPropertyModel::rowCount( const QModelIndex & parent ) const {
+    return __properties.count();
+};
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
@@ -48,7 +58,7 @@ int tengu::AgentPropertyModel::columnCount(const QModelIndex & parent ) const {
 
 QModelIndex tengu::AgentPropertyModel::index(int row, int column, const QModelIndex & parent ) const {
 
-    QModelIndex res;
+    QModelIndex res = createIndex( row, column );
     return res;
 };
 
@@ -68,18 +78,6 @@ QModelIndex tengu::AgentPropertyModel::parent( const QModelIndex & child ) const
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
-// *                                      Return the row count for this model element.                                *
-// * ---------------------------------------------------------------------------------------------------------------- *
-// *                                    Вернуть число строк для данного элемента модели.                              *
-// *                                                                                                                  *
-// ********************************************************************************************************************
-
-int tengu::AgentPropertyModel::rowCount( const QModelIndex & parent ) const {
-    return __rows;
-};
-
-// ********************************************************************************************************************
-// *                                                                                                                  *
 // *                                        Return data for this model index.                                         *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                                         Вернуть данные для этого индекса.                                        *
@@ -87,7 +85,20 @@ int tengu::AgentPropertyModel::rowCount( const QModelIndex & parent ) const {
 // ********************************************************************************************************************
 
 QVariant tengu::AgentPropertyModel::data(const QModelIndex & index, int role ) const {
-
+    
+    if ( ( index.isValid() ) && ( role == Qt::DisplayRole ) ) {
+        
+        QString answer;
+        
+        if ( index.row() < __properties.size() ) {
+            if ( index.column() == 0 ) answer = __properties.at( index.row() ).first;
+            else answer = __properties.at( index.row() ).second;
+        };
+        
+        return QVariant( answer );
+    }
+    
+    return QVariant();
     
 }
 
@@ -102,25 +113,7 @@ QVariant tengu::AgentPropertyModel::data(const QModelIndex & index, int role ) c
 void tengu::AgentPropertyModel::setItem ( tengu::AbstractAgentItem * item ) {
 
     __item = item;
-    __columns = 0;
-    __rows = 0;
-    
-    // From top to bottom on the inheritance.
-    // Сверху вниз по наследованию.
-    
-    TaskItem * taskItem = qobject_cast<TaskItem*>( item );
-    SproutItem * sproutItem = qobject_cast<SproutItem*>( item );
-    if ( taskItem ) {        
-        // It was a Task class representation.
-        // Это было представление класса Task.        
-        __columns = 2;
-        __rows = 10;        
-    } else if ( sproutItem ) {
-        __columns = 2;
-        __rows = 8;
-    };
-    
-    
+    __properties = item->properties();    
     emit layoutChanged();
     
 }

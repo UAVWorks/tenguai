@@ -127,7 +127,7 @@ void tengu::SchemaView::mousePressEvent ( QMouseEvent * event ) {
     QGraphicsView::mousePressEvent( event );
     
     if ( event->buttons() & Qt::LeftButton ) {
-        qDebug() << "SchemaView::mousePressEvent()";
+        
         __leftMouseButtonPressed = true;
         
         QGraphicsItem * item = itemAt( event->pos());

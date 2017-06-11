@@ -20,7 +20,7 @@ namespace tengu {
         
         public:
             
-            State( QString systemName );
+            State();
             virtual ~State();
             
         private:

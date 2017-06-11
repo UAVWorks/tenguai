@@ -21,7 +21,7 @@ namespace tengu {
         
         public:
             
-            Process ( QString systemName );
+            Process ();
             virtual ~Process();
             
     };

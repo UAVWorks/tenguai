@@ -19,7 +19,7 @@ namespace tengu {
         
         public:
             
-            ORer ( QString systemName );
+            ORer ();
             virtual ~ORer();
             
     };

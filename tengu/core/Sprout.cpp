@@ -19,10 +19,9 @@
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::Sprout::Sprout( AbstractAgentKernel * owner, QString systemName )
+tengu::Sprout::Sprout( AbstractAgentKernel * owner )
     : QObject()
 {
-    __system_name = systemName;
     __owner = owner;
     __subscribed = false;
     __subscribtion_requested = false;

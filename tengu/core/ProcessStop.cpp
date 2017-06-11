@@ -17,8 +17,8 @@
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::ProcessStop::ProcessStop ( QString systemName ) 
-    : AbstractAgent ( systemName )
+tengu::ProcessStop::ProcessStop () 
+    : AbstractAgent ()
 {
 
 }

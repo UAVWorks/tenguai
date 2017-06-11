@@ -42,7 +42,7 @@ namespace tengu {
                 float coefficient;
             };
             
-            Summator( QString systemName );
+            Summator();
             ~Summator();
             
             void addInputChannel( appendage_t channel );

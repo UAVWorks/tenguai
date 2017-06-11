@@ -19,8 +19,8 @@
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::Process::Process ( QString systemName ) 
-    : AbstractAgent ( systemName )
+tengu::Process::Process () 
+    : AbstractAgent ()
 {
 
 }

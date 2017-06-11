@@ -17,8 +17,8 @@
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::Task::Task ( QString systemName ) 
-    : AbstractAgent ( systemName )
+tengu::Task::Task () 
+    : AbstractAgent ()
 {
 
 }

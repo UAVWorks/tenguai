@@ -251,6 +251,24 @@ void tengu::AbstractAgentItem::mouseMoveEvent ( QGraphicsSceneMouseEvent * event
 */
 // ********************************************************************************************************************
 // *                                                                                                                  *
+// *                                   Return properties list for this abstract agent.                                *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                       Вернуть список свойств данного агента.                                     *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+QList<QPair<QString,QString>> tengu::AbstractAgentItem::properties() {
+
+    QList<QPair<QString, QString>> result;
+    result.append( QPair<QString, QString>("UUID", agent()->uuid() ) );
+    result.append( QPair<QString, QString>( tr("Name"), agent()->name() ) );
+    result.append( QPair<QString, QString>( tr("Comment"), agent()->comment() ) );
+    return result;
+    
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
 // *                                                   The destructor.                                                *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                                                      Деструктор.                                                 *
