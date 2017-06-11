@@ -63,6 +63,8 @@ namespace tengu {
             virtual bool usable();
             
             void addChild( AbstractAgentKernel * child );
+            
+            bool hasChildren();
                         
             // The agent can be provided either as object in memory
             // or separate process in the operation system for 
@@ -72,12 +74,11 @@ namespace tengu {
             // так и отдельным процессом в операционной системе для
             // экономии ресурсов.
             
-            virtual QString subProcessPath();
-            
+            // virtual QString subProcessPath();
             
         protected:
                         
-            QString _subProcessPath;
+            // QString _subProcessPath;
                         
             // Redis publicator and writer
             // Редис - который публикует и записывает.
@@ -115,19 +116,20 @@ namespace tengu {
             // Древовидная структура агентов. Для загрузки всей "ветки" дерева целиком.
             
             QString _parent_uuid;
+                        
             
         private:
             
             bool __pub_redis_connected;
             bool __sub_redis_connected;                        
             
-            QTimer * __ping_timer;
             QTimer * __connect_timer;
+            QTimer * __ping_timer;
             
         private slots:
             
-            void __on_ping_timer();
             void __on_connect_timer();
+            void __on_ping_timer();
             
             void __on_pub_redis_connected();
             void __on_sub_redis_connected();

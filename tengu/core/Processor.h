@@ -68,8 +68,6 @@ namespace tengu {
             
             bool configCorrect( bool say = false );
             
-            execution_mode_t executionMode();
-            
             static void prepareCommandLineParser( QCommandLineParser & parser );
             static QCommandLineOption noDaemonOption();
             
@@ -89,11 +87,6 @@ namespace tengu {
             // Была ли конфигурация загружена?
             
             bool _configLoaded;
-
-            // Running mode (either real or simulation).
-            // Режим выполнения (реальный или модельный).
-            
-            execution_mode_t _execution_mode;
             
             // Subprocesses for this process. The processes which form the children.
             // But not as classes in memory. Instead of that, some (complex) children 

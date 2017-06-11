@@ -22,6 +22,8 @@
 #include <QPair>
 
 #include "AbstractEntity.h"
+#include "AbstractAgent.h"
+#include "Sprout.h"
 
 // Colors for process diagram.
 // Цвета для диаграммы процессов.
@@ -69,6 +71,11 @@ namespace tengu {
             
             virtual QList<QPair<QString, QVariant>> properties();
             
+            // Is this entity the subject of decomposition?
+            // Является ли данная сущность декомпозируемой?
+            
+            bool isDecomposite();
+            
         protected:
             
             AbstractEntity * _entity;
@@ -91,6 +98,11 @@ namespace tengu {
             // void mousePressEvent( QGraphicsSceneMouseEvent * event );
             // void mouseReleaseEvent(QGraphicsSceneMouseEvent * event);
             // void mouseMoveEvent(QGraphicsSceneMouseEvent * event);
+
+            // Can this entity to be decomposed forcibly?
+            // Может ли данная "сущность" быть декомпозирована принудительно?
+            
+            bool _decomposite;
             
         private:
             

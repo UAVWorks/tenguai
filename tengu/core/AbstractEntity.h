@@ -20,7 +20,8 @@ namespace tengu {
         
         Q_PROPERTY( QString name READ getName WRITE setName )
         Q_PROPERTY( QString uuid READ getUUID WRITE setUUID )
-        Q_PROPERTY( QString comment READ getComment WRITE setComment )        
+        Q_PROPERTY( QString comment READ getComment WRITE setComment )
+        Q_PROPERTY( execution_mode_t executionMode READ getExecutionMode WRITE setExecutionMode )
 
         public:
             
@@ -55,27 +56,44 @@ namespace tengu {
             
             QString getComment();
             void setComment( QString comment );
-
+            
+            // The execution mode of this entity (real, x-plane simulation, always e.t.c.)
+            // Режим выполнения данной сущности (реальный, симуляция в X-Plane, всегда и др).
+            
+            execution_mode_t getExecutionMode();
+            void setExecutionMode( execution_mode_t mode );
+            
+            // Has been this entity changed?
+            // Была ли данная сущность изменена?
+            
+            bool hasChanged();
             
         protected:
+            
+            bool _changed;
+            
+        private:
             
             // Entity name
             // Имя сущности
             
-            QString _name;
+            QString __name;
             
             // Any human readable comment for this entity.
             // Любой человеко-ориентированный комментарий для сущности.
             
-            QString _comment;
+            QString __comment;
             
             // Unique (in entire system range) identifier of this agent.
             // Уникальный (в пределах вообще всей системы) идентификатор данного агента.
             
-            QString _uuid;
-
-
-        private:
+            QString __uuid;
+            
+            // Execution mode
+            // Режим выполнения.
+            
+            execution_mode_t __execution_mode;
+            
     };
 };
 

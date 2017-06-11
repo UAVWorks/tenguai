@@ -24,7 +24,7 @@ tengu::AbstractAgentKernel::AbstractAgentKernel()
     _parent = nullptr;
         
     _parent_uuid = QString("");
-    _subProcessPath = QString("");
+    // _subProcessPath = QString("");
     
     _pub_redis = nullptr;
     _sub_redis = nullptr;
@@ -130,7 +130,7 @@ void tengu::AbstractAgentKernel::__on_connect_timer() {
 
 void tengu::AbstractAgentKernel::__on_ping_timer() {
         
-    if ( ( __pub_redis_connected ) && ( ! _uuid.isEmpty() ) ) {
+    if ( ( __pub_redis_connected ) && ( ! getUUID().isEmpty() ) ) {
         
         // Publish the last live time of this agent.
         // This time allows you to conclude whether the agent is running or not
@@ -146,13 +146,17 @@ void tengu::AbstractAgentKernel::__on_ping_timer() {
         
         QString repr = QString::number( dt.toTime_t() ) + "." + QString::number( time.msec() );
         
-        // If we have an UUID - we will identify using it.        
+        // If we have an UUID - we will identify using it. 
         // Если есть UUID - идентификация идет по нему. 
                        
-        QString channel = QString("agents.") + _uuid + ".ping";
+        QString channel = QString("agents.") + getUUID() + ".ping";
         
-        _pub_redis->publish( channel, repr );
+        // Was commented. I use yet only setting value into redis, but not pub/sub.
+        // Было закомментировано. Использую только значение в редисе, но не pub/sub.
+        // _pub_redis->publish( channel, repr );
+        
         _pub_redis->set( channel, repr );
+        
     };
         
     // In any case, it does not matter whether we are connected or not.
@@ -291,6 +295,7 @@ void tengu::AbstractAgentKernel::connect() {
 
 void tengu::AbstractAgentKernel::addChild ( tengu::AbstractAgentKernel * child ) {
     _children.append( child );
+    _changed = true;
 }
 
 // ********************************************************************************************************************
@@ -301,8 +306,22 @@ void tengu::AbstractAgentKernel::addChild ( tengu::AbstractAgentKernel * child )
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
+/*
 QString tengu::AbstractAgentKernel::subProcessPath() {
     return _subProcessPath;
+}
+*/
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                          Has this agent any of children?                                         *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                           Есть ли дети у данного агента?                                         *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+bool tengu::AbstractAgentKernel::hasChildren() {
+    return _children.count() > 0;
 }
 
 // ********************************************************************************************************************
@@ -314,6 +333,7 @@ QString tengu::AbstractAgentKernel::subProcessPath() {
 // ********************************************************************************************************************
 
 tengu::AbstractAgentKernel::~AbstractAgentKernel() {
+    
     try {
         while ( _children.length() > 0 ) {
             AbstractAgentKernel * child = _children.at(0);

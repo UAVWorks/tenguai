@@ -52,7 +52,7 @@ void tengu::AgentPropertyView::resizeEvent ( QResizeEvent* event ) {
 // ********************************************************************************************************************
 
 void tengu::AgentPropertyView::adjustColumnWidth() {    
-    int nameColumnWidth = round( width() / 2.5 );
+    int nameColumnWidth = qRound( width() / 2.5 );
     int valueColumnWidth = width() - nameColumnWidth - 3;
     setColumnWidth( 0, nameColumnWidth );
     setColumnWidth( 1, valueColumnWidth );        

@@ -47,7 +47,13 @@ namespace tengu {
             
             // void setActivityChannel( QString activityChannel );
                         
+            // Is this agent active (i.e. really work right now)?
+            // Является ли данный агент активным (то есть на самом деле работает прямо сейчас)?
+            
             bool isActive();
+            
+            // Has this agent a "focus", i.e. it think about possibility to launch?
+            // Имеет ли агент "фокус", то есть он думает о возможности запуска?
             
             bool isFocused();
             
@@ -98,6 +104,7 @@ namespace tengu {
             void __on_got_message( QString channel, QString messaage );
             void __on_subscribed( QString channel );
             void __on_unsubscribed( QString channel );
+        
             // void __on_activity_channel_message( QVariant value );
             
     };

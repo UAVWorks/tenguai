@@ -23,6 +23,7 @@ tengu::AbstractEntityItem::AbstractEntityItem( AbstractEntity * entity, QGraphic
     _entity = entity;
     _boundingRect = QRectF(0, 0, 20, 20);
     _selected = false;
+    _decomposite = false;
     
     __mousePressed = false;
     
@@ -277,6 +278,26 @@ QList<QPair<QString, QVariant>> tengu::AbstractEntityItem::properties() {
     }
     
     return result;
+    
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                  Is this entity the subject for decomposition?                                   *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                   Является ли данная сущность декомпозируемой?                                   *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+bool tengu::AbstractEntityItem::isDecomposite() {
+    
+    // "Decomposite" mean either forcibly decomposition or this base is exactly an agent and he has children.
+    // "Декомпозиция" означает либо принудительную декомпозицию, либо в основании лежит точно агент и он имеет детей.
+    
+    AbstractAgent * agent = qobject_cast<AbstractAgent * >( _entity );
+    bool agentHasChildren = false;
+    if ( agent ) agentHasChildren = agent->hasChildren();
+    return ( _decomposite || agentHasChildren  );
     
 }
 

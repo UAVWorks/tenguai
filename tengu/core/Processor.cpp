@@ -24,7 +24,6 @@ tengu::Processor::Processor ()
 {
     
     // _setActivity( false );
-    _execution_mode = AbstractAgentKernel::EM_UNKNOWN;
     _configLoaded = _loadConfig( QString( PROCESSOR_CONFIG_FILE ) );    
         
 }
@@ -46,24 +45,24 @@ bool tengu::Processor::_loadConfig ( QString fileName ) {
         
         QString uuid = settings.value("uuid", "").toString();        
         if ( ! uuid.isEmpty() ) {
-            _uuid = uuid;
+            setUUID( uuid );
         };
         
         QString name = settings.value("system_name", "").toString();
         if ( ! name.isEmpty() ) {
-            _name = name;
+            setName( name );
         };
         
         QString comment = settings.value("comment", "").toString();
         if ( ! comment.isEmpty() ) {
-            _comment = comment;
+            setComment( comment );
         };
         
         QString mode = settings.value("execution_mode", "" ).toString();
         if ( ! mode.isEmpty() ) {
-            if ( mode.toUpper() == "REAL" ) _execution_mode = AbstractAgentKernel::EM_REAL;
-            else if ( mode.toUpper() == "XPLANE" ) _execution_mode = AbstractAgentKernel::EM_XPLANE;
-            else if ( mode.toUpper() == "PREPAR3D" ) _execution_mode = AbstractAgentKernel::EM_PREPAR3D;
+            if ( mode.toUpper() == "REAL" ) setExecutionMode( AbstractEntity::EM_REAL );
+            else if ( mode.toUpper() == "XPLANE" ) setExecutionMode( AbstractAgentKernel::EM_XPLANE );
+            else if ( mode.toUpper() == "PREPAR3D" ) setExecutionMode( AbstractAgentKernel::EM_PREPAR3D );
         };
                 
         return true;
@@ -82,12 +81,12 @@ bool tengu::Processor::_loadConfig ( QString fileName ) {
 
 bool tengu::Processor::configCorrect( bool say ) {
     
-    if ( _uuid.isEmpty() ) {
+    if ( getUUID().isEmpty() ) {
         if ( say ) qDebug() << tr("Processor::configCorrect() : UUID is empty");
         return false;
     };
     
-    if ( _name.isEmpty() ) {
+    if ( getName().isEmpty() ) {
         if ( say ) qDebug() << tr("Processor::configCorrect() : system_name is empty");
         return false;
     };
@@ -99,7 +98,7 @@ bool tengu::Processor::configCorrect( bool say ) {
     };
     */
     
-    if ( _execution_mode == EM_UNKNOWN ) {
+    if ( getExecutionMode() == EM_UNKNOWN ) {
         if ( say ) qDebug() << tr("Processor::configCorrect() : execution mode unknown.");
         return false;
     };
@@ -155,11 +154,11 @@ void tengu::Processor::prepareCommandLineParser ( QCommandLineParser & parser ) 
 // *                                    Вернуть режим выполнения этого "процессора".                                  *
 // *                                                                                                                  *
 // ********************************************************************************************************************
-
+/*
 tengu::Processor::execution_mode_t tengu::Processor::executionMode() {
     return _execution_mode;
 }
-
+*/
 // ********************************************************************************************************************
 // *                                                                                                                  *
 // *                                  Create a separate child's (subagent's) process.                                 *
@@ -176,7 +175,7 @@ void tengu::Processor::_startSubagentProcess( AbstractAgentKernel * child ) {
     QObject::connect( subagent.process, SIGNAL( started() ), this, SLOT( __on_subprocess_started() ) );
     QObject::connect( subagent.process, SIGNAL( errorOccured( QProcess::ProcessError) ), this, SLOT( __on_subprocess_error( QProcess::ProcessError ) ) );
     QObject::connect( subagent.process, SIGNAL( finished( int, QProcess::ExitStatus ) ), this, SLOT( __on_subprocess_finished( int, QProcess::ExitStatus ) ) );
-    subagent.process->start( child->subProcessPath() );    
+    // subagent.process->start( child->subProcessPath() );    
     _subagents.append( subagent );
     
 }
