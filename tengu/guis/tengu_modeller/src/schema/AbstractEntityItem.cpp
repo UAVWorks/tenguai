@@ -1,13 +1,13 @@
 // ********************************************************************************************************************
 // *                                                                                                                  *
-// *                              Abstract graphics object, representation of AbstractAgent.                          *
+// *                              Abstract graphics object, representation of AbstractEntity.                         *
 // * ---------------------------------------------------------------------------------------------------------------- *
-// *                           Абстрактный графический объект, представление AbstractAgent'а.                         *
+// *                            Абстрактный графический объект, представление AbstractEntity.                         *
 // *                                                                                                                  *
 // * Eugene G. Sysoletin <e.g.sysoletin@gmail.com>                                       Created 08 jun 2017 at 09:00 *
 // ********************************************************************************************************************
 
-#include "AbstractAgentItem.h"
+#include "AbstractEntityItem.h"
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
@@ -17,10 +17,10 @@
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::AbstractAgentItem::AbstractAgentItem(AbstractAgent * agent, QGraphicsItem* parent) 
+tengu::AbstractEntityItem::AbstractEntityItem( AbstractEntity * entity, QGraphicsItem * parent ) 
     : QGraphicsObject( parent )
 {
-    _agent = agent;
+    _entity = entity;
     _boundingRect = QRectF(0, 0, 20, 20);
     _selected = false;
     
@@ -38,7 +38,7 @@ tengu::AbstractAgentItem::AbstractAgentItem(AbstractAgent * agent, QGraphicsItem
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-QRectF tengu::AbstractAgentItem::boundingRect() const {
+QRectF tengu::AbstractEntityItem::boundingRect() const {
     return _boundingRect;
 }
 
@@ -50,7 +50,7 @@ QRectF tengu::AbstractAgentItem::boundingRect() const {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::AbstractAgentItem::paint( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) {
+void tengu::AbstractEntityItem::paint( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) {
     painter->drawRect(  _boundingRect );
 }
 
@@ -62,8 +62,8 @@ void tengu::AbstractAgentItem::paint( QPainter * painter, const QStyleOptionGrap
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::AbstractAgent* tengu::AbstractAgentItem::agent() {
-    return _agent;
+tengu::AbstractEntity * tengu::AbstractEntityItem::entity() {
+    return _entity;
 }
 
 // ********************************************************************************************************************
@@ -74,7 +74,7 @@ tengu::AbstractAgent* tengu::AbstractAgentItem::agent() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-bool tengu::AbstractAgentItem::isSelected() {
+bool tengu::AbstractEntityItem::isSelected() {
     return _selected;
 }
 
@@ -87,7 +87,7 @@ bool tengu::AbstractAgentItem::isSelected() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::AbstractAgentItem::setSelected ( bool selection ) {
+void tengu::AbstractEntityItem::setSelected ( bool selection ) {
     _selected = selection;
     update();
 }
@@ -100,7 +100,7 @@ void tengu::AbstractAgentItem::setSelected ( bool selection ) {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-int tengu::AbstractAgentItem::_brighter ( int color ) {
+int tengu::AbstractEntityItem::_brighter ( int color ) {
     color += color / 5;
     if ( color > 255 ) color = 255;
     return color;
@@ -114,20 +114,22 @@ int tengu::AbstractAgentItem::_brighter ( int color ) {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-QColor tengu::AbstractAgentItem::_processDiagram_borderColor() {
+QColor tengu::AbstractEntityItem::_processDiagram_borderColor() {
     
     QColor bgColor = ORDINAR_BORDER_COLOR;
     if ( _selected ) bgColor = ORDINAR_SELECTED_BORDER_COLOR;
     
-    if ( agent()->isFocused() ) {
+    /*
+    if ( entity()->isFocused() ) {
         if ( _selected ) bgColor = FOCUSED_SELECTED_BORDER_COLOR;
         else bgColor = FOCUSED_BORDER_COLOR;
     };
     
-    if ( agent()->isActive() ) {
+    if ( entity()->isActive() ) {
         if ( _selected ) bgColor = ACTIVE_SELECTED_BORDER_COLOR;
         else bgColor = ACTIVE_BORDER_COLOR;
     };
+    */
     
     return bgColor;
     
@@ -141,7 +143,7 @@ QColor tengu::AbstractAgentItem::_processDiagram_borderColor() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-QColor tengu::AbstractAgentItem::_processDiagram_shadowColor() {
+QColor tengu::AbstractEntityItem::_processDiagram_shadowColor() {
     QColor c = QColor( 240, 240, 240 );
     if ( _selected ) c = QColor( 220, 220, 220 );
     return c;
@@ -155,11 +157,12 @@ QColor tengu::AbstractAgentItem::_processDiagram_shadowColor() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-QColor tengu::AbstractAgentItem::_processDiagram_darkFillColor() {
+QColor tengu::AbstractEntityItem::_processDiagram_darkFillColor() {
     
     QColor c = ORDINAR_FILL_COLOR;
     if ( _selected ) c = ORDINAR_SELECTED_FILL_COLOR;
-    
+ 
+    /*
     if ( agent()->isFocused() ) {
         if ( _selected ) c = FOCUSED_SELECTED_FILL_COLOR;
         else c = FOCUSED_FILL_COLOR;
@@ -169,6 +172,8 @@ QColor tengu::AbstractAgentItem::_processDiagram_darkFillColor() {
         if ( _selected ) c = ACTIVE_SELECTED_FILL_COLOR;
         else c = ACTIVE_FILL_COLOR;
     };
+    */
+    
     return c;
     
 }
@@ -182,7 +187,7 @@ QColor tengu::AbstractAgentItem::_processDiagram_darkFillColor() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-QColor tengu::AbstractAgentItem::_processDiagram_brightFillColor() {
+QColor tengu::AbstractEntityItem::_processDiagram_brightFillColor() {
     
     QColor d = _processDiagram_darkFillColor();
     int r = _brighter( d.red() );
@@ -200,7 +205,7 @@ QColor tengu::AbstractAgentItem::_processDiagram_brightFillColor() {
 // *                                                                                                                  * 
 // ********************************************************************************************************************
 
-QPen tengu::AbstractAgentItem::_processDiagram_borderPen() {
+QPen tengu::AbstractEntityItem::_processDiagram_borderPen() {
     QPen pen;
     pen.setWidth( 3 );
     pen.setStyle( Qt::SolidLine );
@@ -257,12 +262,20 @@ void tengu::AbstractAgentItem::mouseMoveEvent ( QGraphicsSceneMouseEvent * event
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-QList<QPair<QString,QString>> tengu::AbstractAgentItem::properties() {
+QList<QPair<QString, QVariant>> tengu::AbstractEntityItem::properties() {
 
-    QList<QPair<QString, QString>> result;
-    result.append( QPair<QString, QString>("UUID", agent()->uuid() ) );
-    result.append( QPair<QString, QString>( tr("Name"), agent()->name() ) );
-    result.append( QPair<QString, QString>( tr("Comment"), agent()->comment() ) );
+    QList<QPair<QString, QVariant>> result;
+    
+    qDebug() << "Name=" << entity()->getName();
+    qDebug() << "Comment=" << entity()->getComment();
+    qDebug() << "UUID=" << entity()->getUUID();
+    
+    if ( entity() ) {
+        result.append( QPair<QString, QVariant>("UUID", QVariant( entity()->getUUID() ) ) );    
+        result.append( QPair<QString, QVariant>( tr("Name"), QVariant( entity()->getName() ) ) );
+        result.append( QPair<QString, QVariant>( tr("Comment"), QVariant( entity()->getComment() ) ) );
+    }
+    
     return result;
     
 }
@@ -275,7 +288,7 @@ QList<QPair<QString,QString>> tengu::AbstractAgentItem::properties() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::AbstractAgentItem::~AbstractAgentItem() {
+tengu::AbstractEntityItem::~AbstractEntityItem() {
 }
 
 

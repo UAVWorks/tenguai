@@ -13,7 +13,7 @@
 #include <QList>
 #include <QGraphicsItem>
 
-#include "AbstractAgentItem.h"
+#include "AbstractEntityItem.h"
 #include "VehicleItem.h"
 #include "TaskItem.h"
 #include "SproutItem.h"

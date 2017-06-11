@@ -19,7 +19,7 @@
 // ********************************************************************************************************************
 
 tengu::SproutItem::SproutItem ( tengu::Sprout * sprout, QGraphicsItem* parent ) 
-    : AbstractAgentItem ( ( AbstractAgent * ) sprout , parent )
+    : AbstractEntityItem ( sprout , parent )
 {
     _boundingRect = QRect( 0, 0, 71, 33 );
 }
@@ -121,6 +121,20 @@ void tengu::SproutItem::paint ( QPainter* painter, const QStyleOptionGraphicsIte
     
     painter->drawPixmap( 0, 0, pixmap );
 }
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                             Return sprout's properties.                                          *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                           Вернуть свойства данного "ростка".                                     *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+QList< QPair< QString, QVariant > > tengu::SproutItem::properties() {
+    qDebug() << "Properties on sprout...";
+    return tengu::AbstractEntityItem::properties();
+}
+
 
 // ********************************************************************************************************************
 // *                                                                                                                  *

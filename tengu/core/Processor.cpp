@@ -24,7 +24,7 @@ tengu::Processor::Processor ()
 {
     
     // _setActivity( false );
-    _execution_mode = EM_UNKNOWN;
+    _execution_mode = AbstractAgentKernel::EM_UNKNOWN;
     _configLoaded = _loadConfig( QString( PROCESSOR_CONFIG_FILE ) );    
         
 }
@@ -61,9 +61,9 @@ bool tengu::Processor::_loadConfig ( QString fileName ) {
         
         QString mode = settings.value("execution_mode", "" ).toString();
         if ( ! mode.isEmpty() ) {
-            if ( mode.toUpper() == "REAL" ) _execution_mode = EM_REAL;
-            else if ( mode.toUpper() == "XPLANE" ) _execution_mode = EM_XPLANE;
-            else if ( mode.toUpper() == "PREPAR3D" ) _execution_mode = EM_PREPAR3D;
+            if ( mode.toUpper() == "REAL" ) _execution_mode = AbstractAgentKernel::EM_REAL;
+            else if ( mode.toUpper() == "XPLANE" ) _execution_mode = AbstractAgentKernel::EM_XPLANE;
+            else if ( mode.toUpper() == "PREPAR3D" ) _execution_mode = AbstractAgentKernel::EM_PREPAR3D;
         };
                 
         return true;

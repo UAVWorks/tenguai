@@ -9,12 +9,12 @@
 
 #pragma once
 
-#include "AbstractAgentItem.h"
+#include "AbstractEntityItem.h"
 #include "Task.h"
 
 namespace tengu {
     
-    class TaskItem : public AbstractAgentItem {
+    class TaskItem : public AbstractEntityItem {
     
         Q_OBJECT
         

@@ -28,17 +28,7 @@ namespace tengu {
     class Processor : public AbstractAgent {
         
         Q_OBJECT
-        
-        // The execution mode of model (of this "processor" and all of it's children)
-        // Режим выполнения модели (данного "процессора" и всех его детей).
-        
-        enum execution_mode_t {
-            EM_UNKNOWN,
-            EM_REAL,
-            EM_XPLANE,
-            EM_PREPAR3D
-        };
-        
+                
         enum agent_state_t {
             AST_UNKNOWN,
             AST_WAIT_STARTING,

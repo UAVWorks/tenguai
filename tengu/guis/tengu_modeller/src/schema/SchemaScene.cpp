@@ -35,7 +35,7 @@ void tengu::SchemaScene::unselectAll() {
     
     QList < QGraphicsItem * > allItems = items();
     for ( int i=0; i<allItems.size(); i++ ) {
-        AbstractAgentItem * agentItem = ( AbstractAgentItem * ) allItems.at(i);
+        AbstractEntityItem * agentItem = ( AbstractEntityItem * ) allItems.at(i);
         if ( agentItem ) {
             if ( agentItem->isSelected() ) {
                 agentItem->setSelected( false );

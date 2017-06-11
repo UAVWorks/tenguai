@@ -90,8 +90,8 @@ namespace tengu {
             
             void __on_quit_request();  
             
-            void __on_schema_item_pressed( AbstractAgentItem * item, bool controlPressed );
-            void __on_schema_item_double_clicked( AbstractAgentItem * item, bool controlPressed );
+            void __on_schema_item_pressed( AbstractEntityItem * item, bool controlPressed );
+            void __on_schema_item_double_clicked( AbstractEntityItem * item, bool controlPressed );
                         
             
     };

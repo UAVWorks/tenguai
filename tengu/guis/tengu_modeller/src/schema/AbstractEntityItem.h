@@ -1,8 +1,8 @@
 // ********************************************************************************************************************
 // *                                                                                                                  *
-// *                              Abstract graphics object, representation of AbstractAgent.                          *
+// *                             Abstract graphics object, representation of AbstractEntity.                          *
 // * ---------------------------------------------------------------------------------------------------------------- *
-// *                           Абстрактный графический объект, представление AbstractAgent'а.                         *
+// *                           Абстрактный графический объект, представление AbstractEntity.                          *
 // *                                                                                                                  *
 // * Eugene G. Sysoletin <e.g.sysoletin@gmail.com>                                       Created 08 jun 2017 at 08:57 *
 // ********************************************************************************************************************
@@ -21,7 +21,7 @@
 #include <QList>
 #include <QPair>
 
-#include "AbstractAgent.h"
+#include "AbstractEntity.h"
 
 // Colors for process diagram.
 // Цвета для диаграммы процессов.
@@ -44,18 +44,18 @@
 
 namespace tengu {
 
-    class AbstractAgentItem : public QGraphicsObject {
+    class AbstractEntityItem : public QGraphicsObject {
         
         Q_OBJECT
         
         public:
             
-            AbstractAgentItem( AbstractAgent * agent, QGraphicsItem * parent = Q_NULLPTR );
-            virtual ~AbstractAgentItem();
+            AbstractEntityItem( AbstractEntity * entity, QGraphicsItem * parent = Q_NULLPTR );
+            virtual ~AbstractEntityItem();
         
             void paint( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = Q_NULLPTR);
             QRectF boundingRect() const;
-            AbstractAgent * agent();
+            AbstractEntity * entity();
             
             // Select this agent (to visual distinguish)
             // Выбрать агента (для визуального отличия)
@@ -67,11 +67,11 @@ namespace tengu {
             // Properties list. The pair of string. First is name of element, second is value of element.
             // Список свойств. Пара строк. Первая - имя элемента, вторая - его значение.
             
-            virtual QList<QPair<QString,QString>> properties();
+            virtual QList<QPair<QString, QVariant>> properties();
             
         protected:
             
-            AbstractAgent * _agent;
+            AbstractEntity * _entity;
             QRectF _boundingRect;
             
             int _brighter( int color );

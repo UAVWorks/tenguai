@@ -56,7 +56,9 @@ tengu::MainWindow::MainWindow(QWidget *parent)
     __schemaScene->addItem( i );
     
     Sprout * s = new Sprout( task );
+    qDebug() << "Birth sprout, name=" << s->getName();
     SproutItem * si = new SproutItem( s );
+    qDebug() << "Birth sproutItem";
     si->setX( 10 );
     si->setY( -80 );
     __schemaScene->addItem( si );
@@ -168,8 +170,8 @@ void tengu::MainWindow::__createToolBar() {
 
 void tengu::MainWindow::__createSchemaView() {
     __schemaView = new SchemaView( __schemaScene );
-    QObject::connect( __schemaView, SIGNAL( signalItemPressed( AbstractAgentItem *, bool )), this, SLOT( __on_schema_item_pressed ( AbstractAgentItem *, bool ) ) );
-    QObject::connect( __schemaView, SIGNAL( signalItemDoubleClicked( AbstractAgentItem *, bool )), this, SLOT( __on_schema_item_double_clicked( AbstractAgentItem *, bool ) ) );
+    QObject::connect( __schemaView, SIGNAL( signalItemPressed( AbstractEntityItem *, bool )), this, SLOT( __on_schema_item_pressed ( AbstractEntityItem *, bool ) ) );
+    QObject::connect( __schemaView, SIGNAL( signalItemDoubleClicked( AbstractEntityItem *, bool )), this, SLOT( __on_schema_item_double_clicked( AbstractEntityItem *, bool ) ) );
 }
 
 // ********************************************************************************************************************
@@ -180,7 +182,7 @@ void tengu::MainWindow::__createSchemaView() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::MainWindow::__on_schema_item_pressed ( tengu::AbstractAgentItem * item, bool controlPressed ) {
+void tengu::MainWindow::__on_schema_item_pressed ( tengu::AbstractEntityItem * item, bool controlPressed ) {
     
     if ( ! controlPressed ) __schemaScene->unselectAll();
     
@@ -192,7 +194,7 @@ void tengu::MainWindow::__on_schema_item_pressed ( tengu::AbstractAgentItem * it
     // Synchronizе properties of the selected agent
     // Синхронизация свойств выбранного агента.
     
-    __agentPropertyModel->setItem( item );
+    __agentPropertyModel->setEntityItem( item );
     __right->propertyView->adjustColumnWidth();
     
 }
@@ -205,7 +207,7 @@ void tengu::MainWindow::__on_schema_item_pressed ( tengu::AbstractAgentItem * it
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::MainWindow::__on_schema_item_double_clicked ( tengu::AbstractAgentItem * item, bool controlPressed ) {
+void tengu::MainWindow::__on_schema_item_double_clicked ( tengu::AbstractEntityItem * item, bool controlPressed ) {
 
 }
 

@@ -134,7 +134,7 @@ void tengu::SchemaView::mousePressEvent ( QMouseEvent * event ) {
         bool controlPressed = event->modifiers() & Qt::ControlModifier;
     
         if ( item ) {
-            emit signalItemPressed( ( AbstractAgentItem * ) item, controlPressed );
+            emit signalItemPressed( ( AbstractEntityItem * ) item, controlPressed );
         };
         
     };    
@@ -171,7 +171,7 @@ void tengu::SchemaView::mouseDoubleClickEvent ( QMouseEvent* event ) {
     QGraphicsItem * item = itemAt( event->pos() );
     bool controlPressed = event->modifiers() & Qt::ControlModifier;
     if ( item ) {
-        emit signalItemDoubleClicked( (AbstractAgentItem * ) item, controlPressed );
+        emit signalItemDoubleClicked( (AbstractEntityItem * ) item, controlPressed );
     };
 }
 

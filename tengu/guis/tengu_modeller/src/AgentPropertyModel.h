@@ -13,9 +13,10 @@
 #include <QAbstractItemModel>
 #include <QModelIndex>
 #include <QList>
+#include <QVariant>
 #include <QPair>
 
-#include "AbstractAgentItem.h"
+#include "AbstractEntityItem.h"
 #include "TaskItem.h"
 #include "SproutItem.h"
 
@@ -34,14 +35,16 @@ namespace tengu {
             int rowCount( const QModelIndex &parent = QModelIndex() ) const;
             QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
             QModelIndex parent( const QModelIndex & child ) const;
+            Qt::ItemFlags flags(const QModelIndex & index) const;
             QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+            bool setData(const QModelIndex & index, const QVariant & value, int role);
             
-            void setItem( AbstractAgentItem * agent );
+            void setEntityItem( AbstractEntityItem * item );
             
         private:
             
-            AbstractAgentItem * __item;
-            QList<QPair<QString, QString> > __properties;
+            AbstractEntityItem * __item;
+            QList<QPair<QString, QVariant> > __properties;
     };
 };
 

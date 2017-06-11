@@ -196,7 +196,7 @@ void tengu::AbstractAgent::__subscribe() {
 // ********************************************************************************************************************
 
 void tengu::AbstractAgent::addSprout ( tengu::Sprout * sprout ) {
-    __sprouts[ sprout->systemName() ] = sprout ;
+    __sprouts[ sprout->getUUID() ] = sprout ;
     __subscribe();
 }
 

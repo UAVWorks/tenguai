@@ -27,7 +27,7 @@ INCLUDEPATH += src src/schema ../../core ../../loredis/src
 
 LIBS += -lLoRedis -L../../loredis/build -ltengu_core -L../../core/build -lhiredis -levent
 
-HEADERS  += src/schema/AbstractAgentItem.h  \
+HEADERS  += src/schema/AbstractEntityItem.h \
         src/schema/TaskItem.h               \
         src/schema/SproutItem.h             \
         src/schema/VehicleItem.h            \
@@ -41,7 +41,7 @@ HEADERS  += src/schema/AbstractAgentItem.h  \
         src/schema/SchemaView.h      
 
 SOURCES += src/main.cpp                     \
-        src/schema/AbstractAgentItem.cpp    \
+        src/schema/AbstractEntityItem.cpp   \
         src/schema/TaskItem.cpp             \
         src/schema/SproutItem.cpp           \
         src/schema/VehicleItem.cpp          \

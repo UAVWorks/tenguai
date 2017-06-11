@@ -18,7 +18,7 @@
 // ********************************************************************************************************************
 
 tengu::TaskItem::TaskItem ( tengu::Task * task, QGraphicsItem * parent ) 
-    : AbstractAgentItem ( task , parent )
+    : AbstractEntityItem ( task , parent )
 {
     _boundingRect = QRectF( 0.0, 0.0, 400.0, 144.0 );
 }
@@ -113,7 +113,7 @@ void tengu::TaskItem::paint ( QPainter * painter, const QStyleOptionGraphicsItem
 // ********************************************************************************************************************
 
 tengu::Task * tengu::TaskItem::__task() {
-    return ( Task * ) _agent;
+    return ( Task * ) _entity;
 }
 
 // ********************************************************************************************************************

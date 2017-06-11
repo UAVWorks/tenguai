@@ -18,20 +18,18 @@
 #include <QUuid>
 
 #include "LoRedis.h"
+#include "AbstractEntity.h"
 
 namespace tengu {
 
-    class AbstractAgentKernel : public QObject {
+    class AbstractAgentKernel : public AbstractEntity {
     
         friend class Sprout;
         
         Q_OBJECT
-        
-        Q_PROPERTY( QString name READ name WRITE setName )
-        Q_PROPERTY( QString uuid READ uuid WRITE setUUID )
-        
+                        
         public:
-            
+                        
             AbstractAgentKernel();
             virtual ~AbstractAgentKernel();
             
@@ -65,23 +63,7 @@ namespace tengu {
             virtual bool usable();
             
             void addChild( AbstractAgentKernel * child );
-            
-            // true, really unique identifier for this object
-            // Действительно уникальный идентификатор для данного объекта.
-            
-            QString uuid();
-            void setUUID( QString uuid );            
-            
-            // The name of this agent.
-            // Имя агента.
-            
-            QString name();
-            void setName( QString name );
-            
-            
-            QString comment();
-            void setComment( QString comment );
-            
+                        
             // The agent can be provided either as object in memory
             // or separate process in the operation system for 
             // resource savings.
@@ -94,17 +76,7 @@ namespace tengu {
             
             
         protected:
-            
-            // Agent name
-            // Имя агента
-            
-            QString _name;
-            
-            // Any human readable comment for this agent.
-            // Любой человеко-ориентированный комментарий для агента.
-            
-            QString _comment;
-            
+                        
             QString _subProcessPath;
                         
             // Redis publicator and writer
@@ -138,12 +110,7 @@ namespace tengu {
             
             QList<AbstractAgentKernel * > _prefiousAgents;
             QList<AbstractAgentKernel * > _nextAgents;
-            
-            // Unique (in entire system range) identifier of this agent.
-            // Уникальный (в пределах вообще всей системы) идентификатор данного агента.
-            
-            QString _uuid;
-            
+                        
             // Tree-like structure of agents. For loading entire "tree branch" completely.
             // Древовидная структура агентов. Для загрузки всей "ветки" дерева целиком.
             

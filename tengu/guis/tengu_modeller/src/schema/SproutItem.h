@@ -10,12 +10,12 @@
 
 #pragma once
 
-#include "AbstractAgentItem.h"
+#include "AbstractEntityItem.h"
 #include "Sprout.h"
 
 namespace tengu {
     
-    class SproutItem : public AbstractAgentItem {
+    class SproutItem : public AbstractEntityItem {
         
         Q_OBJECT
         
@@ -25,6 +25,8 @@ namespace tengu {
             virtual ~SproutItem();
             
             void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = Q_NULLPTR);
+            
+            QList<QPair<QString, QVariant>> properties();
             
         private:
     };

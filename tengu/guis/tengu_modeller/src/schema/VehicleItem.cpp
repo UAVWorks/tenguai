@@ -18,7 +18,7 @@
 // ********************************************************************************************************************
 
 tengu::VehicleItem::VehicleItem ( tengu::Vehicle * vehicle, QGraphicsItem* parent ) 
-    : AbstractAgentItem ( (AbstractAgent * ) vehicle , parent )
+    : AbstractEntityItem ( vehicle , parent )
 {
 
 }

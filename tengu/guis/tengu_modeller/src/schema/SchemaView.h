@@ -21,7 +21,7 @@
 #include <QAction>
 #include <QPixmap>
 
-#include "AbstractAgentItem.h"
+#include "AbstractEntityItem.h"
 
 namespace tengu {
 
@@ -31,8 +31,8 @@ namespace tengu {
         
         signals:
             
-            void signalItemPressed( AbstractAgentItem * item, bool controlPressed );
-            void signalItemDoubleClicked( AbstractAgentItem * item, bool controlPressed );
+            void signalItemPressed( AbstractEntityItem * item, bool controlPressed );
+            void signalItemDoubleClicked( AbstractEntityItem * item, bool controlPressed );
         
         public:
             

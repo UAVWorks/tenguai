@@ -14,12 +14,14 @@
 #include <QObject>
 #include <QVariant>
 #include "AbstractAgentKernel.h"
+#include "AbstractEntity.h"
 
 namespace tengu {
     
-    class Sprout : public QObject {
+    class Sprout : public AbstractEntity {
         
         Q_OBJECT        
+
         Q_PROPERTY( QVariant value READ __getValue WRITE __setValue )
                     
         public:
@@ -38,15 +40,13 @@ namespace tengu {
             void unsubscribed( QString channel );
             virtual bool handleMessage( QString channel, QString message );
             
-            QString systemName();
-                        
         protected:
             
             bool _to_me( QString channel );
             
         private:
             
-            QString __system_name;
+            
             QVariant __value;
             
             bool __subscribed;

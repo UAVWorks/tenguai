@@ -44,7 +44,8 @@ LIBS += -lLoRedis -L../loredis/build
 
 INCLUDEPATH += ../loredis/src
 
-HEADERS += AbstractAgentKernel.h    \
+HEADERS += AbstractEntity.h         \
+        AbstractAgentKernel.h       \
         Sprout.h                    \
         AbstractAgent.h             \
         ORer.h                      \
@@ -59,7 +60,8 @@ HEADERS += AbstractAgentKernel.h    \
         State.h                     \        
         Vehicle.h
             
-SOURCES += AbstractAgentKernel.cpp  \
+SOURCES += AbstractEntity.cpp       \
+        AbstractAgentKernel.cpp     \
         Sprout.cpp                  \
         AbstractAgent.cpp           \
         ORer.cpp                    \

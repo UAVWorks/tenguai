@@ -11,12 +11,12 @@
 
 #include <QPixmap>
 
-#include "AbstractAgentItem.h"
+#include "AbstractEntityItem.h"
 #include "Vehicle.h"
 
 namespace tengu {
 
-    class VehicleItem : public AbstractAgentItem {
+    class VehicleItem : public AbstractEntityItem {
         
         Q_OBJECT
         public:
