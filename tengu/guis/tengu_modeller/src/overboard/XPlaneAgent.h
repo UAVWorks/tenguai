@@ -11,13 +11,16 @@
 
 #include <QSettings>
 #include <QString>
+#include <QDebug>
 
 #include "AbstractAgent.h"
+#include "Sprout.h"
 
 // @todo remake that is the same with X-Tengu.
 // Переделать так, чтобы было одинаково с X-Tengu.
 
 #define CREATE_XTENGU_SETTINGS      QSettings settings( "/etc/tengu/xtengu.conf", QSettings::IniFormat )
+#define TOTAL_AIRCRAFTS_COUNT 20
 
 namespace tengu {
 
@@ -30,11 +33,16 @@ namespace tengu {
             XPlaneAgent();
             virtual ~XPlaneAgent();
             
+            void setName( QString name );
+            void setExecutionMode( execution_mode_t mode );
+            
         protected:
             
         private:
             QString __controlGroup;
             QString __conditionGroup;
+            
+            void __init_sprout( QString settingsGroup, Sprout::sprout_type_t type, QString name );
             
     };
 };

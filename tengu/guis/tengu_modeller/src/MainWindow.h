@@ -62,6 +62,7 @@ namespace tengu {
             
             void __createMainMenu();
             void __createSchemaView();
+            void __createSchemaScene();
             void __createActions();
             void __createToolBar();
             void __createStatusBar();

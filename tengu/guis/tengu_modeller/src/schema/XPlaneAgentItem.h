@@ -1,37 +1,29 @@
 // ********************************************************************************************************************
 // *                                                                                                                  *
-// *                          QGraphicsScene adopted for AbstractAgent and his descedants.                            *
+// *                                Graphics representation of X-Plane as the agent.                                  *
 // * ---------------------------------------------------------------------------------------------------------------- *
-// *                      QGraphicsScene, адаптированная для абстрактного агента и его потомков.                      *
+// *                                 Графическое представление X-Plane как агента.                                    *
 // *                                                                                                                  *
-// * Eugene G. Sysoletin <e.g.sysoletin@gmail.com>                                       Created 10 jun 2017 at 11:11 *
+// * Eugene G. Sysoletin <e.g.sysoletin@gmail.com>                                       Created 12 jun 2017 at 08:58 *
 // ********************************************************************************************************************
 
 #pragma once
 
-#include <QGraphicsScene>
-#include <QList>
-#include <QGraphicsItem>
-
 #include "AbstractEntityItem.h"
-#include "XPlaneAgentItem.h"
-#include "VehicleItem.h"
-#include "TaskItem.h"
-#include "SproutItem.h"
+#include "XPlaneAgent.h"
 
 namespace tengu {
     
-    class SchemaScene : public QGraphicsScene {
+    class XPlaneAgentItem : public AbstractEntityItem {
         
         Q_OBJECT
         
         public:
             
-            SchemaScene ( QObject* parent = 0 );
-            virtual ~SchemaScene();
+            XPlaneAgentItem ( XPlaneAgent * entity, QGraphicsItem* parent = nullptr );
+            virtual ~XPlaneAgentItem();
             
-            void unselectAll();
-            
+        private:
     };
     
 };

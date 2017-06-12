@@ -45,9 +45,8 @@ tengu::MainWindow::MainWindow(QWidget *parent)
     
     lay->addWidget( __hSplitter );
     
-    __schemaScene = new SchemaScene();
-    
-    
+    __createSchemaScene();
+            
     Task * task = new Task();
     task->setName( "The task" );
     TaskItem * i = new TaskItem( task );
@@ -62,7 +61,7 @@ tengu::MainWindow::MainWindow(QWidget *parent)
     si->setX( 10 );
     si->setY( -80 );
     __schemaScene->addItem( si );
-    
+        
     /*
     VehicleItem * w = new VehicleItem( new Vehicle( nullptr, "Vehicle") );
     __canvas->addItem( w );
@@ -172,6 +171,32 @@ void tengu::MainWindow::__createSchemaView() {
     __schemaView = new SchemaView( __schemaScene );
     QObject::connect( __schemaView, SIGNAL( signalItemPressed( AbstractEntityItem *, bool )), this, SLOT( __on_schema_item_pressed ( AbstractEntityItem *, bool ) ) );
     QObject::connect( __schemaView, SIGNAL( signalItemDoubleClicked( AbstractEntityItem *, bool )), this, SLOT( __on_schema_item_double_clicked( AbstractEntityItem *, bool ) ) );
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                        The constructor of model's schema scene with predefined components.                       *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                         Конструктор "схемы" модели с предопределенными компонентами на ней.                      *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindow::__createSchemaScene() {
+    
+    // The scene itself.
+    // Сама сцена.
+    
+    __schemaScene = new SchemaScene();
+    
+    // We always have invisible X-Plane schema item for modelling.
+    // У нас всегда есть невидимый компонент схемы - X-Plane. Он для моделирования.
+    
+    XPlaneAgent * xplane = new XPlaneAgent();
+    XPlaneAgentItem * xpItem = new XPlaneAgentItem( xplane );
+    xpItem->setX( 0 );
+    xpItem->setY( 0 );
+    __schemaScene->addItem( xpItem );
+
 }
 
 // ********************************************************************************************************************

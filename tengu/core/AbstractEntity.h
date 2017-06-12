@@ -49,7 +49,7 @@ namespace tengu {
             // Имя агента.
             
             QString getName();
-            void setName( QString name );
+            virtual void setName( QString name );
             
             // The comment of this entity.
             // Комментарий данной "сущности".
@@ -61,7 +61,7 @@ namespace tengu {
             // Режим выполнения данной сущности (реальный, симуляция в X-Plane, всегда и др).
             
             execution_mode_t getExecutionMode();
-            void setExecutionMode( execution_mode_t mode );
+            virtual void setExecutionMode( execution_mode_t mode );
             
             // Has been this entity changed?
             // Была ли данная сущность изменена?

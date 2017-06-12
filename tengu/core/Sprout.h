@@ -26,6 +26,11 @@ namespace tengu {
                     
         public:
             
+            enum sprout_type_t {
+                SP_INPUT,
+                SP_OUTPUT
+            };
+            
             // The name should be unique in the parent (owner) namespace.
             // Имя лучше бы было уникальным в пределах родителя (владельца).
             
@@ -34,11 +39,14 @@ namespace tengu {
             
             void setInputChannel( QString channel );
             void setOutputChannel( QString channel );
+            void setSproutType( sprout_type_t type );
+            sprout_type_t getSproutType();
             
             void subscribe();
             void subscribed( QString channel );
             void unsubscribed( QString channel );
             virtual bool handleMessage( QString channel, QString message );
+                        
             
         protected:
             
@@ -58,7 +66,9 @@ namespace tengu {
             QString __outputChannel;
             
             QVariant __getValue();
-            void __setValue( QVariant value );            
+            void __setValue( QVariant value );
+            
+            sprout_type_t __sprout_type;
             
         signals:
             

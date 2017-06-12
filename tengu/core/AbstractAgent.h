@@ -42,6 +42,11 @@ namespace tengu {
             
             void addSprout( Sprout * sprout );
             
+            // Total sprout's count for this agent.
+            // Общее число "ростков" агента.
+            
+            int sproutsCount();
+            
             // Activity channel, especially channel for change agent activity.
             // Установка канала активности, специально выделенного для управления активностью агента.
             
