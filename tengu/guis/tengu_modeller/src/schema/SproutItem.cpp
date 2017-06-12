@@ -131,7 +131,6 @@ void tengu::SproutItem::paint ( QPainter* painter, const QStyleOptionGraphicsIte
 // ********************************************************************************************************************
 
 QList< QPair< QString, QVariant > > tengu::SproutItem::properties() {
-    qDebug() << "Properties on sprout...";
     return tengu::AbstractEntityItem::properties();
 }
 

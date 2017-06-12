@@ -26,6 +26,7 @@ tengu::AgentPropertyView::AgentPropertyView(QWidget * parent)
     QHeaderView * vh = verticalHeader();
     vh->setSectionResizeMode(QHeaderView::Fixed);
     vh->setDefaultSectionSize( 16 );    
+    
 }
 
 // ********************************************************************************************************************

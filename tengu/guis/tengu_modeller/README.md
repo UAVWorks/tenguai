@@ -7,7 +7,7 @@ This is graphical tool for work with artifical intelligence models. At the momen
 # The latest operations.
 
 - **12 jun 2017** Add XPlaneAgent and XPlaneAgentItem as persistent invisible agent to simulation purpose. Add a tool buttons
-    for simulation and change execution mode.
+    for simulation and change execution mode. Background for agent's properties.
 - **11 jun 2017** Added MVC-bindings with the entity properties. The first properties of "entities" appeared on the screen.
 
 Currently, the application looks like this:

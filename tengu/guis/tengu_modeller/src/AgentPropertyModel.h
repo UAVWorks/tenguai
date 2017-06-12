@@ -15,6 +15,8 @@
 #include <QList>
 #include <QVariant>
 #include <QPair>
+#include <QPalette>
+#include <QWidget>
 
 #include "AbstractEntityItem.h"
 #include "TaskItem.h"

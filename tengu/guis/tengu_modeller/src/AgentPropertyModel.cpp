@@ -85,9 +85,7 @@ QModelIndex tengu::AgentPropertyModel::parent( const QModelIndex & child ) const
 // ********************************************************************************************************************
 
 Qt::ItemFlags tengu::AgentPropertyModel::flags(const QModelIndex & index) const {
-    
-    qDebug() << "Get flags...";
-    
+        
     Qt::ItemFlags defaultFlags = Qt::ItemIsEnabled | Qt::ItemNeverHasChildren;
     
     if ( !index.isValid() ) return defaultFlags;
@@ -123,17 +121,15 @@ Qt::ItemFlags tengu::AgentPropertyModel::flags(const QModelIndex & index) const 
 // ********************************************************************************************************************
 
 QVariant tengu::AgentPropertyModel::data( const QModelIndex & index, int role ) const {
+        
+    QVariant answer;
     
-    qDebug() << "Get data...";
-    
-    if ( ! index.isValid() ) return QVariant();
+    if ( ! index.isValid() ) return answer;
     
     if ( ( role == Qt::DisplayRole ) || ( role == Qt::EditRole ) ) {
     
         // Want to display. Return contents of properties list.
-        // Хотим показываать. Возвращаем содержание списка свойств.
-        
-        QVariant answer;
+        // Хотим показываать. Возвращаем содержание списка свойств.                
         
         if ( index.row() < __properties.size() ) {
             if ( index.column() == 0 ) answer = QVariant( __properties.at( index.row() ).first );
@@ -143,9 +139,44 @@ QVariant tengu::AgentPropertyModel::data( const QModelIndex & index, int role ) 
         return answer;
     };
     
-    qDebug() << "get data, but not for display. Role=" << role;
+    if ( role == Qt::BackgroundColorRole ) {
+        
+        // Using temporary invisible widget to grab system background color.
+        // Используем временный невидимый виджит, чтобы стащить системный цвет фона.
+        
+        QWidget w;
+        QColor widgetBackground = w.palette().color( QPalette::Window );
+        
+        // Background for UUID contents which is disable for editing.
+        // Цвет фона для содержимого UUID'а, которое нельзя редактировать.
+        
+        QColor disabledBackground = w.palette().color( QPalette::Button );
+        
+        if ( index.column() == 0 ) return QVariant( widgetBackground );
+        else if ( index.row() == 0 ) return QVariant( disabledBackground );
+    };        
     
-    return QVariant();
+    // Does not work... :-(
+    // Не работает... :-(
+    //if ( role == Qt::BackgroundRole ) {
+    //    
+    //    // The background role. Will return QBrush object.
+    //    // Роль - "фон". Будем возвращать объект QBrush.
+    //    
+    //    QBrush b;
+    //    b.setColor( QColor(255,0,0) );
+    //    return QVariant( b );
+    //    
+    //};
+    
+    if ( role == Qt::FontRole ) {
+        QFont font("Tahoma", 9 );
+        return QVariant( font );
+    };
+        
+    // qDebug() << "get data, but not for display. Role=" << role;
+    
+    return answer;
     
 }
 
@@ -181,11 +212,8 @@ bool tengu::AgentPropertyModel::setData(const QModelIndex & index, const QVarian
 
 void tengu::AgentPropertyModel::setEntityItem ( tengu::AbstractEntityItem * item ) {
 
-    qDebug() << "Set agent item, item=" << item;
     __item = item;
-    qDebug() << "Try to get item properties...";
     __properties = item->properties();    
-    qDebug() << "After agent properties size=" << __properties.size();
     emit layoutChanged();
     
 }

@@ -267,10 +267,6 @@ QList<QPair<QString, QVariant>> tengu::AbstractEntityItem::properties() {
 
     QList<QPair<QString, QVariant>> result;
     
-    qDebug() << "Name=" << entity()->getName();
-    qDebug() << "Comment=" << entity()->getComment();
-    qDebug() << "UUID=" << entity()->getUUID();
-    
     if ( entity() ) {
         result.append( QPair<QString, QVariant>("UUID", QVariant( entity()->getUUID() ) ) );    
         result.append( QPair<QString, QVariant>( tr("Name"), QVariant( entity()->getName() ) ) );
