@@ -98,10 +98,12 @@ bool tengu::Processor::configCorrect( bool say ) {
     };
     */
     
+    /*
     if ( getExecutionMode() == EM_UNKNOWN ) {
         if ( say ) qDebug() << tr("Processor::configCorrect() : execution mode unknown.");
         return false;
     };
+    */
     
     return true;
 }
