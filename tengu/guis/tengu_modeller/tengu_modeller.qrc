@@ -12,6 +12,8 @@
     <file alias="control_play_pause_blue_16.png">images/control_play_pause_blue_16.png</file>
     <file alias="control_stop_blue_16.png">images/control_stop_blue_16.png</file>
     <file alias="control_start_blue_16.png">images/control_start_blue_16.png</file>
+    <file alias="process_begin_16.png">images/process_begin_16.png</file>
+    <file alias="process_end_16.png">images/process_end_16.png</file>
     <file alias="Falcon_256.png">images/Falcon-256.png</file>
 </qresource>
 </RCC>

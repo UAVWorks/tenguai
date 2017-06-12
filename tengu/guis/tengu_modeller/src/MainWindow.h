@@ -32,6 +32,7 @@
 #include "Task.h"
 #include "AgentPropertyModel.h"
 #include "MainWindowLeft.h"
+#include "LibraryTab.h"
 #include "SchemaView.h"
 #include "SchemaScene.h"
 #include "MainWindowRight.h"
@@ -74,7 +75,10 @@ namespace tengu {
             
             QToolBar * __toolbar_elements_library;
             
+            LibraryTab * __library_tab;
+            
             void __createMainMenu();
+            void __createLibraryTab();
             void __createSchemaView();
             void __createSchemaScene();
             void __createActions();

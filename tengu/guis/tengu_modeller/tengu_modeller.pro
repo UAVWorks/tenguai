@@ -33,6 +33,9 @@ HEADERS  += src/overboard/XPlaneAgent.h     \
         src/schema/TaskItem.h               \
         src/schema/SproutItem.h             \
         src/schema/VehicleItem.h            \
+        src/LibraryTab_Button.h             \
+        src/LibraryTab_Processes.h          \
+        src/LibraryTab.h                    \
         src/MainWindow.h                    \
         src/MainWindowLeft.h                \
         src/AgentPropertyModel.h            \
@@ -49,6 +52,9 @@ SOURCES += src/main.cpp                     \
         src/schema/TaskItem.cpp             \
         src/schema/SproutItem.cpp           \
         src/schema/VehicleItem.cpp          \
+        src/LibraryTab_Button.cpp           \
+        src/LibraryTab_Processes.cpp        \
+        src/LibraryTab.cpp                  \
         src/MainWindow.cpp                  \
         src/MainWindowLeft.cpp              \
         src/AgentPropertyModel.cpp          \

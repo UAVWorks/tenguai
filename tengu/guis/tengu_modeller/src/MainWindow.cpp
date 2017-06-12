@@ -82,9 +82,10 @@ tengu::MainWindow::MainWindow(QWidget *parent)
     
     __hSplitter->addWidget( __left );
     __hSplitter->addWidget( __schemaView );
-    __hSplitter->addWidget( __right );
+    __hSplitter->addWidget( __right );        
             
     __createActions();
+    __createLibraryTab();
     __createMainMenu();
     __createToolBar();
     __createStatusBar();    
@@ -174,6 +175,19 @@ void tengu::MainWindow::__createStatusBar() {
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
+// *                               Create component's library tabulator for bottom toolbar.                           *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                            Создание табулятора библиотеки элементов для нижнего тулбара.                         *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindow::__createLibraryTab() {
+    __library_tab = new LibraryTab();
+}
+
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
 // *                                                The toolbar constructor.                                          *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                                           Конструктор инструментальной панели.                                   *
@@ -194,6 +208,8 @@ void tengu::MainWindow::__createToolBar() {
     __toolbar_execution_mode->addAction( __action__execution_mode_xplane );
     __toolbar_execution_mode->addAction( __action__execution_mode_real );
     
+    __toolbar_execution_mode->addSeparator();
+    
     __toolbar_execution_mode->addAction( __action__simulation_begin );
     __toolbar_execution_mode->addAction( __action__simulation_start );
     __toolbar_execution_mode->addAction( __action__simulation_pause );
@@ -208,6 +224,7 @@ void tengu::MainWindow::__createToolBar() {
     addToolBarBreak();
     
     __toolbar_elements_library = new QToolBar();
+    __toolbar_elements_library->addWidget( __library_tab );
     addToolBar( Qt::TopToolBarArea, __toolbar_elements_library );
 }
 
