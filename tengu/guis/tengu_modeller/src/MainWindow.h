@@ -16,6 +16,9 @@
 #include <QGraphicsScene>
 #include <QStatusBar>
 #include <QToolBar>
+#include <QToolButton>
+#include <QButtonGroup>
+#include <QActionGroup>
 #include <QMenuBar>
 #include <QMenu>
 #include <QIcon>
@@ -58,6 +61,17 @@ namespace tengu {
             SchemaScene * __schemaScene;
             
             QToolBar * __toolbar_file;
+            
+            QToolBar * __toolbar_execution_mode;
+            
+            QAction * __action__execution_mode_xplane;
+            QAction * __action__execution_mode_real;
+            
+            QAction * __action__simulation_begin;
+            QAction * __action__simulation_start;
+            QAction * __action__simulation_pause;
+            QAction * __action__simulation_stop;
+            
             QToolBar * __toolbar_elements_library;
             
             void __createMainMenu();
@@ -93,6 +107,14 @@ namespace tengu {
             
             void __on_schema_item_pressed( AbstractEntityItem * item, bool controlPressed );
             void __on_schema_item_double_clicked( AbstractEntityItem * item, bool controlPressed );
+            
+            void __on_set_execution_mode_xplane();
+            void __on_set_execution_mode_real();
+            
+            void __on__simulation_begin();
+            void __on__simulation_stop();
+            void __on__simulation_start();
+            void __on__simulation_pause();
                         
             
     };

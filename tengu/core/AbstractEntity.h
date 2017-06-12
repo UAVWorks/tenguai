@@ -29,11 +29,10 @@ namespace tengu {
             // Режим выполнения модели (данного "процессора" и всех его детей).
         
             enum execution_mode_t {
-                EM_UNKNOWN,
-                EM_ALWAYS,
-                EM_REAL,
-                EM_XPLANE,
-                EM_PREPAR3D
+                EM_ALWAYS       = 0,
+                EM_REAL         = 1,
+                EM_XPLANE       = 2,
+                EM_PREPAR3D     = 3
             };                    
 
             explicit AbstractEntity ( QObject* parent = nullptr );

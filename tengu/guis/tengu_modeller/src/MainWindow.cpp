@@ -105,6 +105,41 @@ void tengu::MainWindow::__createActions() {
     __actionQuit->setIcon( QIcon( QPixmap(":door_open_16.png") ) );
     QObject::connect( __actionQuit, SIGNAL(triggered()), this, SLOT( __on_quit_request() ) );
     
+    // Execution mode actions.
+    // Действия изменения режима выполнения.
+    
+    QActionGroup * groupExecutionMode = new QActionGroup( this );
+    
+    __action__execution_mode_xplane = new QAction( QIcon( QPixmap(":xplane10_16.png") ), tr("Set execution mode to X-Plane") , groupExecutionMode );
+    QObject::connect( __action__execution_mode_xplane, SIGNAL( triggered() ), this, SLOT( __on_set_execution_mode_xplane() ) );
+    __action__execution_mode_xplane->setCheckable( true );
+    
+    __action__execution_mode_real = new QAction( QIcon( QPixmap(":cog_16.png") ), tr("Set execution mode to Real"), groupExecutionMode );
+    QObject::connect( __action__execution_mode_real, SIGNAL( triggered() ), this, SLOT( __on_set_execution_mode_real() ) );
+    __action__execution_mode_real->setCheckable( true );
+    
+    __action__execution_mode_xplane->setChecked( true );
+    
+    // Action for simulation process.
+    // Действия для процесса симуляции.
+    
+    __action__simulation_begin = new QAction( QIcon( QPixmap(":control_start_blue_16.png") ), tr("Jump to simulation begin"), this );
+    QObject::connect( __action__simulation_begin, SIGNAL( triggered() ), this, SLOT( __on__simulation_begin() ) );
+    __action__simulation_begin->setEnabled( false );
+    
+    __action__simulation_start = new QAction( QIcon( QPixmap(":control_play_blue_16.png") ), tr("Start a simulation process"), this );
+    QObject::connect( __action__simulation_start, SIGNAL( triggered() ), this, SLOT( __on__simulation_start() ) );
+    __action__simulation_start->setEnabled( false );
+    
+    __action__simulation_stop = new QAction( QIcon( QPixmap(":control_stop_blue_16.png") ), tr("Stop a simulation process"), this );
+    QObject::connect( __action__simulation_stop, SIGNAL( triggered() ), this, SLOT( __on__simulation_stop() ) );
+    __action__simulation_stop->setEnabled( false );
+    
+    __action__simulation_pause = new QAction( QIcon( QPixmap(":control_play_pause_blue_16.png") ), tr("Pause a simulation process"), this );
+    QObject::connect( __action__simulation_pause, SIGNAL( triggered() ), this, SLOT( __on__simulation_pause() ) );
+    __action__simulation_pause->setEnabled( false );
+
+    
 }
 
 // ********************************************************************************************************************
@@ -150,8 +185,25 @@ void tengu::MainWindow::__createToolBar() {
     __toolbar_file = new QToolBar();
     
     addToolBar( Qt::TopToolBarArea, __toolbar_file );
-    QToolBar * tb1 = new QToolBar();
-    addToolBar( Qt::TopToolBarArea, tb1 );
+    
+    // Model execution mode toolbar
+    // Тулбар режима выполнения модели.
+    
+    __toolbar_execution_mode = new QToolBar();
+    __toolbar_execution_mode->setIconSize( QSize(16,16) );
+    __toolbar_execution_mode->addAction( __action__execution_mode_xplane );
+    __toolbar_execution_mode->addAction( __action__execution_mode_real );
+    
+    __toolbar_execution_mode->addAction( __action__simulation_begin );
+    __toolbar_execution_mode->addAction( __action__simulation_start );
+    __toolbar_execution_mode->addAction( __action__simulation_pause );
+    __toolbar_execution_mode->addAction( __action__simulation_stop );
+    
+    addToolBar( Qt::TopToolBarArea, __toolbar_execution_mode );
+    
+    // __toolbutton_em_xplane = new QToolButton();
+    // __toolbutton_em_xplane->setFixedSize( QSize( 22, 22 ) );
+    // groupExecutionMode->addButton( __toolbutton_em_xplane );       
         
     addToolBarBreak();
     
@@ -236,6 +288,77 @@ void tengu::MainWindow::__on_schema_item_double_clicked ( tengu::AbstractEntityI
 
 }
 
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                              Set execution mode to real.                                         *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                         Установить режим выполнения в "реальный".                                *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindow::__on_set_execution_mode_real() {
+
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                            Set execution mode to X-Plane.                                        *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                       Установить режим выполнения в "X-Plane"                                    *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindow::__on_set_execution_mode_xplane() {
+
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                       User want jump to begin of simulation.                                     *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                   Пользователь хочет перейти на начало симуляции.                                *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindow::__on__simulation_begin() {
+
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                         User want start a simulation process.                                    *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                      Пользователь хочет начать процесс симуляции.                                *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindow::__on__simulation_start() {
+
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                         User want pause simulation process.                                      *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                Пользователь хочет поставить процесс симуляции на паузу.                          *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindow::__on__simulation_pause() {
+
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                        User want stop a simulation process.                                      *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                  Пользователь хочет остановить процесс симуляции.                                *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindow::__on__simulation_stop() {
+
+}
 
 // ********************************************************************************************************************
 // *                                                                                                                  *

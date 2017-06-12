@@ -28,7 +28,7 @@ tengu::AbstractEntity::AbstractEntity ( QObject* parent )
     
     __uuid = QUuid::createUuid().toString();
     
-    __execution_mode = EM_UNKNOWN;
+    __execution_mode = EM_ALWAYS;
     
     _changed = false;
 
