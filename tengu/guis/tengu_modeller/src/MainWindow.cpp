@@ -92,7 +92,7 @@ tengu::MainWindow::MainWindow(QWidget *parent)
     
     __mongo = new MongoStorage();
     
-    __mongo->store( task->toJSON() );
+    __mongo->store( task );
     
 }
 

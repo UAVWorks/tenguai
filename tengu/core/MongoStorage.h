@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include <string>
 
 #include <bson.h>
 #include <bcon.h>
@@ -18,6 +19,7 @@
 #include <QString>
 #include <QDebug>
 #include <QJsonObject>
+#include <QJsonDocument>
 
 #include "AbstractEntity.h"
 
@@ -29,16 +31,20 @@ namespace tengu {
         public:
             
             MongoStorage ( QString host = "localhost", int port = 27017 );
-            virtual ~MongoStorage();
+            virtual ~MongoStorage();    
             
-            void store( QJsonObject jsonObject );
+            void store( AbstractEntity * e );
             
         protected:
         private:
             
+            void __insert_single_object( QJsonObject jsonObject );
+            
             mongoc_client_t * __client;
-            mongoc_database_t * __database;
-            mongoc_collection_t * __collection;
+            
+            bson_t * __create_bson( QJsonObject o );
+            // mongoc_database_t * __database;
+            // mongoc_collection_t * __collection;
     };
     
 };
