@@ -11,6 +11,7 @@
 
 #include <QObject>
 #include <QUuid>
+#include <QJsonObject>
 
 namespace tengu {
     
@@ -66,6 +67,8 @@ namespace tengu {
             // Была ли данная сущность изменена?
             
             bool hasChanged();
+            
+            virtual QJsonObject toJSON();
             
         protected:
             

@@ -13,8 +13,12 @@
 #include <QIcon>
 #include <QString>
 #include <QSize>
+#include <QEvent>
 #include <QMouseEvent>
 #include <QPoint>
+#include <QDebug>
+#include <QDrag>
+#include <QMimeData>
 
 namespace tengu {
     
@@ -32,10 +36,12 @@ namespace tengu {
             void mousePressEvent( QMouseEvent * event );
             void mouseReleaseEvent( QMouseEvent * event );
             void mouseMoveEvent( QMouseEvent * event );
+            void leaveEvent( QEvent * event );
             
         private:
             
             bool __mouse_left_button_pressed;
+            bool __dragging;
             QPoint __mouse_pressed_position;
             
     };

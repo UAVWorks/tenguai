@@ -42,9 +42,10 @@ LIBS += -lLoRedis -L../loredis/build
 
 #-lopencv_core -lopencv_video -lopencv_highgui -lopencv_imgproc
 
-INCLUDEPATH += ../loredis/src
+INCLUDEPATH += ../loredis/src /usr/include/libbson-1.0 /usr/include/libmongoc-1.0/
 
-HEADERS += AbstractEntity.h         \
+HEADERS += MongoStorage.h           \
+        AbstractEntity.h            \
         AbstractAgentKernel.h       \
         Sprout.h                    \
         AbstractAgent.h             \
@@ -60,7 +61,8 @@ HEADERS += AbstractEntity.h         \
         State.h                     \        
         Vehicle.h
             
-SOURCES += AbstractEntity.cpp       \
+SOURCES += MongoStorage.cpp         \
+        AbstractEntity.cpp          \
         AbstractAgentKernel.cpp     \
         Sprout.cpp                  \
         AbstractAgent.cpp           \

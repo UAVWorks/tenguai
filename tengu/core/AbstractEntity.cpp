@@ -146,6 +146,35 @@ bool tengu::AbstractEntity::hasChanged() {
     return _changed;
 }
 
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                           Convert an entity to JSON format.                                      *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                       Преобразование "сущности" в формат JSON.                                   *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+QJsonObject tengu::AbstractEntity::toJSON() {
+    
+    QJsonObject o;
+    o.insert("database", "tengu_entities");
+    o.insert("uuid", __uuid );
+    o.insert("name", __name );
+    o.insert("comment", __comment );
+    o.insert("execution_mode", (int) __execution_mode );
+    
+    /*
+    QJsonArray indexes;
+    QJsonArray idx_up;
+    idx_up.insert("uuid");
+    indexes.insert( idx_up );    
+    o.insert("indexes", indexes );
+    */
+    
+    return o;
+    
+}
+
 
 // ********************************************************************************************************************
 // *                                                                                                                  *

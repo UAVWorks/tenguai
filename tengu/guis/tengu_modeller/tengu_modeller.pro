@@ -23,9 +23,9 @@ UI_DIR=build/uic
 RCC_DIR=build/obj
 OBJECTS_DIR=build/obj
 
-INCLUDEPATH += src src/schema src/overboard ../../core ../../loredis/src
+INCLUDEPATH += src src/schema src/overboard ../../core ../../loredis/src /usr/include/libbson-1.0 /usr/include/libmongoc-1.0/
 
-LIBS += -lLoRedis -L../../loredis/build -ltengu_core -L../../core/build -lhiredis -levent
+LIBS += -lLoRedis -L../../loredis/build -ltengu_core -L../../core/build -lhiredis -levent -lmongoc-1.0 -L/usr/lib/x86_64-linux-gnu
 
 HEADERS  += src/overboard/XPlaneAgent.h     \ 
         src/schema/AbstractEntityItem.h     \

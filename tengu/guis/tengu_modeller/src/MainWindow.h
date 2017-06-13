@@ -27,6 +27,7 @@
 #include <QSettings>
 #include <QRect>
 
+#include "MongoStorage.h"
 #include "AbstractAgent.h"
 #include "WorkSpace.h"
 #include "Task.h"
@@ -38,6 +39,7 @@
 #include "MainWindowRight.h"
 #include "Constants.h"
 #include "../guis.h"
+
 
 namespace tengu {
     
@@ -76,6 +78,8 @@ namespace tengu {
             QToolBar * __toolbar_elements_library;
             
             LibraryTab * __library_tab;
+            
+            MongoStorage * __mongo;
             
             void __createMainMenu();
             void __createLibraryTab();

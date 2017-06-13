@@ -21,6 +21,7 @@ tengu::LibraryTab_Button::LibraryTab_Button ( QIcon icon, QString hint )
     : QPushButton()
 {
     __mouse_left_button_pressed = false;
+    __dragging = false;
     setFlat( true );
     setIcon( icon );
     setToolTip( hint );
@@ -57,8 +58,29 @@ void tengu::LibraryTab_Button::mouseMoveEvent ( QMouseEvent* event ) {
     
     QAbstractButton::mouseMoveEvent ( event );
     
-    if ( __mouse_left_button_pressed ) {
-        QPoint pos = event->pos();
+    if ( ( __mouse_left_button_pressed ) && ( ! __dragging ) ) {
+        
+        QPoint pos = event->pos() - __mouse_pressed_position;
+        if ( pos.manhattanLength() > 3 ) {
+            
+            // Start of dragging
+            // Начало перетаскивания
+            
+            __dragging = true;
+            QDrag * drag = new QDrag(this);
+            QMimeData *mimeData = new QMimeData;
+
+            // mimeData->setText( this->toolTip() );
+            mimeData->setData("text/json", "{ action: \"add\", class : \"ProcessBegin\")");
+            drag->setMimeData(mimeData);
+            QPixmap pm = icon().pixmap( QSize(16,16) );
+            drag->setPixmap( pm );
+
+            // Qt::DropAction dropAction = 
+            drag->exec();
+            __dragging = false;            
+            
+        };
     };
 }
 
@@ -77,6 +99,19 @@ void tengu::LibraryTab_Button::mouseReleaseEvent ( QMouseEvent* event ) {
     if ( event->buttons() | Qt::LeftButton ) {
         __mouse_left_button_pressed = false;
     };
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                                Mouse leaves this widget.                                         *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                            Мышка покинула территорию виджита.                                    *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::LibraryTab_Button::leaveEvent ( QEvent* event ) {
+    QWidget::leaveEvent ( event );
+    update();
 }
 
 

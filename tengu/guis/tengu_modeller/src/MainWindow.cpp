@@ -90,6 +90,10 @@ tengu::MainWindow::MainWindow(QWidget *parent)
     __createToolBar();
     __createStatusBar();    
     
+    __mongo = new MongoStorage();
+    
+    __mongo->store( task->toJSON() );
+    
 }
 
 // ********************************************************************************************************************
