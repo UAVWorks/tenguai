@@ -24,8 +24,11 @@ tengu::AbstractEntityItem::AbstractEntityItem( AbstractEntity * entity, QGraphic
     _boundingRect = QRectF(0, 0, 20, 20);
     _selected = false;
     _decomposite = false;
+    _changed = false;
     
-    __mousePressed = false;
+    __mousePressed = false;        
+    __uuid = QUuid::createUuid().toString();
+    __lastModified = QDateTime::currentDateTimeUtc();
     
     // setAcceptHoverEvents( true );
     // setAcceptTouchEvents( true );
@@ -62,11 +65,11 @@ void tengu::AbstractEntityItem::paint( QPainter * painter, const QStyleOptionGra
 // *                        Вернуть агента, на котором основывается данный графический элемент.                       *
 // *                                                                                                                  *
 // ********************************************************************************************************************
-
+/*
 tengu::AbstractEntity * tengu::AbstractEntityItem::entity() {
     return _entity;
 }
-
+*/
 // ********************************************************************************************************************
 // *                                                                                                                  *
 // *                                              Is this agent selected?                                             *
@@ -78,7 +81,6 @@ tengu::AbstractEntity * tengu::AbstractEntityItem::entity() {
 bool tengu::AbstractEntityItem::isSelected() {
     return _selected;
 }
-
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
@@ -267,10 +269,10 @@ QList<QPair<QString, QVariant>> tengu::AbstractEntityItem::properties() {
 
     QList<QPair<QString, QVariant>> result;
     
-    if ( entity() ) {
-        result.append( QPair<QString, QVariant>("UUID", QVariant( entity()->getUUID() ) ) );    
-        result.append( QPair<QString, QVariant>( tr("Name"), QVariant( entity()->getName() ) ) );
-        result.append( QPair<QString, QVariant>( tr("Comment"), QVariant( entity()->getComment() ) ) );
+    if ( _entity ) {
+        result.append( QPair<QString, QVariant>("UUID", QVariant( _entity->getUUID() ) ) );    
+        result.append( QPair<QString, QVariant>( tr("Name"), QVariant( _entity->getName() ) ) );
+        result.append( QPair<QString, QVariant>( tr("Comment"), QVariant( _entity->getComment() ) ) );
     }
     
     return result;
@@ -299,6 +301,171 @@ bool tengu::AbstractEntityItem::isDecomposite() {
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
+// *       Get UUID of this object. This is not the same as uuid of entity this object was based on.                  *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *     Вернуть UUID данного объекта. Это не то же самое, что UUID сущности, на которой данный объект базируется.    *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+QString tengu::AbstractEntityItem::getUUID() {
+    return __uuid;
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                  Return the name, wrapper for the entity object.                                 *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                    Вернуть имя, обертка для объекта-сущности.                                    *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+QString tengu::AbstractEntityItem::getName() {
+    
+    if ( _entity ) return _entity->getName();
+    return QString("");
+    
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                     Set the name. Wrapper for entity object.                                     *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                   Установить имя. Обертка для объекта-сущности.                                  *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::AbstractEntityItem::setName ( QString name ) {
+    if ( _entity ) _entity->setName( name );
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                Return comment. This is only wrapper for entity object.                           *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                             Вернуть комментарий. Просто обертка для объекта сущности.                            *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+QString tengu::AbstractEntityItem::getComment() {
+    
+    if ( _entity ) return _entity->getComment();    
+    return QString("");
+    
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                 Set comment, wrapper for the entity object.                                      *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                              Установить комментарий, обертка для объекта сущности.                               *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::AbstractEntityItem::setComment ( QString comment ) {
+    if ( _entity ) _entity->setComment( comment );
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                  Execution mode is the same as for entity object.                                *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                          Режим выполнения - тот же самый, что и у объекта-сущности.                              *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+tengu::AbstractStorageableEntity::execution_mode_t tengu::AbstractEntityItem::getExecutionMode() {
+    
+    if ( _entity ) return _entity->getExecutionMode();
+    return EM_ALWAYS;
+    
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                               Set execution mode, the wrapper for the entity object.                             *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                           Установка режима выполнения, обертка для объекта-сущности.                             *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::AbstractEntityItem::setExecutionMode ( tengu::AbstractStorageableEntity::execution_mode_t mode ) {
+    if ( _entity ) _entity->setExecutionMode( mode );
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                             Has been this object changed?                                        *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                             Был ли данный объект изменен?                                        *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+bool tengu::AbstractEntityItem::hasChanged() {
+    if ( _entity ) return ( _entity->hasChanged() || _changed );
+    return _changed;
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                     The latest modification time of this object.                                 *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                         Последнее время модификации объекта.                                     *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+QDateTime tengu::AbstractEntityItem::lastModified() {
+    
+    if ( _entity ) {
+        if ( _entity->lastModified() > __lastModified ) return _entity->lastModified();
+        return __lastModified;
+    };
+    
+    return __lastModified;
+    
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                           Conversion from object to json                                         *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                           Преобразование из объекта в JSON.                                      *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+QJsonObject tengu::AbstractEntityItem::toJSON() {
+    
+    QJsonObject o;
+    if ( _entity ) {
+        o = _entity->toJSON();
+        
+        // The UUIDs is different.
+        // UUIDы разные.
+        
+        o.insert("entity_uuid", _entity->getUUID() );        
+    };
+    o.insert("uuid", getUUID() );
+    
+    // This object's fields.
+    // Поля данного объекта.
+    
+    return o;
+    
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                            Conversion from JSON to object.                                       *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                           Преобразование из JSONа в объект.                                      *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::AbstractEntityItem::fromJSON ( QJsonObject json ) {
+    if ( _entity ) _entity->fromJSON( json );
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
 // *                                                   The destructor.                                                *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                                                      Деструктор.                                                 *
@@ -306,6 +473,7 @@ bool tengu::AbstractEntityItem::isDecomposite() {
 // ********************************************************************************************************************
 
 tengu::AbstractEntityItem::~AbstractEntityItem() {
+    if ( _entity ) delete ( _entity );
 }
 
 

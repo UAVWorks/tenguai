@@ -12,67 +12,74 @@
 #include <QObject>
 #include <QUuid>
 #include <QJsonObject>
+#include <QDateTime>
+
+#include "AbstractStorageableEntity.h"
 
 namespace tengu {
     
-    class AbstractEntity : public QObject {
+    class AbstractEntity : public QObject, public AbstractStorageableEntity {
         
         Q_OBJECT
         
-        Q_PROPERTY( QString name READ getName WRITE setName )
-        Q_PROPERTY( QString uuid READ getUUID WRITE setUUID )
-        Q_PROPERTY( QString comment READ getComment WRITE setComment )
-        Q_PROPERTY( execution_mode_t executionMode READ getExecutionMode WRITE setExecutionMode )
-
+        Q_SIGNALS:
+            
+            void signalHasBeenChanged( QDateTime when );
+            
         public:
             
-            // The execution mode of model (of this "processor" and all of it's children)
-            // Режим выполнения модели (данного "процессора" и всех его детей).
-        
-            enum execution_mode_t {
-                EM_ALWAYS       = 0,
-                EM_REAL         = 1,
-                EM_XPLANE       = 2,
-                EM_PREPAR3D     = 3
-            };                    
-
             explicit AbstractEntity ( QObject* parent = nullptr );
             virtual ~AbstractEntity();
             
             // true, really unique identifier for this object
             // Действительно уникальный идентификатор для данного объекта.
             
-            QString getUUID();
-            void setUUID( QString uuid );            
+            virtual QString getUUID();
+            // void setUUID( QString uuid );            
             
             // The name of this agent.
             // Имя агента.
             
-            QString getName();
+            virtual QString getName();
             virtual void setName( QString name );
             
             // The comment of this entity.
             // Комментарий данной "сущности".
             
-            QString getComment();
-            void setComment( QString comment );
+            virtual QString getComment();
+            virtual void setComment( QString comment );
             
             // The execution mode of this entity (real, x-plane simulation, always e.t.c.)
             // Режим выполнения данной сущности (реальный, симуляция в X-Plane, всегда и др).
             
-            execution_mode_t getExecutionMode();
+            virtual execution_mode_t getExecutionMode();
             virtual void setExecutionMode( execution_mode_t mode );
             
             // Has been this entity changed?
             // Была ли данная сущность изменена?
             
-            bool hasChanged();
+            virtual bool hasChanged();
+            
+            // Return last modified datetime (in the UTC) of this object.
+            // Вернуть последнее время модификации (в UTC) данного объекта.
+            
+            virtual QDateTime lastModified();
+            
+            // Convert this object to JSON form.
+            // Преобразование данного объекта в формат JSON.
             
             virtual QJsonObject toJSON();
+            
+            // Back conversion, from JSON to object. All field will be replaced.
+            // Обратное преобразование, из JSONа в объект. Все поля будут изменены.
+            
+            virtual void fromJSON( QJsonObject json );
             
         protected:
             
             bool _changed;
+            
+            void _somewhatChanged();
             
         private:
             
@@ -95,6 +102,11 @@ namespace tengu {
             // Режим выполнения.
             
             execution_mode_t __execution_mode;
+            
+            // The UTC datetime of last modification
+            // Всемирная дата-время последнего изменения.
+            
+            QDateTime __lastModified;
             
     };
 };

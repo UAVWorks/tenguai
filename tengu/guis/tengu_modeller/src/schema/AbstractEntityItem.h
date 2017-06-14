@@ -20,7 +20,10 @@
 #include <QLinearGradient>
 #include <QList>
 #include <QPair>
+#include <QDateTime>
+#include <QUuid>
 
+#include "AbstractStorageableEntity.h"
 #include "AbstractEntity.h"
 #include "AbstractAgent.h"
 #include "Sprout.h"
@@ -46,7 +49,7 @@
 
 namespace tengu {
 
-    class AbstractEntityItem : public QGraphicsObject {
+    class AbstractEntityItem : public QGraphicsObject, public AbstractStorageableEntity {
         
         Q_OBJECT
         
@@ -57,7 +60,8 @@ namespace tengu {
         
             void paint( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = Q_NULLPTR);
             QRectF boundingRect() const;
-            AbstractEntity * entity();
+            
+            // AbstractEntity * entity();
             
             // Select this agent (to visual distinguish)
             // Выбрать агента (для визуального отличия)
@@ -75,6 +79,24 @@ namespace tengu {
             // Является ли данная сущность декомпозируемой?
             
             bool isDecomposite();
+            
+            // ------------------------------------------------------------------------------------
+            //                    AbstractStorageableEntity interface realization.
+            // ------------------------------------------------------------------------------------
+            //                    Реализация интерфейса AbstractStorageableEntity. 
+            // ------------------------------------------------------------------------------------
+            
+            virtual QString getUUID();
+            virtual QString getName();
+            virtual void setName( QString name );
+            virtual QString getComment();
+            virtual void setComment( QString comment );
+            virtual execution_mode_t getExecutionMode();
+            virtual void setExecutionMode( execution_mode_t mode );
+            virtual bool hasChanged();
+            virtual QDateTime lastModified();
+            virtual QJsonObject toJSON();
+            virtual void fromJSON( QJsonObject json );
             
         protected:
             
@@ -104,9 +126,19 @@ namespace tengu {
             
             bool _decomposite;
             
+            // Has been this object changed?
+            // Был ли данный объект изменен?
+            
+            bool _changed;
+            
         private:
             
             bool __mousePressed;
+            
+            QString __uuid;
+            
+            QDateTime __lastModified;
+            
     };
 };
 

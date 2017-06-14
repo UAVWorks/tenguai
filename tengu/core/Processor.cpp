@@ -45,7 +45,7 @@ bool tengu::Processor::_loadConfig ( QString fileName ) {
         
         QString uuid = settings.value("uuid", "").toString();        
         if ( ! uuid.isEmpty() ) {
-            setUUID( uuid );
+            // setUUID( uuid );
         };
         
         QString name = settings.value("system_name", "").toString();

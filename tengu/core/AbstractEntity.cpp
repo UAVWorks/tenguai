@@ -23,14 +23,18 @@ tengu::AbstractEntity::AbstractEntity ( QObject* parent )
     __name = QString("");
     __comment = QString("");
     
-    // Temporary. You always can set it by setUUID().
-    // Времянка. Вы всегда его можете переставить через setUUID().
+    // The UUID is very important parameter. It can not be changed except fromJSON constructor.
+    // UUID - это очень важный параметр. Он может быть переставлен только из конструктора fromJSON.
     
     __uuid = QUuid::createUuid().toString();
     
-    __execution_mode = EM_ALWAYS;
-    
+    __execution_mode = EM_ALWAYS;    
     _changed = false;
+    
+    // Initialization for change time, (probably) will be replaced later.
+    // Инициализация времени изменения, (наверное) потом будет изменена.
+    
+    __lastModified = QDateTime::currentDateTimeUtc();
 
 }
 
@@ -56,7 +60,7 @@ QString tengu::AbstractEntity::getName() {
 
 void tengu::AbstractEntity::setName ( QString name ) {
     __name = name;
-    _changed = true;
+    _somewhatChanged();    
 }
 
 // ********************************************************************************************************************
@@ -78,12 +82,12 @@ QString tengu::AbstractEntity::getUUID() {
 // *                                          Установить uuid данного агента.                                         *
 // *                                                                                                                  *
 // ********************************************************************************************************************
-
+/*
 void tengu::AbstractEntity::setUUID ( QString uuid ) {
     __uuid = uuid;
-    _changed = true;
+    _somewhatChanged();
 }
-
+*/
 // ********************************************************************************************************************
 // *                                                                                                                  *
 // *                                               Get entity's comment.                                              *
@@ -106,7 +110,7 @@ QString tengu::AbstractEntity::getComment() {
 
 void tengu::AbstractEntity::setComment ( QString comment ) {
     __comment = comment;
-    _changed = true;
+    _somewhatChanged();
 }
 
 // ********************************************************************************************************************
@@ -131,7 +135,7 @@ tengu::AbstractEntity::execution_mode_t tengu::AbstractEntity::getExecutionMode(
 
 void tengu::AbstractEntity::setExecutionMode( tengu::AbstractEntity::execution_mode_t mode ) {
     __execution_mode = mode;
-    _changed = true;
+    _somewhatChanged();
 };
 
 // ********************************************************************************************************************
@@ -148,6 +152,32 @@ bool tengu::AbstractEntity::hasChanged() {
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
+// *                                        Somewhat has been changed in the class.                                   *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                        Что-то в данном классе было изменено.                                     *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::AbstractEntity::_somewhatChanged() {
+    _changed = true;
+    __lastModified = QDateTime::currentDateTimeUtc();
+    emit signalHasBeenChanged( __lastModified );
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                    Return last modified time of this object, in the UTC.                         *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                Вернуть последнее время модификации данного объекта в UTC.                        *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+QDateTime tengu::AbstractEntity::lastModified() {
+    return __lastModified;
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
 // *                                           Convert an entity to JSON format.                                      *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                                       Преобразование "сущности" в формат JSON.                                   *
@@ -157,11 +187,13 @@ bool tengu::AbstractEntity::hasChanged() {
 QJsonObject tengu::AbstractEntity::toJSON() {
     
     QJsonObject o;
+    
     o.insert("database", "tengu_entities");
     o.insert("uuid", __uuid );
     o.insert("name", __name );
     o.insert("comment", __comment );
     o.insert("execution_mode", (int) __execution_mode );
+    o.insert("last_modified", __lastModified.toString() );
     
     /*
     QJsonArray indexes;
@@ -175,6 +207,17 @@ QJsonObject tengu::AbstractEntity::toJSON() {
     
 }
 
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                           Convert JSON notation to this object (the constructor from JSON).                      *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                               Преобразование из JSON в объект ("конструктор" от JSON).                           *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::AbstractEntity::fromJSON ( QJsonObject json ) {
+
+}
 
 // ********************************************************************************************************************
 // *                                                                                                                  *

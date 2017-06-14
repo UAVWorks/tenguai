@@ -6,6 +6,7 @@ This is graphical tool for work with artifical intelligence models. At the momen
 
 # The latest operations.
 
+- **14 jun 2017** The interface of the stored object was added.
 - **13 jun 2017** Add drag event for library toolbar, began to make a save in the mongo. A fake task was stored into mongoDB.
 - **12 jun 2017** Add XPlaneAgent and XPlaneAgentItem as persistent invisible agent to simulation purpose. Add a tool buttons
     for simulation and change execution mode. Background colors for agent's properties. The billet for element's library toolbar.
