@@ -34,7 +34,8 @@ tengu::Task::Task ()
 QJsonObject tengu::Task::toJSON() {
     
     QJsonObject o = AbstractAgent::toJSON();
-    o.insert("collection", "tasks");
+    o[ "collection" ] = "tasks";
+    o[ "class_name" ] = "Task";
     return o;
 }
 

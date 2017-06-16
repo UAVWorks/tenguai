@@ -54,7 +54,8 @@ bson_t * tengu::MongoStorage::__create_bson ( QJsonObject o ) {
         memset( ckey, 0, sizeof( ckey) );
         strcpy( ckey, key.toLatin1().data() );
         int ckey_len = keys.at(i).length();
-        qDebug() << "Key: " << key << ", bson key: " << ckey << ", len=" << ckey_len;
+        
+        // qDebug() << "Key: " << key << ", bson key: " << ckey << ", len=" << ckey_len;
                 
         if ( key == "uuid" ) bson_append_utf8( doc, "_id", -1, o.value( key ).toString().toUtf8(), -1  );
         else {
@@ -69,9 +70,9 @@ bson_t * tengu::MongoStorage::__create_bson ( QJsonObject o ) {
         
     };
     
-    char * str = bson_as_json ( doc , NULL );
-    qDebug() << "Bson to insert: " << QString(str) ;
-    bson_free( str );
+    // char * str = bson_as_json ( doc , NULL );
+    // qDebug() << "Bson to insert: " << QString(str) ;
+    // bson_free( str );
         
     
     return doc;
@@ -142,7 +143,7 @@ void tengu::MongoStorage::__insert_single_object ( QJsonObject jsonObject ) {
     mongoc_collection_t * collection = mongoc_client_get_collection( __client, databaseName.toLatin1().data(), collectionName.toLatin1().data() );
     if ( collection ) {
         
-        qDebug() << "Was create collection: " << collection;
+        // qDebug() << "Was create collection: " << collection;
         
         // Convert our json object to string.
         // Преобразуем наш json-объект в строку.
@@ -162,8 +163,8 @@ void tengu::MongoStorage::__insert_single_object ( QJsonObject jsonObject ) {
                         
         bool ok = mongoc_collection_insert( collection, MONGOC_INSERT_NONE, document, NULL, & error );
         if ( ! ok ) {
-            qDebug() << "Insertion was failed. Error code=" << error.code << ", message=" << error.message;
-        } else qDebug() << "Inserted one ok";
+            qDebug() << "MongoStorage::__insert_single_object, insertion was failed. Error code=" << error.code << ", message=" << error.message;
+        } else qDebug() << "MongoStorage::__insert_single_object: Inserted one ok";
             
         bson_destroy( document );
         // bson_destroy( insert );
@@ -171,7 +172,7 @@ void tengu::MongoStorage::__insert_single_object ( QJsonObject jsonObject ) {
         
         mongoc_collection_destroy( collection );
         
-    } else qDebug() << "MongoStorage::store( QJsonObject ), collection is empty";
+    } else qDebug() << "MongoStorage::__insert_single_object( QJsonObject ), collection is empty";
 }
 
 // ********************************************************************************************************************

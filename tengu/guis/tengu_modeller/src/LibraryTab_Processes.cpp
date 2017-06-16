@@ -29,9 +29,11 @@ tengu::LibraryTab__processes::LibraryTab__processes ( QWidget* parent, Qt::Windo
     setLayout( lay );
         
     button__process_begin = new LibraryTab_Button( QIcon( QPixmap(":process_begin_16.png") ), tr("Begin of process")  );
+    button__process_begin->setDrag( ProcessStart().toJSON() );
     lay->addWidget( button__process_begin );
     
     button__process_end = new LibraryTab_Button( QIcon( QPixmap(":process_end_16.png")), tr("End of process")  );
+    button__process_end->setDrag( ProcessStop().toJSON() );
     lay->addWidget( button__process_end );
 }
 

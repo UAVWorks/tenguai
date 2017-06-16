@@ -73,7 +73,9 @@ namespace tengu {
             // Back conversion, from JSON to object. All field will be replaced.
             // Обратное преобразование, из JSONа в объект. Все поля будут изменены.
             
-            virtual void fromJSON( QJsonObject json );
+            virtual bool fromJSON( QJsonObject json );
+            
+            virtual bool hasClass( QJsonObject json, QString class_name );
             
         protected:
             

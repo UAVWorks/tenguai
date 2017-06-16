@@ -1,30 +1,30 @@
 // ********************************************************************************************************************
 // *                                                                                                                  *
-// *                           The stop process point. They can be several within on process.                         *
+// *                                        Agent factory, agent's classes recognizer.                                *
 // * ---------------------------------------------------------------------------------------------------------------- *
-// *                   Точка останова процесса. Их может быть несколько в пределах одного процесса.                   *
+// *                                   "Фабрика агентов", распознавание классов агентов.                              *
 // *                                                                                                                  *
-// * Eugene G. Sysoletin <e.g.sysoletin@gmail.com>                                       Created 09 jun 2017 at 10:44 *
+// * Eugene G. Sysoletin <e.g.sysoletin@gmail.com>                                       Created 16 jun 2017 at 09:40 *
 // ********************************************************************************************************************
 
 #pragma once
 
+#include <QJsonObject>
+#include <QDebug>
+
 #include "AbstractAgent.h"
+#include "ProcessStart.h"
+#include "ProcessStop.h"
+#include "Task.h"
 
 namespace tengu {
-
-    class ProcessStop : public AbstractAgent {
-        
-        Q_OBJECT
+    
+    class AgentFactory {
         
         public:
-            
-            ProcessStop ();
-            virtual ~ProcessStop();
-            
-            virtual QJsonObject toJSON();
-            virtual bool fromJSON( QJsonObject json );
-            
+            // static bool hasAgent( QJsonObject json );
+            static AbstractEntity * createEntity( QJsonObject json );
+        
     };
     
 };

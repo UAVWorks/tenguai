@@ -460,8 +460,13 @@ QJsonObject tengu::AbstractEntityItem::toJSON() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::AbstractEntityItem::fromJSON ( QJsonObject json ) {
-    if ( _entity ) _entity->fromJSON( json );
+bool tengu::AbstractEntityItem::fromJSON ( QJsonObject json ) {
+    
+    if ( _entity ) {
+        return _entity->fromJSON( json );
+    };
+    
+    return false;
 }
 
 // ********************************************************************************************************************

@@ -96,7 +96,7 @@ namespace tengu {
             virtual bool hasChanged();
             virtual QDateTime lastModified();
             virtual QJsonObject toJSON();
-            virtual void fromJSON( QJsonObject json );
+            virtual bool fromJSON( QJsonObject json );
             
         protected:
             

@@ -19,6 +19,9 @@
 #include <QDebug>
 #include <QDrag>
 #include <QMimeData>
+#include <QJsonObject>
+#include <QJsonDocument>
+#include <QApplication>
 
 namespace tengu {
     
@@ -30,6 +33,7 @@ namespace tengu {
             
             LibraryTab_Button ( QIcon icon, QString hint );
             virtual ~LibraryTab_Button();
+            void setDrag( QJsonObject json );
             
         protected:
             
@@ -43,6 +47,7 @@ namespace tengu {
             bool __mouse_left_button_pressed;
             bool __dragging;
             QPoint __mouse_pressed_position;
+            QJsonObject __drag;
             
     };
     

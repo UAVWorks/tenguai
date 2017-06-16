@@ -33,6 +33,12 @@ tengu::SchemaView::SchemaView( QGraphicsScene * scene )
     // Виджит принимает события от мыши даже если ни одна из кнопок не была нажата.
     
     setMouseTracking( true );
+    
+    // Tell the system that widget can receive Drag&Drop events.
+    // Сообщает сисетме, что виджит может принимать события Drag&Drop.
+    
+    setAcceptDrops( true );
+    
     __leftMouseButtonPressed = false;
     
     __createMenus();
@@ -219,6 +225,79 @@ void tengu::SchemaView::contextMenuEvent ( QContextMenuEvent* event ) {
     };
 }
 
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *               Convert QDropEvent (QDragMoveEvent, QDragEnterEvent) to my AbstractEntity object.                  *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *             Преобразовать QDropEvent( QDragMoveEvent, QDragEnterEvent) в мой AbstractEntity объект.              *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+tengu::AbstractEntity * tengu::SchemaView::__event_to_entity ( QDropEvent * event ) {
+    
+    if ( event->mimeData()->hasFormat( "application/json" ) ) {
+        
+        QJsonDocument doc = QJsonDocument::fromJson( event->mimeData()->data("application/json") );
+        if ( ! doc.isEmpty() ) {
+            if ( doc.isObject() ) {
+                QJsonObject json = doc.object();
+                if ( ! json.isEmpty() ) {
+                    return ( AgentFactory::createEntity( json ) );
+                };
+            };
+        };        
+    };
+    
+    return nullptr;
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                            Enter dragging to this widget                                         *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                      Событие входа таскаемого объекта на виджит.                                 *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::SchemaView::dragEnterEvent ( QDragEnterEvent * event ) {
+    QGraphicsView::dragEnterEvent ( event );    
+    AbstractEntity * entity = __event_to_entity( event );
+    if ( entity ) {
+        delete( entity );
+        event->acceptProposedAction();
+    };
+    
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                                 Drage move event.                                                *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                    Событие перемещения таскаемого объекта по виджиту.                            *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::SchemaView::dragMoveEvent ( QDragMoveEvent * event ) {
+    QGraphicsView::dragMoveEvent ( event );
+    AbstractEntity * entity = __event_to_entity ( event );
+    if ( entity ) {
+        delete( entity );
+        event->acceptProposedAction();
+    };
+}
+
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                            Dragging leave this widget.                                           *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                          Таскание покинуло этот виджит.                                          *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::SchemaView::dragLeaveEvent ( QDragLeaveEvent * event ) {
+    QGraphicsView::dragLeaveEvent ( event );    
+}
 
 // ********************************************************************************************************************
 // *                                                                                                                  *

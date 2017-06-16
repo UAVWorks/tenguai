@@ -22,6 +22,9 @@ namespace tengu {
             ProcessStart ();
             virtual ~ProcessStart();
             
+            virtual QJsonObject toJSON();
+            virtual bool fromJSON( QJsonObject json );
+            
     };
     
 };

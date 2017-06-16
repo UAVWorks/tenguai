@@ -193,7 +193,7 @@ QJsonObject tengu::AbstractEntity::toJSON() {
     o.insert("name", __name );
     o.insert("comment", __comment );
     o.insert("execution_mode", (int) __execution_mode );
-    o.insert("last_modified", __lastModified.toString() );
+    o.insert("last_modified", __lastModified.toString("t yyyy-MM-dd hh:mm:ss:zzz") );
     
     /*
     QJsonArray indexes;
@@ -209,14 +209,40 @@ QJsonObject tengu::AbstractEntity::toJSON() {
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
+// *                                        Does json object have this class_name?                                    *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                       Имеет ли JSON-объект данное class_name?                                    *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+bool tengu::AbstractEntity::hasClass ( QJsonObject json, QString class_name ) {
+    
+    if ( json.contains("class_name") ) {
+        QString cName = json.value("class_name").toString();
+        if ( cName == class_name ) return true;
+    };
+    
+    return false;
+    
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
 // *                           Convert JSON notation to this object (the constructor from JSON).                      *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                               Преобразование из JSON в объект ("конструктор" от JSON).                           *
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::AbstractEntity::fromJSON ( QJsonObject json ) {
-
+bool tengu::AbstractEntity::fromJSON ( QJsonObject json ) {
+    
+    if ( json.contains("uuid" ) ) __uuid = json.value("uuid").toString();
+    if ( json.contains("name" ) ) __name = json.value("name").toString();
+    if ( json.contains("execution_mode") ) __execution_mode = ( execution_mode_t ) json.value("execution_mode").toInt();
+    if ( json.contains("last_modified") ) __lastModified = QDateTime::fromString( json.value("last_modified").toString(), "t yyyy-MM-dd hh:mm:ss:zzz" );
+    
+    return true;
+    
 }
 
 // ********************************************************************************************************************

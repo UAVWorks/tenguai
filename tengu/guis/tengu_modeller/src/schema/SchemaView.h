@@ -20,8 +20,17 @@
 #include <QMenu>
 #include <QAction>
 #include <QPixmap>
+#include <QMimeData>
+#include <QDragEnterEvent>
+#include <QDragMoveEvent>
+#include <QDragLeaveEvent>
+#include <QDropEvent>
+#include <QJsonObject>
+#include <QJsonDocument>
 
 #include "AbstractEntityItem.h"
+#include "AbstractEntity.h"
+#include "AgentFactory.h"
 
 namespace tengu {
 
@@ -49,6 +58,12 @@ namespace tengu {
             void mouseMoveEvent( QMouseEvent * event );   
             void mouseDoubleClickEvent(QMouseEvent * event);
             void contextMenuEvent( QContextMenuEvent * event );
+            
+            void dragEnterEvent(QDragEnterEvent * event);
+            void dragMoveEvent(QDragMoveEvent * event);
+            void dragLeaveEvent(QDragLeaveEvent * event);
+            
+            AbstractEntity * __event_to_entity( QDropEvent * event );
             
 #ifndef QT_NO_WHEELEVENT
             void wheelEvent( QWheelEvent * event );

@@ -44,7 +44,7 @@ namespace tengu {
             virtual bool hasChanged() = 0;
             virtual QDateTime lastModified() = 0;   
             virtual QJsonObject toJSON() = 0;
-            virtual void fromJSON( QJsonObject json ) = 0;
+            virtual bool fromJSON( QJsonObject json ) = 0;
             
     };
     

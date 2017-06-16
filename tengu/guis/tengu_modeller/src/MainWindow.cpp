@@ -55,9 +55,7 @@ tengu::MainWindow::MainWindow(QWidget *parent)
     __schemaScene->addItem( i );
     
     Sprout * s = new Sprout( task );
-    qDebug() << "Birth sprout, name=" << s->getName();
     SproutItem * si = new SproutItem( s );
-    qDebug() << "Birth sproutItem";
     si->setX( 10 );
     si->setY( -80 );
     __schemaScene->addItem( si );

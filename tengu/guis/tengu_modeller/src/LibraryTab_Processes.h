@@ -20,6 +20,7 @@
 #include <QMouseEvent>
 
 #include "LibraryTab_Button.h"
+#include "AgentFactory.h"
 
 namespace tengu {
 

@@ -22,11 +22,26 @@ tengu::LibraryTab_Button::LibraryTab_Button ( QIcon icon, QString hint )
 {
     __mouse_left_button_pressed = false;
     __dragging = false;
+    __drag = QJsonObject();
+    
     setFlat( true );
     setIcon( icon );
     setToolTip( hint );
-    setFixedSize( QSize( 22, 22 ) );
+    setFixedSize( QSize( 22, 22 ) );    
 }
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                                  Set drag object.                                                *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                              Установить таскаемый объект.                                        *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::LibraryTab_Button::setDrag ( QJsonObject json ) {
+    __drag = json;
+}
+
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
@@ -61,7 +76,7 @@ void tengu::LibraryTab_Button::mouseMoveEvent ( QMouseEvent* event ) {
     if ( ( __mouse_left_button_pressed ) && ( ! __dragging ) ) {
         
         QPoint pos = event->pos() - __mouse_pressed_position;
-        if ( pos.manhattanLength() > 3 ) {
+        if ( pos.manhattanLength() > QApplication::startDragDistance() ) {
             
             // Start of dragging
             // Начало перетаскивания
@@ -69,15 +84,18 @@ void tengu::LibraryTab_Button::mouseMoveEvent ( QMouseEvent* event ) {
             __dragging = true;
             QDrag * drag = new QDrag(this);
             QMimeData *mimeData = new QMimeData;
-
-            // mimeData->setText( this->toolTip() );
-            mimeData->setData("text/json", "{ action: \"add\", class : \"ProcessBegin\")");
+            
+            QJsonDocument doc( __drag );
+            mimeData->setData("application/json", doc.toJson() );
+            
             drag->setMimeData(mimeData);
+            
             QPixmap pm = icon().pixmap( QSize(16,16) );
             drag->setPixmap( pm );
 
             // Qt::DropAction dropAction = 
             drag->exec();
+                        
             __dragging = false;            
             
         };

@@ -75,7 +75,8 @@ void tengu::XPlaneAgent::__init_sprout ( QString settingsGroup, tengu::Sprout::s
         
         addSprout( sp );
     };
-    qDebug() << "XPlaneAgent::__init_sprout, total sprouts=" << sproutsCount();
+    
+    // qDebug() << "XPlaneAgent::__init_sprout, total sprouts=" << sproutsCount();
 }
 
 // ********************************************************************************************************************
