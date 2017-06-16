@@ -21,7 +21,8 @@ tengu::LibraryTab__processes::LibraryTab__processes ( QWidget* parent, Qt::Windo
     : QWidget ( parent, f )
 {
     setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding );
-    QHBoxLayout * lay = new QHBoxLayout();
+    // QHBoxLayout * lay = new QHBoxLayout();
+    QGridLayout * lay = new QGridLayout();
     lay->setAlignment( Qt::AlignLeft );
     // lay->setDirection( Qt::LeftToRight );
     lay->setMargin( 2 );
@@ -30,11 +31,11 @@ tengu::LibraryTab__processes::LibraryTab__processes ( QWidget* parent, Qt::Windo
         
     button__process_begin = new LibraryTab_Button( QIcon( QPixmap(":process_begin_16.png") ), tr("Begin of process")  );
     button__process_begin->setDrag( ProcessStart().toJSON() );
-    lay->addWidget( button__process_begin );
+    lay->addWidget( button__process_begin, 0, 0 );
     
     button__process_end = new LibraryTab_Button( QIcon( QPixmap(":process_end_16.png")), tr("End of process")  );
     button__process_end->setDrag( ProcessStop().toJSON() );
-    lay->addWidget( button__process_end );
+    lay->addWidget( button__process_end, 1, 0 );
 }
 
 // ********************************************************************************************************************

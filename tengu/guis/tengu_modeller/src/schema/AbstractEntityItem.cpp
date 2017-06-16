@@ -19,6 +19,7 @@
 
 tengu::AbstractEntityItem::AbstractEntityItem( AbstractEntity * entity, QGraphicsItem * parent ) 
     : QGraphicsObject( parent )
+    , AbstractStorageableEntity()
 {
     _entity = entity;
     _boundingRect = QRectF(0, 0, 20, 20);

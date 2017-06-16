@@ -28,8 +28,10 @@ INCLUDEPATH += src src/schema src/overboard ../../core ../../loredis/src /usr/in
 LIBS += -lLoRedis -L../../loredis/build -ltengu_core -L../../core/build -lhiredis -levent -lmongoc-1.0 -L/usr/lib/x86_64-linux-gnu
 
 HEADERS  += src/overboard/XPlaneAgent.h     \ 
-        src/schema/AbstractEntityItem.h     \
+        src/schema/AbstractEntityItem.h     \        
         src/schema/XPlaneAgentItem.h        \
+        src/schema/ProcessStartItem.h       \
+        src/schema/ProcessStopItem.h        \
         src/schema/TaskItem.h               \
         src/schema/SproutItem.h             \
         src/schema/VehicleItem.h            \
@@ -49,6 +51,8 @@ SOURCES += src/main.cpp                     \
         src/overboard/XPlaneAgent.cpp       \
         src/schema/AbstractEntityItem.cpp   \
         src/schema/XPlaneAgentItem.cpp      \
+        src/schema/ProcessStartItem.cpp     \
+        src/schema/ProcessStopItem.cpp      \
         src/schema/TaskItem.cpp             \
         src/schema/SproutItem.cpp           \
         src/schema/VehicleItem.cpp          \

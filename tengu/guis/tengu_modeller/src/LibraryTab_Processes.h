@@ -13,6 +13,7 @@
 #include <QPushButton>
 #include <QToolButton>
 #include <QHBoxLayout>
+#include <QGridLayout>
 #include <QSizePolicy>
 #include <QIcon>
 #include <QPixmap>

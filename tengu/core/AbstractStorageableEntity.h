@@ -4,7 +4,7 @@
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *              Абстрактный интерфейс для сущности, которая может быть записана в какой-нибудь базе данных.         *
 // *                                                                                                                  *
-// * Eugene G. Sysoletin <e.g.sysoletin@gmail.com>                                       Created 29 may 2017 at 07:18 *
+// * Eugene G. Sysoletin <e.g.sysoletin@gmail.com>                                       Created 14 jun 2017 at 12:29 *
 // ********************************************************************************************************************
 
 #pragma once
@@ -32,7 +32,10 @@ namespace tengu {
                 EM_REAL         = 1,
                 EM_XPLANE       = 2,
                 EM_PREPAR3D     = 3
-            };    
+            };
+            
+            AbstractStorageableEntity();
+            virtual ~AbstractStorageableEntity();
             
             virtual QString getUUID() = 0;
             virtual QString getName() = 0;
@@ -45,6 +48,7 @@ namespace tengu {
             virtual QDateTime lastModified() = 0;   
             virtual QJsonObject toJSON() = 0;
             virtual bool fromJSON( QJsonObject json ) = 0;
+            
             
     };
     

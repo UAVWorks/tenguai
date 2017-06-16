@@ -19,6 +19,7 @@
 
 tengu::AbstractEntity::AbstractEntity ( QObject* parent ) 
     : QObject ( parent )
+    , AbstractStorageableEntity()
 {
     __name = QString("");
     __comment = QString("");

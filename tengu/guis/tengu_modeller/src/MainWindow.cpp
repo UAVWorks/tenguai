@@ -59,6 +59,18 @@ tengu::MainWindow::MainWindow(QWidget *parent)
     si->setX( 10 );
     si->setY( -80 );
     __schemaScene->addItem( si );
+    
+    ProcessStart * pStart = new ProcessStart();
+    ProcessStartItem * pi = new ProcessStartItem( pStart );
+    pi->setX( 0 );
+    pi->setY( 300 );
+    __schemaScene->addItem( pi );
+    
+    ProcessStop * pStop = new ProcessStop();
+    ProcessStopItem * pStopItem = new ProcessStopItem( pStop );
+    pStopItem->setX( 500 );
+    pStopItem->setY( 300 );
+    __schemaScene->addItem( pStopItem );
         
     /*
     VehicleItem * w = new VehicleItem( new Vehicle( nullptr, "Vehicle") );
@@ -90,7 +102,7 @@ tengu::MainWindow::MainWindow(QWidget *parent)
     
     __mongo = new MongoStorage();
     
-    __mongo->store( task );
+    // __mongo->store( task );
     
 }
 

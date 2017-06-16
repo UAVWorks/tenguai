@@ -12,9 +12,11 @@
 #include <QJsonObject>
 #include <QDebug>
 
+#include "AbstractStorageableEntity.h"
 #include "AbstractAgent.h"
 #include "ProcessStart.h"
 #include "ProcessStop.h"
+#include "Process.h"
 #include "Task.h"
 
 namespace tengu {
@@ -23,7 +25,7 @@ namespace tengu {
         
         public:
             // static bool hasAgent( QJsonObject json );
-            static AbstractEntity * createEntity( QJsonObject json );
+            static AbstractStorageableEntity * createEntity( QJsonObject json );
         
     };
     

@@ -44,38 +44,39 @@ LIBS += -lLoRedis -L../loredis/build
 
 INCLUDEPATH += ../loredis/src /usr/include/libbson-1.0 /usr/include/libmongoc-1.0/
 
-HEADERS += MongoStorage.h           \
-        AbstractEntity.h            \
-        AbstractAgentKernel.h       \
-        Sprout.h                    \
-        AbstractAgent.h             \
-        ORer.h                      \
-        ANDor.h                     \
-        Task.h                      \
-        SimpleRegulator.h           \
-        Summator.h                  \        
-        Process.h                   \
-        ProcessStart.h              \
-        ProcessStop.h               \
-        Processor.h                 \
-        State.h                     \        
+HEADERS += MongoStorage.h               \
+        AbstractEntity.h                \
+        AbstractAgentKernel.h           \
+        Sprout.h                        \
+        AbstractAgent.h                 \
+        ORer.h                          \
+        ANDor.h                         \
+        Task.h                          \
+        SimpleRegulator.h               \
+        Summator.h                      \
+        Process.h                       \
+        ProcessStart.h                  \
+        ProcessStop.h                   \
+        Processor.h                     \
+        State.h                         \
         Vehicle.h
             
-SOURCES += MongoStorage.cpp         \        
-        AbstractEntity.cpp          \
-        AbstractAgentKernel.cpp     \
-        Sprout.cpp                  \
-        AbstractAgent.cpp           \
-        ORer.cpp                    \
-        ANDor.cpp                   \
-        Task.cpp                    \
-        SimpleRegulator.cpp         \
-        Summator.cpp                \
-        Process.cpp                 \
-        ProcessStart.cpp            \
-        ProcessStop.cpp             \
-        Processor.cpp               \
-        State.cpp                   \        
-        Vehicle.cpp                 \
+SOURCES += MongoStorage.cpp             \
+        AbstractStorageableEntity.cpp   \
+        AbstractEntity.cpp              \
+        AbstractAgentKernel.cpp         \
+        Sprout.cpp                      \
+        AbstractAgent.cpp               \
+        ORer.cpp                        \
+        ANDor.cpp                       \
+        Task.cpp                        \
+        SimpleRegulator.cpp             \
+        Summator.cpp                    \
+        Process.cpp                     \
+        ProcessStart.cpp                \
+        ProcessStop.cpp                 \
+        Processor.cpp                   \
+        State.cpp                       \        
+        Vehicle.cpp                     \
         AgentFactory.cpp            
         

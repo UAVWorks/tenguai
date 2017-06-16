@@ -29,8 +29,8 @@
 
 #include "MongoStorage.h"
 #include "AbstractAgent.h"
+#include "AgentFactory.h"
 #include "WorkSpace.h"
-#include "Task.h"
 #include "AgentPropertyModel.h"
 #include "MainWindowLeft.h"
 #include "LibraryTab.h"

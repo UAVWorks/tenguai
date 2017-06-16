@@ -55,7 +55,7 @@ namespace tengu {
         
         public:
             
-            AbstractEntityItem( AbstractEntity * entity, QGraphicsItem * parent = Q_NULLPTR );
+            AbstractEntityItem( AbstractEntity * entity = Q_NULLPTR, QGraphicsItem * parent = Q_NULLPTR );
             virtual ~AbstractEntityItem();
         
             void paint( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = Q_NULLPTR);
