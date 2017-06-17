@@ -17,9 +17,7 @@
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::AbstractEntity::AbstractEntity ( QObject* parent ) 
-    : QObject ( parent )
-    , AbstractStorageableEntity()
+tengu::AbstractEntity::AbstractEntity () 
 {
     __name = QString("");
     __comment = QString("");
@@ -162,7 +160,7 @@ bool tengu::AbstractEntity::hasChanged() {
 void tengu::AbstractEntity::_somewhatChanged() {
     _changed = true;
     __lastModified = QDateTime::currentDateTimeUtc();
-    emit signalHasBeenChanged( __lastModified );
+    // emit signalHasBeenChanged( __lastModified );
 }
 
 // ********************************************************************************************************************

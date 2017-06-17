@@ -18,7 +18,7 @@
 
 namespace tengu {
     
-    class Sprout : public AbstractEntity {
+    class Sprout : public QObject, public AbstractEntity {
         
         Q_OBJECT        
 

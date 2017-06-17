@@ -19,7 +19,7 @@
 
 tengu::AbstractEntityItem::AbstractEntityItem( AbstractEntity * entity, QGraphicsItem * parent ) 
     : QGraphicsObject( parent )
-    , AbstractStorageableEntity()
+    , AbstractEntity()
 {
     _entity = entity;
     _boundingRect = QRectF(0, 0, 20, 20);
@@ -311,7 +311,7 @@ bool tengu::AbstractEntityItem::isDecomposite() {
     // "Decomposite" mean either forcibly decomposition or this base is exactly an agent and he has children.
     // "Декомпозиция" означает либо принудительную декомпозицию, либо в основании лежит точно агент и он имеет детей.
     
-    AbstractAgent * agent = qobject_cast<AbstractAgent * >( _entity );
+    AbstractAgent * agent = dynamic_cast<AbstractAgent * >( _entity );
     bool agentHasChildren = false;
     if ( agent ) agentHasChildren = agent->hasChildren();
     return ( _decomposite || agentHasChildren  );
@@ -392,7 +392,7 @@ void tengu::AbstractEntityItem::setComment ( QString comment ) {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::AbstractStorageableEntity::execution_mode_t tengu::AbstractEntityItem::getExecutionMode() {
+tengu::AbstractEntity::execution_mode_t tengu::AbstractEntityItem::getExecutionMode() {
     
     if ( _entity ) return _entity->getExecutionMode();
     return EM_ALWAYS;
@@ -407,7 +407,7 @@ tengu::AbstractStorageableEntity::execution_mode_t tengu::AbstractEntityItem::ge
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::AbstractEntityItem::setExecutionMode ( tengu::AbstractStorageableEntity::execution_mode_t mode ) {
+void tengu::AbstractEntityItem::setExecutionMode ( tengu::AbstractEntity::execution_mode_t mode ) {
     if ( _entity ) _entity->setExecutionMode( mode );
 }
 

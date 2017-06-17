@@ -62,7 +62,6 @@ HEADERS += MongoStorage.h               \
         Vehicle.h
             
 SOURCES += MongoStorage.cpp             \
-        AbstractStorageableEntity.cpp   \
         AbstractEntity.cpp              \
         AbstractAgentKernel.cpp         \
         Sprout.cpp                      \

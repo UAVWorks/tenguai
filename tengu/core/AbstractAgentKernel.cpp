@@ -18,7 +18,8 @@
 // ********************************************************************************************************************
 
 tengu::AbstractAgentKernel::AbstractAgentKernel()
-    : AbstractEntity()
+    : QObject()
+    , AbstractEntity()
 {
         
     _parent = nullptr;

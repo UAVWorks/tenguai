@@ -20,7 +20,7 @@
 tengu::ProcessStartItem::ProcessStartItem ( tengu::ProcessStart * entity, QGraphicsItem* parent ) 
     : AbstractEntityItem ( entity, parent )
 {
-    _boundingRect = QRect( 0, 0, 76, 76 );
+    _boundingRect = QRect( 0, 0, 76, 76 );    
 }
 
 // ********************************************************************************************************************

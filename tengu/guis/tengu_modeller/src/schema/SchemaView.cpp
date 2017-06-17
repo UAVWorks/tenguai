@@ -276,7 +276,7 @@ void tengu::SchemaView::contextMenuEvent ( QContextMenuEvent* event ) {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::AbstractStorageableEntity * tengu::SchemaView::__event_to_entity ( QDropEvent * event ) {
+tengu::AbstractEntity * tengu::SchemaView::__event_to_entity ( QDropEvent * event ) {
     
     if ( event->mimeData()->hasFormat( "application/json" ) ) {
         
@@ -304,7 +304,7 @@ tengu::AbstractStorageableEntity * tengu::SchemaView::__event_to_entity ( QDropE
 
 void tengu::SchemaView::dragEnterEvent ( QDragEnterEvent * event ) {
     QGraphicsView::dragEnterEvent ( event );    
-    AbstractStorageableEntity * entity = __event_to_entity( event );
+    AbstractEntity * entity = __event_to_entity( event );
     if ( entity ) {
         delete( entity );
         event->acceptProposedAction();
@@ -322,7 +322,7 @@ void tengu::SchemaView::dragEnterEvent ( QDragEnterEvent * event ) {
 
 void tengu::SchemaView::dragMoveEvent ( QDragMoveEvent * event ) {
     QGraphicsView::dragMoveEvent ( event );
-    AbstractStorageableEntity * entity = __event_to_entity ( event );
+    AbstractEntity * entity = __event_to_entity ( event );
     if ( entity ) {
         delete( entity );
         event->acceptProposedAction();
@@ -353,7 +353,7 @@ void tengu::SchemaView::dragLeaveEvent ( QDragLeaveEvent * event ) {
 void tengu::SchemaView::dropEvent ( QDropEvent* event ) {
     
     QGraphicsView::dropEvent ( event );
-    AbstractStorageableEntity * entity = __event_to_entity( event ); 
+    AbstractEntity * entity = __event_to_entity( event ); 
     
     if ( entity ) {
         emit signalWasDropped( entity );

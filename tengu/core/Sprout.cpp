@@ -20,7 +20,7 @@
 // ********************************************************************************************************************
 
 tengu::Sprout::Sprout( AbstractAgentKernel * owner )
-    : AbstractEntity()
+    : QObject(), AbstractEntity()
 {
     __owner = owner;
     __subscribed = false;

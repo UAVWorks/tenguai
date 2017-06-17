@@ -22,12 +22,12 @@
 
 namespace tengu {
 
-    class AbstractAgentKernel : public AbstractEntity {
+    class AbstractAgentKernel : public QObject, public AbstractEntity {
     
         friend class Sprout;
-        
+                                
         Q_OBJECT
-                        
+        
         public:
                         
             AbstractAgentKernel();

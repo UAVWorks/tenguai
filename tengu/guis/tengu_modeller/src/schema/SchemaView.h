@@ -44,7 +44,7 @@ namespace tengu {
             void signalItemPressed( AbstractEntityItem * item, bool controlPressed );
             void signalItemDoubleClicked( AbstractEntityItem * item, bool controlPressed );
             void signalItemDragging( AbstractEntityItem * item, QPoint pos );
-            void signalWasDropped( AbstractStorageableEntity * entity );
+            void signalWasDropped( AbstractEntity * entity );
         
         public:
             
@@ -67,7 +67,7 @@ namespace tengu {
             void dragLeaveEvent(QDragLeaveEvent * event);
             void dropEvent( QDropEvent * event );
             
-            AbstractStorageableEntity * __event_to_entity( QDropEvent * event );
+            AbstractEntity * __event_to_entity( QDropEvent * event );
             
 #ifndef QT_NO_WHEELEVENT
             void wheelEvent( QWheelEvent * event );

@@ -33,9 +33,9 @@ bool tengu::AgentFactory::hasAgent ( QJSonObject json ) {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::AbstractStorageableEntity* tengu::AgentFactory::createEntity ( QJsonObject json ) {
+tengu::AbstractEntity* tengu::AgentFactory::createEntity ( QJsonObject json ) {
     
-    AbstractStorageableEntity * e = nullptr;
+    AbstractEntity * e = nullptr;
     
     if ( json.contains("class_name" ) ) {
         

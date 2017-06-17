@@ -25,7 +25,6 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QMouseEvent>
 
-#include "AbstractStorageableEntity.h"
 #include "AbstractEntity.h"
 #include "AbstractAgent.h"
 #include "Sprout.h"
@@ -51,7 +50,7 @@
 
 namespace tengu {
 
-    class AbstractEntityItem : public QGraphicsObject, public AbstractStorageableEntity {
+    class AbstractEntityItem : public QGraphicsObject, public AbstractEntity {
         
         Q_OBJECT
         
@@ -93,8 +92,8 @@ namespace tengu {
             virtual void setName( QString name );
             virtual QString getComment();
             virtual void setComment( QString comment );
-            virtual execution_mode_t getExecutionMode();
-            virtual void setExecutionMode( execution_mode_t mode );
+            virtual AbstractEntity::execution_mode_t getExecutionMode();
+            virtual void setExecutionMode( AbstractEntity::execution_mode_t mode );
             virtual bool hasChanged();
             virtual QDateTime lastModified();
             virtual QJsonObject toJSON();

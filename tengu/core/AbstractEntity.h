@@ -14,21 +14,25 @@
 #include <QJsonObject>
 #include <QDateTime>
 
-#include "AbstractStorageableEntity.h"
+// #include "AbstractStorageableEntity.h"
 
 namespace tengu {
     
-    class AbstractEntity : public QObject, public AbstractStorageableEntity {
+    class AbstractEntity {
         
-        Q_OBJECT
-        
-        Q_SIGNALS:
-            
-            void signalHasBeenChanged( QDateTime when );
-            
         public:
             
-            explicit AbstractEntity ( QObject* parent = nullptr );
+            // The execution mode for the model, processor, task e.t.c
+            // Режим выполнения данной модели, процесса, задачи и др.
+        
+            enum execution_mode_t {
+                EM_ALWAYS       = 0,
+                EM_REAL         = 1,
+                EM_XPLANE       = 2,
+                EM_PREPAR3D     = 3
+            };
+            
+            AbstractEntity ();
             virtual ~AbstractEntity();
             
             // true, really unique identifier for this object

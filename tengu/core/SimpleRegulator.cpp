@@ -80,7 +80,7 @@ void tengu::SimpleRegulator::setInputChannel ( QString channel ) {
         _inputChannel = channel;
         Sprout * iSprout = new Sprout();
         iSprout->setInputChannel( channel );
-        QObject::connect( iSprout, SIGNAL(signalGotValue(QVariant)), this, SLOT( __on_input_received( QVariant ) ) );
+        QObject::connect( iSprout, SIGNAL( signalGotValue(QVariant)), this, SLOT( __on_input_received( QVariant ) ) );
         addSprout( iSprout );
     };
     
