@@ -21,6 +21,9 @@
     <file alias="note_add_16.png">images/note_add_16.png</file>
     <file alias="package_add_16.png">images/package_add_16.png</file>    
     <file alias="diskette_16.png">images/diskette_16.png</file>    
+    <file alias="box_16.png">images/box_16.png</file>    
+    <file alias="arrow_right_16.png">images/arrow_right_16.png</file>
+    <file alias="arrow_divide_right_16.png">images/arrow_divide_right_16.png</file>
     <file alias="Falcon_256.png">images/Falcon-256.png</file>
 </qresource>
 </RCC>

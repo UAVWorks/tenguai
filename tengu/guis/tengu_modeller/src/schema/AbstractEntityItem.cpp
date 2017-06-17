@@ -471,8 +471,7 @@ QJsonObject tengu::AbstractEntityItem::toJSON() {
         QJsonObject e = _entity->toJSON();
         o["entity"] = e;                
     };
-    
-       
+           
     return o;
     
 }

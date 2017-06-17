@@ -21,6 +21,7 @@ tengu::ProcessStartItem::ProcessStartItem ( tengu::ProcessStart * entity, QGraph
     : AbstractEntityItem ( entity, parent )
 {
     _boundingRect = QRect( 0, 0, 76, 76 );    
+    _className = "ProcessStartItem";
 }
 
 // ********************************************************************************************************************
@@ -88,15 +89,15 @@ void tengu::ProcessStartItem::checkEntity() {
 // *                                    Представление данного объекта в виде JSON                                     *
 // *                                                                                                                  *
 // ********************************************************************************************************************
-
+/*
 QJsonObject tengu::ProcessStartItem::toJSON() {
     
     QJsonObject o = AbstractEntityItem::toJSON();
-    o["class_name"] = "ProcessStartItem";
+    
     return o;
     
 }
-
+*/
 // ********************************************************************************************************************
 // *                                                                                                                  *
 // *                                        Conversion from JSON to this object.                                      *
@@ -104,7 +105,7 @@ QJsonObject tengu::ProcessStartItem::toJSON() {
 // *                                          Преобразование из JSON'а в объект.                                      *
 // *                                                                                                                  *
 // ********************************************************************************************************************
-
+/*
 bool tengu::ProcessStartItem::fromJSON ( QJsonObject json ) {
     
     if ( json.contains("class_name") ) {
@@ -117,7 +118,7 @@ bool tengu::ProcessStartItem::fromJSON ( QJsonObject json ) {
     }
     return false;
 }
-
+*/
 // ********************************************************************************************************************
 // *                                                                                                                  *
 // *                                                  The destructor.                                                 *

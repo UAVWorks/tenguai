@@ -20,7 +20,7 @@ namespace tengu {
             Task();
             virtual ~Task();
             
-            virtual QJsonObject toJSON();
+            // virtual QJsonObject toJSON();
             
         protected:
         private:

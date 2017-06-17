@@ -25,6 +25,10 @@ namespace tengu {
             
             void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = Q_NULLPTR);
             void checkEntity();
+            
+            // QJsonObject toJSON();
+            // bool fromJSON( QJsonObject json );
+            
         
         private:
             

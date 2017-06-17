@@ -112,7 +112,7 @@ namespace tengu {
             
             AbstractEntity * _entity;
             QRectF _boundingRect;
-            
+                        
             int _brighter( int color );
             
             bool _selected;

@@ -21,9 +21,7 @@
 #include <QMouseEvent>
 
 #include "LibraryTab_Button.h"
-#include "AgentFactory.h"
-#include "ProcessStartItem.h"
-#include "ProcessStopItem.h"
+#include "AgentItemFactory.h"
 
 namespace tengu {
 
@@ -36,6 +34,9 @@ namespace tengu {
             
             LibraryTab_Button * button__process_begin;
             LibraryTab_Button * button__process_end;
+            LibraryTab_Button * button__focus_arrow;
+            LibraryTab_Button * button__focus_divider;
+            LibraryTab_Button * button__task;
             
         protected:
             

@@ -27,14 +27,15 @@ tengu::AbstractEntity::AbstractEntity ()
     
     __uuid = QUuid::createUuid().toString();
     
-    __execution_mode = EM_ALWAYS;    
-    _changed = false;
-    
     // Initialization for change time, (probably) will be replaced later.
     // Инициализация времени изменения, (наверное) потом будет изменена.
     
     __lastModified = QDateTime::currentDateTimeUtc();
-
+    
+    __execution_mode = EM_ALWAYS;    
+    
+    _changed = false;
+    _className = QString("");       
 }
 
 // ********************************************************************************************************************
@@ -193,6 +194,7 @@ QJsonObject tengu::AbstractEntity::toJSON() {
     o.insert("comment", __comment );
     o.insert("execution_mode", (int) __execution_mode );
     o.insert("last_modified", __lastModified.toString("t yyyy-MM-dd hh:mm:ss:zzz") );
+    if ( ! _className.isEmpty() ) o["class_name"] = _className;
     
     /*
     QJsonArray indexes;
@@ -234,6 +236,10 @@ bool tengu::AbstractEntity::hasClass ( QJsonObject json, QString class_name ) {
 // ********************************************************************************************************************
 
 bool tengu::AbstractEntity::fromJSON ( QJsonObject json ) {
+    
+    if ( ! _className.isEmpty() ) {
+        if ( ! hasClass( json, _className ) ) return false;
+    };
     
     if ( json.contains("uuid" ) ) __uuid = json.value("uuid").toString();
     if ( json.contains("name" ) ) __name = json.value("name").toString();

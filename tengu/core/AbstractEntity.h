@@ -87,6 +87,8 @@ namespace tengu {
             
             void _somethingChanged();
             
+            QString _className;
+            
         private:
             
             // Entity name

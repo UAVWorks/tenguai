@@ -22,8 +22,8 @@ namespace tengu {
             ProcessStop ();
             virtual ~ProcessStop();
             
-            virtual QJsonObject toJSON();
-            virtual bool fromJSON( QJsonObject json );
+            // virtual QJsonObject toJSON();
+            // virtual bool fromJSON( QJsonObject json );
             
     };
     

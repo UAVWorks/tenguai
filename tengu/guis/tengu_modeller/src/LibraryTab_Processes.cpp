@@ -36,6 +36,16 @@ tengu::LibraryTab__processes::LibraryTab__processes ( QWidget* parent, Qt::Windo
     button__process_end = new LibraryTab_Button( QIcon( QPixmap(":process_end_16.png")), tr("End of process")  );
     button__process_end->setDrag( ProcessStopItem().toJSON() );
     lay->addWidget( button__process_end, 1, 0 );
+    
+    button__focus_arrow = new LibraryTab_Button( QIcon( QPixmap(":arrow_right_16.png") ), tr("Binding arrow") );
+    lay->addWidget( button__focus_arrow, 0, 1 );
+    
+    button__focus_divider = new LibraryTab_Button( QIcon( QPixmap(":arrow_divide_right_16.png") ), tr("Branching block") );
+    lay->addWidget( button__focus_divider, 1, 1 );
+    
+    button__task = new LibraryTab_Button( QIcon( QPixmap(":box_16.png") ), tr("The Task") );
+    button__task->setDrag( TaskItem().toJSON() );
+    lay->addWidget( button__task, 1, 2 );
 }
 
 // ********************************************************************************************************************

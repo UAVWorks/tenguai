@@ -24,6 +24,7 @@ tengu::ProcessStart::ProcessStart ()
     // Старт всегда в режиме EM_ALWAYS
     
     setExecutionMode( EM_ALWAYS );
+    _className = "ProcessStart";
 }
 
 // ********************************************************************************************************************
@@ -33,7 +34,7 @@ tengu::ProcessStart::ProcessStart ()
 // *                                           Преобразование из объекта в JSON.                                      *
 // *                                                                                                                  *
 // ********************************************************************************************************************
-
+/*
 QJsonObject tengu::ProcessStart::toJSON() {
     
     QJsonObject o = tengu::AbstractEntity::toJSON();
@@ -45,7 +46,7 @@ QJsonObject tengu::ProcessStart::toJSON() {
     return o;
     
 }
-
+*/
 // ********************************************************************************************************************
 // *                                                                                                                  *
 // *                                            Conversion from JSON to object.                                       *
@@ -53,7 +54,7 @@ QJsonObject tengu::ProcessStart::toJSON() {
 // *                                            Преобразование из JSONа в объект.                                     *
 // *                                                                                                                  *
 // ********************************************************************************************************************
-
+/*
 bool tengu::ProcessStart::fromJSON ( QJsonObject json ) {
     
     if ( hasClass( json, "ProcessStart" ) ) {
@@ -63,7 +64,7 @@ bool tengu::ProcessStart::fromJSON ( QJsonObject json ) {
     
     return false;
 }
-
+*/
 // ********************************************************************************************************************
 // *                                                                                                                  *
 // *                                                    The destructor.                                               *

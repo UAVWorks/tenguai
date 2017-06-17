@@ -20,7 +20,7 @@
 tengu::ProcessStop::ProcessStop () 
     : AbstractAgent ()
 {
-
+    _className = "ProcessStop";
 }
 
 // ********************************************************************************************************************
@@ -31,6 +31,7 @@ tengu::ProcessStop::ProcessStop ()
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
+/*
 QJsonObject tengu::ProcessStop::toJSON() {
     
     QJsonObject o = tengu::AbstractEntity::toJSON();
@@ -42,6 +43,7 @@ QJsonObject tengu::ProcessStop::toJSON() {
     return o;
     
 }
+*/
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
@@ -51,6 +53,7 @@ QJsonObject tengu::ProcessStop::toJSON() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
+/*
 bool tengu::ProcessStop::fromJSON ( QJsonObject json ) {
     
     if ( hasClass( json, "ProcessStop" ) ) {
@@ -60,6 +63,7 @@ bool tengu::ProcessStop::fromJSON ( QJsonObject json ) {
     
     return false;
 }
+*/
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
