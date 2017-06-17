@@ -31,9 +31,10 @@ HEADERS  += src/overboard/XPlaneAgent.h     \
         src/schema/AbstractEntityItem.h     \        
         src/schema/XPlaneAgentItem.h        \
         src/schema/ProcessStartItem.h       \
-        src/schema/ProcessStopItem.h        \
+        src/schema/ProcessStopItem.h        \        
         src/schema/TaskItem.h               \
         src/schema/SproutItem.h             \
+        src/schema/ProcessItem.h            \
         src/schema/VehicleItem.h            \
         src/LibraryTab_Button.h             \
         src/LibraryTab_Processes.h          \
@@ -52,9 +53,10 @@ SOURCES += src/main.cpp                     \
         src/schema/AbstractEntityItem.cpp   \
         src/schema/XPlaneAgentItem.cpp      \
         src/schema/ProcessStartItem.cpp     \
-        src/schema/ProcessStopItem.cpp      \
+        src/schema/ProcessStopItem.cpp      \        
         src/schema/TaskItem.cpp             \
         src/schema/SproutItem.cpp           \
+        src/schema/ProcessItem.cpp          \
         src/schema/VehicleItem.cpp          \
         src/schema/AgentItemFactory.cpp     \
         src/LibraryTab_Button.cpp           \

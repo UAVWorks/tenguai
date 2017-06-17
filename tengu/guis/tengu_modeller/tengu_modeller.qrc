@@ -16,6 +16,11 @@
     <file alias="process_end_16.png">images/process_end_16.png</file>
     <file alias="bullet_attach_16.png">images/bullet_attach_16.png</file>
     <file alias="bullet_attach_32.png">images/bullet_attach_32.png</file>
+    <file alias="folder_16.png">images/folder_16.png</file>
+    <file alias="folder_brick_16.png">images/folder_brick_16.png</file>
+    <file alias="note_add_16.png">images/note_add_16.png</file>
+    <file alias="package_add_16.png">images/package_add_16.png</file>    
+    <file alias="diskette_16.png">images/diskette_16.png</file>    
     <file alias="Falcon_256.png">images/Falcon-256.png</file>
 </qresource>
 </RCC>

@@ -15,6 +15,7 @@
 #include "ProcessStartItem.h"
 #include "ProcessStopItem.h"
 #include "TaskItem.h"
+#include "ProcessItem.h"
 
 namespace tengu {
     

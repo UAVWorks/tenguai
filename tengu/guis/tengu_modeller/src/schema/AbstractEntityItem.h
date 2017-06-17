@@ -55,6 +55,9 @@ namespace tengu {
         
         Q_OBJECT
         
+        signals:
+            void signalSomethingChanged();
+            
         public:
             
             AbstractEntityItem( AbstractEntity * entity = Q_NULLPTR, QGraphicsItem * parent = Q_NULLPTR );
@@ -103,6 +106,7 @@ namespace tengu {
             QPoint mousePressedPos();
             
             virtual void checkEntity() = 0;
+            AbstractEntity * getEntity();
             
         protected:
             

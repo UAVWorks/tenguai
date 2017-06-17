@@ -27,12 +27,29 @@ namespace tengu {
         
         Q_OBJECT
         
+        signals:
+            
+            void signalSomethingChanged();
+            
         public:
             
             SchemaScene ( QObject* parent = 0 );
             virtual ~SchemaScene();
             
             void unselectAll();
+            void setRootItem( AbstractEntityItem * rootItem );
+            
+            void addItem( AbstractEntityItem * item );
+            bool changed();
+            
+        private:
+            
+            AbstractEntityItem * __rootItem;
+            bool __changed;
+                        
+        private slots:
+            
+            void __on__something_changed();
             
     };
     

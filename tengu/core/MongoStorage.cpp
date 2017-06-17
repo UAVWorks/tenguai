@@ -22,6 +22,7 @@ tengu::MongoStorage::MongoStorage( QString host, int port )
 {
     mongoc_init();
     __client = nullptr;
+    __alreadyIndexedCollections = QList<QString>();
     
     QString connectionString = QString("mongodb://") + host + ":" + QString::number( port );
     __client = mongoc_client_new ( connectionString.toLocal8Bit().data() );

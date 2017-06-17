@@ -28,9 +28,8 @@
 #include <QRect>
 
 #include "MongoStorage.h"
-#include "AbstractAgent.h"
 #include "AgentFactory.h"
-#include "WorkSpace.h"
+#include "AgentItemFactory.h"
 #include "AgentPropertyModel.h"
 #include "MainWindowLeft.h"
 #include "LibraryTab.h"
@@ -67,6 +66,12 @@ namespace tengu {
             
             QToolBar * __toolbar_execution_mode;
             
+            QAction * __action__create_schema;
+            QAction * __action__create_schema__process;
+            QAction * __action__open_schema;
+            QAction * __action__open_schema__process;
+            QAction * __action__save_schema;            
+            
             QAction * __action__execution_mode_xplane;
             QAction * __action__execution_mode_real;
             
@@ -92,11 +97,8 @@ namespace tengu {
             QAction * __actionQuit;
             
             void __restoreSettings();
-            
-            // The top model (a set of an agents)
-            // Самая верхняя модель (как множество агентов)
-            
-            WorkSpace * __workSpace;
+                        
+            // WorkSpace * __workSpace;
             
             // MVC-model for editing property of current (selected) agent or state.
             // MVC-модель редактирования свойств текущего (выбранного) агента или состояния.
@@ -117,6 +119,9 @@ namespace tengu {
             void __on_schema_item_double_clicked( AbstractEntityItem * item, bool controlPressed );
             void __on_schama_item_moved( AbstractEntityItem * entity, QPoint pos );
             void __on_schema_item_was_dropped( AbstractEntity * entity, QPoint pos );
+            void __on_schema_something_changed();
+            
+            void __on__create__process();
             
             void __on_set_execution_mode_xplane();
             void __on_set_execution_mode_real();

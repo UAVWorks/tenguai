@@ -19,6 +19,7 @@
 #include <QString>
 #include <QDebug>
 #include <QJsonObject>
+#include <QList>
 #include <QJsonDocument>
 
 #include "AbstractEntity.h"
@@ -43,6 +44,9 @@ namespace tengu {
             mongoc_client_t * __client;
             
             bson_t * __create_bson( QJsonObject o );
+            
+            QList<QString> __alreadyIndexedCollections;
+            
             // mongoc_database_t * __database;
             // mongoc_collection_t * __collection;
     };

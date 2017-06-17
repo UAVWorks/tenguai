@@ -26,8 +26,8 @@ tengu::LibraryTab::LibraryTab ( QWidget* parent )
     QFont font("Tahoma", 8 );
     setFont( font );
     
-    __tab__processes = new LibraryTab__processes();
-    addTab( __tab__processes, tr("Processes") );
+    tab__processes = new LibraryTab__processes();
+    addTab( tab__processes, tr("Processes") );
 }
 
 // ********************************************************************************************************************

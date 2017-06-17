@@ -24,7 +24,7 @@ tengu::MainWindow::MainWindow(QWidget *parent)
     setWindowTitle( tr("Tengu modeller") );
     setWindowIcon( QIcon( QPixmap(":tengu_32.png") ) );
     
-    __workSpace = new WorkSpace();
+    // __workSpace = new WorkSpace();
     __agentPropertyModel = new AgentPropertyModel();
     
     QVBoxLayout * lay = new QVBoxLayout();
@@ -45,8 +45,9 @@ tengu::MainWindow::MainWindow(QWidget *parent)
     
     lay->addWidget( __hSplitter );
     
-    __createSchemaScene();
-            
+    __createSchemaScene();    
+
+    /*
     Task * task = new Task();
     task->setName( "The task" );
     TaskItem * i = new TaskItem( task );
@@ -71,6 +72,7 @@ tengu::MainWindow::MainWindow(QWidget *parent)
     pStopItem->setX( 500 );
     pStopItem->setY( 300 );
     __schemaScene->addItem( pStopItem );
+    */
         
     /*
     VehicleItem * w = new VehicleItem( new Vehicle( nullptr, "Vehicle") );
@@ -119,6 +121,23 @@ void tengu::MainWindow::__createActions() {
     __actionQuit = new QAction( tr( "Quit" ), this );
     __actionQuit->setIcon( QIcon( QPixmap(":door_open_16.png") ) );
     QObject::connect( __actionQuit, SIGNAL(triggered()), this, SLOT( __on_quit_request() ) );
+    
+    // a "File" actions
+    // Действия с "файлами".
+    
+    __action__create_schema = new QAction( QIcon( QPixmap(":note_add_16.png") ), tr("Create..."), this );
+    // QObject::connect();
+    
+    __action__create_schema__process = new QAction( QIcon(":package_add_16.png"), tr("Create the process"), this );
+    QObject::connect( __action__create_schema__process, SIGNAL( triggered() ), this, SLOT( __on__create__process() ) );
+    
+    __action__open_schema = new QAction( QIcon( QPixmap(":folder_16.png") ), tr("Open..."), this );
+    
+    __action__open_schema__process = new QAction( QIcon( QPixmap(":folder_brick_16.png") ), tr("Open the process"), this );
+    
+    __action__save_schema = new QAction( QIcon(QPixmap(":diskette_16.png")), tr("Save"), this );
+    __action__save_schema->setEnabled( false );
+    // QObject::connect(
     
     // Execution mode actions.
     // Действия изменения режима выполнения.
@@ -197,6 +216,7 @@ void tengu::MainWindow::__createStatusBar() {
 
 void tengu::MainWindow::__createLibraryTab() {
     __library_tab = new LibraryTab();
+    __library_tab->tab__processes->setEnabled( false );
 }
 
 
@@ -210,8 +230,34 @@ void tengu::MainWindow::__createLibraryTab() {
 
 void tengu::MainWindow::__createToolBar() {
     
-    __toolbar_file = new QToolBar();
+    // --------------------------------------------------------------------------------------------
+    //                                        Toolbar "File"
+    //                                         тулбар "Файл"
+    // --------------------------------------------------------------------------------------------
     
+    __toolbar_file = new QToolBar();
+    __toolbar_file->setIconSize( QSize(16,16) );
+    
+    // Create button
+    // Кнопка создания
+    
+    __toolbar_file->addAction( __action__create_schema );
+    QToolButton * createSchemaButton = dynamic_cast<QToolButton*>( __toolbar_file->widgetForAction( __action__create_schema ));
+    createSchemaButton->setPopupMode( QToolButton::InstantPopup );
+    createSchemaButton->removeAction( __action__create_schema );
+    createSchemaButton->addAction( __action__create_schema__process );
+    
+    // Open button
+    // Кнопка открытия
+    
+    __toolbar_file->addAction( __action__open_schema );
+    QToolButton * openSchemaButton = dynamic_cast< QToolButton * > ( __toolbar_file->widgetForAction( __action__open_schema ) );
+    openSchemaButton->setPopupMode( QToolButton::InstantPopup );
+    openSchemaButton->removeAction( __action__open_schema );
+    openSchemaButton->addAction( __action__open_schema__process );
+    
+    __toolbar_file->addAction( __action__save_schema );
+        
     addToolBar( Qt::TopToolBarArea, __toolbar_file );
     
     // Model execution mode toolbar
@@ -240,6 +286,8 @@ void tengu::MainWindow::__createToolBar() {
     __toolbar_elements_library = new QToolBar();
     __toolbar_elements_library->addWidget( __library_tab );
     addToolBar( Qt::TopToolBarArea, __toolbar_elements_library );
+            
+    
 }
 
 // ********************************************************************************************************************
@@ -272,6 +320,7 @@ void tengu::MainWindow::__createSchemaScene() {
     // Сама сцена.
     
     __schemaScene = new SchemaScene();
+    QObject::connect( __schemaScene, SIGNAL(signalSomethingChanged()), this, SLOT( __on_schema_something_changed() ) );
     
     // We always have invisible X-Plane schema item for modelling.
     // У нас всегда есть невидимый компонент схемы - X-Plane. Он для моделирования.
@@ -282,6 +331,20 @@ void tengu::MainWindow::__createSchemaScene() {
     xpItem->setY( 0 );
     __schemaScene->addItem( xpItem );
 
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                                 Create new process.                                              *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                               Создание нового процесса.                                          *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindow::__on__create__process() {
+    __schemaScene->setRootItem( new ProcessItem() );   
+    __library_tab->tab__processes->setEnabled( true );
+    __library_tab->setCurrentWidget( __library_tab->tab__processes );
 }
 
 // ********************************************************************************************************************
@@ -354,19 +417,32 @@ void tengu::MainWindow::__on_schema_item_was_dropped ( tengu::AbstractEntity* en
     if ( entity ) {
         
         AbstractEntityItem * item = dynamic_cast<AbstractEntityItem * >( entity );        
+        
         if ( item ) {
             
             // It was graphical representation.
             // Это было графическое представление.
-            
+                        
             item->checkEntity();
             item->setX( pos.x() );
             item->setY( pos.y() );
-            __schemaScene->addItem( item );
+            __schemaScene->addItem( item );            
             
         };
     };
     
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                        Something has been changed on the schema.                                 *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                             На схеме что-то было изменено.                                       *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindow::__on_schema_something_changed() {
+    __action__save_schema->setEnabled( true );
 }
 
 // ********************************************************************************************************************

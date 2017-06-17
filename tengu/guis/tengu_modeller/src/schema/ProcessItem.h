@@ -1,36 +1,29 @@
 // ********************************************************************************************************************
 // *                                                                                                                  *
-// *                                     Tabulator widget for component library toolbar.                              *
+// *                                       The graphical representation for the process.                              *
 // * ---------------------------------------------------------------------------------------------------------------- *
-// *                                  Виджит табулятора для тулбара библиотеки компонентов.                           *
+// *                                             Графическое представление процесса.                                  *
 // *                                                                                                                  *
-// * Eugene G. Sysoletin <e.g.sysoletin@gmail.com>                                       Created 12 jun 2017 at 14:56 *
+// * Eugene G. Sysoletin <e.g.sysoletin@gmail.com>                                       Created 17 jun 2017 at 15:34 *
 // ********************************************************************************************************************
 
 #pragma once
 
-#include <QTabWidget>
-#include <QFont>
-
-#include "LibraryTab_Processes.h"
+#include "AbstractEntityItem.h"
 
 namespace tengu {
     
-    class LibraryTab : public QTabWidget {
+    class ProcessItem : public AbstractEntityItem {
         
         Q_OBJECT
         
         public:
             
-            explicit LibraryTab ( QWidget* parent = 0 );
-            virtual ~LibraryTab();
-        
-            LibraryTab__processes * tab__processes;
+            ProcessItem ( AbstractEntity* entity = Q_NULLPTR, QGraphicsItem * parent = Q_NULLPTR );
+            virtual ~ProcessItem();
             
-        protected:
-        private:
-            
-            
+            void checkEntity();
             
     };
 };
+
