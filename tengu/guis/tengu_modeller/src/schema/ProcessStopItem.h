@@ -21,6 +21,10 @@ namespace tengu {
             
             ProcessStopItem ( ProcessStop * entity = Q_NULLPTR, QGraphicsItem * parent = Q_NULLPTR );
             virtual ~ProcessStopItem();
+            
+        protected:
+            
+            void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = Q_NULLPTR);
     };
 };
 
