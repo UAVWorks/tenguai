@@ -85,7 +85,6 @@ void tengu::AbstractAgentKernel::_createRedises() {
     
 }
 
-
 // ********************************************************************************************************************
 // *                                                                                                                  *
 // *                                    Callback procedure after got some value from redis.                           *
@@ -230,6 +229,22 @@ void tengu::AbstractAgentKernel::__on_sub_redis_disconnected() {
 
 void tengu::AbstractAgentKernel::__on_redis_error ( QString message ) {
     qDebug() << "AbstractAgentKernel::__on_error: " << message;
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                     Something has been changed in this agent.                                    *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                         Что-то в данном агенте изменилось.                                       *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+
+void tengu::AbstractAgentKernel::_somethingChanged() {
+    
+    AbstractEntity::_somethingChanged();
+    emit signalSomethingChanged();
+    
 }
 
 // ********************************************************************************************************************

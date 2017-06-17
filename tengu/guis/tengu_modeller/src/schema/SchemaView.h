@@ -31,7 +31,7 @@
 
 #include "AbstractEntityItem.h"
 #include "AbstractEntity.h"
-#include "AgentFactory.h"
+#include "AgentItemFactory.h"
 
 namespace tengu {
 
@@ -43,8 +43,8 @@ namespace tengu {
             
             void signalItemPressed( AbstractEntityItem * item, bool controlPressed );
             void signalItemDoubleClicked( AbstractEntityItem * item, bool controlPressed );
-            void signalItemDragging( AbstractEntityItem * item, QPoint pos );
-            void signalWasDropped( AbstractEntity * entity );
+            void signalItemMoved( AbstractEntityItem * item, QPoint pos );
+            void signalWasDropped( AbstractEntity * entity, QPoint pos );
         
         public:
             
@@ -67,7 +67,7 @@ namespace tengu {
             void dragLeaveEvent(QDragLeaveEvent * event);
             void dropEvent( QDropEvent * event );
             
-            AbstractEntity * __event_to_entity( QDropEvent * event );
+            AbstractEntity * __event_to_entity( QDropEvent * event );            
             
 #ifndef QT_NO_WHEELEVENT
             void wheelEvent( QWheelEvent * event );

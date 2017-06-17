@@ -28,6 +28,10 @@ namespace tengu {
                                 
         Q_OBJECT
         
+        signals:
+            
+            void signalSomethingChanged();
+        
         public:
                         
             AbstractAgentKernel();
@@ -116,6 +120,11 @@ namespace tengu {
             // Древовидная структура агентов. Для загрузки всей "ветки" дерева целиком.
             
             QString _parent_uuid;
+            
+            // Overrided change's method for emit signal
+            // Перекрытый метод изменения, чтобы вызвать сигнал
+            
+            void _somethingChanged();
                         
             
         private:

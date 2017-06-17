@@ -73,6 +73,32 @@ void tengu::SchemaView::__createMenus() {
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
+// *               Convert QDropEvent (QDragMoveEvent, QDragEnterEvent) to my AbstractEntity object.                  *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *             Преобразовать QDropEvent( QDragMoveEvent, QDragEnterEvent) в мой AbstractEntity объект.              *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+tengu::AbstractEntity * tengu::SchemaView::__event_to_entity ( QDropEvent * event ) {
+    
+    if ( event->mimeData()->hasFormat( "application/json" ) ) {
+        
+        QJsonDocument doc = QJsonDocument::fromJson( event->mimeData()->data("application/json") );
+        if ( ! doc.isEmpty() ) {
+            if ( doc.isObject() ) {
+                QJsonObject json = doc.object();
+                if ( ! json.isEmpty() ) {
+                    return ( AgentItemFactory::createEntity( json ) );
+                };
+            };
+        };        
+    };
+    
+    return nullptr;
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
 // *                                             Slot: we want create a task.                                         *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                                           Слот: мы хотим создать задачу.                                         *
@@ -214,6 +240,7 @@ void tengu::SchemaView::mouseMoveEvent ( QMouseEvent * event ) {
     if ( event->buttons() & Qt::LeftButton ) {
         
         if ( __entityDragged ) {
+            
             if ( ! __entityDragInProcess )  {
             
                 // May be we need to switch on the drag process.
@@ -233,7 +260,7 @@ void tengu::SchemaView::mouseMoveEvent ( QMouseEvent * event ) {
                 QPoint targetPos = mapToScene( event->pos() ).toPoint(); 
                 targetPos -= __entityDragged->mousePressedPos();
                 // qDebug() << "Event pos=" << event->pos() << ", mouse pressed=" << __mousePressedPos << ", element pos=" << __entityDragged->mousePressedPos();
-                emit signalItemDragging( __entityDragged, targetPos );
+                emit signalItemMoved( __entityDragged, targetPos );
             };
             
         };
@@ -270,32 +297,6 @@ void tengu::SchemaView::contextMenuEvent ( QContextMenuEvent* event ) {
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
-// *               Convert QDropEvent (QDragMoveEvent, QDragEnterEvent) to my AbstractEntity object.                  *
-// * ---------------------------------------------------------------------------------------------------------------- *
-// *             Преобразовать QDropEvent( QDragMoveEvent, QDragEnterEvent) в мой AbstractEntity объект.              *
-// *                                                                                                                  *
-// ********************************************************************************************************************
-
-tengu::AbstractEntity * tengu::SchemaView::__event_to_entity ( QDropEvent * event ) {
-    
-    if ( event->mimeData()->hasFormat( "application/json" ) ) {
-        
-        QJsonDocument doc = QJsonDocument::fromJson( event->mimeData()->data("application/json") );
-        if ( ! doc.isEmpty() ) {
-            if ( doc.isObject() ) {
-                QJsonObject json = doc.object();
-                if ( ! json.isEmpty() ) {
-                    return ( AgentFactory::createEntity( json ) );
-                };
-            };
-        };        
-    };
-    
-    return nullptr;
-}
-
-// ********************************************************************************************************************
-// *                                                                                                                  *
 // *                                            Enter dragging to this widget                                         *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                                      Событие входа таскаемого объекта на виджит.                                 *
@@ -321,11 +322,30 @@ void tengu::SchemaView::dragEnterEvent ( QDragEnterEvent * event ) {
 // ********************************************************************************************************************
 
 void tengu::SchemaView::dragMoveEvent ( QDragMoveEvent * event ) {
+    
     QGraphicsView::dragMoveEvent ( event );
+    
+    // What is dragged.
+    // То, что тащится
+    
     AbstractEntity * entity = __event_to_entity ( event );
+    
+    // What is dragged over
+    // То, над чем тащится
+    
+    AbstractEntityItem * curItem = dynamic_cast< AbstractEntityItem * >( itemAt( event->pos() ) );
+    
     if ( entity ) {
+        
+        // This is need in any case
+        // Это нужно по-любому.
+        
         delete( entity );
-        event->acceptProposedAction();
+        
+        // The event will be processed only if the object does not drop onto an existing object.
+        // Событие будет обработано только в том случае, если объект не бросается на уже существующий объект.
+        
+        if ( ! curItem ) event->acceptProposedAction();
     };
 }
 
@@ -350,13 +370,14 @@ void tengu::SchemaView::dragLeaveEvent ( QDragLeaveEvent * event ) {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::SchemaView::dropEvent ( QDropEvent* event ) {
+void tengu::SchemaView::dropEvent ( QDropEvent * event ) {
     
     QGraphicsView::dropEvent ( event );
     AbstractEntity * entity = __event_to_entity( event ); 
     
     if ( entity ) {
-        emit signalWasDropped( entity );
+        QPoint pos = mapToScene( event->pos() ).toPoint();
+        emit signalWasDropped( entity, pos );
     };    
     
 }

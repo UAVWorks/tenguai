@@ -28,6 +28,7 @@
 #include "AbstractEntity.h"
 #include "AbstractAgent.h"
 #include "Sprout.h"
+#include "AgentFactory.h"
 
 // Colors for process diagram.
 // Цвета для диаграммы процессов.
@@ -100,6 +101,8 @@ namespace tengu {
             virtual bool fromJSON( QJsonObject json );
             
             QPoint mousePressedPos();
+            
+            virtual void checkEntity() = 0;
             
         protected:
             

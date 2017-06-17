@@ -33,7 +33,7 @@ bool tengu::AgentFactory::hasAgent ( QJSonObject json ) {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::AbstractEntity* tengu::AgentFactory::createEntity ( QJsonObject json ) {
+tengu::AbstractEntity * tengu::AgentFactory::createEntity ( QJsonObject json ) {
     
     AbstractEntity * e = nullptr;
     
@@ -49,9 +49,9 @@ tengu::AbstractEntity* tengu::AgentFactory::createEntity ( QJsonObject json ) {
 
     if ( e ) e->fromJSON( json );
     
-    else {
-        qDebug() << "AgentFactory::hasAgent(), unhandled agent name " << json;
-    };
+//    else {
+//        qDebug() << "AgentFactory::hasAgent(), unhandled agent name " << json;
+//    };
     
     return e;
     

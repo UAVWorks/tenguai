@@ -22,6 +22,8 @@
 
 #include "LibraryTab_Button.h"
 #include "AgentFactory.h"
+#include "ProcessStartItem.h"
+#include "ProcessStopItem.h"
 
 namespace tengu {
 

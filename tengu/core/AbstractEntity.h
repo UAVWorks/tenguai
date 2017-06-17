@@ -85,7 +85,7 @@ namespace tengu {
             
             bool _changed;
             
-            void _somewhatChanged();
+            void _somethingChanged();
             
         private:
             

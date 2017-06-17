@@ -20,10 +20,11 @@ namespace tengu {
         
         public:
             
-            TaskItem ( Task * task, QGraphicsItem * parent = Q_NULLPTR );
+            TaskItem ( Task * task = Q_NULLPTR, QGraphicsItem * parent = Q_NULLPTR );
             virtual ~TaskItem();
             
             void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = Q_NULLPTR);
+            void checkEntity();
         
         private:
             

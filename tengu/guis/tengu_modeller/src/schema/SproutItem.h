@@ -28,6 +28,8 @@ namespace tengu {
             
             QList<QPair<QString, QVariant>> properties();
             
+            void checkEntity();
+            
         private:
     };
     

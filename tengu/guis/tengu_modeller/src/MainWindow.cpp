@@ -254,7 +254,8 @@ void tengu::MainWindow::__createSchemaView() {
     __schemaView = new SchemaView( __schemaScene );
     QObject::connect( __schemaView, SIGNAL( signalItemPressed( AbstractEntityItem *, bool )), this, SLOT( __on_schema_item_pressed ( AbstractEntityItem *, bool ) ) );
     QObject::connect( __schemaView, SIGNAL( signalItemDoubleClicked( AbstractEntityItem *, bool )), this, SLOT( __on_schema_item_double_clicked( AbstractEntityItem *, bool ) ) );
-    QObject::connect( __schemaView, SIGNAL( signalItemDragging( AbstractEntityItem * , QPoint )), this, SLOT( __on_schama_item_dragged( AbstractEntityItem * , QPoint ) ) );
+    QObject::connect( __schemaView, SIGNAL( signalItemMoved( AbstractEntityItem * , QPoint )), this, SLOT( __on_schama_item_moved( AbstractEntityItem * , QPoint ) ) );
+    QObject::connect( __schemaView, SIGNAL( signalWasDropped( AbstractEntity *, QPoint)), this, SLOT( __on_schema_item_was_dropped( AbstractEntity *, QPoint ) ) );
 }
 
 // ********************************************************************************************************************
@@ -322,13 +323,13 @@ void tengu::MainWindow::__on_schema_item_double_clicked ( tengu::AbstractEntityI
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
-// *                                       Entity element was dragged at the schema.                                  *
+// *                                        Entity element was moved at the schema.                                   *
 // * ---------------------------------------------------------------------------------------------------------------- *
-// *                                                "Сущность" тащат по схеме.                                        *
+// *                                           "Сущность" перемещают по схеме.                                        *
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::MainWindow::__on_schama_item_dragged ( tengu::AbstractEntityItem * entity, QPoint pos ) {
+void tengu::MainWindow::__on_schama_item_moved ( tengu::AbstractEntityItem * entity, QPoint pos ) {
     
     if ( entity ) {
         entity->setX( pos.x() );
@@ -336,6 +337,34 @@ void tengu::MainWindow::__on_schama_item_dragged ( tengu::AbstractEntityItem * e
         entity->update(); 
         // currentPos = __schemaView->mapFromScene( currentPos );
         // qDebug() << "After map to scene: " << currentPos;
+    };
+    
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                    Some item was dropped onto the schema view.                                   *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                            Некий элемент был "сброшен" на схему (на ее представление).                           *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindow::__on_schema_item_was_dropped ( tengu::AbstractEntity* entity, QPoint pos ) {
+    
+    if ( entity ) {
+        
+        AbstractEntityItem * item = dynamic_cast<AbstractEntityItem * >( entity );        
+        if ( item ) {
+            
+            // It was graphical representation.
+            // Это было графическое представление.
+            
+            item->checkEntity();
+            item->setX( pos.x() );
+            item->setY( pos.y() );
+            __schemaScene->addItem( item );
+            
+        };
     };
     
 }

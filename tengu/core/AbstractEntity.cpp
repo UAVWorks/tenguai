@@ -59,7 +59,7 @@ QString tengu::AbstractEntity::getName() {
 
 void tengu::AbstractEntity::setName ( QString name ) {
     __name = name;
-    _somewhatChanged();    
+    _somethingChanged();    
 }
 
 // ********************************************************************************************************************
@@ -109,7 +109,7 @@ QString tengu::AbstractEntity::getComment() {
 
 void tengu::AbstractEntity::setComment ( QString comment ) {
     __comment = comment;
-    _somewhatChanged();
+    _somethingChanged();
 }
 
 // ********************************************************************************************************************
@@ -134,7 +134,7 @@ tengu::AbstractEntity::execution_mode_t tengu::AbstractEntity::getExecutionMode(
 
 void tengu::AbstractEntity::setExecutionMode( tengu::AbstractEntity::execution_mode_t mode ) {
     __execution_mode = mode;
-    _somewhatChanged();
+    _somethingChanged();
 };
 
 // ********************************************************************************************************************
@@ -157,7 +157,7 @@ bool tengu::AbstractEntity::hasChanged() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::AbstractEntity::_somewhatChanged() {
+void tengu::AbstractEntity::_somethingChanged() {
     _changed = true;
     __lastModified = QDateTime::currentDateTimeUtc();
     // emit signalHasBeenChanged( __lastModified );
@@ -187,7 +187,7 @@ QJsonObject tengu::AbstractEntity::toJSON() {
     
     QJsonObject o;
     
-    o.insert("database", "tengu_entities");
+    o.insert("database", "tengu");
     o.insert("uuid", __uuid );
     o.insert("name", __name );
     o.insert("comment", __comment );

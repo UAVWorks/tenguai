@@ -22,6 +22,7 @@ namespace tengu {
             
             XPlaneAgentItem ( XPlaneAgent * entity, QGraphicsItem* parent = nullptr );
             virtual ~XPlaneAgentItem();
+            void checkEntity();
             
         private:
     };

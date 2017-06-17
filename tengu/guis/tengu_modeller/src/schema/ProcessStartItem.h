@@ -25,6 +25,11 @@ namespace tengu {
             ProcessStartItem ( ProcessStart * entity = Q_NULLPTR, QGraphicsItem * parent = Q_NULLPTR );
             virtual ~ProcessStartItem();
             
+            QJsonObject toJSON();
+            bool fromJSON( QJsonObject json );
+            
+            void checkEntity();
+            
         protected:
             
             void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = Q_NULLPTR);

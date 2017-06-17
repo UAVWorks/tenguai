@@ -453,20 +453,14 @@ QDateTime tengu::AbstractEntityItem::lastModified() {
 
 QJsonObject tengu::AbstractEntityItem::toJSON() {
     
-    QJsonObject o;
+    QJsonObject o = AbstractEntity::toJSON();
+    
     if ( _entity ) {
-        o = _entity->toJSON();
-        
-        // The UUIDs is different.
-        // UUIDы разные.
-        
-        o.insert("entity_uuid", _entity->getUUID() );        
+        QJsonObject e = _entity->toJSON();
+        o["entity"] = e;                
     };
-    o.insert("uuid", getUUID() );
     
-    // This object's fields.
-    // Поля данного объекта.
-    
+       
     return o;
     
 }
@@ -480,12 +474,25 @@ QJsonObject tengu::AbstractEntityItem::toJSON() {
 // ********************************************************************************************************************
 
 bool tengu::AbstractEntityItem::fromJSON ( QJsonObject json ) {
+
+    bool result = AbstractEntity::fromJSON( json );
     
-    if ( _entity ) {
-        return _entity->fromJSON( json );
+    if ( ( result ) && ( json.contains("entity") ) ) {
+        
+        QJsonValue vEntity = json["entity"];
+                
+        if ( vEntity.isObject() ) {
+            QJsonObject oEntity = vEntity.toObject();
+            qDebug() << "Have entity:" << oEntity;
+        
+            if ( ! _entity ) _entity = AgentFactory::createEntity( oEntity );
+            else _entity->fromJSON( oEntity );
+        }
+        
+        
     };
     
-    return false;
+    return result;
 }
 
 // ********************************************************************************************************************

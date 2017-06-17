@@ -56,6 +56,7 @@ SOURCES += src/main.cpp                     \
         src/schema/TaskItem.cpp             \
         src/schema/SproutItem.cpp           \
         src/schema/VehicleItem.cpp          \
+        src/schema/AgentItemFactory.cpp     \
         src/LibraryTab_Button.cpp           \
         src/LibraryTab_Processes.cpp        \
         src/LibraryTab.cpp                  \
