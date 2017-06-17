@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include <QApplication>
 #include <QWidget>
 #include <QGraphicsView>
 #include <QGraphicsScene>
@@ -42,6 +43,7 @@ namespace tengu {
             
             void signalItemPressed( AbstractEntityItem * item, bool controlPressed );
             void signalItemDoubleClicked( AbstractEntityItem * item, bool controlPressed );
+            void signalItemDragging( AbstractEntityItem * item, QPoint pos );
             void signalWasDropped( AbstractStorageableEntity * entity );
         
         public:
@@ -82,6 +84,9 @@ namespace tengu {
             QPoint __scaleCenter;
             
             QPoint __mouseAtSchemaPos;
+            QPoint __mousePressedPos;
+            AbstractEntityItem * __entityDragged;
+            bool __entityDragInProcess;
             
             // float __scaleFactor;
             

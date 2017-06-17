@@ -22,6 +22,8 @@
 #include <QPair>
 #include <QDateTime>
 #include <QUuid>
+#include <QGraphicsSceneMouseEvent>
+#include <QMouseEvent>
 
 #include "AbstractStorageableEntity.h"
 #include "AbstractEntity.h"
@@ -98,6 +100,8 @@ namespace tengu {
             virtual QJsonObject toJSON();
             virtual bool fromJSON( QJsonObject json );
             
+            QPoint mousePressedPos();
+            
         protected:
             
             AbstractEntity * _entity;
@@ -117,8 +121,8 @@ namespace tengu {
             
             QPen _processDiagram_borderPen();
             
-            // void mousePressEvent( QGraphicsSceneMouseEvent * event );
-            // void mouseReleaseEvent(QGraphicsSceneMouseEvent * event);
+            void mousePressEvent( QGraphicsSceneMouseEvent * event );
+            // void mouseReleaseEvent( QGraphicsSceneMouseEvent * event );
             // void mouseMoveEvent(QGraphicsSceneMouseEvent * event);
 
             // Can this entity to be decomposed forcibly?
@@ -134,6 +138,7 @@ namespace tengu {
         private:
             
             bool __mousePressed;
+            QPoint __mousePressedPoint;
             
             QString __uuid;
             

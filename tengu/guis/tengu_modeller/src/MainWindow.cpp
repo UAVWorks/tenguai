@@ -254,6 +254,7 @@ void tengu::MainWindow::__createSchemaView() {
     __schemaView = new SchemaView( __schemaScene );
     QObject::connect( __schemaView, SIGNAL( signalItemPressed( AbstractEntityItem *, bool )), this, SLOT( __on_schema_item_pressed ( AbstractEntityItem *, bool ) ) );
     QObject::connect( __schemaView, SIGNAL( signalItemDoubleClicked( AbstractEntityItem *, bool )), this, SLOT( __on_schema_item_double_clicked( AbstractEntityItem *, bool ) ) );
+    QObject::connect( __schemaView, SIGNAL( signalItemDragging( AbstractEntityItem * , QPoint )), this, SLOT( __on_schama_item_dragged( AbstractEntityItem * , QPoint ) ) );
 }
 
 // ********************************************************************************************************************
@@ -317,6 +318,26 @@ void tengu::MainWindow::__on_schema_item_pressed ( tengu::AbstractEntityItem * i
 
 void tengu::MainWindow::__on_schema_item_double_clicked ( tengu::AbstractEntityItem * item, bool controlPressed ) {
 
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                       Entity element was dragged at the schema.                                  *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                                "Сущность" тащат по схеме.                                        *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindow::__on_schama_item_dragged ( tengu::AbstractEntityItem * entity, QPoint pos ) {
+    
+    if ( entity ) {
+        entity->setX( pos.x() );
+        entity->setY( pos.y() );
+        entity->update(); 
+        // currentPos = __schemaView->mapFromScene( currentPos );
+        // qDebug() << "After map to scene: " << currentPos;
+    };
+    
 }
 
 // ********************************************************************************************************************

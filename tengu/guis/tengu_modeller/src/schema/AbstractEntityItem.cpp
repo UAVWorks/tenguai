@@ -28,6 +28,7 @@ tengu::AbstractEntityItem::AbstractEntityItem( AbstractEntity * entity, QGraphic
     _changed = false;
     
     __mousePressed = false;        
+    __mousePressedPoint = QPoint( 0, 0 );
     __uuid = QUuid::createUuid().toString();
     __lastModified = QDateTime::currentDateTimeUtc();
     
@@ -224,13 +225,30 @@ QPen tengu::AbstractEntityItem::_processDiagram_borderPen() {
 // *                                            Обработчик события нажатия мышки.                                     *
 // *                                                                                                                  *
 // ********************************************************************************************************************
-/*
-void tengu::AbstractAgentItem::mousePressEvent ( QGraphicsSceneMouseEvent * event ) {
-    qDebug() << "AbstractAgentItem::mousePressEvent()" ;
-    __mousePressed = true;
+
+void tengu::AbstractEntityItem::mousePressEvent ( QGraphicsSceneMouseEvent * event ) {
+    
     QGraphicsItem::mousePressEvent ( event );
+    
+    if ( event->buttons() & Qt::LeftButton ) {
+        __mousePressed = true;
+        __mousePressedPoint = event->pos().toPoint();
+    }
+    
 }
-*/
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                     Get mouse position where press event occured.                                *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                   Получить позицию мышки, на которой было нажатие.                               *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+QPoint tengu::AbstractEntityItem::mousePressedPos() {
+    return __mousePressedPoint;
+}
+
 // ********************************************************************************************************************
 // *                                                                                                                  *
 // *                                             Mouse release event handler.                                         *
@@ -239,10 +257,10 @@ void tengu::AbstractAgentItem::mousePressEvent ( QGraphicsSceneMouseEvent * even
 // *                                                                                                                  *
 // ********************************************************************************************************************
 /*
-void tengu::AbstractAgentItem::mouseReleaseEvent ( QGraphicsSceneMouseEvent * event ) {
+void tengu::AbstractEntityItem::mouseReleaseEvent ( QMouseEvent * event ) {
     qDebug() << "AbstractAgentItem::mouseReleaseEvent()" ;
     __mousePressed = false;
-    QGraphicsItem::mouseReleaseEvent ( event );
+    // QGraphicsItem::mouseReleaseEvent ( event );
 }
 */
 // ********************************************************************************************************************

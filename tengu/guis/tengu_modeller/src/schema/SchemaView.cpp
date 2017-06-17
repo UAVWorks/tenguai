@@ -40,6 +40,8 @@ tengu::SchemaView::SchemaView( QGraphicsScene * scene )
     setAcceptDrops( true );
     
     __leftMouseButtonPressed = false;
+    __entityDragged = nullptr;
+    __entityDragInProcess = false;
     
     __createMenus();
     __mouseAtSchemaPos = QPoint( 0, 0 );
@@ -131,15 +133,24 @@ void tengu::SchemaView::wheelEvent(QWheelEvent* event) {
 void tengu::SchemaView::mousePressEvent ( QMouseEvent * event ) {
     
     QGraphicsView::mousePressEvent( event );
+    __entityDragged = nullptr;
+    __entityDragInProcess = false;
     
     if ( event->buttons() & Qt::LeftButton ) {
         
         __leftMouseButtonPressed = true;
+        __mousePressedPos = event->pos();
         
         QGraphicsItem * item = itemAt( event->pos());
         bool controlPressed = event->modifiers() & Qt::ControlModifier;
     
         if ( item ) {
+            
+            AbstractEntityItem * entityItem = dynamic_cast< AbstractEntityItem * >( item );
+            if ( entityItem ) {
+                __entityDragged = entityItem;                
+            };
+            
             emit signalItemPressed( ( AbstractEntityItem * ) item, controlPressed );
         };
         
@@ -157,11 +168,15 @@ void tengu::SchemaView::mousePressEvent ( QMouseEvent * event ) {
 
 void tengu::SchemaView::mouseReleaseEvent ( QMouseEvent * event ) {
     
+    QGraphicsView::mouseReleaseEvent ( event );
+    
+    __entityDragged = nullptr;
+    __entityDragInProcess = false;
+    
     if ( Qt::LeftButton & event->buttons() ) {    
-        qDebug() << "SchemaView::mouse release event";    
         __leftMouseButtonPressed = false;    
     };
-    QGraphicsView::mouseReleaseEvent ( event );
+    
 }
 
 // ********************************************************************************************************************
@@ -195,6 +210,34 @@ void tengu::SchemaView::mouseMoveEvent ( QMouseEvent * event ) {
     // qDebug() << "SchemaView::mouseMove()";
     QGraphicsView::mouseMoveEvent ( event );
     __mouseAtSchemaPos = mapToScene( event->pos() ).toPoint();
+    
+    if ( event->buttons() & Qt::LeftButton ) {
+        
+        if ( __entityDragged ) {
+            if ( ! __entityDragInProcess )  {
+            
+                // May be we need to switch on the drag process.
+                // Может быть, необходимо включить перетаскивание.
+            
+                QPoint delta = event->pos() - __mousePressedPos;
+                if ( delta.manhattanLength() > QApplication::startDragDistance() ) {
+                    __entityDragInProcess = true;
+                };
+            
+            };
+        
+            // If we are already in drag process, signal about it.
+            // Если уже тащим, сигнал об этом.
+        
+            if ( __entityDragInProcess ) {
+                QPoint targetPos = mapToScene( event->pos() ).toPoint(); 
+                targetPos -= __entityDragged->mousePressedPos();
+                // qDebug() << "Event pos=" << event->pos() << ", mouse pressed=" << __mousePressedPos << ", element pos=" << __entityDragged->mousePressedPos();
+                emit signalItemDragging( __entityDragged, targetPos );
+            };
+            
+        };
+    };
 }
 
 // ********************************************************************************************************************

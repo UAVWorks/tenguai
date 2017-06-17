@@ -115,6 +115,7 @@ namespace tengu {
             
             void __on_schema_item_pressed( AbstractEntityItem * item, bool controlPressed );
             void __on_schema_item_double_clicked( AbstractEntityItem * item, bool controlPressed );
+            void __on_schama_item_dragged( AbstractEntityItem * entity, QPoint pos );
             
             void __on_set_execution_mode_xplane();
             void __on_set_execution_mode_real();
