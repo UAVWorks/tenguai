@@ -38,7 +38,7 @@ namespace tengu {
             QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
             QModelIndex parent( const QModelIndex & child ) const;
             Qt::ItemFlags flags(const QModelIndex & index) const;
-            QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+            QVariant data(const QModelIndex & index, int role = Qt::DisplayRole) const;
             bool setData(const QModelIndex & index, const QVariant & value, int role);
             
             void setEntityItem( AbstractEntityItem * item );

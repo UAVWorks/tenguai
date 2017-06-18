@@ -13,6 +13,7 @@
 #include <QGraphicsItem>
 #include <QPainter>
 #include <QPen>
+#include <QBrush>
 #include <QPixmap>
 #include <QColor>
 #include <QRectF>
@@ -24,6 +25,8 @@
 #include <QUuid>
 #include <QGraphicsSceneMouseEvent>
 #include <QMouseEvent>
+#include <QFont>
+#include <QFontMetrics>
 
 #include "AbstractEntity.h"
 #include "AbstractAgent.h"
@@ -107,7 +110,7 @@ namespace tengu {
             
             virtual void checkEntity() = 0;
             AbstractEntity * getEntity();
-            
+                        
         protected:
             
             AbstractEntity * _entity;
@@ -115,7 +118,7 @@ namespace tengu {
                         
             int _brighter( int color );
             
-            bool _selected;
+            bool _selected;                        
             
             // Get border's color for process diagram.
             // Получить цвет границ для диаграммы процессов.
@@ -141,6 +144,15 @@ namespace tengu {
             
             bool _changed;
             
+            void _storePainterSettings( QPainter * painter );
+            void _restorePainterSettings( QPainter * painter );
+            void _drawBorderRect( QPainter * painter );
+            void _drawTaskRectangle( QPainter * painter );
+            
+            QPixmap _executionModePixmap( bool forSize32 = true );
+            
+            void _somethingChanged();
+                        
         private:
             
             bool __mousePressed;
@@ -150,6 +162,12 @@ namespace tengu {
             
             QDateTime __lastModified;
             
+            // Stored settings for painter
+            // Сохраненнные установки painter'а
+            
+            QPen    __oldPainterPen;
+            QBrush  __oldPainterBrush;
+            QFont   __oldPainterFont;
     };
 };
 

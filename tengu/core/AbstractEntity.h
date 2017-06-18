@@ -79,15 +79,15 @@ namespace tengu {
             
             virtual bool fromJSON( QJsonObject json );
             
-            virtual bool hasClass( QJsonObject json, QString class_name );
+            virtual bool hasClass( QJsonObject json, QString class_name );                        
             
         protected:
             
-            bool _changed;
-            
-            void _somethingChanged();
+            bool _changed;            
             
             QString _className;
+            
+            void _somethingChanged();
             
         private:
             

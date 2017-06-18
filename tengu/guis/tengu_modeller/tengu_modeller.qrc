@@ -24,6 +24,12 @@
     <file alias="box_16.png">images/box_16.png</file>    
     <file alias="arrow_right_16.png">images/arrow_right_16.png</file>
     <file alias="arrow_divide_right_16.png">images/arrow_divide_right_16.png</file>
+    <file alias="arrow_switch_and_16.png">images/arrow_switch_and_16.png</file>
+    <file alias="arrow_switch_or_16.png">images/arrow_switch_or_16.png</file>
+    <file alias="tag_hash_16.png">images/tag_hash_16.png</file>
+    <file alias="attach_16.png">images/attach_16.png</file>
+    <file alias="attach_32.png">images/attach_32.png</file>
+    <file alias="button_navigation_16.png">images/button_navigation_16.png</file>
     <file alias="Falcon_256.png">images/Falcon-256.png</file>
 </qresource>
 </RCC>

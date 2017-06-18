@@ -20,7 +20,10 @@
 tengu::ProcessStartItem::ProcessStartItem ( tengu::ProcessStart * entity, QGraphicsItem* parent ) 
     : AbstractEntityItem ( entity, parent )
 {
-    _boundingRect = QRect( 0, 0, 76, 76 );    
+    __radius = 32;
+    
+    _boundingRect = QRect( 0, 0, __radius * 2 + 1, __radius * 2 + 1 );    
+    
     _className = "ProcessStartItem";
 }
 
@@ -34,6 +37,28 @@ tengu::ProcessStartItem::ProcessStartItem ( tengu::ProcessStart * entity, QGraph
 
 void tengu::ProcessStartItem::paint ( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget ) {
     
+    _storePainterSettings( painter );
+    
+    QPen borderPen = _processDiagram_borderPen();
+    painter->setPen( borderPen );
+    
+    QPoint center( __radius, __radius );
+    int focalShift = __radius - __radius / 3;
+    QPoint focal( focalShift, focalShift );
+    
+    QRadialGradient gradient( center, __radius, focal );
+    gradient.setColorAt(0, _processDiagram_brightFillColor() );
+    gradient.setColorAt(1, _processDiagram_darkFillColor() );
+    QBrush brush = QBrush( gradient );    
+    painter->setBrush( brush );
+    painter->drawEllipse( 1, 1, _boundingRect.width() - 2, _boundingRect.height() - 2 );
+    
+    QPixmap pm = _executionModePixmap();
+    painter->drawPixmap( _boundingRect.width() - 34, 1, pm );
+    
+    _restorePainterSettings( painter );
+    
+    /*
     QPixmap pixmap( _boundingRect.width(), _boundingRect.height() );
     QPainter pixPainter( & pixmap );
     pixPainter.eraseRect( _boundingRect );
@@ -68,6 +93,8 @@ void tengu::ProcessStartItem::paint ( QPainter* painter, const QStyleOptionGraph
     pixPainter.drawEllipse( 1, 1, _boundingRect.width() - shadowSize, _boundingRect.height() - shadowSize );
     
     painter->drawPixmap( 0, 0, pixmap );
+    */
+    
 }
 
 // ********************************************************************************************************************

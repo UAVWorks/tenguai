@@ -34,6 +34,39 @@ tengu::TaskItem::TaskItem ( tengu::Task * task, QGraphicsItem * parent )
 
 void tengu::TaskItem::paint ( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget ) {
     
+    _storePainterSettings( painter );
+    _drawTaskRectangle( painter );
+    
+    // Execution mode picture
+    // Картинка режима выполнения.
+    
+    QPixmap pm = _executionModePixmap();
+    painter->drawPixmap( _boundingRect.width() - 34, 6, pm );
+    
+    // Name of this task.
+    // Имя данной задачи.
+    
+    QString name = getName();
+    if ( ! name.isEmpty() ) {
+        
+        int pixels = 22;
+        QFont font("Tahoma", pixels );
+        font.setBold( true );
+        QFontMetrics mcs( font );
+        while ( (pixels > 0 ) && ( mcs.width( name ) >= _boundingRect.width() ) ) {
+            pixels --;
+            font.setPixelSize( pixels );
+            mcs = QFontMetrics( font );
+        };
+        painter->setFont( font );
+        int x = ( _boundingRect.width() - mcs.width( name ) ) / 2;
+        int y = mcs.height() + ( _boundingRect.height() - mcs.height() ) / 2; 
+        painter->drawText( QPoint(x,y), name );
+    };
+    
+    _restorePainterSettings( painter );
+    
+    /*
     // Draw using a picture in memory to ensure smooth drawing
     // Рисуем через картинку в памяти для обеспечения плавности рисования.
     
@@ -102,7 +135,7 @@ void tengu::TaskItem::paint ( QPainter * painter, const QStyleOptionGraphicsItem
     
     
     painter->drawPixmap( 0, 0, pixmap );
-        
+    */    
 }
 
 // ********************************************************************************************************************

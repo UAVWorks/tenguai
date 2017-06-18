@@ -20,7 +20,16 @@
 tengu::ProcessStopItem::ProcessStopItem ( tengu::ProcessStop * entity, QGraphicsItem* parent ) 
     : AbstractEntityItem ( entity, parent )
 {
-    _boundingRect = QRect(0,0,76,76);
+    // 3 точки граница + 2 точки между кругом и границей.
+    int borderWidth = 3;
+    int spaceWidth = 2;
+    
+    __radius = 38 - borderWidth*2 - spaceWidth*2;
+    
+    int rectSize = __radius * 2 + borderWidth * 2 + spaceWidth * 2;
+    
+    _boundingRect = QRect( 0,0, rectSize, rectSize );
+    
     _className = "ProcessStopItem";
 }
 
@@ -34,6 +43,37 @@ tengu::ProcessStopItem::ProcessStopItem ( tengu::ProcessStop * entity, QGraphics
 
 void tengu::ProcessStopItem::paint ( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget ) {
     
+    _storePainterSettings( painter );
+    
+    QPen borderPen = _processDiagram_borderPen();
+    painter->setPen( borderPen );
+    
+    QPoint center( __radius + 5, __radius +5 );
+    int focalShift = __radius + 5 - __radius / 3;
+    QPoint focal( focalShift, focalShift );
+    
+    QRadialGradient gradient( center, __radius, focal );
+    gradient.setColorAt(0, _processDiagram_brightFillColor() );
+    gradient.setColorAt(1, _processDiagram_darkFillColor() );
+    QBrush brush = QBrush( gradient );    
+    painter->setBrush( brush );
+    painter->drawEllipse( 5, 5, _boundingRect.width() - 10, _boundingRect.height() - 10 );
+    
+    // Circle around element
+    // Окружность вокруг элемента.
+    
+    painter->drawArc( _boundingRect, 0, 16*360 );       
+    
+    // Execute mode icon.
+    // Картинка режима выполнения.
+    
+    QPixmap pm = _executionModePixmap();
+    painter->drawPixmap( _boundingRect.width() - 34, 1, pm );
+    
+    _restorePainterSettings( painter );
+    
+    
+    /*
     int shadowSize = 8;
     
     QPixmap pixmap( _boundingRect.width(), _boundingRect.height() );
@@ -75,7 +115,7 @@ void tengu::ProcessStopItem::paint ( QPainter* painter, const QStyleOptionGraphi
     pixPainter.drawEllipse( 8, 8, radius * 2, radius * 2 ) ; // _boundingRect.width() - shadowSize, _boundingRect.height() - shadowSize );
         
     painter->drawPixmap( 0, 0, pixmap );
-    
+    */    
 }
 
 // ********************************************************************************************************************

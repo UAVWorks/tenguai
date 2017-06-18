@@ -20,7 +20,9 @@ tengu::AbstractEntity* tengu::AgentItemFactory::createEntity ( QJsonObject json 
         
         if ( cName == "ProcessStartItem" )  e = new ProcessStartItem();
         if ( cName == "ProcessStopItem" )   e = new ProcessStopItem();
-        if ( cName == "TaskItem" )          e = new TaskItem(); 
+        if ( cName == "TaskItem" )          e = new TaskItem();
+        if ( cName == "ANDorItem" )         e = new ANDorItem();
+        if ( cName == "ORerItem" )          e = new ORerItem();
         
     };
 

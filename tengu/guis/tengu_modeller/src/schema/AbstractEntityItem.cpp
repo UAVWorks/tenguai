@@ -220,6 +220,103 @@ QPen tengu::AbstractEntityItem::_processDiagram_borderPen() {
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
+// *                                 Store old painter's settings to later restoring.                                 *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                     Сохранение старых установок painter'а для последующего восстановления.                       *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::AbstractEntityItem::_storePainterSettings ( QPainter * painter ) {
+    __oldPainterPen = painter->pen();
+    __oldPainterBrush = painter->brush();
+    __oldPainterFont = painter->font();
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                         Draw border around bounding rectangle.                                   *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                Нарисовать границы вокруг обрамляющего прямоугольника.                            *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::AbstractEntityItem::_drawBorderRect ( QPainter* painter ) {
+    
+    painter->setPen( _processDiagram_borderPen() );
+    painter->drawRect( 1, 1, _boundingRect.width() - 2, _boundingRect.height() - 2 );
+    
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                   Draw color rectangle like "the task inside of the process" representation.                     *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *              Нарисовать цветной прямоугольник, подобный представлению "задаче внутри процесса"                   *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::AbstractEntityItem::_drawTaskRectangle ( QPainter * painter ) {
+    
+    QLinearGradient gradient( _boundingRect.topLeft(), _boundingRect.bottomLeft() );
+    gradient.setColorAt(0, _processDiagram_brightFillColor() );
+    gradient.setColorAt(1, _processDiagram_darkFillColor() );
+    gradient.setStart( 1, _boundingRect.height() / 2 );
+    painter->fillRect( _boundingRect, gradient );
+    
+    _drawBorderRect( painter );
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                             Get appropriate pixmap for execution mode of this element.                           *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                      Вернуть картинку, соответствующую режиму выполнения данного элемента.                       *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+QPixmap tengu::AbstractEntityItem::_executionModePixmap( bool forSize32 ) {
+    
+    execution_mode_t em = getExecutionMode();
+    switch ( em ) {
+        case EM_ALWAYS: if ( forSize32 ) return QPixmap(":attach_32.png"); else return QPixmap(":attach_16.png");
+        case EM_REAL:   if ( forSize32 ) return QPixmap(":cog_32.png"); else return QPixmap(":cog_16.png");
+        case EM_XPLANE: if ( forSize32 ) return QPixmap(":xplane10_32.png"); else return QPixmap(":xplane10_16.png");
+    };
+    return QPixmap();
+}
+
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                             Restore old painter settings.                                        *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                       Восстановление старых установок painter'а.                                 *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::AbstractEntityItem::_restorePainterSettings ( QPainter * painter ) {
+    painter->setPen( __oldPainterPen );
+    painter->setBrush( __oldPainterBrush );
+    painter->setFont( __oldPainterFont );
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                              Something has been changed.                                         *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                                  Что-то изменилось.                                              *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::AbstractEntityItem::_somethingChanged() {
+    AbstractEntity::_somethingChanged();    
+    emit signalSomethingChanged();
+    update();
+}
+
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
 // *                                               Mouse press event handler.                                         *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                                            Обработчик события нажатия мышки.                                     *
@@ -354,7 +451,12 @@ QString tengu::AbstractEntityItem::getName() {
 // ********************************************************************************************************************
 
 void tengu::AbstractEntityItem::setName ( QString name ) {
-    if ( _entity ) _entity->setName( name );
+    
+    if ( _entity ) {
+        _entity->setName( name );
+        _somethingChanged();
+    };
+        
 }
 
 // ********************************************************************************************************************
@@ -381,7 +483,10 @@ QString tengu::AbstractEntityItem::getComment() {
 // ********************************************************************************************************************
 
 void tengu::AbstractEntityItem::setComment ( QString comment ) {
-    if ( _entity ) _entity->setComment( comment );
+    if ( _entity ) {
+        _entity->setComment( comment );
+        _somethingChanged();
+    };
 }
 
 // ********************************************************************************************************************
@@ -408,7 +513,12 @@ tengu::AbstractEntity::execution_mode_t tengu::AbstractEntityItem::getExecutionM
 // ********************************************************************************************************************
 
 void tengu::AbstractEntityItem::setExecutionMode ( tengu::AbstractEntity::execution_mode_t mode ) {
-    if ( _entity ) _entity->setExecutionMode( mode );
+    
+    if ( _entity ) {
+        _entity->setExecutionMode( mode );
+        _somethingChanged();
+    };
+    
 }
 
 // ********************************************************************************************************************

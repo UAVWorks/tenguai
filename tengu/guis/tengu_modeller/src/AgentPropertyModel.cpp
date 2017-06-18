@@ -189,14 +189,29 @@ QVariant tengu::AgentPropertyModel::data( const QModelIndex & index, int role ) 
 // ********************************************************************************************************************
 
 bool tengu::AgentPropertyModel::setData(const QModelIndex & index, const QVariant & value, int role) {
-    
-    qDebug() << "set data row=" << index.row() << ", value=" << value << ", role=" << role;
-    
+        
     if (index.isValid() && role == Qt::EditRole) {
+        
+        switch( index.row() ) {
+            case 1: {
+                // Name
+                QString name = value.toString();
+                __item->setName( name );
+                __properties = __item->properties();
+            }; break;
+            
+            default : {
+                qDebug() << "AgentPropertyModel::setData() unhandled, row=" << index.row() << ", value=" << value << ", role=" << role;
+            };
+        };
+        
         /*
         stringList.replace(index.row(), value.toString());
         emit dataChanged(index, index);
         */
+        
+        emit dataChanged( index, index );
+        
         return true;        
     }
     return false;

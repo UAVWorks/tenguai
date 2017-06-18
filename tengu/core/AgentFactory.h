@@ -17,6 +17,8 @@
 #include "ProcessStop.h"
 #include "Process.h"
 #include "Task.h"
+#include "ANDor.h"
+#include "ORer.h"
 
 namespace tengu {
     

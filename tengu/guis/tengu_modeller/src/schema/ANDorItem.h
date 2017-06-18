@@ -1,42 +1,32 @@
 // ********************************************************************************************************************
 // *                                                                                                                  *
-// *                                       Process start graphics representation.                                     *
+// *                               The graphical representation for logical AND branching.                            *
 // * ---------------------------------------------------------------------------------------------------------------- *
-// *                                    Графическое представление начала процесса.                                    *
+// *                                 Графическое представление ветвления с логическим И.                              *
 // *                                                                                                                  *
-// * Eugene G. Sysoletin <e.g.sysoletin@gmail.com>                                       Created 16 jun 2017 at 12:51 *
+// * Eugene G. Sysoletin <e.g.sysoletin@gmail.com>                                       Created 18 jun 2017 at 09:29 *
 // ********************************************************************************************************************
 
 #pragma once
 
-#include <QRadialGradient>
-
+#include "ANDor.h"
 #include "AbstractEntityItem.h"
-#include "ProcessStart.h"
 
 namespace tengu {
     
-    class ProcessStartItem : public AbstractEntityItem {
-        
+    class ANDorItem : public AbstractEntityItem {
         Q_OBJECT
-        
         public:
             
-            ProcessStartItem ( ProcessStart * entity = Q_NULLPTR, QGraphicsItem * parent = Q_NULLPTR );
-            virtual ~ProcessStartItem();
-            
-            //QJsonObject toJSON();
-            //bool fromJSON( QJsonObject json );
+            ANDorItem ( ANDor * entity = nullptr, QGraphicsItem* parent = nullptr );
+            virtual ~ANDorItem();
             
             void checkEntity();
-            
-        protected:
-            
             void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = Q_NULLPTR);
             
+        protected:
         private:
-            
-            int __radius;
     };
+    
 };
 

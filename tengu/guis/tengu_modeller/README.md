@@ -6,6 +6,7 @@ This is graphical tool for work with artifical intelligence models. At the momen
 
 # The latest operations.
 
+- **18 jun 2017** ANDor, ORer elements. Changing of the task name. Remade painting method.
 - **17 jun 2017** A stop process element was drawed. Moving elements on the schema. Drop event on schema. "File" toolbar.
 - **16 jun 2017** SchemaView does accept drag events. A start process element was created.
 - **14 jun 2017** The interface of the stored object was added.

@@ -78,7 +78,7 @@ namespace tengu {
             // так и отдельным процессом в операционной системе для
             // экономии ресурсов.
             
-            // virtual QString subProcessPath();
+            // virtual QString subProcessPath();                        
             
         protected:
                         
@@ -119,13 +119,12 @@ namespace tengu {
             // Tree-like structure of agents. For loading entire "tree branch" completely.
             // Древовидная структура агентов. Для загрузки всей "ветки" дерева целиком.
             
-            QString _parent_uuid;
+            QString _parent_uuid;               
             
             // Overrided change's method for emit signal
             // Перекрытый метод изменения, чтобы вызвать сигнал
             
             void _somethingChanged();
-                        
             
         private:
             

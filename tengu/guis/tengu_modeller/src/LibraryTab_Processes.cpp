@@ -40,12 +40,20 @@ tengu::LibraryTab__processes::LibraryTab__processes ( QWidget* parent, Qt::Windo
     button__focus_arrow = new LibraryTab_Button( QIcon( QPixmap(":arrow_right_16.png") ), tr("Binding arrow") );
     lay->addWidget( button__focus_arrow, 0, 1 );
     
-    button__focus_divider = new LibraryTab_Button( QIcon( QPixmap(":arrow_divide_right_16.png") ), tr("Branching block") );
-    lay->addWidget( button__focus_divider, 1, 1 );
+    button__focus_andor = new LibraryTab_Button( QIcon( QPixmap(":arrow_switch_and_16.png") ), tr("Branching logical AND block") );
+    button__focus_andor->setDrag( ANDorItem().toJSON() );
+    lay->addWidget( button__focus_andor, 1, 1 );
+    
+    button__focus_orer = new LibraryTab_Button( QIcon( QPixmap(":arrow_switch_or_16.png") ), tr("Branching logical OR block") );
+    button__focus_orer->setDrag( ORerItem().toJSON() );
+    lay->addWidget( button__focus_orer, 0, 2 );
     
     button__task = new LibraryTab_Button( QIcon( QPixmap(":box_16.png") ), tr("The Task") );
     button__task->setDrag( TaskItem().toJSON() );
     lay->addWidget( button__task, 1, 2 );
+    
+    button__sprout = new LibraryTab_Button( QIcon( QPixmap(":button_navigation_16.png")), tr("The Sprout") );
+    lay->addWidget( button__sprout, 0, 3 );
 }
 
 // ********************************************************************************************************************

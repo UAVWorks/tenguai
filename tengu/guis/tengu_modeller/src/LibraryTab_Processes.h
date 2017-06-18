@@ -35,8 +35,10 @@ namespace tengu {
             LibraryTab_Button * button__process_begin;
             LibraryTab_Button * button__process_end;
             LibraryTab_Button * button__focus_arrow;
-            LibraryTab_Button * button__focus_divider;
+            LibraryTab_Button * button__focus_andor;
+            LibraryTab_Button * button__focus_orer;
             LibraryTab_Button * button__task;
+            LibraryTab_Button * button__sprout;
             
         protected:
             
