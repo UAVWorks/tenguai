@@ -12,12 +12,14 @@
 #include <QJsonObject>
 #include "AgentFactory.h"
 
+#include "XPlaneAgentItem.h"
 #include "ProcessStartItem.h"
 #include "ProcessStopItem.h"
 #include "TaskItem.h"
 #include "ProcessItem.h"
 #include "ANDorItem.h"
 #include "ORerItem.h"
+#include "LinkItem.h"
 
 namespace tengu {
     

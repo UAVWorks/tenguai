@@ -342,9 +342,14 @@ void tengu::MainWindow::__createSchemaScene() {
 // ********************************************************************************************************************
 
 void tengu::MainWindow::__on__create__process() {
+    
+    __schemaView->hide();
     __schemaScene->setRootItem( new ProcessItem() );   
+    __schemaView->show();
+    
     __library_tab->tab__processes->setEnabled( true );
     __library_tab->setCurrentWidget( __library_tab->tab__processes );
+    __library_tab->tab__processes->on__process_created();
 }
 
 // ********************************************************************************************************************
@@ -357,12 +362,16 @@ void tengu::MainWindow::__on__create__process() {
 
 void tengu::MainWindow::__on_schema_item_pressed ( tengu::AbstractEntityItem * item, bool controlPressed ) {
     
+    __schemaView->hide();
+    
     if ( ! controlPressed ) __schemaScene->unselectAll();
     
     // Selecting of the agent.
     // Выбор агента.
     
     item->setSelected( true );
+    
+    __schemaView->show();
     
     // Synchronizе properties of the selected agent
     // Синхронизация свойств выбранного агента.
@@ -395,9 +404,12 @@ void tengu::MainWindow::__on_schema_item_double_clicked ( tengu::AbstractEntityI
 void tengu::MainWindow::__on_schama_item_moved ( tengu::AbstractEntityItem * entity, QPoint pos ) {
     
     if ( entity ) {
+        __schemaView->hide();
         entity->setX( pos.x() );
         entity->setY( pos.y() );
+        __schemaView->show();
         entity->update(); 
+        // __schemaView->updateSceneRect( QRect(0, 0, 800, 600 ) );
         // currentPos = __schemaView->mapFromScene( currentPos );
         // qDebug() << "After map to scene: " << currentPos;
     };
@@ -416,20 +428,64 @@ void tengu::MainWindow::__on_schema_item_was_dropped ( tengu::AbstractEntity* en
     
     if ( entity ) {
         
-        AbstractEntityItem * item = dynamic_cast<AbstractEntityItem * >( entity );        
+        // Common item.
+        // общий элемент.
         
-        if ( item ) {
+        AbstractEntityItem * item = dynamic_cast<AbstractEntityItem * >( entity );   
+        
+        // Specified items, which has been created.
+        // Специфические элементы, которые были созданы.
+        
+        ProcessStartItem * start = dynamic_cast<ProcessStartItem * >(entity);
+        TaskItem * task = dynamic_cast<TaskItem *>(entity);
+        ORerItem * orer = dynamic_cast<ORerItem *>(entity);
+        ANDorItem * andor = dynamic_cast<ANDorItem *>(entity);
+        LinkItem * link = dynamic_cast<LinkItem *>(entity);
+        
+        if ( ( item ) && ( ! link ) ) {
             
-            // It was graphical representation.
-            // Это было графическое представление.
+            // It was graphical representation somewhat from agents.
+            // Это было графическое представление кого-то из агентов.
                         
             item->checkEntity();
             item->setX( pos.x() );
             item->setY( pos.y() );
+            __schemaView->hide();
             __schemaScene->addItem( item );            
+            __schemaView->show();
+            
+            // The accessibility of the ToolBar's buttons will vary depending on the element created on the diagram.
+            // В зависимости от созданного на схеме элемента будет меняться доступность кнопок на ToolBar'е.
+            
+            if ( start ) __library_tab->tab__processes->on__process_begin_created();
+            
+            if ( task ) __library_tab->tab__processes->on__process_explicit_task_created();
+            
+            if (( task ) || ( orer ) || ( andor )) {
+                __library_tab->tab__processes->on__process_some_task_created();
+            }
             
         };
-    };
+        
+        if ( link ) {
+            
+            // This is a link, not an agent.
+            // Это - связь, а не агент.
+            
+            AbstractEntityItem * existing = dynamic_cast<AbstractEntityItem * > ( __schemaScene->itemAt( pos, QTransform() ) );
+            qDebug() << "Existing object=" << existing;
+            
+            if ( ( link->isEmpty() ) && ( existing ) ) {                
+                link->setFrom( existing );
+                __schemaView->semiCreatedLink = link;
+            };
+            
+            __schemaView->hide();
+            __schemaScene->addItem( item );            
+            __schemaView->show();
+        };
+                
+    };    
     
 }
 

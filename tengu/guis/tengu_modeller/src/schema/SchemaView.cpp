@@ -39,12 +39,16 @@ tengu::SchemaView::SchemaView( QGraphicsScene * scene )
     
     setAcceptDrops( true );
     
+    setUpdatesEnabled( true );
+    
     __leftMouseButtonPressed = false;
     __entityDragged = nullptr;
     __entityDragInProcess = false;
     
     __createMenus();
     __mouseAtSchemaPos = QPoint( 0, 0 );
+    
+    semiCreatedLink = nullptr;
     
     // __scaleFactor = 1.0;
 }
@@ -237,6 +241,15 @@ void tengu::SchemaView::mouseMoveEvent ( QMouseEvent * event ) {
     QGraphicsView::mouseMoveEvent ( event );
     __mouseAtSchemaPos = mapToScene( event->pos() ).toPoint();
     
+    if ( semiCreatedLink ) {
+        semiCreatedLink->hide();
+        semiCreatedLink->setTo( __mouseAtSchemaPos );
+        semiCreatedLink->update();
+        semiCreatedLink->show();
+        
+        // this->updateSceneRect ( semiCreatedLink->boundingRect() );
+    };
+    
     if ( event->buttons() & Qt::LeftButton ) {
         
         if ( __entityDragged ) {
@@ -257,6 +270,7 @@ void tengu::SchemaView::mouseMoveEvent ( QMouseEvent * event ) {
             // Если уже тащим, сигнал об этом.
         
             if ( __entityDragInProcess ) {
+                
                 QPoint targetPos = mapToScene( event->pos() ).toPoint(); 
                 targetPos -= __entityDragged->mousePressedPos();
                 // qDebug() << "Event pos=" << event->pos() << ", mouse pressed=" << __mousePressedPos << ", element pos=" << __entityDragged->mousePressedPos();
@@ -329,6 +343,7 @@ void tengu::SchemaView::dragMoveEvent ( QDragMoveEvent * event ) {
     // То, что тащится
     
     AbstractEntity * entity = __event_to_entity ( event );
+    LinkItem * link = dynamic_cast<LinkItem * >( entity );
     
     // What is dragged over
     // То, над чем тащится
@@ -343,9 +358,14 @@ void tengu::SchemaView::dragMoveEvent ( QDragMoveEvent * event ) {
         delete( entity );
         
         // The event will be processed only if the object does not drop onto an existing object.
-        // Событие будет обработано только в том случае, если объект не бросается на уже существующий объект.
+        // But if this is a link, then it can be thrown only on the existing object.
         
-        if ( ! curItem ) event->acceptProposedAction();
+        // Событие будет обработано только в том случае, если объект не бросается на уже существующий объект.
+        // Но если это связь, то ее наоборот можно бросать только на существующий объект.
+                
+        if ( ( link ) && ( curItem ) ) event->acceptProposedAction();
+        if ( ( ! link ) && ( ! curItem ) ) event->acceptProposedAction();
+        
     };
 }
 
@@ -373,10 +393,43 @@ void tengu::SchemaView::dragLeaveEvent ( QDragLeaveEvent * event ) {
 void tengu::SchemaView::dropEvent ( QDropEvent * event ) {
     
     QGraphicsView::dropEvent ( event );
+    
+    // What is dropped on
+    // То, что было сброшено.
+    
     AbstractEntity * entity = __event_to_entity( event ); 
+    LinkItem * link = dynamic_cast<LinkItem *>(entity);
+    
+    // What is dropped over
+    // То, над чем было брошено
+    
+    AbstractEntityItem * curItem = dynamic_cast< AbstractEntityItem * >( itemAt( event->pos() ) );
+    
     
     if ( entity ) {
+        
+        // Point on the scene where item was dropped on
+        // Точка на сцене, куда бросили элемент.
+        
         QPoint pos = mapToScene( event->pos() ).toPoint();
+        
+        // If this is a link, we need set his "from" or "to" entities.
+        // Если это связь, то нужно установить ей сущности "откуда" или "куда".
+        
+        /*
+        if ( ( link ) && ( curItem ) ) {
+            
+            if ( link->isEmpty() ) {
+                link->setFrom( curItem );
+                __semiCreatedLink = link;
+            } else if ( link->semiCreated() ) {
+                link->setTo( curItem );
+                __semiCreatedLink = nullptr;
+            };
+            
+        };
+        */
+        
         emit signalWasDropped( entity, pos );
     };    
     

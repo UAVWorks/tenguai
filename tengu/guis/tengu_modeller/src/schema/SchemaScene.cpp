@@ -62,7 +62,7 @@ void tengu::SchemaScene::setRootItem ( tengu::AbstractEntityItem * rootItem ) {
     };
     
     __rootItem = rootItem;
-    clear();
+    clear();        
 }
 
 // ********************************************************************************************************************
@@ -98,6 +98,14 @@ void tengu::SchemaScene::addItem ( tengu::AbstractEntityItem * item ) {
     
     XPlaneAgentItem * xp = dynamic_cast<XPlaneAgentItem * >(item);
     if ( ! xp ) __on__something_changed();
+    
+    // If this is a link, it can be in "semi-added" state.
+    // Если это связь, то она может находиться в "полу-добавленном" состоянии.
+    
+    LinkItem * link = dynamic_cast<LinkItem *>( item );
+    if ( link ) {
+        
+    };
     
 }
 

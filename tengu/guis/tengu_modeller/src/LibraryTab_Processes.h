@@ -26,7 +26,9 @@
 namespace tengu {
 
     class LibraryTab__processes : public QWidget {
+        
         Q_OBJECT
+        
         public:
             
             explicit LibraryTab__processes ( QWidget* parent = 0, Qt::WindowFlags f = 0 );
@@ -39,6 +41,13 @@ namespace tengu {
             LibraryTab_Button * button__focus_orer;
             LibraryTab_Button * button__task;
             LibraryTab_Button * button__sprout;
+            
+        public slots:
+            
+            void on__process_created();            
+            void on__process_begin_created();
+            void on__process_some_task_created();
+            void on__process_explicit_task_created();
             
         protected:
             

@@ -13,13 +13,7 @@
 #include <QList>
 #include <QGraphicsItem>
 
-#include "AbstractEntityItem.h"
-#include "XPlaneAgentItem.h"
-#include "VehicleItem.h"
-#include "ProcessStartItem.h"
-#include "ProcessStopItem.h"
-#include "TaskItem.h"
-#include "SproutItem.h"
+#include "AgentItemFactory.h"
 
 namespace tengu {
     

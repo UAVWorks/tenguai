@@ -23,6 +23,11 @@ tengu::AbstractEntity* tengu::AgentItemFactory::createEntity ( QJsonObject json 
         if ( cName == "TaskItem" )          e = new TaskItem();
         if ( cName == "ANDorItem" )         e = new ANDorItem();
         if ( cName == "ORerItem" )          e = new ORerItem();
+        if ( cName == "LinkItem" )          e = new LinkItem();
+        
+        // XPlaneAgent does not birth yet.
+        // XPlaneAgent не порождается пока что.
+        // if ( cName == "XPlaneAgentItem" )   e = new XPlaneAgentItem();
         
     };
 

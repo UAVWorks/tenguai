@@ -50,10 +50,9 @@ namespace tengu {
             
             SchemaView( QGraphicsScene * scene );
             virtual ~SchemaView();
-
-            // mouse wheel event
-            // событие колесика мышки
-                        
+            
+            LinkItem * semiCreatedLink;
+                                    
         private:
             
             void mousePressEvent( QMouseEvent * event );
@@ -66,10 +65,12 @@ namespace tengu {
             void dragMoveEvent(QDragMoveEvent * event);
             void dragLeaveEvent(QDragLeaveEvent * event);
             void dropEvent( QDropEvent * event );
-            
+                        
             AbstractEntity * __event_to_entity( QDropEvent * event );            
             
 #ifndef QT_NO_WHEELEVENT
+            // mouse wheel event
+            // событие колесика мышки
             void wheelEvent( QWheelEvent * event );
 #endif
             
@@ -86,7 +87,7 @@ namespace tengu {
             QPoint __mouseAtSchemaPos;
             QPoint __mousePressedPos;
             AbstractEntityItem * __entityDragged;
-            bool __entityDragInProcess;
+            bool __entityDragInProcess;                        
             
             // float __scaleFactor;
             
