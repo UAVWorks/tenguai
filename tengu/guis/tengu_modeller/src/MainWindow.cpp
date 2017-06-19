@@ -473,7 +473,8 @@ void tengu::MainWindow::__on_schema_item_was_dropped ( tengu::AbstractEntity* en
             // Это - связь, а не агент.
             
             AbstractEntityItem * existing = dynamic_cast<AbstractEntityItem * > ( __schemaScene->itemAt( pos, QTransform() ) );
-            qDebug() << "Existing object=" << existing;
+            
+            // qDebug() << "Existing object=" << existing;
             
             if ( ( link->isEmpty() ) && ( existing ) ) {                
                 link->setFrom( existing );
@@ -710,6 +711,7 @@ void tengu::MainWindow::keyPressEvent ( QKeyEvent* event ) {
         __schemaScene->removeSemiCreatedLinks();
         __schemaView->semiCreatedLink = nullptr;
         __schemaView->update();
+                
     };
 }
 

@@ -26,6 +26,7 @@
 #include <QDebug>
 #include <QSettings>
 #include <QRect>
+#include <QDrag>
 
 #include "MongoStorage.h"
 #include "AgentFactory.h"

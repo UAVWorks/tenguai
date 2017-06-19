@@ -189,7 +189,7 @@ void tengu::SchemaView::mousePressEvent ( QMouseEvent * event ) {
                 semiCreatedLink->show();
                 // semiCreatedLink->update();
                 semiCreatedLink = nullptr;
-                update();                
+                // update();                
                 
             } else {
                 

@@ -185,17 +185,27 @@ void tengu::LinkItem::__recalculate() {
                 
                 x = fromRect.topRight().x() + __from->x();
                 y = fromRect.topRight().y() + __from->y();
-                w = ( toRect.topLeft().x() + __to->x() ) - ( fromRect.topRight().x() + __from->x() );
-                h = 100;
+                if ( y > toRect.topLeft().y() + __to->y() ) {
+                    y = toRect.topLeft().y() + __to->y();
+                };
+                
+                w = ( toRect.topLeft().x() + __to->x() ) - ( fromRect.topRight().x() + __from->x() );                
+                h = fromRect.bottomRight().y() + __from->y() - y;
+                if ( h < toRect.bottomRight().y() + __to->y() - y ) h = toRect.bottomRight().y() + __to->y() - y;
+                
+                __posFrom.setX( 1 );
+                __posFrom.setY( ( fromRect.topRight().y() + __from->y() - y ) + fromRect.height() / 2 );
+                __posTo.setX( w - 1 );
+                __posTo.setY( ( __to->y() + toRect.height() / 2 ) - y );
                 
             } else {
-                qDebug() << "to не правее по X";
+                // qDebug() << "to не правее по X";
             };
             
         };
     };                
     
-    qDebug() << "Итого после recalculate x=" << x << ",y=" << y << ",w=" << w << ",h=" << h << ", fromPoint=" << __posFrom << ", toPoint=" << __posTo;
+    // qDebug() << "Итого после recalculate x=" << x << ",y=" << y << ",w=" << w << ",h=" << h << ", fromPoint=" << __posFrom << ", toPoint=" << __posTo;
     
     setX( x );
     setY( y );
@@ -212,14 +222,16 @@ void tengu::LinkItem::__recalculate() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::LinkItem::paint ( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget ) {
+void tengu::LinkItem::paint ( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget ) {
+    
+    if ( ( __posFrom.x() == 0 ) && ( __posFrom.y() == 0 ) && ( __posTo.x() == 0 ) && ( __posTo.y() == 0 ) ) return;
     
     _storePainterSettings( painter );
     
     // -----------------------------------------------
     // For debug purposes, do not remove it.
     // Для отладки, не удаляй.
-    if ( ! semiCreated() ) _drawBorderRect( painter );
+    // if ( ! semiCreated() ) _drawBorderRect( painter );
     // -----------------------------------------------
         
     QPen pen;
@@ -240,28 +252,30 @@ void tengu::LinkItem::paint ( QPainter* painter, const QStyleOptionGraphicsItem*
             pen.setWidth( 8 );
         } else {
             pen.setColor( _processDiagram_borderColor() );
-            pen.setWidth( 4 );
+            pen.setWidth( 3 );
         };
         
     }
         
     painter->setPen( pen );
     
-    // qDebug() << "Repaint: from " << __posFrom << ", to=" << __posTo ;
-    
     // The arrow's line
     // Линия стрелки.
     
     painter->drawLine( __posFrom, __posTo );
     
-    // The nose of arrow
-    // Носик стрелки.
+    QLineF line( __posFrom, __posTo );
+    QTransform transform;
+    transform.rotate( - line.angle() );
     
-    // QPoint endT = end + QPoint( -15, -10 );
-    // QPoint endB = end + QPoint( -15, 10 );
+    QPointF endT = ( transform.map( QPointF( -18.0, -10.0 ) ) + __posTo ).toPoint();
+    QPointF endB = ( transform.map( QPointF( -18.0, 10.0 ) ) + __posTo ).toPoint();
     
-    // painter->drawLine( end, endT );
-    // painter->drawLine( end, endB );
+    if ( endT.x() > _boundingRect.width() - 1 ) endT.setX( _boundingRect.width() - 1 );
+    if ( endB.y() > _boundingRect.height() - 1 ) endB.setY ( _boundingRect.height() - 1  );
+    
+    painter->drawLine( __posTo, endT );
+    painter->drawLine( __posTo, endB );
     
     _restorePainterSettings( painter );
     

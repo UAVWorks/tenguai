@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include <QtMath>
 #include "AbstractEntityItem.h"
 
 namespace tengu {
@@ -37,6 +38,7 @@ namespace tengu {
             
             AbstractEntityItem * __from;
             AbstractEntityItem * __to;
+            
             QPoint __posFrom;
             QPoint __posTo;
             
