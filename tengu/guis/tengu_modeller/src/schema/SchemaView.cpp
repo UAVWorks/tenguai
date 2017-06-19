@@ -172,16 +172,33 @@ void tengu::SchemaView::mousePressEvent ( QMouseEvent * event ) {
         __mousePressedPos = event->pos();
         
         QGraphicsItem * item = itemAt( event->pos());
+        
         bool controlPressed = event->modifiers() & Qt::ControlModifier;
     
         if ( item ) {
             
             AbstractEntityItem * entityItem = dynamic_cast< AbstractEntityItem * >( item );
-            if ( entityItem ) {
-                __entityDragged = entityItem;                
-            };
             
-            emit signalItemPressed( ( AbstractEntityItem * ) item, controlPressed );
+            if ( ( semiCreatedLink ) && ( entityItem ) ) {
+                
+                // If we have an semi-created link and mouse was pressed on the agent - we will finish the link creating process.
+                // Если у нас полу-созданная связь и нажата мышь на агенте - завершаем создание связи.
+                
+                semiCreatedLink->hide();
+                semiCreatedLink->setTo( entityItem );
+                semiCreatedLink->show();
+                // semiCreatedLink->update();
+                semiCreatedLink = nullptr;
+                update();                
+                
+            } else {
+                
+                if ( entityItem ) {
+                    __entityDragged = entityItem;                
+                };
+            
+                emit signalItemPressed( ( AbstractEntityItem * ) item, controlPressed );
+            };
         };
         
     };    
@@ -238,21 +255,28 @@ void tengu::SchemaView::mouseDoubleClickEvent ( QMouseEvent* event ) {
 void tengu::SchemaView::mouseMoveEvent ( QMouseEvent * event ) {
     // __scaleCenter = event->pos();
     // qDebug() << "SchemaView::mouseMove()";
-    QGraphicsView::mouseMoveEvent ( event );
-    __mouseAtSchemaPos = mapToScene( event->pos() ).toPoint();
     
+    QGraphicsView::mouseMoveEvent ( event );
+        
+    __mouseAtSchemaPos = mapToScene( event->pos() ).toPoint();
+            
     if ( semiCreatedLink ) {
+        
+        // Semi-created link we will move by the point where mouse is located now.
+        // Полу-созданную связь будем перемещать при помощи точки, в которой сейчас расположена мышь.
+        
         semiCreatedLink->hide();
         semiCreatedLink->setTo( __mouseAtSchemaPos );
         semiCreatedLink->update();
         semiCreatedLink->show();
-        
-        // this->updateSceneRect ( semiCreatedLink->boundingRect() );
+                
     };
     
     if ( event->buttons() & Qt::LeftButton ) {
         
         if ( __entityDragged ) {
+            
+            LinkItem * link = dynamic_cast<LinkItem * > ( __entityDragged );
             
             if ( ! __entityDragInProcess )  {
             
@@ -260,7 +284,11 @@ void tengu::SchemaView::mouseMoveEvent ( QMouseEvent * event ) {
                 // Может быть, необходимо включить перетаскивание.
             
                 QPoint delta = event->pos() - __mousePressedPos;
-                if ( delta.manhattanLength() > QApplication::startDragDistance() ) {
+                
+                // Wi will not dragg a link.
+                // Связь не будем таскать.
+                
+                if (( ! link ) && ( delta.manhattanLength() > QApplication::startDragDistance() )) {
                     __entityDragInProcess = true;
                 };
             
@@ -398,12 +426,12 @@ void tengu::SchemaView::dropEvent ( QDropEvent * event ) {
     // То, что было сброшено.
     
     AbstractEntity * entity = __event_to_entity( event ); 
-    LinkItem * link = dynamic_cast<LinkItem *>(entity);
+    // LinkItem * link = dynamic_cast<LinkItem *>(entity);
     
     // What is dropped over
     // То, над чем было брошено
     
-    AbstractEntityItem * curItem = dynamic_cast< AbstractEntityItem * >( itemAt( event->pos() ) );
+    // AbstractEntityItem * curItem = dynamic_cast< AbstractEntityItem * >( itemAt( event->pos() ) );
     
     
     if ( entity ) {

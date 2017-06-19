@@ -177,12 +177,26 @@ void tengu::LinkItem::__recalculate() {
             // We have an finished element for this link.
             // У нас есть конечный элемент.
             
-            QRect r2 = __to->boundingRect().toRect();
+            QRect toRect = __to->boundingRect().toRect();
+            if ( toRect.topLeft().x() + __to->x() > fromRect.topRight().x() + __from->x() ) {
+                
+                // __to is the right of X that __from
+                // __to правее по X, чем __from.
+                
+                x = fromRect.topRight().x() + __from->x();
+                y = fromRect.topRight().y() + __from->y();
+                w = ( toRect.topLeft().x() + __to->x() ) - ( fromRect.topRight().x() + __from->x() );
+                h = 100;
+                
+            } else {
+                qDebug() << "to не правее по X";
+            };
             
         };
     };                
     
-    qDebug() << "Итого после recalculate x=" << x << ",y=" << y << ",w=" << w << ",h=" << h;
+    qDebug() << "Итого после recalculate x=" << x << ",y=" << y << ",w=" << w << ",h=" << h << ", fromPoint=" << __posFrom << ", toPoint=" << __posTo;
+    
     setX( x );
     setY( y );
     _boundingRect.setWidth( w );
@@ -205,7 +219,7 @@ void tengu::LinkItem::paint ( QPainter* painter, const QStyleOptionGraphicsItem*
     // -----------------------------------------------
     // For debug purposes, do not remove it.
     // Для отладки, не удаляй.
-    // _drawBorderRect( painter );
+    if ( ! semiCreated() ) _drawBorderRect( painter );
     // -----------------------------------------------
         
     QPen pen;
