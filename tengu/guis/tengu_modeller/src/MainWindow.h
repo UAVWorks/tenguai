@@ -110,6 +110,7 @@ namespace tengu {
             
             void closeEvent( QCloseEvent * event );
             void showEvent( QShowEvent * event );
+            void keyPressEvent( QKeyEvent * event );
             
         private slots:
             

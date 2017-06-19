@@ -202,8 +202,11 @@ void tengu::LinkItem::paint ( QPainter* painter, const QStyleOptionGraphicsItem*
     
     _storePainterSettings( painter );
     
-    
+    // -----------------------------------------------
+    // For debug purposes, do not remove it.
+    // Для отладки, не удаляй.
     // _drawBorderRect( painter );
+    // -----------------------------------------------
         
     QPen pen;
     
@@ -212,7 +215,7 @@ void tengu::LinkItem::paint ( QPainter* painter, const QStyleOptionGraphicsItem*
         // We are in the process of creating.
         // Мы находимся в процессе создания.
         
-        pen.setColor( QColor( 92, 92, 92 ) );
+        pen.setColor( QColor( 128, 128, 128 ) );
         pen.setWidth( 2 );
         pen.setStyle( Qt::DashLine );
         
@@ -230,12 +233,15 @@ void tengu::LinkItem::paint ( QPainter* painter, const QStyleOptionGraphicsItem*
         
     painter->setPen( pen );
     
-    // QPoint begin( 1, _boundingRect.height() / 2 );    
-    // QPoint end( _boundingRect.width() - 1, _boundingRect.height() / 2 );
-        
-    qDebug() << "Repaint: from " << __posFrom << ", to=" << __posTo ;
+    // qDebug() << "Repaint: from " << __posFrom << ", to=" << __posTo ;
+    
+    // The arrow's line
+    // Линия стрелки.
     
     painter->drawLine( __posFrom, __posTo );
+    
+    // The nose of arrow
+    // Носик стрелки.
     
     // QPoint endT = end + QPoint( -15, -10 );
     // QPoint endB = end + QPoint( -15, 10 );

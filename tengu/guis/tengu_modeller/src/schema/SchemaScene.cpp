@@ -111,6 +111,39 @@ void tengu::SchemaScene::addItem ( tengu::AbstractEntityItem * item ) {
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
+// *                                     Remove links that were not completely created.                               *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                 Удаление связей, которые были созданы не полностью.                              *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::SchemaScene::removeSemiCreatedLinks() {
+    
+    QList<QGraphicsItem * > items = this->items();
+    bool deleted = true;
+    while ( deleted ) {
+        
+        deleted = false;
+        for ( int i=0; i<items.count(); i++ ) {
+            
+            LinkItem * link = dynamic_cast<LinkItem *>( items.at(i) );
+            if ( ( link ) && ( ( link->semiCreated() ) || ( link->isEmpty() ) ) ) {
+                
+                deleted = true;
+                delete( link );
+                link = nullptr;
+                items.removeAt( i );
+                break;
+                
+            };
+        };
+        
+    };
+    
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
 // *                                              Something has been changed.                                         *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                                                Что-то было изменено.                                             *

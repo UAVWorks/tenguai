@@ -36,6 +36,8 @@ namespace tengu {
             void addItem( AbstractEntityItem * item );
             bool changed();
             
+            void removeSemiCreatedLinks();
+            
         private:
             
             AbstractEntityItem * __rootItem;
