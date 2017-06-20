@@ -45,6 +45,7 @@ HEADERS  += src/overboard/XPlaneAgent.h     \
         src/MainWindow.h                    \
         src/MainWindowLeft.h                \
         src/AgentPropertyElement.h          \
+        src/AgentPropertyDelegate.h         \
         src/AgentPropertyModel.h            \
         src/AgentPropertyView.h             \
         src/WorkSpace.h                     \
@@ -72,6 +73,7 @@ SOURCES += src/main.cpp                     \
         src/MainWindow.cpp                  \
         src/MainWindowLeft.cpp              \
         src/AgentPropertyElement.cpp        \
+        src/AgentPropertyDelegate.cpp       \
         src/AgentPropertyModel.cpp          \
         src/AgentPropertyView.cpp           \
         src/WorkSpace.cpp                   \

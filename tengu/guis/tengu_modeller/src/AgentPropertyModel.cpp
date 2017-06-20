@@ -84,7 +84,7 @@ QModelIndex tengu::AgentPropertyModel::parent( const QModelIndex & child ) const
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::AgentPropertyElement tengu::AgentPropertyModel::__getPropertyElement ( const QModelIndex & index, bool * ok ) {
+tengu::AgentPropertyElement tengu::AgentPropertyModel::propertyElement ( const QModelIndex & index, bool * ok ) {
     
     ( * ok ) = false;
     
@@ -113,7 +113,7 @@ Qt::ItemFlags tengu::AgentPropertyModel::flags( const QModelIndex & index) const
     if ( !index.isValid() ) return defaultFlags;
     
     bool ok = false;
-    tengu::AgentPropertyElement oneElement = __getPropertyElement( index, & ok );
+    tengu::AgentPropertyElement oneElement = propertyElement( index, & ok );
     if ( ! ok ) return defaultFlags;
             
     defaultFlags = defaultFlags | QAbstractItemModel::flags( index );
@@ -165,7 +165,7 @@ QVariant tengu::AgentPropertyModel::data( const QModelIndex & index, int role ) 
     // Получаем конкретный элемент свойств.
     
     bool ok;
-    AgentPropertyElement oneElement = __getPropertyElement( index, & ok );
+    AgentPropertyElement oneElement = propertyElement( index, & ok );
     if ( ! ok ) return QVariant();
         
     if ( ( role == Qt::DisplayRole ) || ( role == Qt::EditRole ) ) {
@@ -173,8 +173,21 @@ QVariant tengu::AgentPropertyModel::data( const QModelIndex & index, int role ) 
         // Want to display. Return the value of specified element.
         // Хотим показываать. Возвращаем значение указанного элемента.
         
-        return oneElement.value ;
-                        
+        switch ( oneElement.type ) {
+            
+            case AgentPropertyElement::APE_String: {
+                return oneElement.value ;
+            }; break;
+            
+            case AgentPropertyElement::APE_ExecutionModeSelector: {
+                switch ( ( AbstractAgent::execution_mode_t ) oneElement.value.toInt() ) {
+                    case AbstractAgent::EM_ALWAYS:  return QVariant( tr("Always") );
+                    case AbstractAgent::EM_REAL:    return QVariant( tr("Real") );
+                    case AbstractAgent::EM_XPLANE:  return QVariant( tr("X-Plane simulation") );
+                };                                
+            };
+        };
+                                        
     };
     
     if ( role == Qt::BackgroundColorRole ) {        
@@ -216,37 +229,27 @@ QVariant tengu::AgentPropertyModel::data( const QModelIndex & index, int role ) 
 
 bool tengu::AgentPropertyModel::setData( const QModelIndex & index, const QVariant & value, int role) {
     
+    
     if ( ! index.isValid() ) return false;
     
     bool ok;
-    AgentPropertyElement oneElement = __getPropertyElement( index, & ok );
+    AgentPropertyElement oneElement = propertyElement( index, & ok );
     if ( ! ok ) return false;
     
     if ( ( role == Qt::EditRole ) && ( ! oneElement.readOnly ) && ( ! oneElement.propertyName.isEmpty() ) ) {
         
-        __item->setProperty( oneElement.propertyName.toLatin1().data(), value );
-        __properties = __item->properties();
-        
-        /*
-        switch( index.row() ) {
-            case 1: {
-                // Name
-                QString name = value.toString();
-                __item->setName( name );
-                __properties = __item->properties();
+        switch ( oneElement.type ) {
+            
+            case AgentPropertyElement::APE_String: {
+                __item->setProperty( oneElement.propertyName.toLatin1().data(), value );
             }; break;
             
-            default : {
-                qDebug() << "AgentPropertyModel::setData() unhandled, row=" << index.row() << ", value=" << value << ", role=" << role;
-            };
+            case AgentPropertyElement::APE_ExecutionModeSelector : {
+                __item->setExecutionMode( (AbstractAgent::execution_mode_t) value.toInt() );
+            }; break;
         };
-        */
-        
-        /*
-        stringList.replace(index.row(), value.toString());
-        emit dataChanged(index, index);
-        */
-        
+                
+        __properties = __item->properties();        
         emit dataChanged( index, index );
         
         return true;        

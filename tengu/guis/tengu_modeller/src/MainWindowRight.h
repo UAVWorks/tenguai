@@ -17,6 +17,7 @@
 
 #include "AgentPropertyView.h"
 #include "AgentPropertyModel.h"
+#include "AgentPropertyDelegate.h"
 #include "WorkSpace.h"
 #include "../guis.h"
 
@@ -48,7 +49,7 @@ namespace tengu {
             
             // void updateProperties();
             
-            AgentPropertyView * propertyView;
+            AgentPropertyView * propertyView;                        
             
         private:
             

@@ -43,12 +43,13 @@ namespace tengu {
             bool setData(const QModelIndex & index, const QVariant & value, int role);
             
             void setEntityItem( AbstractEntityItem * item );            
+            AgentPropertyElement propertyElement( const QModelIndex & index, bool * ok );
             
         private:
             
             AbstractEntityItem * __item;
             QList< QList<AgentPropertyElement> > __properties;
-            AgentPropertyElement __getPropertyElement( const QModelIndex & index, bool * ok );
+            
     };
 };
 

@@ -6,7 +6,7 @@ This is graphical tool for work with artifical intelligence models. At the momen
 
 # The latest operations.
 
-- **20 jun 2017** Moving the link together with the task.
+- **20 jun 2017** Moving the link together with the task. Changing execution mode for the element.
 - **19 jun 2017** Stoping of the create link process by escape key. The noses for the arrows.
 - **18 jun 2017** ANDor, ORer elements. Changing of the task name. Remade painting method. Creating a link (not completed).
 - **17 jun 2017** A stop process element was drawed. Moving elements on the schema. Drop event on schema. "File" toolbar.

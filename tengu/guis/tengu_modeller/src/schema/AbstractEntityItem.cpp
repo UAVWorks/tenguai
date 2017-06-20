@@ -432,15 +432,35 @@ QList< QList< tengu::AgentPropertyElement > > tengu::AbstractEntityItem::propert
     
     result.append( commentElement );
     
+    // Agent execution mode selector. This is an combo-box.
+    // Выбор режима выполнения данного агента. Это - комбо-бокс.
     
+    QList<AgentPropertyElement> executionModeElement;
+    
+    AgentPropertyElement executionModeName( tr("Execution mode") );
+    executionModeName.backgroundColor = executionModeName.widgetBackground();
+    executionModeElement.append( executionModeName );
+    
+    AgentPropertyElement executionModeValue;
+    executionModeValue.type = AgentPropertyElement::APE_ExecutionModeSelector;
+    executionModeValue.readOnly = false;
+    executionModeValue.propertyName = "execution_mode";
+    executionModeValue.value = QVariant( (int) getExecutionMode() );
+    executionModeValue.backgroundColor = executionModeValue.widgetBackground();
+    
+    // QComboBox * cb = new QComboBox();
     /*
-    if ( _entity ) {
-        result.append( QPair<QString, QVariant>("UUID", QVariant( _entity->getUUID() ) ) );    
-        result.append( QPair<QString, QVariant>( tr("Name"), QVariant( _entity->getName() ) ) );
-        result.append( QPair<QString, QVariant>( tr("Comment"), QVariant( _entity->getComment() ) ) );
-    }
+    cb->addItem( tr("Always"), QVariant( AbstractAgent::EM_ALWAYS ) );
+    cb->addItem( tr("Real"), QVariant( AbstractAgent::EM_REAL ) );
+    cb->addItem( tr("X-Plane"), QVariant( AbstractAgent::EM_XPLANE ) );
     */
+    // executionModeValue.editorWidget = cb; 
     
+    
+    executionModeElement.append( executionModeValue );
+    
+    result.append( executionModeElement );
+        
     return result;
     
 }
@@ -563,7 +583,7 @@ tengu::AbstractEntity::execution_mode_t tengu::AbstractEntityItem::getExecutionM
 // ********************************************************************************************************************
 
 void tengu::AbstractEntityItem::setExecutionMode ( tengu::AbstractEntity::execution_mode_t mode ) {
-    
+        
     if ( _entity ) {
         _entity->setExecutionMode( mode );
         _somethingChanged();

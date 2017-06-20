@@ -32,8 +32,10 @@ tengu::MainWindowRight::MainWindowRight(QWidget * parent)
     // QWidget * propWrapper = new QWidget();
     // QHBoxLayout * propLay = new QHBoxLayout();
     // propWrapper->setLayout( propLay );
+    
     propertyView = new AgentPropertyView();
     propertyView->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding );
+    
     // propLay->addWidget( __properties );
     __splitter->addWidget( propertyView );
     

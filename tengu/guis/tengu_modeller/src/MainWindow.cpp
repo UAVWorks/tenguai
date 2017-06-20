@@ -26,6 +26,7 @@ tengu::MainWindow::MainWindow(QWidget *parent)
     
     // __workSpace = new WorkSpace();
     __agentPropertyModel = new AgentPropertyModel();
+    __agentPropertyDelegate = new AgentPropertyDelegate( __agentPropertyModel );
     
     QVBoxLayout * lay = new QVBoxLayout();
     lay->setMargin( 0 );
@@ -91,6 +92,7 @@ tengu::MainWindow::MainWindow(QWidget *parent)
     __right = new MainWindowRight();
     
     __right->propertyView->setModel( __agentPropertyModel );
+    __right->propertyView->setItemDelegateForColumn( 1, __agentPropertyDelegate );
     
     __hSplitter->addWidget( __left );
     __hSplitter->addWidget( __schemaView );

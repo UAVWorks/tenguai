@@ -21,6 +21,11 @@ namespace tengu {
         
         public:
             
+            enum agent_property_t {
+                APE_String,
+                APE_ExecutionModeSelector
+            };
+            
             AgentPropertyElement();
             AgentPropertyElement( QString text );
             ~AgentPropertyElement();
@@ -30,8 +35,8 @@ namespace tengu {
             
             QString propertyName;
             
-            // The text of property name (first column)
-            // Текст имени свойства (первый столбец)
+            // The value of this element
+            // Значение элемента
             
             QVariant value;
             
@@ -47,6 +52,10 @@ namespace tengu {
             QColor widgetBackground();
             QColor baseBackground();
             QColor disabledBackground();
+            
+            // QWidget * editorWidget;
+            
+            agent_property_t type;
             
             // QVariant get();
             // void set( QVariant val );

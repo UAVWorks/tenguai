@@ -32,6 +32,7 @@
 #include "AgentFactory.h"
 #include "AgentItemFactory.h"
 #include "AgentPropertyModel.h"
+#include "AgentPropertyDelegate.h"
 #include "MainWindowLeft.h"
 #include "LibraryTab.h"
 #include "SchemaView.h"
@@ -105,6 +106,7 @@ namespace tengu {
             // MVC-модель редактирования свойств текущего (выбранного) агента или состояния.
             
             AgentPropertyModel * __agentPropertyModel;
+            AgentPropertyDelegate * __agentPropertyDelegate;
             
             // Overrided widget's functions
             // Перекрытые функции виджита.

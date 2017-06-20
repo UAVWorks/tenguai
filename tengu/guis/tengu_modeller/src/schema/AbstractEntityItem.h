@@ -27,12 +27,13 @@
 #include <QMouseEvent>
 #include <QFont>
 #include <QFontMetrics>
+#include <QComboBox>
 
 #include "AbstractEntity.h"
 #include "AbstractAgent.h"
 #include "Sprout.h"
 #include "AgentFactory.h"
-#include "AgentPropertyElement.h"
+#include "../AgentPropertyElement.h"
 
 // Colors for process diagram.
 // Цвета для диаграммы процессов.
@@ -61,7 +62,8 @@ namespace tengu {
         
         Q_PROPERTY( QString name READ getName WRITE setName );
         Q_PROPERTY( QString comment READ getComment WRITE setComment );
-        Q_PROPERTY( QString uuid READ getUUID );        
+        Q_PROPERTY( QString uuid READ getUUID );   
+        Q_PROPERTY( execution_mode_t execution_mode READ getExecutionMode WRITE setExecutionMode );
         
         signals:
             void signalSomethingChanged();

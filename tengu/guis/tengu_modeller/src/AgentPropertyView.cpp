@@ -59,6 +59,12 @@ void tengu::AgentPropertyView::adjustColumnWidth() {
     setColumnWidth( 1, valueColumnWidth );        
 }
 
+/*
+QAbstractItemDelegate* tengu::AgentPropertyView::itemDelegate ( const QModelIndex& index ) {
+    qDebug() << "itemDelegate for index";
+    return QTableView::itemDelegate( index );
+}
+*/
 
 // ********************************************************************************************************************
 // *                                                                                                                  *

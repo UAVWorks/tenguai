@@ -24,6 +24,8 @@ tengu::AgentPropertyElement::AgentPropertyElement() {
     font = QFont("Arial", 9 );
     readOnly = true;
     backgroundColor = baseBackground();
+    // editorWidget = nullptr;
+    type = APE_String;
 }
 
 // ********************************************************************************************************************
@@ -55,10 +57,10 @@ QColor tengu::AgentPropertyElement::widgetBackground() {
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
-// *                                       Return the base background color.                                          *
+// *                                          Return the base background color.                                       *
 // * ---------------------------------------------------------------------------------------------------------------- *
-// * Вернуть основной цвет фона. *
-// * *
+// *                                             Вернуть основной цвет фона.                                          *
+// *                                                                                                                  *
 // ********************************************************************************************************************
 
 QColor tengu::AgentPropertyElement::baseBackground() {
@@ -88,7 +90,6 @@ QColor tengu::AgentPropertyElement::disabledBackground() {
 // ********************************************************************************************************************
 
 tengu::AgentPropertyElement::~AgentPropertyElement() {
-
+    // if ( editorWidget ) delete( editorWidget );
 }
-
 
