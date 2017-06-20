@@ -408,9 +408,18 @@ void tengu::MainWindow::__on_schama_item_moved ( tengu::AbstractEntityItem * ent
     if ( entity ) {
         __schemaView->hide();
         entity->setX( pos.x() );
-        entity->setY( pos.y() );
-        __schemaView->show();
+        entity->setY( pos.y() );        
         entity->update(); 
+        
+        QList<AbstractEntityItem * > links = entity->hisLinks();
+        for ( int i=0; i<links.size(); i ++ ) {
+            LinkItem * link = dynamic_cast<LinkItem * >( links.at(i) );
+            if ( link ) {
+                link->recalculate();
+                link->update();
+            };
+        };                    
+        __schemaView->show();
         // __schemaView->updateSceneRect( QRect(0, 0, 800, 600 ) );
         // currentPos = __schemaView->mapFromScene( currentPos );
         // qDebug() << "After map to scene: " << currentPos;

@@ -382,6 +382,13 @@ tengu::AbstractAgentKernel::~AbstractAgentKernel() {
     // Дети хранятся прямо здесь и их нужно чистить.
             
     if ( _children.size() > 0 ) {
+        
+        foreach ( AbstractAgentKernel * child, _children ) {
+            delete( child );
+        };
+        
+        /*
+        cout << value << endl;
         AbstractAgentKernel * child = _children.first();
         qDebug() << "First child = " << child;
         while ( child ) {
@@ -389,6 +396,7 @@ tengu::AbstractAgentKernel::~AbstractAgentKernel() {
             delete( child );
             child = _children.first();
         };
+        */
     };
                         
     // qDebug() << "AbstractAgentKernel::~AbstractAgentKernel() done!";

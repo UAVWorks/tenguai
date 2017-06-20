@@ -29,6 +29,8 @@ namespace tengu {
             void setTo( QPoint to );
             bool semiCreated();
             bool isEmpty();
+            void recalculate();
+            
             
         protected:
             
@@ -42,7 +44,6 @@ namespace tengu {
             QPoint __posFrom;
             QPoint __posTo;
             
-            void __recalculate();
             QPoint __tempTo;
             
             bool __withSprout;

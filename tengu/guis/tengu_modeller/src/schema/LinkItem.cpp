@@ -52,7 +52,10 @@ void tengu::LinkItem::checkEntity() {
 
 void tengu::LinkItem::setFrom ( tengu::AbstractEntityItem * entity ) {
     __from = entity;
-    __recalculate();
+    
+    if ( entity ) entity->addOutgoingLink( this );
+    
+    recalculate();
     update();
 }
 
@@ -67,6 +70,8 @@ void tengu::LinkItem::setFrom ( tengu::AbstractEntityItem * entity ) {
 void tengu::LinkItem::setTo ( tengu::AbstractEntityItem * entity ) {
     
     __to = entity;
+    
+    if ( entity ) entity->addIncommingLink( this );
     
     // Set the link between agents.
     // Установка связи между агентами.
@@ -101,7 +106,7 @@ void tengu::LinkItem::setTo ( tengu::AbstractEntityItem * entity ) {
     
     __tempTo = QPoint( 0, 0 );
     
-    __recalculate();
+    recalculate();
     update();
 }
 
@@ -115,7 +120,7 @@ void tengu::LinkItem::setTo ( tengu::AbstractEntityItem * entity ) {
 
 void tengu::LinkItem::setTo ( QPoint to ) {
     __tempTo = to;
-    __recalculate();
+    recalculate();
     update();    
 }
 
@@ -153,7 +158,7 @@ bool tengu::LinkItem::semiCreated() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::LinkItem::__recalculate() {
+void tengu::LinkItem::recalculate() {
         
     int x = 0, y = 0, w = 0, h = 0;
         

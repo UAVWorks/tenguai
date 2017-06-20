@@ -62,7 +62,7 @@ bool tengu::Processor::_loadConfig ( QString fileName ) {
         if ( ! mode.isEmpty() ) {
             if ( mode.toUpper() == "REAL" ) setExecutionMode( AbstractEntity::EM_REAL );
             else if ( mode.toUpper() == "XPLANE" ) setExecutionMode( AbstractAgentKernel::EM_XPLANE );
-            else if ( mode.toUpper() == "PREPAR3D" ) setExecutionMode( AbstractAgentKernel::EM_PREPAR3D );
+            // else if ( mode.toUpper() == "PREPAR3D" ) setExecutionMode( AbstractAgentKernel::EM_PREPAR3D );
         };
                 
         return true;

@@ -32,6 +32,9 @@ tengu::AbstractEntityItem::AbstractEntityItem( AbstractEntity * entity, QGraphic
     __uuid = QUuid::createUuid().toString();
     __lastModified = QDateTime::currentDateTimeUtc();
     
+    __linksOutgoingFromThis = QMap< QString, AbstractEntityItem * >();
+    __linksIncommingToThis = QMap< QString, AbstractEntityItem * >();
+    
     // setAcceptHoverEvents( true );
     // setAcceptTouchEvents( true );
 }
@@ -658,6 +661,52 @@ bool tengu::AbstractEntityItem::fromJSON ( QJsonObject json ) {
         }
         
         
+    };
+    
+    return result;
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                       Add a link which is outgoing from this item.                               *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                   Добавить связь, исходящую из данного элемента.                                 *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::AbstractEntityItem::addOutgoingLink ( tengu::AbstractEntityItem* link ) {
+    __linksOutgoingFromThis[ link->getUUID() ] = link;
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                    Add a link which is incomming to this item                                    *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                      Добавить связь, входящую в этот элемент.                                    *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::AbstractEntityItem::addIncommingLink ( tengu::AbstractEntityItem * link ) {
+    __linksIncommingToThis[ link->getUUID() ] = link;
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                              Get all links of this item.                                         *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                          Вернуть все связи данного элемента.                                     *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+QList< tengu::AbstractEntityItem* > tengu::AbstractEntityItem::hisLinks() {
+    QList< AbstractEntityItem * > result;
+    
+    foreach( AbstractEntityItem * item, __linksIncommingToThis ) {
+        result.append( item );
+    };
+    
+    foreach( AbstractEntityItem * item, __linksOutgoingFromThis ) {
+        result.append( item );
     };
     
     return result;

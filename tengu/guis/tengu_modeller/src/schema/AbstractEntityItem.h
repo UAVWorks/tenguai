@@ -115,6 +115,10 @@ namespace tengu {
             
             virtual void checkEntity() = 0;
             AbstractEntity * entity();
+            
+            void addOutgoingLink( AbstractEntityItem * link );
+            void addIncommingLink( AbstractEntityItem * link );
+            QList< AbstractEntityItem * > hisLinks();
                         
         protected:
             
@@ -173,6 +177,9 @@ namespace tengu {
             QPen    __oldPainterPen;
             QBrush  __oldPainterBrush;
             QFont   __oldPainterFont;
+            
+            QMap< QString, AbstractEntityItem * > __linksOutgoingFromThis;
+            QMap< QString, AbstractEntityItem * > __linksIncommingToThis;
     };
 };
 

@@ -28,8 +28,11 @@ namespace tengu {
             enum execution_mode_t {
                 EM_ALWAYS       = 0,
                 EM_REAL         = 1,
-                EM_XPLANE       = 2,
-                EM_PREPAR3D     = 3
+                EM_XPLANE       = 2
+                
+                // Not realized yet.
+                // EM_PREPAR3D     = 3
+                
             };
             
             AbstractEntity ();
