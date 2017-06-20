@@ -21,6 +21,7 @@
 #include "AbstractEntityItem.h"
 #include "TaskItem.h"
 #include "SproutItem.h"
+#include "AgentPropertyElement.h"
 
 namespace tengu {
 
@@ -41,12 +42,13 @@ namespace tengu {
             QVariant data(const QModelIndex & index, int role = Qt::DisplayRole) const;
             bool setData(const QModelIndex & index, const QVariant & value, int role);
             
-            void setEntityItem( AbstractEntityItem * item );
+            void setEntityItem( AbstractEntityItem * item );            
             
         private:
             
             AbstractEntityItem * __item;
-            QList<QPair<QString, QVariant> > __properties;
+            QList< QList<AgentPropertyElement> > __properties;
+            AgentPropertyElement __getPropertyElement( const QModelIndex & index, bool * ok );
     };
 };
 

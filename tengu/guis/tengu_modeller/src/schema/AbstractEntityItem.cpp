@@ -381,15 +381,62 @@ void tengu::AbstractAgentItem::mouseMoveEvent ( QGraphicsSceneMouseEvent * event
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-QList<QPair<QString, QVariant>> tengu::AbstractEntityItem::properties() {
+QList< QList< tengu::AgentPropertyElement > > tengu::AbstractEntityItem::properties() {
 
-    QList<QPair<QString, QVariant>> result;
+    QList< QList<AgentPropertyElement> > result;
     
+    // UUID
+    
+    QList<AgentPropertyElement > uuidElement;
+    
+    AgentPropertyElement uuidName( tr ("UUID" ) );
+    uuidName.backgroundColor = uuidName.widgetBackground();
+    uuidElement.append( uuidName );
+    
+    AgentPropertyElement uuidValue( getUUID() );
+    uuidValue.backgroundColor = uuidValue.disabledBackground();
+    uuidElement.append( uuidValue );
+    
+    result.append( uuidElement );
+    
+    // Name
+    
+    QList< AgentPropertyElement > nameElement;
+    
+    AgentPropertyElement nameName( tr("Name") );
+    nameName.backgroundColor = nameName.widgetBackground();
+    nameElement.append( nameName );
+    
+    AgentPropertyElement nameValue( getName() );
+    nameValue.readOnly = false;
+    nameValue.propertyName = QString("name");
+    nameElement.append( nameValue );
+    
+    result.append( nameElement );
+    
+    // Comment
+    
+    QList < AgentPropertyElement > commentElement;
+    
+    AgentPropertyElement commentName( tr( "Comment" ) );
+    commentName.backgroundColor = commentName.widgetBackground();
+    commentElement.append( commentName );
+    
+    AgentPropertyElement commentValue( getComment() );
+    commentValue.readOnly = false;
+    commentValue.propertyName = QString("comment");
+    commentElement.append( commentValue );
+    
+    result.append( commentElement );
+    
+    
+    /*
     if ( _entity ) {
         result.append( QPair<QString, QVariant>("UUID", QVariant( _entity->getUUID() ) ) );    
         result.append( QPair<QString, QVariant>( tr("Name"), QVariant( _entity->getName() ) ) );
         result.append( QPair<QString, QVariant>( tr("Comment"), QVariant( _entity->getComment() ) ) );
     }
+    */
     
     return result;
     
@@ -561,7 +608,7 @@ QDateTime tengu::AbstractEntityItem::lastModified() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::AbstractEntity * tengu::AbstractEntityItem::getEntity() {
+tengu::AbstractEntity * tengu::AbstractEntityItem::entity() {
     return _entity;
 }
 
@@ -625,7 +672,11 @@ bool tengu::AbstractEntityItem::fromJSON ( QJsonObject json ) {
 // ********************************************************************************************************************
 
 tengu::AbstractEntityItem::~AbstractEntityItem() {
-    if ( _entity ) delete ( _entity );
+    // qDebug() << "AbstractEntityItem::~AbstractEntityItem(), name=" << getName();
+    if ( _entity ) {
+        delete ( _entity );
+    };
+    // qDebug() << "AbstractEntityItem::~AbstractEntityItem() done!";
 }
 
 

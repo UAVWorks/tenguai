@@ -9,8 +9,8 @@
 
 #pragma once
 
-#include <QtMath>
 #include "AbstractEntityItem.h"
+#include "SproutItem.h"
 
 namespace tengu {
     
@@ -44,6 +44,8 @@ namespace tengu {
             
             void __recalculate();
             QPoint __tempTo;
+            
+            bool __withSprout;
             
     };
     

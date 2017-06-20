@@ -61,8 +61,9 @@ void tengu::SchemaScene::setRootItem ( tengu::AbstractEntityItem * rootItem ) {
         __rootItem = nullptr;
     };
     
-    __rootItem = rootItem;
-    clear();        
+    __rootItem = rootItem;        
+    clear();
+    
 }
 
 // ********************************************************************************************************************

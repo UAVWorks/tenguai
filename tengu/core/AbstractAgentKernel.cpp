@@ -33,9 +33,10 @@ tengu::AbstractAgentKernel::AbstractAgentKernel()
     __pub_redis_connected = false;
     __sub_redis_connected = false;
     
-    _prefiousAgents = QList < AbstractAgentKernel * > ();
-    _nextAgents = QList < AbstractAgentKernel * > ();
-    _children = QList < AbstractAgentKernel * > ();
+    _previousByFocus = QMap < QString, AbstractAgentKernel * > ();
+    _nextByFocus = QMap < QString, AbstractAgentKernel * > ();
+    
+    _children = QMap< QString, AbstractAgentKernel * > ();
     
     // Creating redis'es objects.
     // Создание редисовых объектов.
@@ -310,7 +311,7 @@ void tengu::AbstractAgentKernel::connect() {
 // ********************************************************************************************************************
 
 void tengu::AbstractAgentKernel::addChild ( tengu::AbstractAgentKernel * child ) {
-    _children.append( child );
+    _children[ child->getUUID() ] = child;
     _changed = true;
 }
 
@@ -342,6 +343,31 @@ bool tengu::AbstractAgentKernel::hasChildren() {
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
+// *                      Adding previous (in the sence of focus transition flow) agent.                              *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                  Добавление предыдущего (в смысле течения потока передачи фокуса) агента.                        *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::AbstractAgentKernel::addPreviousByFocus ( tengu::AbstractAgentKernel* previous ) {
+    _previousByFocus[ previous->getUUID() ] = previous;
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                              Adding next (in the sence of focus flow) agent.                                     *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                       Добавление следующего (в смысле потока передачи фокуса) агента.                            *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::AbstractAgentKernel::addNextByFocus ( tengu::AbstractAgentKernel* next ) {
+    _nextByFocus[ next->getUUID() ] = next;
+}
+
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
 // *                                                  The destructor.                                                 *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                                                     Деструктор.                                                  *
@@ -350,16 +376,22 @@ bool tengu::AbstractAgentKernel::hasChildren() {
 
 tengu::AbstractAgentKernel::~AbstractAgentKernel() {
     
-    try {
-        while ( _children.length() > 0 ) {
-            AbstractAgentKernel * child = _children.at(0);
+    // qDebug() << "AbstractAgentKernel::~AbstractAgentKernel(), my name is " << getName() << ", children size=" << _children.size();
+    
+    // The children are stored right here. We must clean them.
+    // Дети хранятся прямо здесь и их нужно чистить.
+            
+    if ( _children.size() > 0 ) {
+        AbstractAgentKernel * child = _children.first();
+        qDebug() << "First child = " << child;
+        while ( child ) {
+            _children.remove( child->getUUID() );
             delete( child );
-            _children.removeAt( 0 );
+            child = _children.first();
         };
-    } catch ( std::exception & e ) {
-        qDebug() << "AbstractAgent::~AbstractAgent(): " << e.what();
-    } catch ( ... ) {
-        qDebug() << "AbstractAgent::~AbstractAgent(): unhandled exception";
     };
+                        
+    // qDebug() << "AbstractAgentKernel::~AbstractAgentKernel() done!";
+    
 }
 

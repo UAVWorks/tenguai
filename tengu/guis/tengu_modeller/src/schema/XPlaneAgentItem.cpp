@@ -43,6 +43,6 @@ void tengu::XPlaneAgentItem::checkEntity() {
 // ********************************************************************************************************************
 
 tengu::XPlaneAgentItem::~XPlaneAgentItem() {
-
+    // qDebug() << "XPlaneAgentItem::~XPlaneAgentItem()";
 }
 

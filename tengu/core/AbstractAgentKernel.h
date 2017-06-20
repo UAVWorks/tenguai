@@ -16,6 +16,7 @@
 #include <QTime>
 #include <QDateTime>
 #include <QUuid>
+#include <QMap>
 
 #include "LoRedis.h"
 #include "AbstractEntity.h"
@@ -67,8 +68,14 @@ namespace tengu {
             virtual bool usable();
             
             void addChild( AbstractAgentKernel * child );
-            
             bool hasChildren();
+            
+            /**
+             * @short Adding or replacing previous (in the sence of focus flow) agent.
+             */
+            
+            void addPreviousByFocus( AbstractAgentKernel * previous );
+            void addNextByFocus( AbstractAgentKernel * next );            
                         
             // The agent can be provided either as object in memory
             // or separate process in the operation system for 
@@ -108,13 +115,13 @@ namespace tengu {
             // Деревообразная ("объемная", 3d) структура агентов.
             
             AbstractAgentKernel * _parent;
-            QList<AbstractAgentKernel * > _children;
+            QMap< QString, AbstractAgentKernel * > _children;
             
-            // Line-like (flat, 2d, by time flow) structure of agents.
-            // Линейная (плоская, 2d, по времени) структура агентов.
+            // Line-like (flat, 2d, by time flow) structure of agents. Key for map is an UUID.            
+            // Линейная (плоская, 2d, по времени) структура агентов. Ключ для словарика - это UUID.
             
-            QList<AbstractAgentKernel * > _prefiousAgents;
-            QList<AbstractAgentKernel * > _nextAgents;
+            QMap< QString, AbstractAgentKernel * > _previousByFocus;
+            QMap< QString, AbstractAgentKernel * > _nextByFocus;
                         
             // Tree-like structure of agents. For loading entire "tree branch" completely.
             // Древовидная структура агентов. Для загрузки всей "ветки" дерева целиком.

@@ -343,6 +343,7 @@ void tengu::MainWindow::__createSchemaScene() {
 
 void tengu::MainWindow::__on__create__process() {
     
+    
     __schemaView->hide();
     __schemaScene->setRootItem( new ProcessItem() );   
     __schemaView->show();
@@ -350,6 +351,7 @@ void tengu::MainWindow::__on__create__process() {
     __library_tab->tab__processes->setEnabled( true );
     __library_tab->setCurrentWidget( __library_tab->tab__processes );
     __library_tab->tab__processes->on__process_created();
+    
 }
 
 // ********************************************************************************************************************

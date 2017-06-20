@@ -142,10 +142,9 @@ void tengu::SproutItem::checkEntity() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-QList< QPair< QString, QVariant > > tengu::SproutItem::properties() {
+QList< QList<tengu::AgentPropertyElement> > tengu::SproutItem::properties() {
     return tengu::AbstractEntityItem::properties();
 }
-
 
 // ********************************************************************************************************************
 // *                                                                                                                  *

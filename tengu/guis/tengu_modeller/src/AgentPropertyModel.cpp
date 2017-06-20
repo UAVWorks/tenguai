@@ -21,7 +21,7 @@ tengu::AgentPropertyModel::AgentPropertyModel()
     : QAbstractItemModel()
 {
     __item = nullptr;
-    __properties = QList<QPair<QString, QVariant>>();
+    __properties = QList< QList< AgentPropertyElement >>();
 }
 
 // ********************************************************************************************************************
@@ -78,18 +78,54 @@ QModelIndex tengu::AgentPropertyModel::parent( const QModelIndex & child ) const
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
+// *                                    Get one property element for this index.                                      *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                  Вернуть один элемент свойств агента по индексу.                                 *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+tengu::AgentPropertyElement tengu::AgentPropertyModel::__getPropertyElement ( const QModelIndex & index, bool * ok ) {
+    
+    ( * ok ) = false;
+    
+    if ( index.row() >= __properties.size() ) return AgentPropertyElement();        
+    QList < AgentPropertyElement > oneRow = __properties.at( index.row() );    
+    if ( index.column() > oneRow.size() ) return AgentPropertyElement();    
+    AgentPropertyElement oneElement = oneRow.at( index.column() );
+    
+    ( * ok ) = true;    
+    return oneElement;
+}
+
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
 // *                                            Make flags for this index.                                            *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                                            Флаги для данного индекса.                                            *
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-Qt::ItemFlags tengu::AgentPropertyModel::flags(const QModelIndex & index) const {
+Qt::ItemFlags tengu::AgentPropertyModel::flags( const QModelIndex & index) const {
         
     Qt::ItemFlags defaultFlags = Qt::ItemIsEnabled | Qt::ItemNeverHasChildren;
     
     if ( !index.isValid() ) return defaultFlags;
     
+    bool ok = false;
+    tengu::AgentPropertyElement oneElement = __getPropertyElement( index, & ok );
+    if ( ! ok ) return defaultFlags;
+            
+    defaultFlags = defaultFlags | QAbstractItemModel::flags( index );
+    
+    // Is this property editable?
+    // Редактируемо ли данное свойство?
+    
+    if ( ( ! oneElement.readOnly ) && ( ! oneElement.propertyName.isEmpty() ) ) return defaultFlags | Qt::ItemIsEditable;
+    
+    return defaultFlags;
+
+    /*
     // At least the index is valid.
     // Как минимум, индекс - вменяемый.
     
@@ -110,6 +146,7 @@ Qt::ItemFlags tengu::AgentPropertyModel::flags(const QModelIndex & index) const 
     // Все остальные поля можно редактировать.
     
     return QAbstractItemModel::flags( index ) | Qt::ItemIsEditable | defaultFlags;
+    */
 }
 
 // ********************************************************************************************************************
@@ -121,39 +158,27 @@ Qt::ItemFlags tengu::AgentPropertyModel::flags(const QModelIndex & index) const 
 // ********************************************************************************************************************
 
 QVariant tengu::AgentPropertyModel::data( const QModelIndex & index, int role ) const {
+            
+    if ( ! index.isValid() ) return QVariant();
+    
+    // Get exactly needed element of properties.
+    // Получаем конкретный элемент свойств.
+    
+    bool ok;
+    AgentPropertyElement oneElement = __getPropertyElement( index, & ok );
+    if ( ! ok ) return QVariant();
         
-    QVariant answer;
-    
-    if ( ! index.isValid() ) return answer;
-    
     if ( ( role == Qt::DisplayRole ) || ( role == Qt::EditRole ) ) {
     
-        // Want to display. Return contents of properties list.
-        // Хотим показываать. Возвращаем содержание списка свойств.                
+        // Want to display. Return the value of specified element.
+        // Хотим показываать. Возвращаем значение указанного элемента.
         
-        if ( index.row() < __properties.size() ) {
-            if ( index.column() == 0 ) answer = QVariant( __properties.at( index.row() ).first );
-            else answer = __properties.at( index.row() ).second;
-        };
-        
-        return answer;
+        return oneElement.value ;
+                        
     };
     
-    if ( role == Qt::BackgroundColorRole ) {
-        
-        // Using temporary invisible widget to grab system background color.
-        // Используем временный невидимый виджит, чтобы стащить системный цвет фона.
-        
-        QWidget w;
-        QColor widgetBackground = w.palette().color( QPalette::Window );
-        
-        // Background for UUID contents which is disable for editing.
-        // Цвет фона для содержимого UUID'а, которое нельзя редактировать.
-        
-        QColor disabledBackground = w.palette().color( QPalette::Button );
-        
-        if ( index.column() == 0 ) return QVariant( widgetBackground );
-        else if ( index.row() == 0 ) return QVariant( disabledBackground );
+    if ( role == Qt::BackgroundColorRole ) {        
+        return oneElement.backgroundColor;
     };        
     
     // Does not work... :-(
@@ -170,13 +195,14 @@ QVariant tengu::AgentPropertyModel::data( const QModelIndex & index, int role ) 
     //};
     
     if ( role == Qt::FontRole ) {
-        QFont font("Tahoma", 9 );
-        return QVariant( font );
+        
+        //QFont font("Tahoma", 9 );
+        return QVariant( oneElement.font );
     };
         
     // qDebug() << "get data, but not for display. Role=" << role;
     
-    return answer;
+    return QVariant();
     
 }
 
@@ -188,10 +214,20 @@ QVariant tengu::AgentPropertyModel::data( const QModelIndex & index, int role ) 
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-bool tengu::AgentPropertyModel::setData(const QModelIndex & index, const QVariant & value, int role) {
+bool tengu::AgentPropertyModel::setData( const QModelIndex & index, const QVariant & value, int role) {
+    
+    if ( ! index.isValid() ) return false;
+    
+    bool ok;
+    AgentPropertyElement oneElement = __getPropertyElement( index, & ok );
+    if ( ! ok ) return false;
+    
+    if ( ( role == Qt::EditRole ) && ( ! oneElement.readOnly ) && ( ! oneElement.propertyName.isEmpty() ) ) {
         
-    if (index.isValid() && role == Qt::EditRole) {
+        __item->setProperty( oneElement.propertyName.toLatin1().data(), value );
+        __properties = __item->properties();
         
+        /*
         switch( index.row() ) {
             case 1: {
                 // Name
@@ -204,6 +240,7 @@ bool tengu::AgentPropertyModel::setData(const QModelIndex & index, const QVarian
                 qDebug() << "AgentPropertyModel::setData() unhandled, row=" << index.row() << ", value=" << value << ", role=" << role;
             };
         };
+        */
         
         /*
         stringList.replace(index.row(), value.toString());
@@ -214,6 +251,7 @@ bool tengu::AgentPropertyModel::setData(const QModelIndex & index, const QVarian
         
         return true;        
     }
+    
     return false;
 }
 
@@ -226,7 +264,6 @@ bool tengu::AgentPropertyModel::setData(const QModelIndex & index, const QVarian
 // ********************************************************************************************************************
 
 void tengu::AgentPropertyModel::setEntityItem ( tengu::AbstractEntityItem * item ) {
-
     __item = item;
     __properties = item->properties();    
     emit layoutChanged();

@@ -12,6 +12,7 @@
 
 #include "AbstractEntityItem.h"
 #include "Sprout.h"
+#include "AgentPropertyElement.h"
 
 namespace tengu {
     
@@ -26,7 +27,7 @@ namespace tengu {
             
             void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = Q_NULLPTR);
             
-            QList<QPair<QString, QVariant>> properties();
+            QList< QList<AgentPropertyElement> > properties();
             
             void checkEntity();
             

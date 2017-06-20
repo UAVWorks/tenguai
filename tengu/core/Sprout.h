@@ -22,7 +22,11 @@ namespace tengu {
         
         Q_OBJECT        
 
-        Q_PROPERTY( QVariant value READ __getValue WRITE __setValue )
+        Q_PROPERTY( QString name READ getName WRITE setName );
+        Q_PROPERTY( QString comment READ getComment WRITE setComment );
+        Q_PROPERTY( QString uuid READ getUUID );
+        
+        Q_PROPERTY( QVariant value READ __getValue WRITE __setValue );
                     
         public:
             

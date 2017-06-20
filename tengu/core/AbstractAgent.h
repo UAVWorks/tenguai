@@ -28,6 +28,10 @@ namespace tengu {
         
         Q_OBJECT
         
+        Q_PROPERTY( QString name READ getName WRITE setName );
+        Q_PROPERTY( QString comment READ getComment WRITE setComment );
+        Q_PROPERTY( QString uuid READ getUUID );
+        
         public:
             
             // The name should be unique around the system. 
@@ -80,7 +84,13 @@ namespace tengu {
             
         private:
             
-            // QList <Sprout * > __sprouts;
+            /**
+             * @short Sprouts of this agent.
+             * 
+             * The "Sprouts" of this agent, communication with an environment.
+             * "Ростки" данного агента, связь с окружающей средой.
+             */
+            
             QMap < QString, Sprout * > __sprouts;
             
             // The subscribtion function. Call at the moment subsciber redis connection.            

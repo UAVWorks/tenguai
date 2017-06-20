@@ -32,6 +32,7 @@
 #include "AbstractAgent.h"
 #include "Sprout.h"
 #include "AgentFactory.h"
+#include "AgentPropertyElement.h"
 
 // Colors for process diagram.
 // Цвета для диаграммы процессов.
@@ -58,6 +59,10 @@ namespace tengu {
         
         Q_OBJECT
         
+        Q_PROPERTY( QString name READ getName WRITE setName );
+        Q_PROPERTY( QString comment READ getComment WRITE setComment );
+        Q_PROPERTY( QString uuid READ getUUID );        
+        
         signals:
             void signalSomethingChanged();
             
@@ -78,10 +83,10 @@ namespace tengu {
             
             bool isSelected();
             
-            // Properties list. The pair of string. First is name of element, second is value of element.
-            // Список свойств. Пара строк. Первая - имя элемента, вторая - его значение.
+            // The properties list. 
+            // Список свойств. 
             
-            virtual QList<QPair<QString, QVariant>> properties();
+            virtual QList< QList<AgentPropertyElement> > properties();
             
             // Is this entity the subject of decomposition?
             // Является ли данная сущность декомпозируемой?
@@ -89,9 +94,9 @@ namespace tengu {
             bool isDecomposite();
             
             // ------------------------------------------------------------------------------------
-            //                    AbstractStorageableEntity interface realization.
+            //                        AbstractAgent interface overriding.
             // ------------------------------------------------------------------------------------
-            //                    Реализация интерфейса AbstractStorageableEntity. 
+            //                       Перекрытие интерфейса AbstractAgent. 
             // ------------------------------------------------------------------------------------
             
             virtual QString getUUID();
@@ -109,7 +114,7 @@ namespace tengu {
             QPoint mousePressedPos();
             
             virtual void checkEntity() = 0;
-            AbstractEntity * getEntity();
+            AbstractEntity * entity();
                         
         protected:
             

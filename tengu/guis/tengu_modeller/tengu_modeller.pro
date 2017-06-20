@@ -13,7 +13,7 @@ CONFIG += qt release thread rtti
 QT += core gui widgets 
 #opengl
 
-QMAKE_CXXFLAGS += -std=gnu++11 
+QMAKE_CXXFLAGS += -std=gnu++11 -fpermissive
 
 TARGET = build/tengu_modeller
 TEMPLATE = app
@@ -44,6 +44,7 @@ HEADERS  += src/overboard/XPlaneAgent.h     \
         src/LibraryTab.h                    \
         src/MainWindow.h                    \
         src/MainWindowLeft.h                \
+        src/AgentPropertyElement.h          \
         src/AgentPropertyModel.h            \
         src/AgentPropertyView.h             \
         src/WorkSpace.h                     \
@@ -70,6 +71,7 @@ SOURCES += src/main.cpp                     \
         src/LibraryTab.cpp                  \
         src/MainWindow.cpp                  \
         src/MainWindowLeft.cpp              \
+        src/AgentPropertyElement.cpp        \
         src/AgentPropertyModel.cpp          \
         src/AgentPropertyView.cpp           \
         src/WorkSpace.cpp                   \

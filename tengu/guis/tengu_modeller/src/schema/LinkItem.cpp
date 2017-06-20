@@ -27,6 +27,7 @@ tengu::LinkItem::LinkItem()
     __posFrom = QPoint( 0, 0 );
     __posTo = QPoint( 0, 0 );
     __tempTo = QPoint( 0, 0 );
+    __withSprout = false;
 }
 
 // ********************************************************************************************************************
@@ -64,8 +65,42 @@ void tengu::LinkItem::setFrom ( tengu::AbstractEntityItem * entity ) {
 // ********************************************************************************************************************
 
 void tengu::LinkItem::setTo ( tengu::AbstractEntityItem * entity ) {
+    
     __to = entity;
+    
+    // Set the link between agents.
+    // Установка связи между агентами.
+    
+    if ( ( __from ) && ( __to ) ) {
+        
+        // We will not draw a nose of arrow if at least one of the link's participants is Sprout.
+        // Мы не будем рисовать носик связи, если хоть один из участников - это Sprout.
+        
+        SproutItem * prevIsSprout = dynamic_cast< SproutItem * >( __from );
+        SproutItem * nextIsSprout = dynamic_cast< SproutItem * >( __to );
+        __withSprout = prevIsSprout || nextIsSprout;
+        
+        if ( ! __withSprout ) {
+            
+            // If this is link between agents, we need to set previous/next focus flow elements in agents.
+            // Если это связь между агентами - нужно установить предыдущий-следующий по фокусу у самих агентов.
+            
+            AbstractAgent * toAgent = dynamic_cast< AbstractAgent * >(  __to->entity() );
+            AbstractAgent * fromAgent = dynamic_cast<AbstractAgent * >( __from->entity() );
+            if ( ( toAgent ) && ( fromAgent ) ) {
+                toAgent->addPreviousByFocus( fromAgent );
+                fromAgent->addPreviousByFocus( toAgent );
+            };
+            
+        } else {
+            
+            // If this is link between sprout and task, we need add sprout to task.
+            // Если это связь между Sprout и задачей, то нужно добавить Sprout к задаче.
+        }
+    };
+    
     __tempTo = QPoint( 0, 0 );
+    
     __recalculate();
     update();
 }
@@ -121,16 +156,46 @@ bool tengu::LinkItem::semiCreated() {
 void tengu::LinkItem::__recalculate() {
         
     int x = 0, y = 0, w = 0, h = 0;
-    
+        
     if ( __from ) {        
         
         QRect fromRect = __from->boundingRect().toRect();
         
-        if ( ( __tempTo.x() != 0 ) || ( __tempTo.y() != 0 ) ) {
+        if ( __to ) {
             
-            // The temporary drag point has a higher priority than the __to element.
-            // Точка перетаскивания имеет более высокий приоритет, чем элемент __to.
+            // We have an finished element for this link.
+            // У нас есть конечный элемент.
             
+            QRect toRect = __to->boundingRect().toRect();
+            
+            if ( toRect.topLeft().x() + __to->x() > fromRect.topRight().x() + __from->x() ) {
+                
+                // __to is the right of X that __from
+                // __to правее по X, чем __from.
+                
+                x = fromRect.topRight().x() + __from->x();
+                y = fromRect.topRight().y() + __from->y();
+                if ( y > toRect.topLeft().y() + __to->y() ) {
+                    y = toRect.topLeft().y() + __to->y();
+                };
+                
+                w = ( toRect.topLeft().x() + __to->x() ) - ( fromRect.topRight().x() + __from->x() );                
+                h = fromRect.bottomRight().y() + __from->y() - y;
+                if ( h < toRect.bottomRight().y() + __to->y() - y ) h = toRect.bottomRight().y() + __to->y() - y;
+                
+                __posFrom.setX( 1 );
+                __posFrom.setY( ( fromRect.topRight().y() + __from->y() - y ) + fromRect.height() / 2 );
+                __posTo.setX( w - 1 );
+                __posTo.setY( ( __to->y() + toRect.height() / 2 ) - y );
+                
+            } else {
+                // qDebug() << "to не правее по X";
+            };
+            
+        } else if ( ( __tempTo.x() != 0 ) && ( __tempTo.y() != 0 ) ) {
+            
+            // if ( ( __tempTo.x() != 0 ) || ( __tempTo.y() != 0 ) ) {
+                        
             if ( __tempTo.x() > fromRect.topRight().x() + __from->x() ) {
                 
                 // We are to the right of the rectangle of the first element.
@@ -172,37 +237,7 @@ void tengu::LinkItem::__recalculate() {
                 // Мы находимся левее, чем прямоугольник первого элемента.                
             };            
         
-        } else if ( __to ) {
-            
-            // We have an finished element for this link.
-            // У нас есть конечный элемент.
-            
-            QRect toRect = __to->boundingRect().toRect();
-            if ( toRect.topLeft().x() + __to->x() > fromRect.topRight().x() + __from->x() ) {
-                
-                // __to is the right of X that __from
-                // __to правее по X, чем __from.
-                
-                x = fromRect.topRight().x() + __from->x();
-                y = fromRect.topRight().y() + __from->y();
-                if ( y > toRect.topLeft().y() + __to->y() ) {
-                    y = toRect.topLeft().y() + __to->y();
-                };
-                
-                w = ( toRect.topLeft().x() + __to->x() ) - ( fromRect.topRight().x() + __from->x() );                
-                h = fromRect.bottomRight().y() + __from->y() - y;
-                if ( h < toRect.bottomRight().y() + __to->y() - y ) h = toRect.bottomRight().y() + __to->y() - y;
-                
-                __posFrom.setX( 1 );
-                __posFrom.setY( ( fromRect.topRight().y() + __from->y() - y ) + fromRect.height() / 2 );
-                __posTo.setX( w - 1 );
-                __posTo.setY( ( __to->y() + toRect.height() / 2 ) - y );
-                
-            } else {
-                // qDebug() << "to не правее по X";
-            };
-            
-        };
+        }; // else, i.e. we have not a __to element. 
     };                
     
     // qDebug() << "Итого после recalculate x=" << x << ",y=" << y << ",w=" << w << ",h=" << h << ", fromPoint=" << __posFrom << ", toPoint=" << __posTo;
@@ -223,7 +258,7 @@ void tengu::LinkItem::__recalculate() {
 // ********************************************************************************************************************
 
 void tengu::LinkItem::paint ( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget ) {
-    
+        
     if ( ( __posFrom.x() == 0 ) && ( __posFrom.y() == 0 ) && ( __posTo.x() == 0 ) && ( __posTo.y() == 0 ) ) return;
     
     _storePainterSettings( painter );
@@ -264,18 +299,24 @@ void tengu::LinkItem::paint ( QPainter * painter, const QStyleOptionGraphicsItem
     
     painter->drawLine( __posFrom, __posTo );
     
-    QLineF line( __posFrom, __posTo );
-    QTransform transform;
-    transform.rotate( - line.angle() );
+    // The nose of the arrow
+    // Носик стрелки.
     
-    QPointF endT = ( transform.map( QPointF( -18.0, -10.0 ) ) + __posTo ).toPoint();
-    QPointF endB = ( transform.map( QPointF( -18.0, 10.0 ) ) + __posTo ).toPoint();
+    if ( ! __withSprout ) {
     
-    if ( endT.x() > _boundingRect.width() - 1 ) endT.setX( _boundingRect.width() - 1 );
-    if ( endB.y() > _boundingRect.height() - 1 ) endB.setY ( _boundingRect.height() - 1  );
+        QLineF line( __posFrom, __posTo );
+        QTransform transform;
+        transform.rotate( - line.angle() );
     
-    painter->drawLine( __posTo, endT );
-    painter->drawLine( __posTo, endB );
+        QPointF endT = ( transform.map( QPointF( -18.0, -10.0 ) ) + __posTo ).toPoint();
+        QPointF endB = ( transform.map( QPointF( -18.0, 10.0 ) ) + __posTo ).toPoint();
+    
+        if ( endT.x() > _boundingRect.width() - 1 ) endT.setX( _boundingRect.width() - 1 );
+        if ( endB.y() > _boundingRect.height() - 1 ) endB.setY ( _boundingRect.height() - 1  );
+    
+        painter->drawLine( __posTo, endT );
+        painter->drawLine( __posTo, endB );
+    }
     
     _restorePainterSettings( painter );
     
