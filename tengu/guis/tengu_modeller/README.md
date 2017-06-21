@@ -7,7 +7,7 @@ This is graphical tool for work with artifical intelligence models. At the momen
 # The latest operations.
 
 - **21 jun 2017** Redone the rendering of "Sprout". Choice of type and rotation angle for the "Sprout". Remove an element
-    from schema.
+    from schema. Links from the top and bottom of the task.
 - **20 jun 2017** Moving the link together with the task. Changing execution mode for the element.
 - **19 jun 2017** Stoping of the create link process by escape key. The noses for the arrows.
 - **18 jun 2017** ANDor, ORer elements. Changing of the task name. Remade painting method. Creating a link (not completed).
