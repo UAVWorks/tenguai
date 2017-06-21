@@ -25,7 +25,7 @@ tengu::AgentPropertyElement::AgentPropertyElement() {
     readOnly = true;
     backgroundColor = baseBackground();
     // editorWidget = nullptr;
-    type = APE_String;
+    type = AgentPropertyElement::String;
 }
 
 // ********************************************************************************************************************

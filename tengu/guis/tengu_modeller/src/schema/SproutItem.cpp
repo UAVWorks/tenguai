@@ -21,7 +21,9 @@
 tengu::SproutItem::SproutItem ( tengu::Sprout * sprout, QGraphicsItem* parent ) 
     : AbstractEntityItem ( sprout , parent )
 {
-    _boundingRect = QRect( 0, 0, 71, 33 );
+    _boundingRect = QRect( 0, 0, 72, 33 );
+    _className = "SproutItem";
+    __orientation = SPO_0;
 }
 
 // ********************************************************************************************************************
@@ -34,6 +36,32 @@ tengu::SproutItem::SproutItem ( tengu::Sprout * sprout, QGraphicsItem* parent )
 
 void tengu::SproutItem::paint ( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget ) {
     
+    _storePainterSettings( painter );
+    
+    painter->setPen( _processDiagram_borderPen() );
+    
+    QLinearGradient gradient( _boundingRect.topLeft(), _boundingRect.bottomLeft() );
+    gradient.setColorAt(0, _processDiagram_brightFillColor() );
+    gradient.setColorAt(1, _processDiagram_darkFillColor() );
+    gradient.setStart( 1, _boundingRect.height() / 3 );
+    QBrush brush( gradient );
+    painter->setBrush( brush );
+    
+    int noseWidth = ( _boundingRect.height() - 2 ) / 2;
+    QPointF points[5] = {
+        QPointF(1,1),
+        QPointF( _boundingRect.width() - 1 - noseWidth, 1 ),
+        QPointF( _boundingRect.width() - 1, _boundingRect.height() / 2 ),
+        QPointF( _boundingRect.width() - 1 - noseWidth, _boundingRect.height() - 1 ),
+        QPointF( 1, _boundingRect.height() - 1 )
+        
+    };
+    
+    painter->drawPolygon( points, 5 );
+    
+    _restorePainterSettings( painter );
+    
+    /*
     QPixmap pixmap( _boundingRect.width(), _boundingRect.height() ) ;
     QPainter pixPainter( & pixmap );
     pixPainter.eraseRect( _boundingRect );
@@ -120,6 +148,7 @@ void tengu::SproutItem::paint ( QPainter* painter, const QStyleOptionGraphicsIte
     
     
     painter->drawPixmap( 0, 0, pixmap );
+    */
 }
 
 // ********************************************************************************************************************
@@ -136,6 +165,73 @@ void tengu::SproutItem::checkEntity() {
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
+// *                               Get type of sprout entity which this item based on.                                *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                           Вернуть тип Sprout'а, на котором базируется данный элемент.                            *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+tengu::Sprout::sprout_type_t tengu::SproutItem::getSproutType() {
+    Sprout * s = sprout();
+    if ( s ) return s->getSproutType();
+    return Sprout::SP_INPUT;
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                 Set type of sprout entity which this item based on.                              *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                           Установить тип Sprout'а, на котором базируется данный элемент.                         *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::SproutItem::setSproutType ( tengu::Sprout::sprout_type_t type ) {
+    Sprout * s = sprout();
+    if ( s ) {
+        s->setSproutType( type );
+        _somethingChanged();
+    };
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                         Get this item's draft orientation.                                       *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                Вернуть ориентацию на диаграмме для данного элемента.                             *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+tengu::SproutItem::sprout_orientation_t tengu::SproutItem::getOrientation() {
+    return __orientation;
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                             Set orientation (rotation angle) of this item at the chart.                          *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                          Установить ориентацию (угол поворота) этого элемента на диаграмме.                      *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::SproutItem::setOrientation ( tengu::SproutItem::sprout_orientation_t orientation ) {
+    __orientation = orientation;
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                              Convert the "entity" to sprout pointer if it is possible.                           *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                       Преобразование "сущности" в Sprout, если такое преобразование возможно.                    *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+tengu::Sprout* tengu::SproutItem::sprout() {
+    Sprout * sp = dynamic_cast< Sprout * > ( _entity );
+    return sp;
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
 // *                                             Return sprout's properties.                                          *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                                           Вернуть свойства данного "ростка".                                     *
@@ -143,7 +239,52 @@ void tengu::SproutItem::checkEntity() {
 // ********************************************************************************************************************
 
 QList< QList<tengu::AgentPropertyElement> > tengu::SproutItem::properties() {
-    return tengu::AbstractEntityItem::properties();
+    
+    QList<QList<tengu::AgentPropertyElement>> p = AbstractEntityItem::properties();
+    
+    // --------------------------------------------------------------------------------------------
+    //                                        Type of this sprout
+    //                                        Тип данного Sprout'а.
+    // --------------------------------------------------------------------------------------------
+    
+    QList<AgentPropertyElement> typeElement;
+    
+    AgentPropertyElement typeName( tr("Type") );
+    typeName.backgroundColor = typeName.widgetBackground();
+    typeElement.append( typeName );
+    
+    AgentPropertyElement typeValue;
+    typeValue.value = QVariant( (int) getSproutType() );
+    typeValue.readOnly = false;
+    typeValue.type = AgentPropertyElement::SproutTypeSelector;
+    typeValue.propertyName = "sprout_type";
+    typeValue.backgroundColor = typeValue.widgetBackground();
+    typeElement.append( typeValue );
+    
+    p.append( typeElement );
+    
+    // --------------------------------------------------------------------------------------------
+    //                                    Rotation angle on the chart 
+    //                                     Угол поворота на диаграмме 
+    // --------------------------------------------------------------------------------------------
+    
+    QList<AgentPropertyElement> angleElement;
+    
+    AgentPropertyElement angleName( tr("Rotation agnle") );
+    angleName.backgroundColor = angleName.widgetBackground();
+    angleElement.append( angleName );
+    
+    AgentPropertyElement angleValue;
+    angleValue.value = QVariant( ( int ) getOrientation() );
+    angleValue.propertyName = "orientation";
+    angleValue.readOnly = false;
+    angleValue.type = AgentPropertyElement::SproutAngleSelector;
+    angleValue.backgroundColor = angleValue.widgetBackground();
+    angleElement.append( angleValue );
+    
+    p.append( angleElement );
+    
+    return p;
 }
 
 // ********************************************************************************************************************

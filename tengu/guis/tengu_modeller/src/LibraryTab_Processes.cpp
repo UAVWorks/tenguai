@@ -54,6 +54,7 @@ tengu::LibraryTab__processes::LibraryTab__processes ( QWidget* parent, Qt::Windo
     lay->addWidget( button__task, 1, 2 );
     
     button__sprout = new LibraryTab_Button( QIcon( QPixmap(":button_navigation_16.png")), tr("The Sprout") );
+    button__sprout->setDrag( SproutItem().toJSON() );
     lay->addWidget( button__sprout, 0, 3 );
 }
 

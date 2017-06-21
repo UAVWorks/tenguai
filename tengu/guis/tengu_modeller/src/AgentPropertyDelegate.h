@@ -38,6 +38,9 @@ namespace tengu {
             
             AgentPropertyModel * __model;
             
+            void __setComboBoxValue( QWidget * editor, const QModelIndex & index );
+            void __setModelValueFromComboBox(  QWidget * editor, QAbstractItemModel * model, const QModelIndex & index );
+            
     };
 };
 

@@ -28,6 +28,8 @@ tengu::Sprout::Sprout( AbstractAgentKernel * owner )
     __inputChannel = QString("");
     __outputChannel = QString("");
     __sprout_type = SP_INPUT;
+    
+    _className = "Sprout";
 }
 
 // ********************************************************************************************************************

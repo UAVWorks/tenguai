@@ -44,6 +44,7 @@ tengu::AbstractEntity * tengu::AgentFactory::createEntity ( QJsonObject json ) {
         if ( cName == "ProcessStart" )  e = new ProcessStart();
         if ( cName == "ProcessStop" )   e = new ProcessStop();
         if ( cName == "Task" )          e = new Task(); 
+        if ( cName == "Sprout" )        e = new Sprout();
         if ( cName == "ORer" )          e = new ORer();
         if ( cName == "ANDor" )         e = new ANDor();
         

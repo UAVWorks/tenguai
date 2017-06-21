@@ -263,7 +263,7 @@ void tengu::AbstractEntityItem::_drawTaskRectangle ( QPainter * painter ) {
     QLinearGradient gradient( _boundingRect.topLeft(), _boundingRect.bottomLeft() );
     gradient.setColorAt(0, _processDiagram_brightFillColor() );
     gradient.setColorAt(1, _processDiagram_darkFillColor() );
-    gradient.setStart( 1, _boundingRect.height() / 2 );
+    gradient.setStart( 1, _boundingRect.height() / 3 );
     painter->fillRect( _boundingRect, gradient );
     
     _drawBorderRect( painter );
@@ -442,7 +442,7 @@ QList< QList< tengu::AgentPropertyElement > > tengu::AbstractEntityItem::propert
     executionModeElement.append( executionModeName );
     
     AgentPropertyElement executionModeValue;
-    executionModeValue.type = AgentPropertyElement::APE_ExecutionModeSelector;
+    executionModeValue.type = AgentPropertyElement::ExecutionModeSelector;
     executionModeValue.readOnly = false;
     executionModeValue.propertyName = "execution_mode";
     executionModeValue.value = QVariant( (int) getExecutionMode() );
@@ -730,6 +730,21 @@ QList< tengu::AbstractEntityItem* > tengu::AbstractEntityItem::hisLinks() {
     };
     
     return result;
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                 Recalculate coordinates for this element visualization.                          *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                             Пересчитать координаты визуального отображения данного элемента.                     *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::AbstractEntityItem::recalculate() {
+    
+    // This method is empty for AbstractEntityItem
+    // Данный метод пустой для класса AbstractEntityItem
+    
 }
 
 // ********************************************************************************************************************

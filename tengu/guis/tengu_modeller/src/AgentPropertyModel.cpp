@@ -175,17 +175,29 @@ QVariant tengu::AgentPropertyModel::data( const QModelIndex & index, int role ) 
         
         switch ( oneElement.type ) {
             
-            case AgentPropertyElement::APE_String: {
+            case AgentPropertyElement::String: {
                 return oneElement.value ;
             }; break;
             
-            case AgentPropertyElement::APE_ExecutionModeSelector: {
+            case AgentPropertyElement::ExecutionModeSelector: {
                 switch ( ( AbstractAgent::execution_mode_t ) oneElement.value.toInt() ) {
                     case AbstractAgent::EM_ALWAYS:  return QVariant( tr("Always") );
                     case AbstractAgent::EM_REAL:    return QVariant( tr("Real") );
                     case AbstractAgent::EM_XPLANE:  return QVariant( tr("X-Plane simulation") );
                 };                                
-            };
+            }; break;
+            
+            case AgentPropertyElement::SproutTypeSelector : {
+                switch ( ( Sprout::sprout_type_t ) oneElement.value.toInt() ) {
+                    case Sprout::SP_INPUT: return QVariant( tr("Input") );
+                    case Sprout::SP_OUTPUT: return QVariant( tr("Output" ) );
+                };
+            }; break;
+            
+            case AgentPropertyElement::SproutAngleSelector : {
+                int deg = oneElement.value.toInt();
+                return QVariant( QString::number( deg ) + tr(" degrees") );
+            }; break;
         };
                                         
     };
@@ -240,12 +252,22 @@ bool tengu::AgentPropertyModel::setData( const QModelIndex & index, const QVaria
         
         switch ( oneElement.type ) {
             
-            case AgentPropertyElement::APE_String: {
+            case AgentPropertyElement::String: {
                 __item->setProperty( oneElement.propertyName.toLatin1().data(), value );
             }; break;
             
-            case AgentPropertyElement::APE_ExecutionModeSelector : {
+            case AgentPropertyElement::ExecutionModeSelector : {
                 __item->setExecutionMode( (AbstractAgent::execution_mode_t) value.toInt() );
+            }; break;
+            
+            case AgentPropertyElement::SproutTypeSelector : {
+                SproutItem * spi = dynamic_cast<SproutItem *> ( __item );
+                if ( spi ) spi->setSproutType( value.toInt() );
+            }; break;
+            
+            case AgentPropertyElement::SproutAngleSelector : {
+                SproutItem * spi = dynamic_cast<SproutItem * > ( __item );
+                if ( spi ) spi->setOrientation( value.toInt() );
             }; break;
         };
                 

@@ -31,7 +31,7 @@ namespace tengu {
         Q_PROPERTY( QString name READ getName WRITE setName );
         Q_PROPERTY( QString comment READ getComment WRITE setComment );
         Q_PROPERTY( QString uuid READ getUUID );
-        Q_PROPERTY( execution_mode_t execution_mode READ getExecutionMode WRITE setExecutionMode );
+        Q_PROPERTY( AbstractEntity::execution_mode_t execution_mode READ getExecutionMode WRITE setExecutionMode );
         
         public:
             

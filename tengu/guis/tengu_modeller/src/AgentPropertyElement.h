@@ -22,8 +22,26 @@ namespace tengu {
         public:
             
             enum agent_property_t {
-                APE_String,
-                APE_ExecutionModeSelector
+                
+                // The simple string property (by default)
+                // Просто строковое свойство (по умолчанию)
+                
+                String,
+                
+                // The agent's execution mode combo box
+                // Выпадающий список режима выполнения агента
+                
+                ExecutionModeSelector,
+                
+                // Type of sprout (input or output)
+                // Тип "росточка" (вход или выход)
+                
+                SproutTypeSelector,
+                
+                // Sprout rotation angle at the chart
+                // Угол поворота "росточка" на диаграмме
+                
+                SproutAngleSelector
             };
             
             AgentPropertyElement();

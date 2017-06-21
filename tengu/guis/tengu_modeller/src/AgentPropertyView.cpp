@@ -27,6 +27,11 @@ tengu::AgentPropertyView::AgentPropertyView(QWidget * parent)
     vh->setSectionResizeMode(QHeaderView::Fixed);
     vh->setDefaultSectionSize( 16 );    
     
+    // For one click to start editing
+    // Для того, чтобы редактирование начиналось по одному щелчку.
+    
+    setEditTriggers(QAbstractItemView::AllEditTriggers);
+    
 }
 
 // ********************************************************************************************************************

@@ -6,6 +6,7 @@ This is graphical tool for work with artifical intelligence models. At the momen
 
 # The latest operations.
 
+- **21 jun 2017** Redone the rendering of "Sprout". Choice of type and rotation angle for the "Sprout".
 - **20 jun 2017** Moving the link together with the task. Changing execution mode for the element.
 - **19 jun 2017** Stoping of the create link process by escape key. The noses for the arrows.
 - **18 jun 2017** ANDor, ORer elements. Changing of the task name. Remade painting method. Creating a link (not completed).
@@ -15,7 +16,9 @@ This is graphical tool for work with artifical intelligence models. At the momen
 - **13 jun 2017** Add drag event for library toolbar, began to make a save in the mongo. A fake task was stored into mongoDB.
 - **12 jun 2017** Add XPlaneAgent and XPlaneAgentItem as persistent invisible agent to simulation purpose. Add a tool buttons
     for simulation and change execution mode. Background colors for agent's properties. The billet for element's library toolbar.
+<!--    
 - **11 jun 2017** Added MVC-bindings with the entity properties. The first properties of "entities" appeared on the screen.
+-->
 - ......
 - **27 may 2017** Getted started on this GUI-program.
 

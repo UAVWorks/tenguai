@@ -26,6 +26,7 @@ namespace tengu {
         Q_PROPERTY( QString comment READ getComment WRITE setComment );
         Q_PROPERTY( QString uuid READ getUUID );
         Q_PROPERTY( execution_mode_t execution_mode READ getExecutionMode WRITE setExecutionMode );
+        Q_PROPERTY( sprout_type_t sprout_type READ getSproutType WRITE setSproutType );
         
         Q_PROPERTY( QVariant value READ __getValue WRITE __setValue );
                     
@@ -44,14 +45,14 @@ namespace tengu {
             
             void setInputChannel( QString channel );
             void setOutputChannel( QString channel );
+            
             void setSproutType( sprout_type_t type );
             sprout_type_t getSproutType();
             
             void subscribe();
             void subscribed( QString channel );
             void unsubscribed( QString channel );
-            virtual bool handleMessage( QString channel, QString message );
-                        
+            virtual bool handleMessage( QString channel, QString message );                                                
             
         protected:
             
