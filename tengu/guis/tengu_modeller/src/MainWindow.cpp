@@ -472,7 +472,7 @@ void tengu::MainWindow::__on_schema_item_was_dropped ( tengu::AbstractEntity* en
             item->setX( pos.x() );
             item->setY( pos.y() );
             __schemaView->hide();
-            __schemaScene->addItem( item );            
+            __schemaScene->addItem( item );
             __schemaView->show();
             
             // The accessibility of the ToolBar's buttons will vary depending on the element created on the diagram.
@@ -494,6 +494,7 @@ void tengu::MainWindow::__on_schema_item_was_dropped ( tengu::AbstractEntity* en
             // Это - связь, а не агент.
             
             AbstractEntityItem * existing = dynamic_cast<AbstractEntityItem * > ( __schemaScene->itemAt( pos, QTransform() ) );
+            if ( existing ) existing->setSelected( true );
             
             // qDebug() << "Existing object=" << existing;
             

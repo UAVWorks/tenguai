@@ -109,7 +109,7 @@ void tengu::AbstractEntityItem::setSelected ( bool selection ) {
 // ********************************************************************************************************************
 
 int tengu::AbstractEntityItem::_brighter ( int color ) {
-    color += color / 5;
+    color = qRound( color * 1.4 );
     if ( color > 255 ) color = 255;
     return color;
 }

@@ -74,7 +74,7 @@ QWidget * tengu::AgentPropertyDelegate::createEditor ( QWidget* parent, const QS
         
     };
     
-    QStyledItemDelegate::createEditor( parent, option, index );
+    return QStyledItemDelegate::createEditor( parent, option, index );
         
 }
 

@@ -11,6 +11,7 @@
 
 #include "AbstractEntityItem.h"
 #include "SproutItem.h"
+#include "Constants.h"
 
 namespace tengu {
     

@@ -32,6 +32,7 @@
 #include "AbstractEntityItem.h"
 #include "AbstractEntity.h"
 #include "AgentItemFactory.h"
+#include "SchemaScene.h"
 
 namespace tengu {
 

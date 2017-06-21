@@ -208,25 +208,43 @@ void tengu::SchemaView::mousePressEvent ( QMouseEvent * event ) {
         __leftMouseButtonPressed = true;
         __mousePressedPos = event->pos();
         
-        QGraphicsItem * item = itemAt( event->pos());
+        QList<QGraphicsItem * > itemsList = items( event->pos() );
+        AbstractEntityItem * entityItem = dynamic_cast< AbstractEntityItem * >( itemsList.at(0) );            
+        
+        // QGraphicsItem * item = itemAt( event->pos());
         
         bool controlPressed = event->modifiers() & Qt::ControlModifier;
     
-        if ( item ) {
-            
-            AbstractEntityItem * entityItem = dynamic_cast< AbstractEntityItem * >( item );
-            
+        if ( itemsList.count() > 0 ) {
+                                    
             if ( ( semiCreatedLink ) && ( entityItem ) ) {
                 
-                // If we have an semi-created link and mouse was pressed on the agent - we will finish the link creating process.
-                // Если у нас полу-созданная связь и нажата мышь на агенте - завершаем создание связи.
+                // If we have an semi-created link and mouse was pressed on the agent - we will finish the link creating 
+                // process. But we need not a link.
+                
+                // Если у нас полу-созданная связь и нажата мышь на агенте - завершаем создание связи. Но нам нужна не-связь.
+                                
+                LinkItem * link = dynamic_cast< LinkItem * >( entityItem );
+            
+                if ( link ) {
+                    for ( int i=1; i<itemsList.count(); i++ ) {
+                        entityItem = dynamic_cast< AbstractEntityItem * >( itemsList.at(i) ); 
+                        link = dynamic_cast< LinkItem * >( entityItem );
+                        if ( ! link ) break;
+                    }
+                };
                 
                 semiCreatedLink->hide();
-                semiCreatedLink->setTo( entityItem );
-                semiCreatedLink->show();
-                // semiCreatedLink->update();
-                semiCreatedLink = nullptr;
-                // update();                
+                
+                if ( ( entityItem ) && ( ! link ) )  {                                        
+                    semiCreatedLink->setTo( entityItem );                                                                        
+                };
+                
+                semiCreatedLink->show();                
+                semiCreatedLink = nullptr;                
+                
+                SchemaScene * sc = dynamic_cast<SchemaScene * >( scene() );
+                if ( sc ) sc->unselectAll();
                 
             } else {
                 
@@ -234,9 +252,9 @@ void tengu::SchemaView::mousePressEvent ( QMouseEvent * event ) {
                     __entityDragged = entityItem;                
                 };
             
-                emit signalItemPressed( ( AbstractEntityItem * ) item, controlPressed );
+                emit signalItemPressed( entityItem, controlPressed );
             };
-        };
+        };        
         
     };    
     
@@ -467,6 +485,7 @@ void tengu::SchemaView::dropEvent ( QDropEvent * event ) {
     // То, что было сброшено.
     
     AbstractEntity * entity = __event_to_entity( event ); 
+    
     // LinkItem * link = dynamic_cast<LinkItem *>(entity);
     
     // What is dropped over
@@ -497,7 +516,7 @@ void tengu::SchemaView::dropEvent ( QDropEvent * event ) {
             };
             
         };
-        */
+        */        
         
         emit signalWasDropped( entity, pos );
     };    
