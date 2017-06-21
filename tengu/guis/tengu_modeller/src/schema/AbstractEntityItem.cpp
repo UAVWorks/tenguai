@@ -230,9 +230,29 @@ QPen tengu::AbstractEntityItem::_processDiagram_borderPen() {
 // ********************************************************************************************************************
 
 void tengu::AbstractEntityItem::_storePainterSettings ( QPainter * painter ) {
+    
     __oldPainterPen = painter->pen();
     __oldPainterBrush = painter->brush();
     __oldPainterFont = painter->font();
+    __oldPainterCompositionMode = painter->compositionMode();
+    
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                             Restore old painter settings.                                        *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                       Восстановление старых установок painter'а.                                 *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::AbstractEntityItem::_restorePainterSettings ( QPainter * painter ) {
+    
+    painter->setPen( __oldPainterPen );
+    painter->setBrush( __oldPainterBrush );
+    painter->setFont( __oldPainterFont );
+    painter->setCompositionMode( __oldPainterCompositionMode );
+    
 }
 
 // ********************************************************************************************************************
@@ -288,20 +308,6 @@ QPixmap tengu::AbstractEntityItem::_executionModePixmap( bool forSize32 ) {
     return QPixmap();
 }
 
-
-// ********************************************************************************************************************
-// *                                                                                                                  *
-// *                                             Restore old painter settings.                                        *
-// * ---------------------------------------------------------------------------------------------------------------- *
-// *                                       Восстановление старых установок painter'а.                                 *
-// *                                                                                                                  *
-// ********************************************************************************************************************
-
-void tengu::AbstractEntityItem::_restorePainterSettings ( QPainter * painter ) {
-    painter->setPen( __oldPainterPen );
-    painter->setBrush( __oldPainterBrush );
-    painter->setFont( __oldPainterFont );
-}
 
 // ********************************************************************************************************************
 // *                                                                                                                  *

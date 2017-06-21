@@ -21,10 +21,46 @@
 tengu::SproutItem::SproutItem ( tengu::Sprout * sprout, QGraphicsItem* parent ) 
     : AbstractEntityItem ( sprout , parent )
 {
-    _boundingRect = QRect( 0, 0, 72, 33 );
-    _className = "SproutItem";
+    __width = 72;
+    __height = 33;
     __orientation = SPO_0;
+    
+    _boundingRect = QRect( 0, 0, __width, __height );
+    _className = "SproutItem";    
+    
 }
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                          Make and return transformation matrix.                                  *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                        Сделать и вернуть матрицу трансформации.                                  *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+QTransform tengu::SproutItem::__transform() {
+    QTransform transform;
+    transform.translate( - __width/2, __height/2 );
+    transform.rotate( 360.0 - (int) getOrientation() );
+    transform.translate( __width/2, __height/2 );
+    return transform;
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                           Recalculate item's screen position.                                    *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                           Пересчет позиции элемента на экране.                                   *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::SproutItem::recalculate() {
+    
+    QPixmap pixmap( __width + 1, __height + 1 );            
+    QPixmap rotated = pixmap.transformed( __transform() );    
+    _boundingRect = rotated.rect();    
+}
+
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
@@ -38,28 +74,87 @@ void tengu::SproutItem::paint ( QPainter* painter, const QStyleOptionGraphicsIte
     
     _storePainterSettings( painter );
     
-    painter->setPen( _processDiagram_borderPen() );
+    // Draw the picture at the in-memory pixmap
+    // Рисуем картинку в памяти.
+    
+    QPixmap pixmap( __width + 1, __height + 1 );    
+    
+    QPainter p( & pixmap );
+    
+    // No color but alpha-layer
+    // Цвета нет, но есть альфа-слой.
+    
+    p.setBrush( QColor( 0, 0, 0, 255 ) );
+    p.eraseRect( 0, 0, __width + 1, __height + 1 );
+    
+    p.setPen( _processDiagram_borderPen() );
     
     QLinearGradient gradient( _boundingRect.topLeft(), _boundingRect.bottomLeft() );
     gradient.setColorAt(0, _processDiagram_brightFillColor() );
     gradient.setColorAt(1, _processDiagram_darkFillColor() );
     gradient.setStart( 1, _boundingRect.height() / 3 );
     QBrush brush( gradient );
-    painter->setBrush( brush );
+    p.setBrush( brush );
     
     int noseWidth = ( _boundingRect.height() - 2 ) / 2;
-    QPointF points[5] = {
-        QPointF(1,1),
-        QPointF( _boundingRect.width() - 1 - noseWidth, 1 ),
-        QPointF( _boundingRect.width() - 1, _boundingRect.height() / 2 ),
-        QPointF( _boundingRect.width() - 1 - noseWidth, _boundingRect.height() - 1 ),
-        QPointF( 1, _boundingRect.height() - 1 )
+    
+    if ( getSproutType() == Sprout::SP_OUTPUT ) {
         
+        QPointF points[5] = {
+            QPointF(1,1),
+            QPointF( __width - 1 - noseWidth, 1 ),
+            QPointF( __width - 1, __height / 2 ),
+            QPointF( __width - 1 - noseWidth, __height - 1 ),
+            QPointF( 1, __height - 1 )
+        
+        };    
+        p.drawPolygon( points, 5 );
+        
+    } else {
+        
+        QPointF points[5] = {
+            QPointF(1,1),
+            QPointF( __width - 1, 1 ),
+            QPointF( __width - 1 - noseWidth, __height / 2 ),
+            QPointF( __width - 1, __height - 1 ),
+            QPointF( 1, __height - 1 )
+        };
+        p.drawPolygon( points, 5 );
     };
     
-    painter->drawPolygon( points, 5 );
+    // Execution mode pixmap.
+    // Картинка режима выполнения.
     
+    QPixmap emp = _executionModePixmap( false );
+    // if ( getExecutionMode() == EM_XPLANE ) 
+    //    p.drawPixmap( __width-40, 8, emp );
+    // else 
+        p.drawPixmap( 10, 8, emp );
+    
+    // Rotate in-memory picture to specified angle.
+    // Поворот картинки в памяти на укзанный угол.
+        
+    QPixmap rotated = pixmap.transformed( __transform() );    
+    
+    // Output picture from memory to screen
+    // вывод картинки из памяти на экран.
+    
+    painter->setCompositionMode( QPainter::CompositionMode_Multiply );
+    painter->drawPixmap( 0, 0, rotated );
+        
     _restorePainterSettings( painter );
+    
+    /*
+    QPixmap pix1 = pixmap.transformed( QTransform().translate(-rRadius, -rRadius));
+    QPixmap pix2 = m_pxOriginal.transformed(QTransform().rotate(m_iAn gle));
+    QPixmap rotatedPix = pix2.transformed(QTransform().translate(rRadius, rRadius));
+    m_pxItem->setPixmap(rotatedPix);
+    */
+    
+    // _storePainterSettings( painter );
+    
+    
+    // _restorePainterSettings( painter );
     
     /*
     QPixmap pixmap( _boundingRect.width(), _boundingRect.height() ) ;

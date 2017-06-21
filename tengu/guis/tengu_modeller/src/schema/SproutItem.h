@@ -66,9 +66,16 @@ namespace tengu {
             sprout_orientation_t getOrientation();
             void setOrientation( sprout_orientation_t orientation );
             
+            void recalculate();
+            
         private:
             
             sprout_orientation_t __orientation;
+            
+            QTransform __transform();
+            
+            int __width;
+            int __height;
     };
     
 };

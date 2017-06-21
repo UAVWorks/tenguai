@@ -201,7 +201,7 @@ void tengu::AgentPropertyDelegate::setModelData ( QWidget * editor, QAbstractIte
             int value = cb->itemData( idx ).toInt();
             model->setData( index, value, Qt::EditRole );
             */
-        };        
+        }; break;
     };
         
 }

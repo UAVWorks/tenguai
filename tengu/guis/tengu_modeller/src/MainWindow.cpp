@@ -408,10 +408,19 @@ void tengu::MainWindow::__on_schema_item_double_clicked ( tengu::AbstractEntityI
 void tengu::MainWindow::__on_schama_item_moved ( tengu::AbstractEntityItem * entity, QPoint pos ) {
     
     if ( entity ) {
+        
         __schemaView->hide();
+        
+        // Move the entity itself on the screen.
+        // Движение самой "сущности" на экране.
+        
         entity->setX( pos.x() );
-        entity->setY( pos.y() );        
+        entity->setY( pos.y() );  
+        entity->recalculate();
         entity->update(); 
+        
+        // After the entity itself, we need to recalculate and repaint his links.
+        // После самой "сущности" нужно пересчитать и перерисовать ее связи.
         
         QList<AbstractEntityItem * > links = entity->hisLinks();
         for ( int i=0; i<links.size(); i ++ ) {
@@ -421,10 +430,9 @@ void tengu::MainWindow::__on_schama_item_moved ( tengu::AbstractEntityItem * ent
                 link->update();
             };
         };                    
+        
         __schemaView->show();
-        // __schemaView->updateSceneRect( QRect(0, 0, 800, 600 ) );
-        // currentPos = __schemaView->mapFromScene( currentPos );
-        // qDebug() << "After map to scene: " << currentPos;
+                
     };
     
 }

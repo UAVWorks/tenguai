@@ -250,11 +250,16 @@ bool tengu::AgentPropertyModel::setData( const QModelIndex & index, const QVaria
     
     if ( ( role == Qt::EditRole ) && ( ! oneElement.readOnly ) && ( ! oneElement.propertyName.isEmpty() ) ) {
         
+        __item->hide();
+        
         switch ( oneElement.type ) {
             
             case AgentPropertyElement::String: {
                 __item->setProperty( oneElement.propertyName.toLatin1().data(), value );
             }; break;
+            
+            // The enumerable values want not to be setted as property.
+            // Перечислимые значения не хотят устанавливаться как свойство.
             
             case AgentPropertyElement::ExecutionModeSelector : {
                 __item->setExecutionMode( (AbstractAgent::execution_mode_t) value.toInt() );
@@ -262,16 +267,23 @@ bool tengu::AgentPropertyModel::setData( const QModelIndex & index, const QVaria
             
             case AgentPropertyElement::SproutTypeSelector : {
                 SproutItem * spi = dynamic_cast<SproutItem *> ( __item );
-                if ( spi ) spi->setSproutType( value.toInt() );
+                if ( spi ) spi->setSproutType( (Sprout::sprout_type_t) value.toInt() );
             }; break;
             
             case AgentPropertyElement::SproutAngleSelector : {
                 SproutItem * spi = dynamic_cast<SproutItem * > ( __item );
-                if ( spi ) spi->setOrientation( value.toInt() );
+                if ( spi ) {                    
+                    spi->setOrientation( (SproutItem::sprout_orientation_t) value.toInt() );                    
+                };
+                
             }; break;
         };
                 
+        __item->recalculate();
+        __item->update();
+        __item->show();
         __properties = __item->properties();        
+        
         emit dataChanged( index, index );
         
         return true;        

@@ -181,6 +181,7 @@ namespace tengu {
             QPen    __oldPainterPen;
             QBrush  __oldPainterBrush;
             QFont   __oldPainterFont;
+            QPainter::CompositionMode __oldPainterCompositionMode;
             
             QMap< QString, AbstractEntityItem * > __linksOutgoingFromThis;
             QMap< QString, AbstractEntityItem * > __linksIncommingToThis;
