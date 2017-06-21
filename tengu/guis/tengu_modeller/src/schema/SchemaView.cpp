@@ -47,6 +47,7 @@ tengu::SchemaView::SchemaView( QGraphicsScene * scene )
     
     __createMenus();
     __mouseAtSchemaPos = QPoint( 0, 0 );
+    __contextMenuItem = nullptr;
     
     semiCreatedLink = nullptr;
     
@@ -63,17 +64,53 @@ tengu::SchemaView::SchemaView( QGraphicsScene * scene )
 
 void tengu::SchemaView::__createMenus() {
     
-    __contextMenu = new QMenu( this );
+    // __contextMenu = new QMenu( this );
     
     __contextMenu__create = new QMenu( tr("Create") );
     __contextMenu__create->setIcon( QIcon( QPixmap(":bricks_16.png") ) );
     
-    __actionCreateTask = new QAction( QIcon(QPixmap("page_gear_16.png")), QString("Task"), this );
-    QObject::connect( __actionCreateTask, SIGNAL( triggered()), this, SLOT( __on_action_create_task() ) );
-    __contextMenu__create->addAction( __actionCreateTask );
+    __action__create_task = new QAction( QIcon(QPixmap("page_gear_16.png")), tr("Task"), this );
+    QObject::connect( __action__create_task, SIGNAL( triggered()), this, SLOT( __on__action__create_task() ) );
+    __contextMenu__create->addAction( __action__create_task );
     
-    __contextMenu->addMenu( __contextMenu__create );
+    __action__delete_item = new QAction( QIcon(), tr("Delete"), this );
+    QObject::connect( __action__delete_item, SIGNAL( triggered() ), this, SLOT( __on__action__delete_item() ) );
+    
+    // __contextMenu->addMenu( __contextMenu__create );
 }
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                            Delete item from schema.                                              *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                           Удалить элемент со схемы.                                              *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::SchemaView::__on__action__delete_item() {
+    
+    if ( __contextMenuItem ) {
+        hide();
+        
+        // Links of this item. Will be removed simultaneously with him.
+        // Связи данного элемента - будут удалены совместно с ним.
+        
+        QList< AbstractEntityItem *> links = __contextMenuItem->hisLinks();
+        for ( int i=0; i<links.size(); i++ ) {
+            LinkItem * link = dynamic_cast<LinkItem * > ( links.at(i) );
+            if ( link ) {
+                scene()->removeItem( link );
+                delete( link );
+            };
+        };
+        
+        scene()->removeItem( __contextMenuItem );
+        delete( __contextMenuItem );
+        __contextMenuItem = nullptr;
+        show();
+    };
+}
+
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
@@ -109,7 +146,7 @@ tengu::AbstractEntity * tengu::SchemaView::__event_to_entity ( QDropEvent * even
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::SchemaView::__on_action_create_task() {
+void tengu::SchemaView::__on__action__create_task() {
     qDebug() << "Мы хотим создать задачу";
 }
 
@@ -319,22 +356,26 @@ void tengu::SchemaView::mouseMoveEvent ( QMouseEvent * event ) {
 
 void tengu::SchemaView::contextMenuEvent ( QContextMenuEvent* event ) {
     
-    QGraphicsView::contextMenuEvent ( event );    
+    __contextMenuItem = dynamic_cast<AbstractEntityItem * > ( itemAt( event->pos()) );
     
-    qDebug() << "Context menu event handler";
-    QGraphicsItem * item = itemAt( event->pos());
+    QMenu menu;
     
-    if ( item ) {
-        qDebug() << "have item under mouse";
-        // __contextMenu__create->hide();
-        // __contextMenu__create->setEnabled( false );
+    if ( __contextMenuItem ) {
+        
+        // We have some item under mouse
+        // У нас есть какой-то элемент под мышкой.
+        
+        menu.addAction( __action__delete_item );                
         
     } else {
-        __contextMenu->exec( event->globalPos() );
-        qDebug() << "Have NOT item, free";
-        // __contextMenu__create->show();
-        // __contextMenu__create->setEnabled( true );        
+        
+        // The space under mouse is clear.
+        // Пространство под мышкой чистое.
+        
+        menu.addMenu( __contextMenu__create );                
     };
+    
+    menu.exec( event->globalPos() );
 }
 
 // ********************************************************************************************************************

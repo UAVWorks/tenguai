@@ -74,8 +74,9 @@ namespace tengu {
              * @short Adding or replacing previous (in the sence of focus flow) agent.
              */
             
-            void addPreviousByFocus( AbstractAgentKernel * previous );
-            void addNextByFocus( AbstractAgentKernel * next );            
+            void addPreviousByFocus( AbstractAgentKernel * previous );            
+            void addNextByFocus( AbstractAgentKernel * next );                       
+            void removeNeighborByFocus( AbstractAgentKernel * agent );
                         
             // The agent can be provided either as object in memory
             // or separate process in the operation system for 

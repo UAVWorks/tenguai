@@ -718,6 +718,19 @@ void tengu::AbstractEntityItem::addIncommingLink ( tengu::AbstractEntityItem * l
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
+// *                                                  Remove the link                                                 *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                                  Удаление связи.                                                 *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::AbstractEntityItem::removeLink ( tengu::AbstractEntityItem* link ) {
+    if ( __linksIncommingToThis.contains( link->getUUID() ) ) __linksIncommingToThis.remove( link->getUUID() );
+    if ( __linksOutgoingFromThis.contains( link->getUUID() ) ) __linksOutgoingFromThis.remove( link->getUUID() );
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
 // *                                              Get all links of this item.                                         *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                                          Вернуть все связи данного элемента.                                     *

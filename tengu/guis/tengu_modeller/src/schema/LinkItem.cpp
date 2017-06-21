@@ -94,7 +94,7 @@ void tengu::LinkItem::setTo ( tengu::AbstractEntityItem * entity ) {
             AbstractAgent * fromAgent = dynamic_cast<AbstractAgent * >( __from->entity() );
             if ( ( toAgent ) && ( fromAgent ) ) {
                 toAgent->addPreviousByFocus( fromAgent );
-                fromAgent->addPreviousByFocus( toAgent );
+                fromAgent->addNextByFocus( toAgent );
             };
             
         } else {
@@ -336,5 +336,14 @@ void tengu::LinkItem::paint ( QPainter * painter, const QStyleOptionGraphicsItem
 // ********************************************************************************************************************
 
 tengu::LinkItem::~LinkItem() {
-
+    if ( __from ) __from->removeLink( this );
+    if ( __to ) __to->removeLink( this );
+    if ( ( __from ) && ( __to ) ) {
+        AbstractAgent * fromAgent = dynamic_cast<AbstractAgent * >( __from->entity() );
+        AbstractAgent * toAgent = dynamic_cast<AbstractAgent * > ( __to->entity() );
+        if ( ( toAgent ) && ( fromAgent ) ) {
+            toAgent->removeNeighborByFocus( fromAgent );
+            fromAgent->removeNeighborByFocus( toAgent );
+        };
+    };
 }

@@ -355,6 +355,19 @@ void tengu::AbstractAgentKernel::addPreviousByFocus ( tengu::AbstractAgentKernel
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
+// *                                  Remove previous (in sence of focus) agent.                                      *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                           Удаление соседа по фокусу.                                             *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::AbstractAgentKernel::removeNeighborByFocus ( tengu::AbstractAgentKernel * agent ) {
+    if ( _previousByFocus.contains( agent->getUUID() ) ) _previousByFocus.remove( agent->getUUID() );
+    if ( _nextByFocus.contains( agent->getUUID() ) ) _nextByFocus.remove( agent->getUUID() );
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
 // *                              Adding next (in the sence of focus flow) agent.                                     *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                       Добавление следующего (в смысле потока передачи фокуса) агента.                            *

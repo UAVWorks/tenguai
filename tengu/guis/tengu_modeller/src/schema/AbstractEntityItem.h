@@ -120,6 +120,18 @@ namespace tengu {
             
             void addOutgoingLink( AbstractEntityItem * link );
             void addIncommingLink( AbstractEntityItem * link );
+            
+            /**
+             * @short Remove link.
+             * 
+             * If we gonna go to delete, this is without a difference, whether it is incoming or outgoing, 
+             * we will delete it from somewhere.
+             * 
+             * При удалении нам без разницы, входящий он или исходящий, удаляем его хоть откуда.
+             */
+            
+            void removeLink( AbstractEntityItem * link );
+            
             QList< AbstractEntityItem * > hisLinks();
             
             virtual void recalculate();

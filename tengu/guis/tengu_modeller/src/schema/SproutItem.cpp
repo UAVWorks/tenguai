@@ -391,6 +391,6 @@ QList< QList<tengu::AgentPropertyElement> > tengu::SproutItem::properties() {
 // ********************************************************************************************************************
 
 tengu::SproutItem::~SproutItem() {
-
+    
 }
 

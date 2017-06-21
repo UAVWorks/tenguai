@@ -76,9 +76,11 @@ namespace tengu {
             
             bool __leftMouseButtonPressed;
             
-            QMenu * __contextMenu;
+            // QMenu * __contextMenu;
             QMenu * __contextMenu__create;
-            QAction * __actionCreateTask;
+            
+            QAction * __action__create_task;
+            QAction * __action__delete_item;
             
             void __createMenus();
             
@@ -86,6 +88,8 @@ namespace tengu {
             
             QPoint __mouseAtSchemaPos;
             QPoint __mousePressedPos;
+            AbstractEntityItem * __contextMenuItem;
+            
             AbstractEntityItem * __entityDragged;
             bool __entityDragInProcess;                        
             
@@ -93,7 +97,8 @@ namespace tengu {
             
         private slots:
             
-            void __on_action_create_task();            
+            void __on__action__create_task();
+            void __on__action__delete_item();
                         
     };
 };
