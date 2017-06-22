@@ -474,8 +474,10 @@ void tengu::LinkItem::paint ( QPainter * painter, const QStyleOptionGraphicsItem
 // ********************************************************************************************************************
 
 tengu::LinkItem::~LinkItem() {
+        
     if ( __from ) __from->removeLink( this );
     if ( __to ) __to->removeLink( this );
+        
     if ( ( __from ) && ( __to ) ) {
         AbstractAgent * fromAgent = dynamic_cast<AbstractAgent * >( __from->entity() );
         AbstractAgent * toAgent = dynamic_cast<AbstractAgent * > ( __to->entity() );
@@ -484,4 +486,5 @@ tengu::LinkItem::~LinkItem() {
             fromAgent->removeNeighborByFocus( toAgent );
         };
     };
+        
 }

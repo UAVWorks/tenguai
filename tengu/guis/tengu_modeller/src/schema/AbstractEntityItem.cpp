@@ -775,11 +775,12 @@ void tengu::AbstractEntityItem::recalculate() {
 // ********************************************************************************************************************
 
 tengu::AbstractEntityItem::~AbstractEntityItem() {
-    // qDebug() << "AbstractEntityItem::~AbstractEntityItem(), name=" << getName();
+        
     if ( _entity ) {
         delete ( _entity );
-    };
-    // qDebug() << "AbstractEntityItem::~AbstractEntityItem() done!";
+        _entity = nullptr;
+    };        
+    
 }
 
 

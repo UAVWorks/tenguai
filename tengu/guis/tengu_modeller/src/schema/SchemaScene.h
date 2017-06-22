@@ -24,6 +24,10 @@ namespace tengu {
         signals:
             
             void signalSomethingChanged();
+        
+        public slots:
+            
+            void clear();
             
         public:
             

@@ -388,31 +388,17 @@ void tengu::AbstractAgentKernel::addNextByFocus ( tengu::AbstractAgentKernel* ne
 // ********************************************************************************************************************
 
 tengu::AbstractAgentKernel::~AbstractAgentKernel() {
-    
-    // qDebug() << "AbstractAgentKernel::~AbstractAgentKernel(), my name is " << getName() << ", children size=" << _children.size();
-    
+        
     // The children are stored right here. We must clean them.
     // Дети хранятся прямо здесь и их нужно чистить.
-            
+    
     if ( _children.size() > 0 ) {
         
         foreach ( AbstractAgentKernel * child, _children ) {
             delete( child );
         };
         
-        /*
-        cout << value << endl;
-        AbstractAgentKernel * child = _children.first();
-        qDebug() << "First child = " << child;
-        while ( child ) {
-            _children.remove( child->getUUID() );
-            delete( child );
-            child = _children.first();
-        };
-        */
     };
-                        
-    // qDebug() << "AbstractAgentKernel::~AbstractAgentKernel() done!";
     
 }
 

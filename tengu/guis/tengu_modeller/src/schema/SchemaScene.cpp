@@ -48,6 +48,34 @@ void tengu::SchemaScene::unselectAll() {
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
+// *                                           Overrided slot for scene clear.                                        *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                         Перекрытый слот для очистки сцены.                                       *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::SchemaScene::clear() {
+    
+    bool removed = true;
+    while (removed) {
+        
+        removed = false;
+        QList<QGraphicsItem *> children = items();
+        for ( int i=0; i<children.count(); i++ ) {
+            LinkItem * link = dynamic_cast< LinkItem * > ( children.at(i) );
+            if ( link ) {
+                delete( link );
+                removed = true;
+                break;
+            };            
+        };
+    };
+    
+    QGraphicsScene::clear();
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
 // *                                            Set root entity item for scene.                                       *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                                         Установить корневой элемент для сцены.                                   *
@@ -61,7 +89,8 @@ void tengu::SchemaScene::setRootItem ( tengu::AbstractEntityItem * rootItem ) {
         __rootItem = nullptr;
     };
     
-    __rootItem = rootItem;        
+    __rootItem = rootItem;      
+    
     clear();
     
 }

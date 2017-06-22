@@ -6,13 +6,14 @@ This is graphical tool for work with artifical intelligence models. At the momen
 
 # The latest operations.
 
+- **22 jun 2017** Bug when cleaning the scene.
 - **21 jun 2017** Redone the rendering of "Sprout". Choice of type and rotation angle for the "Sprout". Remove an element
     from schema. Links from the top and bottom of the task.
 - **20 jun 2017** Moving the link together with the task. Changing execution mode for the element.
 - **19 jun 2017** Stoping of the create link process by escape key. The noses for the arrows.
 - **18 jun 2017** ANDor, ORer elements. Changing of the task name. Remade painting method. Creating a link (not completed).
-- **17 jun 2017** A stop process element was drawed. Moving elements on the schema. Drop event on schema. "File" toolbar.
 <!--
+- **17 jun 2017** A stop process element was drawed. Moving elements on the schema. Drop event on schema. "File" toolbar.
 - **16 jun 2017** SchemaView does accept drag events. A start process element was created.
 - **14 jun 2017** The interface of the stored object was added.
 - **13 jun 2017** Add drag event for library toolbar, began to make a save in the mongo. A fake task was stored into mongoDB.
