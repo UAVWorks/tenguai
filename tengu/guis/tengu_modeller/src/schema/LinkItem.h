@@ -10,14 +10,21 @@
 #pragma once
 
 #include "AbstractEntityItem.h"
-#include "SproutItem.h"
 #include "Constants.h"
 
 namespace tengu {
     
+    
     class LinkItem : public AbstractEntityItem {
+    
+        friend class ItemWithLinks;
         
         Q_OBJECT
+        
+        signals:
+            
+            void signalLinkRemoved( QString uuid );
+            
         public:
             
             explicit LinkItem ();
@@ -25,9 +32,8 @@ namespace tengu {
             
             void checkEntity();
             
-            void setFrom( AbstractEntityItem * entity );
-            void setTo( AbstractEntityItem * entity );
             void setTo( QPoint to );
+            
             bool semiCreated();
             bool isEmpty();
             void recalculate();
@@ -42,12 +48,18 @@ namespace tengu {
             AbstractEntityItem * __from;
             AbstractEntityItem * __to;
             
+            void __setFrom( AbstractEntityItem * entity, bool withSproutFrom );
+            void __setTo( AbstractEntityItem * entity, bool withSproutTo );     
+            
+            void __correctPointsForSprouts( int x, QRect fromRect, QRect toRect );
+            
             QPoint __posFrom;
             QPoint __posTo;
             
             QPoint __tempTo;
             
-            bool __withSprout;
+            bool __withSproutFrom;
+            bool __withSproutTo;
             
     };
     

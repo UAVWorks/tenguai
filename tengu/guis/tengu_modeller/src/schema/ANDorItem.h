@@ -10,11 +10,11 @@
 #pragma once
 
 #include "ANDor.h"
-#include "AbstractEntityItem.h"
+#include "ItemWithLinks.h"
 
 namespace tengu {
     
-    class ANDorItem : public AbstractEntityItem {
+    class ANDorItem : public ItemWithLinks {
         Q_OBJECT
         public:
             

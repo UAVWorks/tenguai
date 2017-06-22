@@ -11,12 +11,12 @@
 
 #include <QRadialGradient>
 
-#include "AbstractEntityItem.h"
+#include "ItemWithLinks.h"
 #include "ProcessStart.h"
 
 namespace tengu {
     
-    class ProcessStartItem : public AbstractEntityItem {
+    class ProcessStartItem : public ItemWithLinks {
         
         Q_OBJECT
         

@@ -28,6 +28,10 @@ tengu::MainWindow::MainWindow(QWidget *parent)
     __agentPropertyModel = new AgentPropertyModel();
     __agentPropertyDelegate = new AgentPropertyDelegate( __agentPropertyModel );
     
+    __createSchemaScene();
+    __createSchemaView();
+
+    
     QVBoxLayout * lay = new QVBoxLayout();
     lay->setMargin( 0 );
     lay->setSpacing( 0 );
@@ -39,55 +43,13 @@ tengu::MainWindow::MainWindow(QWidget *parent)
     
     setCentralWidget( __centerWidget );
     
-    
     __hSplitter = new QSplitter();
     __hSplitter->setHandleWidth( SPLITTERS_HANDLE_WIDTH );
     __hSplitter->setLineWidth( SPLITTERS_LINE_WIDTH );
     
     lay->addWidget( __hSplitter );
     
-    __createSchemaScene();    
-
-    /*
-    Task * task = new Task();
-    task->setName( "The task" );
-    TaskItem * i = new TaskItem( task );
-    i->setX( 10 );
-    i->setY( 10 );
-    __schemaScene->addItem( i );
-    
-    Sprout * s = new Sprout( task );
-    SproutItem * si = new SproutItem( s );
-    si->setX( 10 );
-    si->setY( -80 );
-    __schemaScene->addItem( si );
-    
-    ProcessStart * pStart = new ProcessStart();
-    ProcessStartItem * pi = new ProcessStartItem( pStart );
-    pi->setX( 0 );
-    pi->setY( 300 );
-    __schemaScene->addItem( pi );
-    
-    ProcessStop * pStop = new ProcessStop();
-    ProcessStopItem * pStopItem = new ProcessStopItem( pStop );
-    pStopItem->setX( 500 );
-    pStopItem->setY( 300 );
-    __schemaScene->addItem( pStopItem );
-    */
-        
-    /*
-    VehicleItem * w = new VehicleItem( new Vehicle( nullptr, "Vehicle") );
-    __canvas->addItem( w );
-    w->setX( -20 );
-    w->setY( 50 );
-    AbstractAgentItem * a = new AbstractAgentItem( __topModel );
-    __canvas->addItem( a );
-    a->setX( 20 );
-    a->setY( -50 );
-    */
-
-    __left = new MainWindowLeft();
-    __createSchemaView();
+    __left = new MainWindowLeft();    
     
     __right = new MainWindowRight();
     
@@ -97,13 +59,13 @@ tengu::MainWindow::MainWindow(QWidget *parent)
     __hSplitter->addWidget( __left );
     __hSplitter->addWidget( __schemaView );
     __hSplitter->addWidget( __right );        
-            
+        
     __createActions();
     __createLibraryTab();
     __createMainMenu();
     __createToolBar();
     __createStatusBar();    
-    
+        
     __mongo = new MongoStorage();
     
     // __mongo->store( task );
@@ -219,6 +181,14 @@ void tengu::MainWindow::__createStatusBar() {
 void tengu::MainWindow::__createLibraryTab() {
     __library_tab = new LibraryTab();
     __library_tab->tab__processes->setEnabled( false );
+    
+    // Signals from schema to tabulator
+    // Сигналы от схемы к табулятору.
+    
+    QObject::connect( __schemaScene, SIGNAL( signalInsideProcess() ), __library_tab->tab__processes, SLOT( on__inside_process() ) );
+    QObject::connect( __schemaScene, SIGNAL( signalProcessStartCreated() ), __library_tab->tab__processes, SLOT( on__process_start_created() ) );
+    QObject::connect( __schemaScene, SIGNAL( signalProcessItemWithLinksCreated() ), __library_tab->tab__processes, SLOT( on__process_item_with_links_created() ) );
+    QObject::connect( __schemaScene, SIGNAL( signalProcessExplicitTaskCreated() ), __library_tab->tab__processes, SLOT( on__process_explicit_task_created() ) );            
 }
 
 
@@ -288,7 +258,6 @@ void tengu::MainWindow::__createToolBar() {
     __toolbar_elements_library = new QToolBar();
     __toolbar_elements_library->addWidget( __library_tab );
     addToolBar( Qt::TopToolBarArea, __toolbar_elements_library );
-            
     
 }
 
@@ -322,8 +291,9 @@ void tengu::MainWindow::__createSchemaScene() {
     // Сама сцена.
     
     __schemaScene = new SchemaScene();
-    QObject::connect( __schemaScene, SIGNAL(signalSomethingChanged()), this, SLOT( __on_schema_something_changed() ) );
     
+    QObject::connect( __schemaScene, SIGNAL( signalSomethingChanged() ), this, SLOT( __on_schema_something_changed() ) );
+        
     // We always have invisible X-Plane schema item for modelling.
     // У нас всегда есть невидимый компонент схемы - X-Plane. Он для моделирования.
     
@@ -352,7 +322,7 @@ void tengu::MainWindow::__on__create__process() {
     
     __library_tab->tab__processes->setEnabled( true );
     __library_tab->setCurrentWidget( __library_tab->tab__processes );
-    __library_tab->tab__processes->on__process_created();
+    // __library_tab->tab__processes->on__process_created();
     
 }
 
@@ -419,17 +389,19 @@ void tengu::MainWindow::__on_schama_item_moved ( tengu::AbstractEntityItem * ent
         entity->recalculate();
         entity->update(); 
         
+        ItemWithLinks * itemWithLinks = dynamic_cast< ItemWithLinks * >( entity );
+        if ( itemWithLinks ) {
+        
         // After the entity itself, we need to recalculate and repaint his links.
         // После самой "сущности" нужно пересчитать и перерисовать ее связи.
-        
-        QList<AbstractEntityItem * > links = entity->hisLinks();
-        for ( int i=0; i<links.size(); i ++ ) {
-            LinkItem * link = dynamic_cast<LinkItem * >( links.at(i) );
-            if ( link ) {
-                link->recalculate();
-                link->update();
+                
+            QList<LinkItem * > links = itemWithLinks->hisLinks();
+            for ( int i=0; i<links.size(); i ++ ) {
+                links.at(i)->recalculate();
+                links.at(i)->update();                
             };
-        };                    
+        
+        }
         
         __schemaView->show();
                 
@@ -462,6 +434,7 @@ void tengu::MainWindow::__on_schema_item_was_dropped ( tengu::AbstractEntity* en
         ORerItem * orer = dynamic_cast<ORerItem *>(entity);
         ANDorItem * andor = dynamic_cast<ANDorItem *>(entity);
         LinkItem * link = dynamic_cast<LinkItem *>(entity);
+        SproutItem * sprout = dynamic_cast<SproutItem * >( entity );
         
         if ( ( item ) && ( ! link ) ) {
             
@@ -475,6 +448,7 @@ void tengu::MainWindow::__on_schema_item_was_dropped ( tengu::AbstractEntity* en
             __schemaScene->addItem( item );
             __schemaView->show();
             
+            /*
             // The accessibility of the ToolBar's buttons will vary depending on the element created on the diagram.
             // В зависимости от созданного на схеме элемента будет меняться доступность кнопок на ToolBar'е.
             
@@ -485,6 +459,7 @@ void tengu::MainWindow::__on_schema_item_was_dropped ( tengu::AbstractEntity* en
             if (( task ) || ( orer ) || ( andor )) {
                 __library_tab->tab__processes->on__process_some_task_created();
             }
+            */
             
         };
         
@@ -493,13 +468,10 @@ void tengu::MainWindow::__on_schema_item_was_dropped ( tengu::AbstractEntity* en
             // This is a link, not an agent.
             // Это - связь, а не агент.
             
-            AbstractEntityItem * existing = dynamic_cast<AbstractEntityItem * > ( __schemaScene->itemAt( pos, QTransform() ) );
-            if ( existing ) existing->setSelected( true );
-            
-            // qDebug() << "Existing object=" << existing;
-            
-            if ( ( link->isEmpty() ) && ( existing ) ) {                
-                link->setFrom( existing );
+            ItemWithLinks * existing = dynamic_cast<ItemWithLinks * > ( __schemaScene->itemAt( pos, QTransform() ) );
+            if ( existing ) {
+                existing->setSelected( true );
+                if ( link->isEmpty() ) existing->addOutgoingLink( link );
                 __schemaView->semiCreatedLink = link;
             };
             

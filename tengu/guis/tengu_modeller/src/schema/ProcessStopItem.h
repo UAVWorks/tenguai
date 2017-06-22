@@ -9,12 +9,12 @@
 
 #pragma once
 
-#include "AbstractEntityItem.h"
+#include "ItemWithLinks.h"
 #include "ProcessStop.h"
 
 namespace tengu {
     
-    class ProcessStopItem : public AbstractEntityItem {
+    class ProcessStopItem : public ItemWithLinks {
         
         Q_OBJECT
         public:

@@ -18,7 +18,7 @@
 // ********************************************************************************************************************
 
 tengu::ProcessItem::ProcessItem ( tengu::AbstractEntity * entity, QGraphicsItem * parent ) 
-    : AbstractEntityItem ( entity, parent )
+    : ItemWithLinks ( entity, parent )
 {
 
 }

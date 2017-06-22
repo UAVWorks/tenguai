@@ -81,7 +81,7 @@ void tengu::LibraryTab__processes::__init_button ( QPushButton * button ) {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::LibraryTab__processes::on__process_created() {
+void tengu::LibraryTab__processes::on__inside_process() {
     button__process_begin->setEnabled( true );
     button__process_end->setEnabled( false );
     button__focus_arrow->setEnabled( false );
@@ -99,7 +99,7 @@ void tengu::LibraryTab__processes::on__process_created() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::LibraryTab__processes::on__process_begin_created() {
+void tengu::LibraryTab__processes::on__process_start_created() {
     
     button__process_begin->setEnabled( false );
     button__process_end->setEnabled( true );
@@ -119,7 +119,7 @@ void tengu::LibraryTab__processes::on__process_begin_created() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::LibraryTab__processes::on__process_some_task_created() {
+void tengu::LibraryTab__processes::on__process_item_with_links_created() {
     button__focus_arrow->setEnabled( true );
 }
 

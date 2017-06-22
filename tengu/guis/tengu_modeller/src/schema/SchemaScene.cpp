@@ -56,6 +56,7 @@ void tengu::SchemaScene::unselectAll() {
 
 void tengu::SchemaScene::clear() {
     
+    /*
     bool removed = true;
     while (removed) {
         
@@ -70,6 +71,7 @@ void tengu::SchemaScene::clear() {
             };            
         };
     };
+    */
     
     QGraphicsScene::clear();
 }
@@ -93,6 +95,19 @@ void tengu::SchemaScene::setRootItem ( tengu::AbstractEntityItem * rootItem ) {
     
     clear();
     
+    if ( __rootProcess() ) emit signalInsideProcess();
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                   Return the root item as the ProcessItem instance                               *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                  Вернуть корневой элемент как инстанцию ProcessItem                              *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+tengu::ProcessItem* tengu::SchemaScene::__rootProcess() {
+    return dynamic_cast< ProcessItem * > ( __rootItem );
 }
 
 // ********************************************************************************************************************
@@ -119,7 +134,7 @@ void tengu::SchemaScene::addItem ( tengu::AbstractEntityItem * item ) {
     
     // This is in any case.
     // Это - в любом случае.
-    
+        
     QGraphicsScene::addItem( item );
     QObject::connect( item, SIGNAL( signalSomethingChanged() ), this, SLOT( __on__something_changed() ) );
     
@@ -129,13 +144,28 @@ void tengu::SchemaScene::addItem ( tengu::AbstractEntityItem * item ) {
     XPlaneAgentItem * xp = dynamic_cast<XPlaneAgentItem * >(item);
     if ( ! xp ) __on__something_changed();
     
+    // ProcessItem * processItem = dynamic_cast< ProcessItem * > ( item );
+    
+    ProcessStartItem * processStartItem = dynamic_cast<ProcessStartItem *>( item );
+    ItemWithLinks * itemWithLinks = dynamic_cast<ItemWithLinks *>(item);
+    TaskItem * taskItem = dynamic_cast<TaskItem *>(item);
+    if ( __rootProcess() ) {
+        
+        // We have opened "a process" as root of the scheme.
+        // У нас открыт "процесс" в качестве корня схемы.
+        
+        if ( processStartItem ) emit signalProcessStartCreated();
+        if ( ( itemWithLinks ) && ( ! processStartItem ) ) emit signalProcessItemWithLinksCreated();
+        if ( taskItem ) emit signalProcessExplicitTaskCreated();
+    };
+    
     // If this is a link, it can be in "semi-added" state.
     // Если это связь, то она может находиться в "полу-добавленном" состоянии.
     
-    LinkItem * link = dynamic_cast<LinkItem *>( item );
-    if ( link ) {
-        
-    };
+    // LinkItem * link = dynamic_cast<LinkItem *>( item );
+    // if ( link ) {
+    //     
+    // };    
     
 }
 

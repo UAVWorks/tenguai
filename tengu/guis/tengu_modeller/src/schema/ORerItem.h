@@ -10,10 +10,10 @@
 #pragma once
 
 #include "ORer.h"
-#include "AbstractEntityItem.h"
+#include "ItemWithLinks.h"
 
 namespace tengu {
-    class ORerItem : public AbstractEntityItem {
+    class ORerItem : public ItemWithLinks {
         
         Q_OBJECT
         

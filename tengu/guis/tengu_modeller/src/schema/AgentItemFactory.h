@@ -20,6 +20,7 @@
 #include "ANDorItem.h"
 #include "ORerItem.h"
 #include "LinkItem.h"
+#include "SproutItem.h"
 
 namespace tengu {
     

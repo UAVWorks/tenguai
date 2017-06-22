@@ -44,9 +44,9 @@ namespace tengu {
             
         public slots:
             
-            void on__process_created();            
-            void on__process_begin_created();
-            void on__process_some_task_created();
+            void on__inside_process();
+            void on__process_start_created();
+            void on__process_item_with_links_created();
             void on__process_explicit_task_created();
             
         protected:

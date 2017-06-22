@@ -10,13 +10,13 @@
 
 #pragma once
 
-#include "AbstractEntityItem.h"
+#include "ItemWithLinks.h"
 #include "Sprout.h"
 #include "AgentPropertyElement.h"
 
 namespace tengu {
     
-    class SproutItem : public AbstractEntityItem {
+    class SproutItem : public ItemWithLinks {
         
         Q_OBJECT
         

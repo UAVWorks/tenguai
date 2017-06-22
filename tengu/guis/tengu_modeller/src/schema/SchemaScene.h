@@ -23,7 +23,25 @@ namespace tengu {
         
         signals:
             
+            /**
+             * @short We have some changes at the schema.
+             * 
+             * Сигнал вырабатывается в том случае, если на схеме были хоть какие-то изменения.
+             */
+            
             void signalSomethingChanged();
+            void signalInsideProcess();
+            void signalProcessStartCreated();
+            void signalProcessItemWithLinksCreated();
+            
+            /**
+             * @short The task was created inside the process.
+             * 
+             * The task (precisely the task, not any block) was created within the process.
+             * Задача (именно и в точности задача, а не любой блок) была создана внутри процесса.
+             */
+            
+            void signalProcessExplicitTaskCreated();
         
         public slots:
             
@@ -46,6 +64,7 @@ namespace tengu {
             
             AbstractEntityItem * __rootItem;
             bool __changed;
+            ProcessItem * __rootProcess();
                         
         private slots:
             

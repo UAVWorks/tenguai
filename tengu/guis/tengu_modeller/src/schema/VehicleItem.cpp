@@ -18,7 +18,7 @@
 // ********************************************************************************************************************
 
 tengu::VehicleItem::VehicleItem ( tengu::Vehicle * vehicle, QGraphicsItem* parent ) 
-    : AbstractEntityItem ( vehicle , parent )
+    : ItemWithLinks ( vehicle , parent )
 {
 
 }

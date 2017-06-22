@@ -27,7 +27,8 @@ tengu::LinkItem::LinkItem()
     __posFrom = QPoint( MINIMUM_CONSTRAINT, MINIMUM_CONSTRAINT );
     __posTo = QPoint( MINIMUM_CONSTRAINT, MINIMUM_CONSTRAINT );
     __tempTo = QPoint( MINIMUM_CONSTRAINT, MINIMUM_CONSTRAINT );
-    __withSprout = false;
+    __withSproutFrom = false;
+    __withSproutTo = false;
 }
 
 // ********************************************************************************************************************
@@ -50,10 +51,12 @@ void tengu::LinkItem::checkEntity() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::LinkItem::setFrom ( tengu::AbstractEntityItem * entity ) {
-    __from = entity;
+void tengu::LinkItem::__setFrom ( tengu::AbstractEntityItem * entity, bool withSproutFrom ) {
     
-    if ( entity ) entity->addOutgoingLink( this );
+    __from = entity;
+    __withSproutFrom = withSproutFrom;
+    
+    // if ( entity ) entity->addOutgoingLink( this );
     
     recalculate();
     update();
@@ -67,23 +70,26 @@ void tengu::LinkItem::setFrom ( tengu::AbstractEntityItem * entity ) {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::LinkItem::setTo ( tengu::AbstractEntityItem * entity ) {
+void tengu::LinkItem::__setTo ( tengu::AbstractEntityItem * entity, bool withSproutTo ) {
     
     __to = entity;
+    __withSproutTo = withSproutTo;
     
-    if ( entity ) entity->addIncommingLink( this );
+    // if ( entity ) entity->addIncommingLink( this );
     
     // Set the link between agents.
     // Установка связи между агентами.
+    /*
     
     if ( ( __from ) && ( __to ) ) {
         
         // We will not draw a nose of arrow if at least one of the link's participants is Sprout.
         // Мы не будем рисовать носик связи, если хоть один из участников - это Sprout.
         
-        SproutItem * prevIsSprout = dynamic_cast< SproutItem * >( __from );
-        SproutItem * nextIsSprout = dynamic_cast< SproutItem * >( __to );
-        __withSprout = prevIsSprout || nextIsSprout;
+        // SproutItem * prevIsSprout = dynamic_cast< SproutItem * >( __from );
+        // SproutItem * nextIsSprout = dynamic_cast< SproutItem * >( __to );
+        
+        // __withSprout = prevIsSprout || nextIsSprout;
         
         if ( ! __withSprout ) {
             
@@ -103,6 +109,7 @@ void tengu::LinkItem::setTo ( tengu::AbstractEntityItem * entity ) {
             // Если это связь между Sprout и задачей, то нужно добавить Sprout к задаче.
         }
     };
+    */
     
     __tempTo = QPoint( 0, 0 );
     
@@ -149,6 +156,29 @@ bool tengu::LinkItem::semiCreated() {
     return ( ( !__from ) || ( ! __to ) );
 }
 
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                      From-point and to-point correction in case one of linked items is sprout.                   *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                  Коррекция начальной и конечной точек, если один из связанных элементов - это Sprout.            *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::LinkItem::__correctPointsForSprouts( int x, QRect fromRect, QRect toRect ) {
+    
+    if ( __withSproutTo ) {
+        __posFrom.setX( __posTo.x() );
+        if ( __posFrom.x() < __from->x() + fromRect.topLeft().x() - x ) __posFrom.setX( __from->x() + fromRect.topLeft().x() - x );
+        if ( __posFrom.x() > __from->x() + fromRect.topRight().x() - x ) __posFrom.setX( __from->x() + fromRect.topRight().x() - x  );
+    };
+    
+    if ( __withSproutFrom ) {
+        __posTo.setX( __posFrom.x() );
+        if ( __posTo.x() < __to->x() + toRect.topLeft().x() - x ) __posTo.setX( __to->x() + toRect.topLeft().x() - x );
+        if ( __posTo.x() > __to->x() + toRect.topRight().x() - x ) __posTo.setX( __to->x() + toRect.topRight().x() - x );
+    };
+
+}
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
@@ -176,8 +206,8 @@ void tengu::LinkItem::recalculate() {
             
             QRect toRect = __to->boundingRect().toRect();
             
-            SproutItem * sproutFrom = dynamic_cast< SproutItem * > ( __from ) ;
-            SproutItem * sproutTo = dynamic_cast< SproutItem * > ( __to );
+            // SproutItem * sproutFrom = dynamic_cast< SproutItem * > ( __from ) ;
+            // SproutItem * sproutTo = dynamic_cast< SproutItem * > ( __to );
             
             if ( toRect.topLeft().x() + __to->x() > fromRect.topRight().x() + __from->x() ) {
                 
@@ -229,6 +259,9 @@ void tengu::LinkItem::recalculate() {
                 __posTo.setX( __to->x() + toRect.topLeft().x() - x + toRect.width() / 2 );
                 __posTo.setY( 1 );
                 
+                __correctPointsForSprouts( x, fromRect, toRect );
+                
+                /*
                 if ( sproutTo ) {
                     __posFrom.setX( __posTo.x() );
                     if ( __posFrom.x() < __from->x() + fromRect.topLeft().x() - x ) __posFrom.setX( __from->x() + fromRect.topLeft().x() - x );
@@ -240,6 +273,7 @@ void tengu::LinkItem::recalculate() {
                     if ( __posTo.x() < __to->x() + toRect.topLeft().x() - x ) __posTo.setX( __to->x() + toRect.topLeft().x() - x );
                     if ( __posTo.x() > __to->x() + toRect.topRight().x() - x ) __posTo.setX( __to->x() + toRect.topRight().x() - x );
                 };
+                */
                                 
                 
             } else if ( toRect.topLeft().y() + __to->y() > fromRect.bottomLeft().y() + __from->y() ) {
@@ -259,17 +293,8 @@ void tengu::LinkItem::recalculate() {
                 __posTo.setX( __to->x() + toRect.topLeft().x() - x + toRect.width() / 2 );
                 __posTo.setY( h-1 );
                 
-                if ( sproutTo ) {
-                    __posFrom.setX( __posTo.x() );
-                    if ( __posFrom.x() < __from->x() + fromRect.topLeft().x() - x ) __posFrom.setX( __from->x() + fromRect.topLeft().x() - x );
-                    if ( __posFrom.x() > __from->x() + fromRect.topRight().x() - x ) __posFrom.setX( __from->x() + fromRect.topRight().x() - x  );
-                };
-                
-                if ( sproutFrom ) {
-                    __posTo.setX( __posFrom.x() );
-                    if ( __posTo.x() < __to->x() + toRect.topLeft().x() - x ) __posTo.setX( __to->x() + toRect.topLeft().x() - x );
-                    if ( __posTo.x() > __to->x() + toRect.topRight().x() - x ) __posTo.setX( __to->x() + toRect.topRight().x() - x );
-                };
+                __correctPointsForSprouts( x, fromRect, toRect );
+                               
                 
             } else {
                 
@@ -422,7 +447,7 @@ void tengu::LinkItem::paint ( QPainter * painter, const QStyleOptionGraphicsItem
         if ( isSelected() ) {
             pen.setColor( QColor( 92, 32, 32 ) );       
             pen.setWidth( 6 );
-        } else if ( __withSprout ) {
+        } else if (( __withSproutFrom ) || ( __withSproutTo ) ) {
             pen.setColor( QColor( 192, 192, 192 ) );
             pen.setWidth( 1 );
         } else  {
@@ -442,7 +467,7 @@ void tengu::LinkItem::paint ( QPainter * painter, const QStyleOptionGraphicsItem
     // The nose of the arrow
     // Носик стрелки.
     
-    if ( ! __withSprout ) {
+    if ( ( ! __withSproutFrom ) && ( ! __withSproutTo ) ) {
     
         QLineF line( __posFrom, __posTo );
         QTransform transform;
@@ -475,9 +500,12 @@ void tengu::LinkItem::paint ( QPainter * painter, const QStyleOptionGraphicsItem
 
 tengu::LinkItem::~LinkItem() {
         
-    if ( __from ) __from->removeLink( this );
-    if ( __to ) __to->removeLink( this );
-        
+    emit signalLinkRemoved( this->getUUID() );
+    
+    // if ( __from ) __from->removeLink( this );
+    // if ( __to ) __to->removeLink( this );
+
+    /*
     if ( ( __from ) && ( __to ) ) {
         AbstractAgent * fromAgent = dynamic_cast<AbstractAgent * >( __from->entity() );
         AbstractAgent * toAgent = dynamic_cast<AbstractAgent * > ( __to->entity() );
@@ -486,5 +514,6 @@ tengu::LinkItem::~LinkItem() {
             fromAgent->removeNeighborByFocus( toAgent );
         };
     };
+    */
         
 }

@@ -18,7 +18,7 @@
 // ********************************************************************************************************************
 
 tengu::ProcessStopItem::ProcessStopItem ( tengu::ProcessStop * entity, QGraphicsItem* parent ) 
-    : AbstractEntityItem ( entity, parent )
+    : ItemWithLinks ( entity, parent )
 {
     // 3 точки граница + 2 точки между кругом и границей.
     int borderWidth = 3;

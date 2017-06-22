@@ -6,7 +6,7 @@ This is graphical tool for work with artifical intelligence models. At the momen
 
 # The latest operations.
 
-- **22 jun 2017** Bug when cleaning the scene.
+- **22 jun 2017** Bug when cleaning the scene. The schema of the inheritance of elements with links was remade.
 - **21 jun 2017** Redone the rendering of "Sprout". Choice of type and rotation angle for the "Sprout". Remove an element
     from schema. Links from the top and bottom of the task.
 - **20 jun 2017** Moving the link together with the task. Changing execution mode for the element.

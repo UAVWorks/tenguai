@@ -115,25 +115,9 @@ namespace tengu {
             
             QPoint mousePressedPos();
             
-            virtual void checkEntity() = 0;
+            virtual void checkEntity();
             AbstractEntity * entity();
-            
-            void addOutgoingLink( AbstractEntityItem * link );
-            void addIncommingLink( AbstractEntityItem * link );
-            
-            /**
-             * @short Remove link.
-             * 
-             * If we gonna go to delete, this is without a difference, whether it is incoming or outgoing, 
-             * we will delete it from somewhere.
-             * 
-             * При удалении нам без разницы, входящий он или исходящий, удаляем его хоть откуда.
-             */
-            
-            void removeLink( AbstractEntityItem * link );
-            
-            QList< AbstractEntityItem * > hisLinks();
-            
+                        
             virtual void recalculate();
                         
         protected:
@@ -195,8 +179,6 @@ namespace tengu {
             QFont   __oldPainterFont;
             QPainter::CompositionMode __oldPainterCompositionMode;
             
-            QMap< QString, AbstractEntityItem * > __linksOutgoingFromThis;
-            QMap< QString, AbstractEntityItem * > __linksIncommingToThis;
     };
 };
 

@@ -18,7 +18,7 @@
 // ********************************************************************************************************************
 
 tengu::TaskItem::TaskItem ( tengu::Task * task, QGraphicsItem * parent ) 
-    : AbstractEntityItem ( task , parent )
+    : ItemWithLinks ( task , parent )
 {
     _boundingRect = QRectF( 0.0, 0.0, 400.0, 144.0 );
     _className = "TaskItem";

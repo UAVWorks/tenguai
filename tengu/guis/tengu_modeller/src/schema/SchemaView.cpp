@@ -92,17 +92,19 @@ void tengu::SchemaView::__on__action__delete_item() {
     if ( __contextMenuItem ) {
         hide();
         
-        // Links of this item. Will be removed simultaneously with him.
-        // Связи данного элемента - будут удалены совместно с ним.
-        
-        QList< AbstractEntityItem *> links = __contextMenuItem->hisLinks();
-        for ( int i=0; i<links.size(); i++ ) {
-            LinkItem * link = dynamic_cast<LinkItem * > ( links.at(i) );
-            if ( link ) {
-                scene()->removeItem( link );
-                delete( link );
+        ItemWithLinks * itemWithLinks = dynamic_cast< ItemWithLinks * > ( __contextMenuItem );
+        if ( itemWithLinks ) {
+            
+            // Links of this item. Will be removed simultaneously with him.
+            // Связи данного элемента - будут удалены совместно с ним.
+             
+            QList< LinkItem *> links = itemWithLinks->hisLinks();
+            for ( int i=0; i<links.size(); i++ ) {                
+                scene()->removeItem( links.at(i) );
+                delete( links.at(i) );                
             };
-        };
+        
+        }
         
         scene()->removeItem( __contextMenuItem );
         delete( __contextMenuItem );
@@ -209,7 +211,8 @@ void tengu::SchemaView::mousePressEvent ( QMouseEvent * event ) {
         __mousePressedPos = event->pos();
         
         QList<QGraphicsItem * > itemsList = items( event->pos() );
-        AbstractEntityItem * entityItem = dynamic_cast< AbstractEntityItem * >( itemsList.at(0) );            
+        AbstractEntityItem * entity = dynamic_cast<AbstractEntityItem *>( itemsList.at(0) );
+        ItemWithLinks * itemWithLinks = dynamic_cast< ItemWithLinks * >( entity );      
         
         // QGraphicsItem * item = itemAt( event->pos());
         
@@ -217,29 +220,24 @@ void tengu::SchemaView::mousePressEvent ( QMouseEvent * event ) {
     
         if ( itemsList.count() > 0 ) {
                                     
-            if ( ( semiCreatedLink ) && ( entityItem ) ) {
+            if ( ( semiCreatedLink ) && ( entity ) ) {
                 
                 // If we have an semi-created link and mouse was pressed on the agent - we will finish the link creating 
                 // process. But we need not a link.
                 
                 // Если у нас полу-созданная связь и нажата мышь на агенте - завершаем создание связи. Но нам нужна не-связь.
-                                
-                LinkItem * link = dynamic_cast< LinkItem * >( entityItem );
-            
-                if ( link ) {
+                                                
+                if ( ! itemWithLinks ) {
                     for ( int i=1; i<itemsList.count(); i++ ) {
-                        entityItem = dynamic_cast< AbstractEntityItem * >( itemsList.at(i) ); 
-                        link = dynamic_cast< LinkItem * >( entityItem );
-                        if ( ! link ) break;
-                    }
+                        itemWithLinks = dynamic_cast< ItemWithLinks * > ( itemsList.at(i) );
+                        if ( itemWithLinks ) break;
+                    };
                 };
-                
-                semiCreatedLink->hide();
-                
-                if ( ( entityItem ) && ( ! link ) )  {                                        
-                    semiCreatedLink->setTo( entityItem );                                                                        
-                };
-                
+            
+                semiCreatedLink->hide();                
+                if ( itemWithLinks )  {                                        
+                    itemWithLinks->addIncommingLink( semiCreatedLink );                    
+                };                
                 semiCreatedLink->show();                
                 semiCreatedLink = nullptr;                
                 
@@ -248,11 +246,11 @@ void tengu::SchemaView::mousePressEvent ( QMouseEvent * event ) {
                 
             } else {
                 
-                if ( entityItem ) {
-                    __entityDragged = entityItem;                
+                if ( entity ) {
+                    __entityDragged = entity;                
                 };
             
-                emit signalItemPressed( entityItem, controlPressed );
+                emit signalItemPressed( entity, controlPressed );
             };
         };        
         
@@ -383,7 +381,11 @@ void tengu::SchemaView::contextMenuEvent ( QContextMenuEvent* event ) {
         // We have some item under mouse
         // У нас есть какой-то элемент под мышкой.
         
-        menu.addAction( __action__delete_item );                
+        // We can not delete the start of process.
+        // Мы не можем удалить старт процесса.
+        
+        ProcessStartItem * processStartItem = dynamic_cast< ProcessStartItem * > ( __contextMenuItem );        
+        if ( ! processStartItem ) menu.addAction( __action__delete_item );                
         
     } else {
         

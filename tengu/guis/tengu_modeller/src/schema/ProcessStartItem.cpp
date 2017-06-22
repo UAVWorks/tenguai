@@ -18,7 +18,7 @@
 // ********************************************************************************************************************
 
 tengu::ProcessStartItem::ProcessStartItem ( tengu::ProcessStart * entity, QGraphicsItem* parent ) 
-    : AbstractEntityItem ( entity, parent )
+    : ItemWithLinks ( entity, parent )
 {
     __radius = 32;
     
