@@ -1,6 +1,6 @@
 [Описание на русском языке](README.ru.md)
 
-# The Tengu.
+# The Tengu Artificial Intelligence: the tools to create a soul of mobile robots. 
 
 <p style="float: left; " >
     <img src="images/Unit_ills_full_40083.png" width="256" /> 
