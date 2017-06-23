@@ -15,6 +15,7 @@
 #include <QVariant>
 #include "AbstractAgentKernel.h"
 #include "AbstractEntity.h"
+#include "Constants.h"
 
 namespace tengu {
     
@@ -28,14 +29,27 @@ namespace tengu {
         Q_PROPERTY( QString uuid READ getUUID );
         Q_PROPERTY( execution_mode_t execution_mode READ getExecutionMode WRITE setExecutionMode );
         Q_PROPERTY( sprout_type_t sprout_type READ getSproutType WRITE setSproutType );
+        Q_PROPERTY( QString signal_name READ getSignalName WRITE setSignalName );
+        Q_PROPERTY( float minimal_value READ getMinimalValue WRITE setMinimalValue );
+        Q_PROPERTY( float maximal_value READ getMaximalValue WRITE setMaximalValue );
         
         Q_PROPERTY( QVariant value READ __getValue WRITE __setValue );
+        
+        signals:
+            
+            void signalGotValue( QVariant value );
                     
         public:
             
             enum sprout_type_t {
-                SP_INPUT,
-                SP_OUTPUT
+                // Signal only, without redis.
+                // Только через сигналы, без редиса.
+                IN_PROCESS_INPUT,
+                // External mean throught redis
+                // Внешний - означает через редис.
+                EXTERNAL_INPUT,
+                IN_PROCESS_OUTPUT,
+                EXTERNAL_OUTPUT
             };
             
             // The name should be unique in the parent (owner) namespace.
@@ -44,8 +58,11 @@ namespace tengu {
             Sprout( AbstractAgentKernel * owner = Q_NULLPTR );
             virtual ~Sprout();
             
-            void setInputChannel( QString channel );
-            void setOutputChannel( QString channel );
+            // void setInputChannel( QString channel );
+            // void setOutputChannel( QString channel );
+            
+            QString getSignalName();
+            void setSignalName( QString signal );
             
             void setSproutType( sprout_type_t type );
             sprout_type_t getSproutType();
@@ -53,7 +70,12 @@ namespace tengu {
             void subscribe();
             void subscribed( QString channel );
             void unsubscribed( QString channel );
-            virtual bool handleMessage( QString channel, QString message );                                                
+            virtual bool handleMessage( QString channel, QString message );     
+            
+            float getMinimalValue();
+            void setMinimalValue( float min );
+            float getMaximalValue();
+            void setMaximalValue( float max );
             
         protected:
             
@@ -69,18 +91,18 @@ namespace tengu {
             
             AbstractAgentKernel * __owner;
             
-            QString __inputChannel;
-            QString __outputChannel;
+            // QString __inputChannel;
+            // QString __outputChannel;
+            
+            QString __signalName;
             
             QVariant __getValue();
             void __setValue( QVariant value );
             
-            sprout_type_t __sprout_type;
+            sprout_type_t __sprout_type;                            
             
-        signals:
-            
-            void signalGotValue( QVariant value );
-        
+            float __minimal_value;
+            float __maximal_value;
             
     };
     

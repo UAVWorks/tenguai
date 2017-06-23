@@ -32,17 +32,17 @@ tengu::XPlaneAgent::XPlaneAgent()
     __conditionGroup = settings.value("ConditionNameGroup", "xtengu.condition").toString();
     settings.endGroup();
     
-    __init_sprout( "LeftAileron", Sprout::SP_OUTPUT, tr("Left aileron") );
-    __init_sprout( "LeftFlaperon", Sprout::SP_OUTPUT, tr("Left flaperon") );
-    __init_sprout( "LeftElevator", Sprout::SP_OUTPUT, tr("Left elevator" ) );
-    __init_sprout( "LeftRudder", Sprout::SP_OUTPUT, tr("Left rudder" ) );    
-    __init_sprout( "LeftBrake", Sprout::SP_OUTPUT, tr("Left brake" ) );
+    __init_sprout( "LeftAileron", Sprout::EXTERNAL_OUTPUT, tr("Left aileron") );
+    __init_sprout( "LeftFlaperon", Sprout::EXTERNAL_OUTPUT, tr("Left flaperon") );
+    __init_sprout( "LeftElevator", Sprout::EXTERNAL_OUTPUT, tr("Left elevator" ) );
+    __init_sprout( "LeftRudder", Sprout::EXTERNAL_OUTPUT, tr("Left rudder" ) );    
+    __init_sprout( "LeftBrake", Sprout::EXTERNAL_OUTPUT, tr("Left brake" ) );
     
-    __init_sprout( "RightAileron", Sprout::SP_OUTPUT, tr("Right aileron" ) );
-    __init_sprout( "RightFlaperon", Sprout::SP_OUTPUT, tr("Right flaperon" ) );
-    __init_sprout( "RightElevator", Sprout::SP_OUTPUT, tr("Right elevator" ) );
-    __init_sprout( "RightRudder", Sprout::SP_OUTPUT, tr("Right rudder" ) );
-    __init_sprout( "RightBrake", Sprout::SP_OUTPUT, tr("Right brake" ) );
+    __init_sprout( "RightAileron", Sprout::EXTERNAL_OUTPUT, tr("Right aileron" ) );
+    __init_sprout( "RightFlaperon", Sprout::EXTERNAL_OUTPUT, tr("Right flaperon" ) );
+    __init_sprout( "RightElevator", Sprout::EXTERNAL_OUTPUT, tr("Right elevator" ) );
+    __init_sprout( "RightRudder", Sprout::EXTERNAL_OUTPUT, tr("Right rudder" ) );
+    __init_sprout( "RightBrake", Sprout::EXTERNAL_OUTPUT, tr("Right brake" ) );
        
 }
 
@@ -71,10 +71,10 @@ void tengu::XPlaneAgent::__init_sprout ( QString settingsGroup, tengu::Sprout::s
         // Crossing. Because output for sprout is an input for X-Plane.
         // Переворот, потому что выход для "ростка" - это вход для X-Plane.
         
-        if ( type == Sprout::SP_INPUT ) 
-            sp->setInputChannel( output ); 
+        if ( type == Sprout::EXTERNAL_INPUT ) 
+            sp->setSignalName( output ); 
         else 
-            sp->setOutputChannel( input );
+            sp->setSignalName( input );
         
         addSprout( sp );
     };

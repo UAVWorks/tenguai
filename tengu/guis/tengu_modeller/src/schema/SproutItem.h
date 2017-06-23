@@ -13,6 +13,7 @@
 #include "ItemWithLinks.h"
 #include "Sprout.h"
 #include "AgentPropertyElement.h"
+#include "Constants.h"
 
 namespace tengu {
     
@@ -22,6 +23,9 @@ namespace tengu {
         
         Q_PROPERTY( Sprout::sprout_type_t sprout_type READ getSproutType WRITE setSproutType );
         Q_PROPERTY( SproutItem::sprout_orientation_t orientation READ getOrientation WRITE setOrientation );
+        Q_PROPERTY( QString signal_name READ getSignalName WRITE setSignalName );
+        Q_PROPERTY( float minimal_value READ getMinimalValue WRITE setMinimalValue );
+        Q_PROPERTY( float maximal_value READ getMaximalValue WRITE setMaximalValue );
         
         public:
             
@@ -66,7 +70,15 @@ namespace tengu {
             sprout_orientation_t getOrientation();
             void setOrientation( sprout_orientation_t orientation );
             
+            QString getSignalName();
+            void setSignalName( QString name );
+            
             void recalculate();
+            
+            float getMinimalValue();
+            void setMinimalValue( float min );
+            float getMaximalValue();
+            void setMaximalValue( float max );
             
         private:
             

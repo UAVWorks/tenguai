@@ -25,9 +25,13 @@ tengu::Sprout::Sprout( AbstractAgentKernel * owner )
     __owner = owner;
     __subscribed = false;
     __subscribtion_requested = false;
-    __inputChannel = QString("");
-    __outputChannel = QString("");
-    __sprout_type = SP_INPUT;
+    // __inputChannel = QString("");
+    // __outputChannel = QString("");
+    __signalName = QString("");
+    __sprout_type = IN_PROCESS_INPUT;
+    
+    __minimal_value = MINIMUM_CONSTRAINT;
+    __maximal_value = MAXIMUM_CONSTRAINT;
     
     _className = "Sprout";
 }
@@ -39,13 +43,13 @@ tengu::Sprout::Sprout( AbstractAgentKernel * owner )
 // *                                          Добавить канал редиса по входу.                                         *
 // *                                                                                                                  *
 // ********************************************************************************************************************
-
+/*
 void tengu::Sprout::setInputChannel( QString channel ) {
     if ( ! channel.isEmpty() ) {
         __inputChannel = channel;
     };
 }
-
+*/
 // ********************************************************************************************************************
 // *                                                                                                                  *
 // *                                              Add output redis channel.                                           *
@@ -53,14 +57,14 @@ void tengu::Sprout::setInputChannel( QString channel ) {
 // *                                           Добавить выходной канал редиса.                                        *
 // *                                                                                                                  *
 // ********************************************************************************************************************
-
+/*
 void tengu::Sprout::setOutputChannel( QString channel ) {
     if ( ! channel.isEmpty() ) {
         __outputChannel = channel ;
         _changed = true;
     };
 }
-
+*/
 // ********************************************************************************************************************
 // *                                                                                                                  *
 // *                                            Get sprout's signal direction.                                        *
@@ -84,9 +88,84 @@ tengu::Sprout::sprout_type_t tengu::Sprout::getSproutType() {
 
 void tengu::Sprout::setSproutType ( tengu::Sprout::sprout_type_t type ) {
     __sprout_type = type;
-    _changed = true;
+    _somethingChanged();
 }
 
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                                  Get signal name                                                 *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                                Получить имя сигнала.                                             *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+QString tengu::Sprout::getSignalName() {
+    return __signalName;
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                                Set signal name                                                   *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                             Установить имя сигнала.                                              *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::Sprout::setSignalName ( QString signal ) {
+    __signalName = signal;
+    _somethingChanged();
+    
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                 Get minimal allowed value for this sprout.                                       *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                        Получить минимально допустимое значение данного "росточка".                               *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+float tengu::Sprout::getMinimalValue() {
+    return __minimal_value;
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                    Set minimal allowed value for this sprout                                     *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                           Установить минимально допустимое значение данного "росточка".                          *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::Sprout::setMinimalValue ( float min ) {
+    __minimal_value = min;
+    _somethingChanged();
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                    Get maximal allowed value for this sprout.                                    *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                         Получить максимально допустимое значение для данного "росточка"                          *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+float tengu::Sprout::getMaximalValue() {
+    return __maximal_value;
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                   Set maximum allowed value for this sprout.                                     *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                             Установить максимально допустимое значение данного росточка.                         *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::Sprout::setMaximalValue ( float max ) {
+    __maximal_value = max;
+    _somethingChanged();
+}
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
@@ -127,8 +206,9 @@ void tengu::Sprout::__setValue( QVariant val ) {
 void tengu::Sprout::subscribed( QString channel ) {
     if (
         ( ! __subscribed )
-        && ( ! __inputChannel.isEmpty() )
-        && ( __inputChannel == channel ) 
+        && ( __sprout_type == EXTERNAL_INPUT )
+        && ( ! __signalName.isEmpty() )
+        && ( __signalName == channel ) 
     ) {
         __subscribed = true;
     }
@@ -163,12 +243,13 @@ void tengu::Sprout::subscribe() {
     if ( 
         ( ! __subscribed ) 
         && ( ! __subscribtion_requested )
-        && ( ! __inputChannel.isEmpty() )
+        && ( ! __signalName.isEmpty() )
+        && ( __sprout_type == EXTERNAL_INPUT )
         && ( __owner )
         && ( __owner->_sub_redis ) 
         && ( __owner->__sub_redis_connected )
     ) {
-        __owner->_sub_redis->subscribe( __inputChannel );
+        __owner->_sub_redis->subscribe( __signalName );
         __subscribtion_requested = true;
     };
 }
@@ -183,7 +264,7 @@ void tengu::Sprout::subscribe() {
 
 bool tengu::Sprout::_to_me( QString channel ) {
 
-    return ( ( ! __inputChannel.isEmpty() ) && ( channel == __inputChannel ) );
+    return ( ( ! __signalName.isEmpty() ) && ( channel == __signalName ) );
         
 };
 

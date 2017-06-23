@@ -6,7 +6,7 @@ This is graphical tool for work with artifical intelligence models. At the momen
 
 # The latest operations.
 
-- **23 jun 2017** A "Human name" was appended. Links ("sprouts") selection.
+- **23 jun 2017** A "Human name" was appended. Links ("sprouts") selection. Sprout's constraints.
 - **22 jun 2017** Bug when cleaning the scene. The schema of the inheritance of elements with links was remade.
 - **21 jun 2017** Redone the rendering of "Sprout". Choice of type and rotation angle for the "Sprout". Remove an element
     from schema. Links from the top and bottom of the task.

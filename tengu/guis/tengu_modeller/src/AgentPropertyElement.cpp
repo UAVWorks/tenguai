@@ -21,7 +21,7 @@ tengu::AgentPropertyElement::AgentPropertyElement() {
     
     propertyName = QString("");
     value = QVariant(QString(""));
-    font = QFont("Arial", 9 );
+    font = QFont("Arial", 10 );
     readOnly = true;
     backgroundColor = baseBackground();
     // editorWidget = nullptr;

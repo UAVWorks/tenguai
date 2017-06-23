@@ -179,6 +179,16 @@ QVariant tengu::AgentPropertyModel::data( const QModelIndex & index, int role ) 
                 return oneElement.value ;
             }; break;
             
+            case AgentPropertyElement::Float: {
+                
+                float f = oneElement.value.toFloat();
+                if ( ( f > MINIMUM_CONSTRAINT ) && ( f < MAXIMUM_CONSTRAINT ))
+                    return QVariant( QString::number( oneElement.value.toFloat() ) );
+                else
+                    return QVariant( QString("") );
+                
+            }; break;
+            
             case AgentPropertyElement::ExecutionModeSelector: {
                 switch ( ( AbstractAgent::execution_mode_t ) oneElement.value.toInt() ) {
                     case AbstractAgent::EM_ALWAYS:  return QVariant( tr("Always") );
@@ -189,8 +199,10 @@ QVariant tengu::AgentPropertyModel::data( const QModelIndex & index, int role ) 
             
             case AgentPropertyElement::SproutTypeSelector : {
                 switch ( ( Sprout::sprout_type_t ) oneElement.value.toInt() ) {
-                    case Sprout::SP_INPUT: return QVariant( tr("Input") );
-                    case Sprout::SP_OUTPUT: return QVariant( tr("Output" ) );
+                    case Sprout::IN_PROCESS_INPUT: return QVariant( tr("In-process input") );
+                    case Sprout::EXTERNAL_INPUT: return QVariant( tr("External input") );
+                    case Sprout::IN_PROCESS_OUTPUT: return QVariant( tr("In-process output" ) );
+                    case Sprout::EXTERNAL_OUTPUT: return QVariant( tr("External output") );
                 };
             }; break;
             
@@ -241,7 +253,6 @@ QVariant tengu::AgentPropertyModel::data( const QModelIndex & index, int role ) 
 
 bool tengu::AgentPropertyModel::setData( const QModelIndex & index, const QVariant & value, int role) {
     
-    
     if ( ! index.isValid() ) return false;
     
     bool ok;
@@ -256,6 +267,16 @@ bool tengu::AgentPropertyModel::setData( const QModelIndex & index, const QVaria
             
             case AgentPropertyElement::String: {
                 __item->setProperty( oneElement.propertyName.toLatin1().data(), value );
+            }; break;
+            
+            case AgentPropertyElement::Float: {
+                bool ok = false;
+                QString strVal = value.toString();
+                float fVal = strVal.toFloat( & ok );
+                if ( ( ok ) && ( fVal > MINIMUM_CONSTRAINT ) && ( fVal < MAXIMUM_CONSTRAINT ) ) {
+                    __item->setProperty( oneElement.propertyName.toLatin1().data(), fVal );                    
+                };
+                
             }; break;
             
             // The enumerable values want not to be setted as property.

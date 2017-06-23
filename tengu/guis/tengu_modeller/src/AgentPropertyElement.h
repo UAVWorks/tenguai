@@ -28,6 +28,11 @@ namespace tengu {
                 
                 String,
                 
+                // The float value
+                // Значение с плавающей запятой
+                
+                Float,
+                
                 // The agent's execution mode combo box
                 // Выпадающий список режима выполнения агента
                 

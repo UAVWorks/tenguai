@@ -282,7 +282,8 @@ void tengu::AbstractEntityItem::_drawTaskRectangle ( QPainter * painter ) {
     gradient.setColorAt(0, _processDiagram_brightFillColor() );
     gradient.setColorAt(1, _processDiagram_darkFillColor() );
     gradient.setStart( 1, _boundingRect.height() / 3 );
-    painter->fillRect( _boundingRect, gradient );
+    QRect r( _boundingRect.x() + 1, _boundingRect.y()+1, _boundingRect.width() - 1, _boundingRect.height() - 1 );
+    painter->fillRect( r, gradient );
     
     _drawBorderRect( painter );
 }

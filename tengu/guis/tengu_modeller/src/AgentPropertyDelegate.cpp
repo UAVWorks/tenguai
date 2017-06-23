@@ -38,7 +38,12 @@ QWidget * tengu::AgentPropertyDelegate::createEditor ( QWidget* parent, const QS
     if ( ! ok ) return QStyledItemDelegate::createEditor( parent, option, index );
     switch ( oneElement.type ) {
         
-        case AgentPropertyElement::String: return QStyledItemDelegate::createEditor( parent, option, index );
+        case AgentPropertyElement::String: 
+        case AgentPropertyElement::Float: {
+            
+            return QStyledItemDelegate::createEditor( parent, option, index );
+            
+        }; break;
         
         case AgentPropertyElement::ExecutionModeSelector: {
             
@@ -48,13 +53,16 @@ QWidget * tengu::AgentPropertyDelegate::createEditor ( QWidget* parent, const QS
             editor->addItem( tr("Real"), QVariant( AbstractAgent::EM_REAL ) );
             editor->addItem( tr("X-Plane simulation"), QVariant( AbstractAgent::EM_XPLANE ) );
             return editor;
+            
         }; break;
         
         case AgentPropertyElement::SproutTypeSelector : {
             QComboBox * editor = new QComboBox( parent );
             editor->setFont( oneElement.font );
-            editor->addItem( tr("Input"), QVariant( Sprout::SP_INPUT ) );
-            editor->addItem( tr("Output"), QVariant( Sprout::SP_OUTPUT ) );
+            editor->addItem( tr("In-process input"), QVariant( Sprout::IN_PROCESS_INPUT ) );
+            editor->addItem( tr("External input"), QVariant( Sprout::EXTERNAL_INPUT ) );
+            editor->addItem( tr("In-process output"), QVariant( Sprout::IN_PROCESS_OUTPUT ) );
+            editor->addItem( tr("External output"), QVariant( Sprout::EXTERNAL_OUTPUT ) );
             return editor;
         }; break;
         
@@ -118,8 +126,11 @@ void tengu::AgentPropertyDelegate::setEditorData ( QWidget * editor, const QMode
     
     switch ( oneElement.type ) {
         
-        case AgentPropertyElement::String: {
+        case AgentPropertyElement::String: 
+        case AgentPropertyElement::Float:
+        {
             QStyledItemDelegate::setEditorData ( editor, index );
+            
         }; break;
         
         case AgentPropertyElement::ExecutionModeSelector : 
@@ -184,7 +195,9 @@ void tengu::AgentPropertyDelegate::setModelData ( QWidget * editor, QAbstractIte
     
     switch ( oneElement.type ) {
         
-        case AgentPropertyElement::String: {
+        case AgentPropertyElement::String: 
+        case AgentPropertyElement::Float:
+        {
             QStyledItemDelegate::setModelData ( editor, model, index );
         }; break;
         

@@ -103,7 +103,9 @@ void tengu::SproutItem::paint ( QPainter* painter, const QStyleOptionGraphicsIte
     
     int noseWidth = ( _boundingRect.height() - 2 ) / 2;
     
-    if ( getSproutType() == Sprout::SP_OUTPUT ) {
+    bool isOut = ( ( getSproutType() == Sprout::IN_PROCESS_OUTPUT ) || ( getSproutType() == Sprout::EXTERNAL_OUTPUT ) );
+    
+    if ( isOut ) {
         
         QPointF points[5] = {
             QPointF(1,1),
@@ -273,7 +275,7 @@ void tengu::SproutItem::checkEntity() {
 tengu::Sprout::sprout_type_t tengu::SproutItem::getSproutType() {
     Sprout * s = sprout();
     if ( s ) return s->getSproutType();
-    return Sprout::SP_INPUT;
+    return Sprout::EXTERNAL_INPUT;
 }
 
 // ********************************************************************************************************************
@@ -314,6 +316,93 @@ tengu::SproutItem::sprout_orientation_t tengu::SproutItem::getOrientation() {
 
 void tengu::SproutItem::setOrientation ( tengu::SproutItem::sprout_orientation_t orientation ) {
     __orientation = orientation;
+    _somethingChanged();
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                                 Get signal name                                                  *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                               Вернуть имя сигнала.                                               *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+QString tengu::SproutItem::getSignalName() {
+    if ( sprout() ) return sprout()->getSignalName();
+    return QString("");
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                                 Set signal name.                                                 *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                             Установить имя сигнала.                                              *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::SproutItem::setSignalName ( QString name ) {
+    if ( sprout() ) {
+        sprout()->setSignalName( name );
+        _somethingChanged();
+    };
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                      Get minimal allowed value for this sprout.                                  *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                        Получить минимально допустимое значение для данного "росточка".                           *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+float tengu::SproutItem::getMinimalValue() {
+    if ( sprout() ) return sprout()->getMinimalValue();
+    return MINIMUM_CONSTRAINT;
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                      Set minimal allowed value for this sprout.                                  *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                           Установить минимально допустимое значение данного "росточка".                          *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::SproutItem::setMinimalValue ( float min ) {
+    if ( sprout() ) {
+        sprout()->setMinimalValue( min );
+        _somethingChanged();
+    }
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                    Get maximal allowed value for this sprout                                     *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                          Получить максимально допустимое значение для данного "росточка"                         *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+float tengu::SproutItem::getMaximalValue() {
+    if ( sprout() ) return sprout()->getMaximalValue();
+    return MINIMUM_CONSTRAINT;
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                    Set maximal allowed value for this sprout.                                    *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                        Установить максимально допустимое значение для данного "росточка".                        *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::SproutItem::setMaximalValue ( float max ) {
+    
+    if ( sprout() ) {
+        sprout()->setMaximalValue( max );
+        _somethingChanged();
+    };
+    
 }
 
 // ********************************************************************************************************************
@@ -342,15 +431,31 @@ QList< QList<tengu::AgentPropertyElement> > tengu::SproutItem::properties() {
     QList<QList<tengu::AgentPropertyElement>> p = AbstractEntityItem::properties();
     
     // --------------------------------------------------------------------------------------------
+    //                                    Rotation angle on the chart 
+    //                                     Угол поворота на диаграмме 
+    // --------------------------------------------------------------------------------------------
+    
+    QList<AgentPropertyElement> angleElement;
+    
+    angleElement.append( AgentPropertyElement::captionElement( tr("Rotation agnle") ) );
+    
+    AgentPropertyElement angleValue;
+    angleValue.value = QVariant( ( int ) getOrientation() );
+    angleValue.propertyName = "orientation";
+    angleValue.readOnly = false;
+    angleValue.type = AgentPropertyElement::SproutAngleSelector;
+    angleValue.backgroundColor = angleValue.widgetBackground();
+    angleElement.append( angleValue );
+    
+    p.append( angleElement );
+    
+    // --------------------------------------------------------------------------------------------
     //                                        Type of this sprout
     //                                        Тип данного Sprout'а.
     // --------------------------------------------------------------------------------------------
     
-    QList<AgentPropertyElement> typeElement;
-    
-    AgentPropertyElement typeName( tr("Type") );
-    typeName.backgroundColor = typeName.widgetBackground();
-    typeElement.append( typeName );
+    QList<AgentPropertyElement> typeElement;    
+    typeElement.append( AgentPropertyElement::captionElement( tr("Signal type") ) );
     
     AgentPropertyElement typeValue;
     typeValue.value = QVariant( (int) getSproutType() );
@@ -363,25 +468,54 @@ QList< QList<tengu::AgentPropertyElement> > tengu::SproutItem::properties() {
     p.append( typeElement );
     
     // --------------------------------------------------------------------------------------------
-    //                                    Rotation angle on the chart 
-    //                                     Угол поворота на диаграмме 
+    //                                     Signal name of this sprout. 
+    //                                     Имя сигнала данного "ростка". 
     // --------------------------------------------------------------------------------------------
     
-    QList<AgentPropertyElement> angleElement;
+    QList< AgentPropertyElement > signalNameElement;
+    signalNameElement.append( AgentPropertyElement::captionElement( tr("Signal name") ));
     
-    AgentPropertyElement angleName( tr("Rotation agnle") );
-    angleName.backgroundColor = angleName.widgetBackground();
-    angleElement.append( angleName );
+    AgentPropertyElement signalNameValue;
+    signalNameValue.readOnly = true;
+    signalNameValue.backgroundColor = signalNameValue.widgetBackground();
+    signalNameValue.value = getSignalName();
+    signalNameValue.propertyName = "signal_name";
+    signalNameElement.append( signalNameValue);
     
-    AgentPropertyElement angleValue;
-    angleValue.value = QVariant( ( int ) getOrientation() );
-    angleValue.propertyName = "orientation";
-    angleValue.readOnly = false;
-    angleValue.type = AgentPropertyElement::SproutAngleSelector;
-    angleValue.backgroundColor = angleValue.widgetBackground();
-    angleElement.append( angleValue );
+    p.append( signalNameElement );
     
-    p.append( angleElement );
+    // --------------------------------------------------------------------------------------------
+    //                                   Minimal allowed value
+    //                               Минимально допустимое значение. 
+    // --------------------------------------------------------------------------------------------
+    
+    QList<AgentPropertyElement> minElement;
+    minElement.append( AgentPropertyElement::captionElement( tr("Minimal value") ));
+    
+    AgentPropertyElement minValue;
+    minValue.type = AgentPropertyElement::Float;
+    minValue.readOnly = false;
+    minValue.propertyName = "minimal_value";
+    minValue.value = getMinimalValue();
+    minElement.append( minValue );
+    
+    p.append( minElement );
+    
+    // --------------------------------------------------------------------------------------------
+    //                                  Maximal allowed value 
+    //                              Максимально допустимое значение.
+    // --------------------------------------------------------------------------------------------
+    
+    QList<AgentPropertyElement> maxElement;
+    maxElement.append( AgentPropertyElement::captionElement( tr("Maximal value")) );
+    AgentPropertyElement maxValue;
+    maxValue.value = getMaximalValue();
+    maxValue.readOnly = false;
+    maxValue.propertyName = "maximal_value";
+    maxValue.type = AgentPropertyElement::Float;
+    maxElement.append( maxValue );
+    
+    p.append( maxElement );
     
     return p;
 }

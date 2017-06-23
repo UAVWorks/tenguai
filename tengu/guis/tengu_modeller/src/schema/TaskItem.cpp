@@ -39,7 +39,7 @@ void tengu::TaskItem::paint ( QPainter * painter, const QStyleOptionGraphicsItem
     
     _storePainterSettings( painter );
     
-    QPixmap pixmap( _boundingRect.width(), _boundingRect.height() );
+    QPixmap pixmap( _boundingRect.width() + 1, _boundingRect.height() + 1 );
     QPainter p ( & pixmap );    
     
     // p.setBrush( QColor(0, 0, 0, 255) );
