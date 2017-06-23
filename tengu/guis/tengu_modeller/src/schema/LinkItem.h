@@ -9,6 +9,9 @@
 
 #pragma once
 
+#include <QPoint>
+#include <QPointF>
+
 #include "AbstractEntityItem.h"
 #include "Constants.h"
 
@@ -37,6 +40,7 @@ namespace tengu {
             bool semiCreated();
             bool isEmpty();
             void recalculate();
+            float distanceTo( QPointF point );
             
             
         protected:

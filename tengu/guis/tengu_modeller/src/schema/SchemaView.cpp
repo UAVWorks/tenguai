@@ -214,30 +214,31 @@ void tengu::SchemaView::mousePressEvent ( QMouseEvent * event ) {
         AbstractEntityItem * entity = dynamic_cast<AbstractEntityItem *>( itemsList.at(0) );
         ItemWithLinks * itemWithLinks = dynamic_cast< ItemWithLinks * >( entity );      
         
+        // Wi try to find out first not-link element.
+        // Ищем первую не-связь.
+        
+        if ( ! itemWithLinks ) {
+            for ( int i=1; i<itemsList.count(); i++ ) {
+                itemWithLinks = dynamic_cast< ItemWithLinks * > ( itemsList.at(i) );
+                if ( itemWithLinks ) break;
+            };
+        };
+        
         // QGraphicsItem * item = itemAt( event->pos());
         
         bool controlPressed = event->modifiers() & Qt::ControlModifier;
     
         if ( itemsList.count() > 0 ) {
                                     
-            if ( ( semiCreatedLink ) && ( entity ) ) {
+            if ( ( semiCreatedLink ) && ( itemWithLinks ) ) {
                 
                 // If we have an semi-created link and mouse was pressed on the agent - we will finish the link creating 
                 // process. But we need not a link.
                 
                 // Если у нас полу-созданная связь и нажата мышь на агенте - завершаем создание связи. Но нам нужна не-связь.
-                                                
-                if ( ! itemWithLinks ) {
-                    for ( int i=1; i<itemsList.count(); i++ ) {
-                        itemWithLinks = dynamic_cast< ItemWithLinks * > ( itemsList.at(i) );
-                        if ( itemWithLinks ) break;
-                    };
-                };
-            
+                                                                            
                 semiCreatedLink->hide();                
-                if ( itemWithLinks )  {                                        
-                    itemWithLinks->addIncommingLink( semiCreatedLink );                    
-                };                
+                itemWithLinks->addIncommingLink( semiCreatedLink );                    
                 semiCreatedLink->show();                
                 semiCreatedLink = nullptr;                
                 
@@ -245,12 +246,46 @@ void tengu::SchemaView::mousePressEvent ( QMouseEvent * event ) {
                 if ( sc ) sc->unselectAll();
                 
             } else {
+                                
+                if ( itemWithLinks ) {
+                    
+                    // If there is at least one non-link in the array of elements under the mouse -
+                    // then it becomes active and dragged.
+                    
+                    // Если в массиве элементов под мышкой есть хотя бы одна не-связь - 
+                    // то активной и перетаскиваемой становится именно она.
                 
-                if ( entity ) {
-                    __entityDragged = entity;                
-                };
-            
-                emit signalItemPressed( entity, controlPressed );
+                    __entityDragged = itemWithLinks;
+                    emit signalItemPressed( itemWithLinks, controlPressed );
+                    
+                } else if ( entity ) {
+                    
+                    // If there are a links only, then we try to find the closest one to the point of the mouse from them.
+                    // Если там только связи, то пытаемся найти из них самую ближнюю к точке мыши.
+                    
+                    float distance = MAXIMUM_CONSTRAINT;
+                    LinkItem * link = nullptr;
+                    for ( int i=0; i<itemsList.count(); i++ ) {
+                        LinkItem * l = dynamic_cast< LinkItem * > ( itemsList.at(i ) );
+                        if ( l ) {
+                            float d = l->distanceTo( mapToScene( event->pos() ) );
+                            if ( d < distance ) {
+                                distance = d;
+                                link = l;
+                            };
+                        };
+                    };
+                    
+                    if ( link ) {
+                        
+                        // Links are not dragged.
+                        // Связи - не таскаются.
+                        // __entityDragged = entity;                
+                    
+                        emit signalItemPressed( link, controlPressed );
+                    };
+                    
+                };                            
             };
         };        
         

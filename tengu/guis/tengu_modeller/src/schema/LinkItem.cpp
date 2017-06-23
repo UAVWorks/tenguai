@@ -492,6 +492,33 @@ void tengu::LinkItem::paint ( QPainter * painter, const QStyleOptionGraphicsItem
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
+// *                                    Calculate distance to global schema point                                     *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                         Посчитать расстояние до точки в глобальных координатах всей схемы.                       *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+float tengu::LinkItem::distanceTo ( QPointF point ) {
+        
+    QPointF delta = point - QPoint(x(), y() ) - __posFrom;
+    
+    QPoint begin( x() + __posFrom.x(), y() + __posFrom.y() );
+    QPoint end( x() + __posTo.x(), y() + __posTo.y() );
+    QLineF line( begin, end );
+    QLineF normal = line.normalVector();    
+    
+    normal.setP1( normal.p1() + delta );
+    normal.setP2( normal.p2() + delta );
+        
+    QPointF intersect;    
+    normal.intersect( line, & intersect );
+    intersect = intersect - point;
+    
+    return intersect.manhattanLength();
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
 // *                                                The destructor.                                                   *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                                                  Деструктор.                                                     *
