@@ -52,7 +52,10 @@ HEADERS  += src/overboard/XPlaneAgent.h     \
         src/WorkSpace.h                     \
         src/MainWindowRight.h               \
         src/schema/SchemaScene.h            \
-        src/schema/SchemaView.h      
+        src/schema/SchemaView.h             \
+        src/DialogProperties.h              \
+        src/DialogPropertiesSprout.h        \
+        src/DialogPropertiesTask.h
 
 SOURCES += src/main.cpp                     \
         src/overboard/XPlaneAgent.cpp       \
@@ -81,7 +84,10 @@ SOURCES += src/main.cpp                     \
         src/WorkSpace.cpp                   \
         src/MainWindowRight.cpp             \
         src/schema/SchemaScene.cpp          \
-        src/schema/SchemaView.cpp
+        src/schema/SchemaView.cpp           \
+        src/DialogProperties.cpp            \
+        src/DialogPropertiesSprout.cpp      \
+        src/DialogPropertiesTask.cpp
 
 RESOURCES += tengu_modeller.qrc
 

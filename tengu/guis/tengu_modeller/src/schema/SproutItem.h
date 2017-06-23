@@ -80,6 +80,12 @@ namespace tengu {
             float getMaximalValue();
             void setMaximalValue( float max );
             
+            /**
+             * @short Manual signal name selection.
+             */
+            
+            bool manualSignalNameSelection;
+            
         private:
             
             sprout_orientation_t __orientation;

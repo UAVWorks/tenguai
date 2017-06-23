@@ -24,7 +24,9 @@ tengu::MainWindow::MainWindow(QWidget *parent)
     setWindowTitle( tr("Tengu modeller") );
     setWindowIcon( QIcon( QPixmap(":tengu_32.png") ) );
     
-    // __workSpace = new WorkSpace();
+    __mongo = new MongoStorage();
+    
+    __workSpace = new WorkSpace();
     __agentPropertyModel = new AgentPropertyModel();
     __agentPropertyDelegate = new AgentPropertyDelegate( __agentPropertyModel );
     
@@ -65,9 +67,8 @@ tengu::MainWindow::MainWindow(QWidget *parent)
     __createMainMenu();
     __createToolBar();
     __createStatusBar();    
-        
-    __mongo = new MongoStorage();
-    
+    __createDialogs();
+            
     // __mongo->store( task );
     
 }
@@ -307,6 +308,19 @@ void tengu::MainWindow::__createSchemaScene() {
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
+// *                                                   Create dialogs.                                                *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                                 Создание диалогов.                                               *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindow::__createDialogs() {
+    __dialogPropertiesSprout = new DialogPropertiesSprout( __workSpace );
+    __dialogPropertiesTask = new DialogPropertiesTask( __workSpace );
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
 // *                                                 Create new process.                                              *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                                               Создание нового процесса.                                          *
@@ -364,7 +378,17 @@ void tengu::MainWindow::__on_schema_item_pressed ( tengu::AbstractEntityItem * i
 // ********************************************************************************************************************
 
 void tengu::MainWindow::__on_schema_item_double_clicked ( tengu::AbstractEntityItem * item, bool controlPressed ) {
-
+    DialogProperties * dialog = nullptr;
+    SproutItem * sproutItem = dynamic_cast< SproutItem * > ( item );
+    TaskItem * taskItem = dynamic_cast< TaskItem * > ( item );
+    
+    if ( sproutItem ) dialog = __dialogPropertiesSprout;        
+    if ( taskItem ) dialog = __dialogPropertiesTask;
+    
+    if ( dialog ) {
+        dialog->fillFrom( item );
+        dialog->show();
+    };
 }
 
 // ********************************************************************************************************************

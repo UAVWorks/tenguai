@@ -40,6 +40,8 @@
 #include "MainWindowRight.h"
 #include "Constants.h"
 #include "../guis.h"
+#include "DialogPropertiesSprout.h"
+#include "DialogPropertiesTask.h"
 
 
 namespace tengu {
@@ -95,12 +97,13 @@ namespace tengu {
             void __createActions();
             void __createToolBar();
             void __createStatusBar();
+            void __createDialogs();
             
             QAction * __actionQuit;
             
             void __restoreSettings();
                         
-            // WorkSpace * __workSpace;
+            WorkSpace * __workSpace;
             
             // MVC-model for editing property of current (selected) agent or state.
             // MVC-модель редактирования свойств текущего (выбранного) агента или состояния.
@@ -114,6 +117,9 @@ namespace tengu {
             void closeEvent( QCloseEvent * event );
             void showEvent( QShowEvent * event );
             void keyPressEvent( QKeyEvent * event );
+            
+            DialogPropertiesSprout * __dialogPropertiesSprout;
+            DialogPropertiesTask * __dialogPropertiesTask;
             
         private slots:
             

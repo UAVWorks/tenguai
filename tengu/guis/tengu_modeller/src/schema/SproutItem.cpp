@@ -28,7 +28,9 @@ tengu::SproutItem::SproutItem ( tengu::Sprout * sprout, QGraphicsItem* parent )
     _iAmSprout = true;
     
     _boundingRect = QRect( 0, 0, __width, __height );
-    _className = "SproutItem";    
+    _className = "SproutItem";   
+    
+    manualSignalNameSelection = false;
     
 }
 

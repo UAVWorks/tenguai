@@ -30,6 +30,8 @@
     <file alias="attach_16.png">images/attach_16.png</file>
     <file alias="attach_32.png">images/attach_32.png</file>
     <file alias="button_navigation_16.png">images/button_navigation_16.png</file>
+    <file alias="accept_button_32.png">images/accept_button_32.png</file>
+    <file alias="cancel_32.png">images/cancel_32.png</file>
     <file alias="Falcon_256.png">images/Falcon-256.png</file>
 </qresource>
 </RCC>
