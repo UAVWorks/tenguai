@@ -37,10 +37,17 @@ tengu::ProcessStartItem::ProcessStartItem ( tengu::ProcessStart * entity, QGraph
 
 void tengu::ProcessStartItem::paint ( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget ) {
     
+    Q_UNUSED( option );
+    Q_UNUSED( widget );
+    
     _storePainterSettings( painter );
+    QPixmap pixmap( _boundingRect.width(), _boundingRect.height() );
+    QPainter p( & pixmap );
+    p.setBrush( QColor( 0, 0, 0, 255 ) );
+    p.eraseRect( 0, 0, _boundingRect.width(), _boundingRect.height() );
     
     QPen borderPen = _processDiagram_borderPen();
-    painter->setPen( borderPen );
+    p.setPen( borderPen );
     
     QPoint center( __radius, __radius );
     int focalShift = __radius - __radius / 3;
@@ -50,12 +57,13 @@ void tengu::ProcessStartItem::paint ( QPainter* painter, const QStyleOptionGraph
     gradient.setColorAt(0, _processDiagram_brightFillColor() );
     gradient.setColorAt(1, _processDiagram_darkFillColor() );
     QBrush brush = QBrush( gradient );    
-    painter->setBrush( brush );
-    painter->drawEllipse( 1, 1, _boundingRect.width() - 2, _boundingRect.height() - 2 );
+    p.setBrush( brush );
+    p.drawEllipse( 1, 1, _boundingRect.width() - 2, _boundingRect.height() - 2 );
     
     QPixmap pm = _executionModePixmap();
-    painter->drawPixmap( _boundingRect.width() - 34, 1, pm );
+    p.drawPixmap( _boundingRect.width() - 34, 1, pm );
     
+    painter->drawPixmap( 0, 0, pixmap );
     _restorePainterSettings( painter );
     
     /*

@@ -19,7 +19,8 @@
 
 tengu::AbstractEntity::AbstractEntity () 
 {
-    __name = QString("");
+    __system_name = QString("");
+    __human_name = QString("");
     __comment = QString("");
     
     // The UUID is very important parameter. It can not be changed except fromJSON constructor.
@@ -46,8 +47,8 @@ tengu::AbstractEntity::AbstractEntity ()
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-QString tengu::AbstractEntity::getName() {
-    return __name;
+QString tengu::AbstractEntity::getSystemName() {
+    return __system_name;
 }
 
 // ********************************************************************************************************************
@@ -58,9 +59,35 @@ QString tengu::AbstractEntity::getName() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::AbstractEntity::setName ( QString name ) {
-    __name = name;
+void tengu::AbstractEntity::setSystemName ( QString name ) {
+    __system_name = name;
+    __system_name = __system_name.replace(' ', '_');
     _somethingChanged();    
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                             Get human name of this agent.                                        *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                        Получить "человеческое" имя этого агента.                                 *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+QString tengu::AbstractEntity::getHumanName() {
+    return __human_name;    
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                         Set the human name of this agent.                                        *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                     Установить человеческое имя этого агента.                                    *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::AbstractEntity::setHumanName( QString name ) {
+    __human_name = name;
+    _somethingChanged();
 }
 
 // ********************************************************************************************************************
@@ -190,7 +217,8 @@ QJsonObject tengu::AbstractEntity::toJSON() {
     
     o.insert("database", "tengu");
     o.insert("uuid", __uuid );
-    o.insert("name", __name );
+    o["system_name"] = __system_name;
+    o["human_name"] = __human_name;
     o.insert("comment", __comment );
     o.insert("execution_mode", (int) __execution_mode );
     o.insert("last_modified", __lastModified.toString("t yyyy-MM-dd hh:mm:ss:zzz") );
@@ -242,7 +270,8 @@ bool tengu::AbstractEntity::fromJSON ( QJsonObject json ) {
     };
     
     if ( json.contains("uuid" ) ) __uuid = json.value("uuid").toString();
-    if ( json.contains("name" ) ) __name = json.value("name").toString();
+    if ( json.contains("system_name" ) ) __system_name = json.value("system_name").toString();
+    if ( json.contains("human_name" ) ) __human_name = json.value("human_name").toString();
     if ( json.contains("execution_mode") ) __execution_mode = ( execution_mode_t ) json.value("execution_mode").toInt();
     if ( json.contains("last_modified") ) __lastModified = QDateTime::fromString( json.value("last_modified").toString(), "t yyyy-MM-dd hh:mm:ss:zzz" );
     

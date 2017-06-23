@@ -232,6 +232,7 @@ void tengu::AbstractEntityItem::_storePainterSettings ( QPainter * painter ) {
     __oldPainterBrush = painter->brush();
     __oldPainterFont = painter->font();
     __oldPainterCompositionMode = painter->compositionMode();
+    painter->setCompositionMode( QPainter::CompositionMode_Multiply );
     
 }
 
@@ -393,57 +394,48 @@ QList< QList< tengu::AgentPropertyElement > > tengu::AbstractEntityItem::propert
     
     // UUID
     
-    QList<AgentPropertyElement > uuidElement;
-    
-    AgentPropertyElement uuidName( tr ("UUID" ) );
-    uuidName.backgroundColor = uuidName.widgetBackground();
-    uuidElement.append( uuidName );
-    
+    QList<AgentPropertyElement > uuidElement;    
+    uuidElement.append( AgentPropertyElement::captionElement("UUID") );    
     AgentPropertyElement uuidValue( getUUID() );
     uuidValue.backgroundColor = uuidValue.disabledBackground();
-    uuidElement.append( uuidValue );
-    
+    uuidElement.append( uuidValue );    
     result.append( uuidElement );
     
-    // Name
+    // System Name
     
-    QList< AgentPropertyElement > nameElement;
+    QList< AgentPropertyElement > systemNameElement;    
+    systemNameElement.append( AgentPropertyElement::captionElement(tr("System name")) );    
+    AgentPropertyElement systemNameValue( getSystemName() );
+    systemNameValue.readOnly = false;
+    systemNameValue.propertyName = QString("system_name");
+    systemNameElement.append( systemNameValue );    
+    result.append( systemNameElement );
     
-    AgentPropertyElement nameName( tr("Name") );
-    nameName.backgroundColor = nameName.widgetBackground();
-    nameElement.append( nameName );
+    // Human name
     
-    AgentPropertyElement nameValue( getName() );
-    nameValue.readOnly = false;
-    nameValue.propertyName = QString("name");
-    nameElement.append( nameValue );
-    
-    result.append( nameElement );
+    QList<AgentPropertyElement> humanNameElement;
+    humanNameElement.append( AgentPropertyElement::captionElement( tr("Human name") ));
+    AgentPropertyElement humanNameValue( getHumanName() );
+    humanNameValue.readOnly = false;
+    humanNameValue.propertyName = "human_name";
+    humanNameElement.append( humanNameValue );    
+    result.append( humanNameElement );
     
     // Comment
     
-    QList < AgentPropertyElement > commentElement;
-    
-    AgentPropertyElement commentName( tr( "Comment" ) );
-    commentName.backgroundColor = commentName.widgetBackground();
-    commentElement.append( commentName );
-    
+    QList < AgentPropertyElement > commentElement;    
+    commentElement.append( AgentPropertyElement::captionElement( tr( "Comment" ) ) );    
     AgentPropertyElement commentValue( getComment() );
     commentValue.readOnly = false;
     commentValue.propertyName = QString("comment");
-    commentElement.append( commentValue );
-    
+    commentElement.append( commentValue );    
     result.append( commentElement );
     
     // Agent execution mode selector. This is an combo-box.
     // Выбор режима выполнения данного агента. Это - комбо-бокс.
     
-    QList<AgentPropertyElement> executionModeElement;
-    
-    AgentPropertyElement executionModeName( tr("Execution mode") );
-    executionModeName.backgroundColor = executionModeName.widgetBackground();
-    executionModeElement.append( executionModeName );
-    
+    QList<AgentPropertyElement> executionModeElement;    
+    executionModeElement.append( AgentPropertyElement::captionElement(  tr("Execution mode") ) );    
     AgentPropertyElement executionModeValue;
     executionModeValue.type = AgentPropertyElement::ExecutionModeSelector;
     executionModeValue.readOnly = false;
@@ -508,9 +500,9 @@ QString tengu::AbstractEntityItem::getUUID() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-QString tengu::AbstractEntityItem::getName() {
+QString tengu::AbstractEntityItem::getSystemName() {
     
-    if ( _entity ) return _entity->getName();
+    if ( _entity ) return _entity->getSystemName();
     return QString("");
     
 }
@@ -523,13 +515,41 @@ QString tengu::AbstractEntityItem::getName() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::AbstractEntityItem::setName ( QString name ) {
+void tengu::AbstractEntityItem::setSystemName ( QString name ) {
     
     if ( _entity ) {
-        _entity->setName( name );
+        _entity->setSystemName( name );
         _somethingChanged();
     };
         
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                                 Get human name                                                   *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                           Получить "человеческое" имя.                                           *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+QString tengu::AbstractEntityItem::getHumanName() {
+    if ( _entity ) return _entity->getHumanName();
+    return QString ("");    
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                                  Set human name                                                  *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                           Установить человеческое имя.                                           *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::AbstractEntityItem::setHumanName ( QString name ) {
+    if ( _entity ) {
+        _entity->setHumanName( name );
+        _somethingChanged();
+    };
 }
 
 // ********************************************************************************************************************

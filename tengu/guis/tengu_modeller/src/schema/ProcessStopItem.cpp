@@ -44,11 +44,16 @@ tengu::ProcessStopItem::ProcessStopItem ( tengu::ProcessStop * entity, QGraphics
 void tengu::ProcessStopItem::paint ( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget ) {
     
     _storePainterSettings( painter );
+    QPixmap pixmap( _boundingRect.width(), _boundingRect.height() );
+    QPainter p( & pixmap );
+    p.setBrush( QColor( 0, 0, 0, 255 ) );
+    p.eraseRect( 0, 0, _boundingRect.width(), _boundingRect.height() );
+    
     
     QPen borderPen = _processDiagram_borderPen();
-    painter->setPen( borderPen );
+    p.setPen( borderPen );
     
-    QPoint center( __radius + 5, __radius +5 );
+    QPoint center( __radius + 5, __radius + 5 );
     int focalShift = __radius + 5 - __radius / 3;
     QPoint focal( focalShift, focalShift );
     
@@ -56,20 +61,22 @@ void tengu::ProcessStopItem::paint ( QPainter* painter, const QStyleOptionGraphi
     gradient.setColorAt(0, _processDiagram_brightFillColor() );
     gradient.setColorAt(1, _processDiagram_darkFillColor() );
     QBrush brush = QBrush( gradient );    
-    painter->setBrush( brush );
-    painter->drawEllipse( 5, 5, _boundingRect.width() - 10, _boundingRect.height() - 10 );
+    p.setBrush( brush );
+    p.drawEllipse( 6, 6, _boundingRect.width() - 12, _boundingRect.height() - 12 );
     
     // Circle around element
     // Окружность вокруг элемента.
     
-    painter->drawArc( _boundingRect, 0, 16*360 );       
+    QRect r( 1,1, _boundingRect.width() - 2, _boundingRect.height() - 2 );
+    p.drawArc( r, 0, 16*360 );       
     
     // Execute mode icon.
     // Картинка режима выполнения.
     
     QPixmap pm = _executionModePixmap();
-    painter->drawPixmap( _boundingRect.width() - 34, 1, pm );
+    p.drawPixmap( _boundingRect.width() - 34, 1, pm );
     
+    painter->drawPixmap( 0, 0, pixmap );
     _restorePainterSettings( painter );
     
     

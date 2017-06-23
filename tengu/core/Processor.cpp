@@ -50,7 +50,7 @@ bool tengu::Processor::_loadConfig ( QString fileName ) {
         
         QString name = settings.value("system_name", "").toString();
         if ( ! name.isEmpty() ) {
-            setName( name );
+            setSystemName( name );
         };
         
         QString comment = settings.value("comment", "").toString();
@@ -86,7 +86,7 @@ bool tengu::Processor::configCorrect( bool say ) {
         return false;
     };
     
-    if ( getName().isEmpty() ) {
+    if ( getSystemName().isEmpty() ) {
         if ( say ) qDebug() << tr("Processor::configCorrect() : system_name is empty");
         return false;
     };

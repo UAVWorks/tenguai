@@ -74,6 +74,9 @@ void tengu::SproutItem::recalculate() {
 
 void tengu::SproutItem::paint ( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget ) {
     
+    Q_UNUSED( option );
+    Q_UNUSED( widget );
+    
     _storePainterSettings( painter );
     
     // Draw the picture at the in-memory pixmap
@@ -140,8 +143,7 @@ void tengu::SproutItem::paint ( QPainter* painter, const QStyleOptionGraphicsIte
     
     // Output picture from memory to screen
     // вывод картинки из памяти на экран.
-    
-    painter->setCompositionMode( QPainter::CompositionMode_Multiply );
+        
     painter->drawPixmap( 0, 0, rotated );
         
     _restorePainterSettings( painter );

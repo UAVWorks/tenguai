@@ -34,20 +34,30 @@ tengu::TaskItem::TaskItem ( tengu::Task * task, QGraphicsItem * parent )
 
 void tengu::TaskItem::paint ( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget ) {
     
+    Q_UNUSED( option );
+    Q_UNUSED( widget );
+    
     _storePainterSettings( painter );
-    _drawTaskRectangle( painter );
+    
+    QPixmap pixmap( _boundingRect.width(), _boundingRect.height() );
+    QPainter p ( & pixmap );    
+    
+    // p.setBrush( QColor(0, 0, 0, 255) );
+    // p.eraseRect( 0, 0, _boundingRect.width(), _boundingRect.height() );
+    
+    _drawTaskRectangle( & p );
     
     // Execution mode picture
     // Картинка режима выполнения.
     
     QPixmap pm = _executionModePixmap();
-    if ( getExecutionMode() == AbstractAgent::EM_XPLANE ) painter->drawPixmap( _boundingRect.width() - 42, 6, pm );
-    else painter->drawPixmap( _boundingRect.width() - 36, 6, pm );
+    if ( getExecutionMode() == AbstractAgent::EM_XPLANE ) p.drawPixmap( _boundingRect.width() - 42, 6, pm );
+    else p.drawPixmap( _boundingRect.width() - 36, 6, pm );
     
     // Name of this task.
     // Имя данной задачи.
     
-    QString name = getName();
+    QString name = getHumanName();
     if ( ! name.isEmpty() ) {
         
         int pixels = 22;
@@ -59,11 +69,13 @@ void tengu::TaskItem::paint ( QPainter * painter, const QStyleOptionGraphicsItem
             font.setPixelSize( pixels );
             mcs = QFontMetrics( font );
         };
-        painter->setFont( font );
+        p.setFont( font );
         int x = ( _boundingRect.width() - mcs.width( name ) ) / 2;
         int y = mcs.height() + ( _boundingRect.height() - mcs.height() ) / 2; 
-        painter->drawText( QPoint(x,y), name );
+        p.drawText( QPoint(x,y), name );
     };
+    
+    painter->drawPixmap( 0, 0, pixmap );
     
     _restorePainterSettings( painter );
     

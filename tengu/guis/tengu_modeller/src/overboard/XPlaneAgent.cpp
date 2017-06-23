@@ -21,7 +21,9 @@ tengu::XPlaneAgent::XPlaneAgent()
     : tengu::AbstractAgent()
 {
     
-    AbstractEntity::setName("X-Plane");
+    AbstractEntity::setSystemName("X-Plane");
+    AbstractEntity::setHumanName("X-Plane");
+    
     AbstractEntity::setExecutionMode( AbstractEntity::EM_XPLANE );
     
     CREATE_XTENGU_SETTINGS;
@@ -62,7 +64,8 @@ void tengu::XPlaneAgent::__init_sprout ( QString settingsGroup, tengu::Sprout::s
     
     for ( int i=0; i<TOTAL_AIRCRAFTS_COUNT; i++ ) {
         Sprout * sp = new Sprout( this );
-        sp->setName( name );
+        sp->setSystemName( name );
+        sp->setHumanName( name );
         sp->setSproutType( type );
         
         // Crossing. Because output for sprout is an input for X-Plane.

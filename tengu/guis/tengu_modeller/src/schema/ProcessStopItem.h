@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include <QPen>
+
 #include "ItemWithLinks.h"
 #include "ProcessStop.h"
 

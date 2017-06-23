@@ -60,7 +60,8 @@ namespace tengu {
         
         Q_OBJECT
         
-        Q_PROPERTY( QString name READ getName WRITE setName );
+        Q_PROPERTY( QString system_name READ getSystemName WRITE setSystemName );
+        Q_PROPERTY( QString human_name READ getHumanName WRITE setHumanName );
         Q_PROPERTY( QString comment READ getComment WRITE setComment );
         Q_PROPERTY( QString uuid READ getUUID );   
         Q_PROPERTY( AbstractEntity::execution_mode_t execution_mode READ getExecutionMode WRITE setExecutionMode );
@@ -102,8 +103,10 @@ namespace tengu {
             // ------------------------------------------------------------------------------------
             
             virtual QString getUUID();
-            virtual QString getName();
-            virtual void setName( QString name );
+            virtual QString getSystemName();
+            virtual void setSystemName( QString name );
+            virtual QString getHumanName();
+            virtual void setHumanName( QString name );
             virtual QString getComment();
             virtual void setComment( QString comment );
             virtual AbstractEntity::execution_mode_t getExecutionMode();
@@ -160,7 +163,7 @@ namespace tengu {
             
             QPixmap _executionModePixmap( bool forSize32 = true );
             
-            void _somethingChanged();
+            void _somethingChanged();                        
                         
         private:
             

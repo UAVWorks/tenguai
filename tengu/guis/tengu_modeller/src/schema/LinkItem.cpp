@@ -429,6 +429,7 @@ void tengu::LinkItem::paint ( QPainter * painter, const QStyleOptionGraphicsItem
     QPixmap pixmap( _boundingRect.width() + 1, _boundingRect.height() + 1 );
     QPainter p( & pixmap );
     QColor c(0,0,0,255);
+    p.setBrush( QBrush( c ) );
     p.eraseRect( 0, 0, _boundingRect.width() + 1, _boundingRect.height() + 1 );
         
     QPen pen;
@@ -448,7 +449,7 @@ void tengu::LinkItem::paint ( QPainter * painter, const QStyleOptionGraphicsItem
             pen.setColor( QColor( 92, 32, 32 ) );       
             pen.setWidth( 6 );
         } else if (( __withSproutFrom ) || ( __withSproutTo ) ) {
-            pen.setColor( QColor( 192, 192, 192 ) );
+            pen.setColor( QColor( 164, 164, 164 ) );
             pen.setWidth( 1 );
         } else  {
             pen.setColor( _processDiagram_borderColor() );
@@ -483,7 +484,6 @@ void tengu::LinkItem::paint ( QPainter * painter, const QStyleOptionGraphicsItem
         p.drawLine( __posTo, endB );
     }
     
-    painter->setCompositionMode( QPainter::CompositionMode_Multiply );
     painter->drawPixmap(0, 0, pixmap );
     
     _restorePainterSettings( painter );

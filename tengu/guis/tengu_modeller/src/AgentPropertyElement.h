@@ -75,6 +75,8 @@ namespace tengu {
             
             agent_property_t type;
             
+            static AgentPropertyElement captionElement( QString title );
+            
             // QVariant get();
             // void set( QVariant val );
     };

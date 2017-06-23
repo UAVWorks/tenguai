@@ -47,8 +47,11 @@ namespace tengu {
             // The name of this agent.
             // Имя агента.
             
-            virtual QString getName();
-            virtual void setName( QString name );
+            virtual QString getSystemName();
+            virtual void setSystemName( QString name );
+            
+            virtual QString getHumanName();
+            virtual void setHumanName( QString name );
             
             // The comment of this entity.
             // Комментарий данной "сущности".
@@ -97,7 +100,9 @@ namespace tengu {
             // Entity name
             // Имя сущности
             
-            QString __name;
+            QString __system_name;
+            
+            QString __human_name;
             
             // Any human readable comment for this entity.
             // Любой человеко-ориентированный комментарий для сущности.

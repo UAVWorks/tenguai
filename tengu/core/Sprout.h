@@ -22,7 +22,8 @@ namespace tengu {
         
         Q_OBJECT        
 
-        Q_PROPERTY( QString name READ getName WRITE setName );
+        Q_PROPERTY( QString system_name READ getSystemName WRITE setSystemName );
+        Q_PROPERTY( QString human_name READ getHumanName WRITE setHumanName );
         Q_PROPERTY( QString comment READ getComment WRITE setComment );
         Q_PROPERTY( QString uuid READ getUUID );
         Q_PROPERTY( execution_mode_t execution_mode READ getExecutionMode WRITE setExecutionMode );
