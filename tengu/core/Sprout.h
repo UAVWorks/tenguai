@@ -66,6 +66,8 @@ namespace tengu {
             
             void setSproutType( sprout_type_t type );
             sprout_type_t getSproutType();
+            bool isInput();
+            bool isOutput();
             
             void subscribe();
             void subscribed( QString channel );
