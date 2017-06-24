@@ -1,36 +1,27 @@
 // ********************************************************************************************************************
 // *                                                                                                                  *
-// *                                                Left piece of main window.                                        *
+// *                   Entity entering the workspace (an aiircraft, an airport. an vehicle e.t.c. )                   *
 // * ---------------------------------------------------------------------------------------------------------------- *
-// *                                                 Левая часть главного окна.                                       *
+// *                   Сущность, входящая в рабочее пространство (самолет, аэропорт, машинка и др.)                   *
 // *                                                                                                                  *
-// * Eugene G. Sysoletin <e.g.sysoletin@gmail.com>                                       Created 28 may 2017 at 15:20 *
+// * Eugene G. Sysoletin <e.g.sysoletin@gmail.com>                                       Created 24 jun 2017 at 16:07 *
 // ********************************************************************************************************************
 
 #pragma once
 
-#include <QWidget>
-#include <QLayout>
-#include <QToolBox>
-
-#include "WorkSpace.h"
-#include "TreeStructure.h"
+#include "Processor.h"
 
 namespace tengu {
     
-    class MainWindowLeft : public QWidget {
-    
+    class TopLevelEntity : public Processor {
+        
         Q_OBJECT
         
         public:
-            MainWindowLeft( WorkSpace * ws );
-            virtual ~MainWindowLeft();
-            QToolBox * toolbox;
-            TreeStructure * treeStructure;
             
+            TopLevelEntity();
+            virtual ~TopLevelEntity();
+        protected:
         private:
-            
     };
-    
 };
-

@@ -1,25 +1,27 @@
 // ********************************************************************************************************************
 // *                                                                                                                  *
-// *      The top level for modelling of a system: a set of agents and it's states for graphics representation.       *
+// *                                   The graphics representation of top-level entity                                *
 // * ---------------------------------------------------------------------------------------------------------------- *
-// *    Верхний уровень моделирования системы: множество агентов и их состояний для графического представления.       *
+// *                                  Графическое представление сущности верхнего уровня.                             *
 // *                                                                                                                  *
-// * Eugene G. Sysoletin <e.g.sysoletin@gmail.com>                                       Created 02 jun 2017 at 16:47 *
+// * Eugene G. Sysoletin <e.g.sysoletin@gmail.com>                                       Created 24 jun 2017 at 16:12 *
 // ********************************************************************************************************************
 
 #pragma once
 
-#include "AbstractAgent.h"
+#include "AbstractEntityItem.h"
 
 namespace tengu {
-
-    class WorkSpace : public AbstractAgent {
     
+    class TopLevelIem : public AbstractEntityItem {
+        
         Q_OBJECT
+        
         public:
-            WorkSpace();
-            virtual ~WorkSpace();
+            
+            TopLevelIem ( AbstractEntity * entity = nullptr, QGraphicsItem* parent = nullptr );
+            virtual ~TopLevelIem();
     };
     
-}; // namespace tengu
+};
 

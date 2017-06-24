@@ -26,7 +26,11 @@ tengu::MainWindow::MainWindow(QWidget *parent)
     
     __mongo = new MongoStorage();
     
-    __workSpace = new WorkSpace();
+    // Workspace must be created before widgets based on it
+    // Рабочее пространство должно быть создано до виджитов, которые на нем базируются.
+    
+    __createWorkspace();    
+    
     __agentPropertyModel = new AgentPropertyModel();
     __agentPropertyDelegate = new AgentPropertyDelegate( __agentPropertyModel );
     
@@ -51,7 +55,7 @@ tengu::MainWindow::MainWindow(QWidget *parent)
     
     lay->addWidget( __hSplitter );
     
-    __left = new MainWindowLeft();    
+    __left = new MainWindowLeft( __workSpace );    
     
     __right = new MainWindowRight();
     
@@ -71,6 +75,33 @@ tengu::MainWindow::MainWindow(QWidget *parent)
             
     // __mongo->store( task );
     
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                               Create workspace object.                                           *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                         Создание объекта рабочего пространства.                                  *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindow::__createWorkspace() {
+    
+    __workSpace = new WorkSpace();
+    
+    // In the workspace we always have an x-plane process.
+    // Внутри рабочего пространства у нас всегда есть процесс X-Plane.
+    
+    // We always have invisible X-Plane schema item for modelling.
+    // У нас всегда есть невидимый компонент схемы - X-Plane. Он для моделирования.
+    
+    /*
+    XPlaneAgent * xplane = new XPlaneAgent();
+    XPlaneAgentItem * xpItem = new XPlaneAgentItem( xplane );
+    xpItem->setX( 0 );
+    xpItem->setY( 0 );
+    __schemaScene->addItem( xpItem );
+    */
 }
 
 // ********************************************************************************************************************
@@ -293,16 +324,7 @@ void tengu::MainWindow::__createSchemaScene() {
     
     __schemaScene = new SchemaScene();
     
-    QObject::connect( __schemaScene, SIGNAL( signalSomethingChanged() ), this, SLOT( __on_schema_something_changed() ) );
-        
-    // We always have invisible X-Plane schema item for modelling.
-    // У нас всегда есть невидимый компонент схемы - X-Plane. Он для моделирования.
-    
-    XPlaneAgent * xplane = new XPlaneAgent();
-    XPlaneAgentItem * xpItem = new XPlaneAgentItem( xplane );
-    xpItem->setX( 0 );
-    xpItem->setY( 0 );
-    __schemaScene->addItem( xpItem );
+    QObject::connect( __schemaScene, SIGNAL( signalSomethingChanged() ), this, SLOT( __on_schema_something_changed() ) );            
 
 }
 

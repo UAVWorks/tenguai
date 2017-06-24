@@ -28,7 +28,10 @@ INCLUDEPATH += src src/schema src/overboard ../../core ../../loredis/src /usr/in
 LIBS += -lLoRedis -L../../loredis/build -ltengu_core -L../../core/build -lhiredis -levent -lmongoc-1.0 -L/usr/lib/x86_64-linux-gnu
 
 HEADERS  += src/overboard/XPlaneAgent.h     \ 
+        src/overboard/TopLevelEntity.h      \
+        src/overboard/WorkSpace.h           \        
         src/schema/AbstractEntityItem.h     \
+        src/schema/TopLevelItem.h           \
         src/schema/ItemWithLinks.h          \
         src/schema/XPlaneAgentItem.h        \
         src/schema/ProcessStartItem.h       \
@@ -44,12 +47,12 @@ HEADERS  += src/overboard/XPlaneAgent.h     \
         src/LibraryTab_Processes.h          \
         src/LibraryTab.h                    \
         src/MainWindow.h                    \
+        src/TreeStructure.h                 \
         src/MainWindowLeft.h                \
         src/AgentPropertyElement.h          \
         src/AgentPropertyDelegate.h         \
         src/AgentPropertyModel.h            \
-        src/AgentPropertyView.h             \
-        src/WorkSpace.h                     \
+        src/AgentPropertyView.h             \        
         src/MainWindowRight.h               \
         src/schema/SchemaScene.h            \
         src/schema/SchemaView.h             \
@@ -59,7 +62,10 @@ HEADERS  += src/overboard/XPlaneAgent.h     \
 
 SOURCES += src/main.cpp                     \
         src/overboard/XPlaneAgent.cpp       \
+        src/overboard/TopLevelEntity.cpp    \
+        src/overboard/WorkSpace.cpp         \
         src/schema/AbstractEntityItem.cpp   \
+        src/schema/TopLevelItem.cpp         \
         src/schema/ItemWithLinks.cpp        \
         src/schema/XPlaneAgentItem.cpp      \
         src/schema/ProcessStartItem.cpp     \
@@ -76,12 +82,12 @@ SOURCES += src/main.cpp                     \
         src/LibraryTab_Processes.cpp        \
         src/LibraryTab.cpp                  \
         src/MainWindow.cpp                  \
+        src/TreeStructure.cpp               \
         src/MainWindowLeft.cpp              \
         src/AgentPropertyElement.cpp        \
         src/AgentPropertyDelegate.cpp       \
         src/AgentPropertyModel.cpp          \
-        src/AgentPropertyView.cpp           \
-        src/WorkSpace.cpp                   \
+        src/AgentPropertyView.cpp           \        
         src/MainWindowRight.cpp             \
         src/schema/SchemaScene.cpp          \
         src/schema/SchemaView.cpp           \

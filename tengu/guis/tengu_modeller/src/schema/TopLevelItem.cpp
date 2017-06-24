@@ -1,44 +1,37 @@
 // ********************************************************************************************************************
 // *                                                                                                                  *
-// *                                                Left piece of main window.                                        *
+// *                                   The graphics representation of top-level entity                                *
 // * ---------------------------------------------------------------------------------------------------------------- *
-// *                                                 Левая часть главного окна.                                       *
+// *                                  Графическое представление сущности верхнего уровня.                             *
 // *                                                                                                                  *
-// * Eugene G. Sysoletin <e.g.sysoletin@gmail.com>                                       Created 28 may 2017 at 15:24 *
+// * Eugene G. Sysoletin <e.g.sysoletin@gmail.com>                                       Created 24 jun 2017 at 16:12 *
 // ********************************************************************************************************************
 
-#include "MainWindowLeft.h"
+#include "TopLevelItem.h"
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
-// *                                                    The constructor.                                              *
+// *                                                  The constructor.                                                *
 // * ---------------------------------------------------------------------------------------------------------------- *
-// *                                                       Конструктор.                                               *
+// *                                                    Конструктор.                                                  *
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::MainWindowLeft::MainWindowLeft( WorkSpace * ws )
-    : QWidget()
+tengu::TopLevelIem::TopLevelIem ( tengu::AbstractEntity * entity, QGraphicsItem * parent ) 
+    : AbstractEntityItem ( entity, parent )
 {
-    QVBoxLayout * layout = new QVBoxLayout();
-    layout->setMargin( 0 );
-    layout->setSpacing( 0 );
-    setLayout( layout );
-    
-    toolbox = new QToolBox();
-    layout->addWidget( toolbox );
-    
-    treeStructure = new TreeStructure( ws );
-    toolbox->addItem( treeStructure, QIcon(QPixmap(":chart_organization_16.png")), tr("The Structure") );
+
 }
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
-// *                                                    The destructor.                                               *
+// *                                                 The destructor.                                                  *
 // * ---------------------------------------------------------------------------------------------------------------- *
-// *                                                       Деструктор                                                 *
+// *                                                    Деструктор.                                                   *
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::MainWindowLeft::~MainWindowLeft() {
+tengu::TopLevelIem::~TopLevelIem() {
+
 }
+

@@ -70,7 +70,7 @@ namespace tengu {
             void signalSomethingChanged();
             
         public:
-            
+                        
             AbstractEntityItem( AbstractEntity * entity = Q_NULLPTR, QGraphicsItem * parent = Q_NULLPTR );
             virtual ~AbstractEntityItem();
         

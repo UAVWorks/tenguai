@@ -34,6 +34,7 @@ tengu::AbstractEntityItem::AbstractEntityItem( AbstractEntity * entity, QGraphic
     
     // setAcceptHoverEvents( true );
     // setAcceptTouchEvents( true );
+    
 }
 
 // ********************************************************************************************************************

@@ -90,6 +90,7 @@ namespace tengu {
             
             MongoStorage * __mongo;
             
+            void __createWorkspace();
             void __createMainMenu();
             void __createLibraryTab();
             void __createSchemaView();
