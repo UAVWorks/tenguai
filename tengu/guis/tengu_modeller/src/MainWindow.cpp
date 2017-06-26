@@ -89,6 +89,9 @@ void tengu::MainWindow::__createWorkspace() {
     
     __workSpace = new WorkSpace();
     
+    XPlaneProcess * xpProcsss = new XPlaneProcess();
+    __workSpace->addChild( xpProcsss );
+    
     // In the workspace we always have an x-plane process.
     // Внутри рабочего пространства у нас всегда есть процесс X-Plane.
     

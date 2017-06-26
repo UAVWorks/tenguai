@@ -31,7 +31,7 @@ tengu::XPlaneAgentItem::XPlaneAgentItem ( XPlaneAgent * entity, QGraphicsItem * 
 // ********************************************************************************************************************
 
 void tengu::XPlaneAgentItem::checkEntity() {
-    if ( ! _entity ) _entity = new XPlaneAgent();
+    // if ( ! _entity ) _entity = new XPlaneAgent();
 }
 
 // ********************************************************************************************************************

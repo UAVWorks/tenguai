@@ -19,7 +19,7 @@
 // @todo remake that is the same with X-Tengu.
 // Переделать так, чтобы было одинаково с X-Tengu.
 
-#define CREATE_XTENGU_SETTINGS      QSettings settings( "/etc/tengu/xtengu.conf", QSettings::IniFormat )
+#define CREATE_XTENGU_SETTINGS      QSettings settings( "/etc/tenguai/xtengu.conf", QSettings::IniFormat )
 #define TOTAL_AIRCRAFTS_COUNT 20
 
 namespace tengu {
@@ -30,7 +30,7 @@ namespace tengu {
         
         public:
             
-            XPlaneAgent();
+            XPlaneAgent( int acf_index );
             virtual ~XPlaneAgent();
             
             void setName( QString name );
@@ -39,8 +39,11 @@ namespace tengu {
         protected:
             
         private:
+            
             QString __controlGroup;
             QString __conditionGroup;
+            
+            int __aircraft_index;
             
             void __init_sprout( QString settingsGroup, Sprout::sprout_type_t type, QString name );
             

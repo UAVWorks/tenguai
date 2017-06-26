@@ -51,7 +51,7 @@ extern void xplugin__log( QString msg );
 // To avoid difference in config file name
 // Чтобы избежать различия в имени конфигурационного файла.
 
-#define CREATE_XTENGU_SETTINGS QSettings settings( "/etc/tengu/xtengu.conf", QSettings::IniFormat )
+#define CREATE_XTENGU_SETTINGS QSettings settings( "/etc/tenguai/xtengu.conf", QSettings::IniFormat )
 
 // Total aircrafts in X-Plane, user's and environment together.
 // Всего самолетов в X-Plane, пользовательский и окружающих вместе.

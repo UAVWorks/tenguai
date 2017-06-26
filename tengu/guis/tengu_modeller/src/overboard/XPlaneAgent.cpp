@@ -17,14 +17,24 @@
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::XPlaneAgent::XPlaneAgent() 
+tengu::XPlaneAgent::XPlaneAgent( int acf_index ) 
     : tengu::AbstractAgent()
 {
     
-    AbstractEntity::setSystemName("X-Plane");
-    AbstractEntity::setHumanName("X-Plane");
+    __aircraft_index = acf_index;
     
+    QString sName= tr("Aircraft_") + QString::number( acf_index );
+    QString hName = tr("Aircraft") + QString::number( acf_index );
+    
+    if ( acf_index == 0 ) {
+        sName = tr("UserAircraft");
+        hName = tr("User Aircraft");
+    };
+    
+    AbstractEntity::setSystemName( sName );
+    AbstractEntity::setHumanName( hName );    
     AbstractEntity::setExecutionMode( AbstractEntity::EM_XPLANE );
+    
     
     CREATE_XTENGU_SETTINGS;
     settings.beginGroup("CommonControl");
@@ -33,6 +43,7 @@ tengu::XPlaneAgent::XPlaneAgent()
     settings.endGroup();
     
     __init_sprout( "LeftAileron", Sprout::EXTERNAL_OUTPUT, tr("Left aileron") );
+    /*
     __init_sprout( "LeftFlaperon", Sprout::EXTERNAL_OUTPUT, tr("Left flaperon") );
     __init_sprout( "LeftElevator", Sprout::EXTERNAL_OUTPUT, tr("Left elevator" ) );
     __init_sprout( "LeftRudder", Sprout::EXTERNAL_OUTPUT, tr("Left rudder" ) );    
@@ -43,6 +54,8 @@ tengu::XPlaneAgent::XPlaneAgent()
     __init_sprout( "RightElevator", Sprout::EXTERNAL_OUTPUT, tr("Right elevator" ) );
     __init_sprout( "RightRudder", Sprout::EXTERNAL_OUTPUT, tr("Right rudder" ) );
     __init_sprout( "RightBrake", Sprout::EXTERNAL_OUTPUT, tr("Right brake" ) );
+    */
+    
        
 }
 
@@ -56,6 +69,7 @@ tengu::XPlaneAgent::XPlaneAgent()
 
 void tengu::XPlaneAgent::__init_sprout ( QString settingsGroup, tengu::Sprout::sprout_type_t type, QString name ) {
     
+    
     CREATE_XTENGU_SETTINGS;
     settings.beginGroup( settingsGroup );
     QString input = settings.value("input_channel", "").toString();
@@ -64,6 +78,10 @@ void tengu::XPlaneAgent::__init_sprout ( QString settingsGroup, tengu::Sprout::s
     
     for ( int i=0; i<TOTAL_AIRCRAFTS_COUNT; i++ ) {
         Sprout * sp = new Sprout( this );
+        
+        // The whitespace can be replaced to "_" in this procedurer
+        // Пробел будет заменен на "_" в данной процедуре.
+        
         sp->setSystemName( name );
         sp->setHumanName( name );
         sp->setSproutType( type );
@@ -79,7 +97,8 @@ void tengu::XPlaneAgent::__init_sprout ( QString settingsGroup, tengu::Sprout::s
         addSprout( sp );
     };
     
-    // qDebug() << "XPlaneAgent::__init_sprout, total sprouts=" << sproutsCount();
+    
+    qDebug() << "XPlaneAgent::__init_sprout, total sprouts=" << sproutsCount();
 }
 
 // ********************************************************************************************************************

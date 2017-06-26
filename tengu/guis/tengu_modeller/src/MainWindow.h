@@ -42,7 +42,7 @@
 #include "../guis.h"
 #include "DialogPropertiesSprout.h"
 #include "DialogPropertiesTask.h"
-
+#include "XPlaneProcess.h"
 
 namespace tengu {
     

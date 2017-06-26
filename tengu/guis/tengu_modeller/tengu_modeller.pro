@@ -28,6 +28,7 @@ INCLUDEPATH += src src/schema src/overboard ../../core ../../loredis/src /usr/in
 LIBS += -lLoRedis -L../../loredis/build -ltengu_core -L../../core/build -lhiredis -levent -lmongoc-1.0 -L/usr/lib/x86_64-linux-gnu
 
 HEADERS  += src/overboard/XPlaneAgent.h     \ 
+        src/overboard/XPlaneProcess.h       \
         src/overboard/TopLevelEntity.h      \
         src/overboard/WorkSpace.h           \        
         src/schema/AbstractEntityItem.h     \
@@ -62,6 +63,7 @@ HEADERS  += src/overboard/XPlaneAgent.h     \
 
 SOURCES += src/main.cpp                     \
         src/overboard/XPlaneAgent.cpp       \
+        src/overboard/XPlaneProcess.cpp     \
         src/overboard/TopLevelEntity.cpp    \
         src/overboard/WorkSpace.cpp         \
         src/schema/AbstractEntityItem.cpp   \
