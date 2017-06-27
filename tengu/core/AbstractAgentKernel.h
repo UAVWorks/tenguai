@@ -49,6 +49,8 @@ namespace tengu {
             
             void connect();
             
+            virtual void disconnect();
+            
             // Is the publisher connected to redis?
             // Соединен ли с редисом публикатор?
             
@@ -141,6 +143,8 @@ namespace tengu {
             
             QTimer * __connect_timer;
             QTimer * __ping_timer;
+            
+            bool __must_be_connected;
             
         private slots:
             

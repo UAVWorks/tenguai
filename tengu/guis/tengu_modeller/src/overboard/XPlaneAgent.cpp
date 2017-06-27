@@ -42,7 +42,9 @@ tengu::XPlaneAgent::XPlaneAgent( int acf_index )
     __conditionGroup = settings.value("ConditionNameGroup", "xtengu.condition").toString();
     settings.endGroup();
     
-    __init_sprout( "LeftAileron", Sprout::EXTERNAL_OUTPUT, tr("Left aileron") );
+    __init_sprout( "Longitude", Sprout::EXTERNAL_INPUT, tr("Longitude") );
+    
+    // __init_sprout( "LeftAileron", Sprout::EXTERNAL_OUTPUT, tr("Left aileron") );
     /*
     __init_sprout( "LeftFlaperon", Sprout::EXTERNAL_OUTPUT, tr("Left flaperon") );
     __init_sprout( "LeftElevator", Sprout::EXTERNAL_OUTPUT, tr("Left elevator" ) );
@@ -56,7 +58,7 @@ tengu::XPlaneAgent::XPlaneAgent( int acf_index )
     __init_sprout( "RightBrake", Sprout::EXTERNAL_OUTPUT, tr("Right brake" ) );
     */
     
-       
+    // this->connect();
 }
 
 // ********************************************************************************************************************
@@ -76,26 +78,27 @@ void tengu::XPlaneAgent::__init_sprout ( QString settingsGroup, tengu::Sprout::s
     QString output = settings.value("output_channel", "").toString(); 
     settings.endGroup();
     
-    for ( int i=0; i<TOTAL_AIRCRAFTS_COUNT; i++ ) {
-        Sprout * sp = new Sprout( this );
+    QString inputPath = __controlGroup + ".acf_" + QString::number( __aircraft_index ) + "." + input;
+    QString outputPath = __conditionGroup + ".acf_" + QString::number( __aircraft_index ) + "." + output;
+    
+    SproutProxy * sp = new SproutProxy( this );
         
-        // The whitespace can be replaced to "_" in this procedurer
-        // Пробел будет заменен на "_" в данной процедуре.
+    // The whitespace can be replaced to "_" in this procedurer
+    // Пробел будет заменен на "_" в данной процедуре.
         
-        sp->setSystemName( name );
-        sp->setHumanName( name );
-        sp->setSproutType( type );
+    sp->setSystemName( name );
+    sp->setHumanName( name );
+    sp->setSproutType( type );
         
-        // Crossing. Because output for sprout is an input for X-Plane.
-        // Переворот, потому что выход для "ростка" - это вход для X-Plane.
+    // Crossing. Because output for sprout is an input for X-Plane.
+    // Переворот, потому что выход для "ростка" - это вход для X-Plane.
         
-        if ( type == Sprout::EXTERNAL_INPUT ) 
-            sp->setSignalName( output ); 
-        else 
-            sp->setSignalName( input );
-        
-        addSprout( sp );
-    };
+    if ( type == Sprout::EXTERNAL_INPUT ) 
+        sp->setSignalName( outputPath ); 
+    else 
+        sp->setSignalName( inputPath );
+    
+    addSprout( sp );
     
     
     qDebug() << "XPlaneAgent::__init_sprout, total sprouts=" << sproutsCount();

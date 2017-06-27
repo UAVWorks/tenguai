@@ -33,7 +33,11 @@ namespace tengu {
         Q_PROPERTY( QString comment READ getComment WRITE setComment );
         Q_PROPERTY( QString uuid READ getUUID );
         Q_PROPERTY( AbstractEntity::execution_mode_t execution_mode READ getExecutionMode WRITE setExecutionMode );
-        
+
+        signals:
+            
+            void signalSproutGotValue( QString sproutName, QVariant value );
+            
         public:
             
             // The name should be unique around the system. 
@@ -68,6 +72,8 @@ namespace tengu {
             
             bool isFocused();
             
+            void disconnect();
+            
         protected:
             
             // Output channel name to display real activity of this agent.
@@ -100,6 +106,11 @@ namespace tengu {
             
             void __subscribe();
             
+            // The unsubscribtion function.
+            // Функция отписки от сообщений.
+            
+            void __unsubscribe();
+            
             // The focus of this channel.
             // Фокус данного канала.
             
@@ -121,7 +132,10 @@ namespace tengu {
             void __on_got_message( QString channel, QString messaage );
             void __on_subscribed( QString channel );
             void __on_unsubscribed( QString channel );
-        
+            
+            // void __on_sprout_got_message();
+            
+            // void __on_sub_redis_connected();        
             // void __on_activity_channel_message( QVariant value );
             
     };

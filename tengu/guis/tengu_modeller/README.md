@@ -6,6 +6,7 @@ This is graphical tool for work with artifical intelligence models. At the momen
 
 # The latest operations.
 
+- **27 jun 2017** The sprout proxy for the simulation process.
 - **24 jun 2017** The sprout's properties dialog. Tree-like workspace structure.
 - **23 jun 2017** A "Human name" was appended. Links ("sprouts") selection. Sprout's constraints.
 - **22 jun 2017** Bug when cleaning the scene. The schema of the inheritance of elements with links was remade.

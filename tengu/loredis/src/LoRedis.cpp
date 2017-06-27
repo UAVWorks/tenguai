@@ -556,6 +556,8 @@ LoRedis::LoRedis( LoRedisReactor * reactor )
 
 void LoRedis::connect( QString host, int port ) {
     
+    qDebug() << "LoRedis::connect()";
+    
     if ( ! _asyncContext ) {
         
         __event_base = event_base_new();

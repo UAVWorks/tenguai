@@ -14,13 +14,13 @@
 #include <QDebug>
 
 #include "AbstractAgent.h"
-#include "Sprout.h"
+#include "SproutProxy.h"
 
 // @todo remake that is the same with X-Tengu.
 // Переделать так, чтобы было одинаково с X-Tengu.
 
 #define CREATE_XTENGU_SETTINGS      QSettings settings( "/etc/tenguai/xtengu.conf", QSettings::IniFormat )
-#define TOTAL_AIRCRAFTS_COUNT 20
+// #define TOTAL_AIRCRAFTS_COUNT 20
 
 namespace tengu {
 

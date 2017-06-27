@@ -48,6 +48,7 @@ tengu::AbstractAgent::AbstractAgent ()
 // ********************************************************************************************************************
 
 void tengu::AbstractAgent::__on_subscriber_connected() {
+    qDebug() << "AbstractAgent::on subscriber connected";
     __subscribe();
 };
 
@@ -91,12 +92,16 @@ void tengu::AbstractAgent::__on_unsubscribed ( QString channel ) {
 // ********************************************************************************************************************
 
 void tengu::AbstractAgent::__on_got_message ( QString channel, QString message ) {
-    
+
     bool handled = false;
     
     foreach ( Sprout * sprout, __sprouts ) {
         bool res = sprout->handleMessage( channel, message );
-        if ( res ) handled = true;
+        if ( res ) {
+            QString sproutName = sprout->getSystemName();
+            emit signalSproutGotValue( sproutName, sprout->getValue() );
+            handled = true;
+        };
     }    
     
     if ( ! handled ) {
@@ -134,6 +139,19 @@ void tengu::AbstractAgent::__on_activity_channel_message ( QVariant value ) {
     
 }
 */
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                         Disconnect this agent from RedisIO                                       *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                               Рассоединиться с редисом.                                          *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::AbstractAgent::disconnect() {
+    __unsubscribe();
+    tengu::AbstractAgentKernel::disconnect();
+}
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
@@ -186,6 +204,21 @@ void tengu::AbstractAgent::__subscribe() {
     };
     
 }
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                          Unsubscribe from redis messages.                                        *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                            отписаться от событий редиса.                                         *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::AbstractAgent::__unsubscribe() {
+    foreach( Sprout * sprout, __sprouts ) {
+        sprout->unsubscribe();
+    };
+}
+
 
 // ********************************************************************************************************************
 // *                                                                                                                  *

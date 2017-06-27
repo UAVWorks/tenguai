@@ -33,7 +33,7 @@ namespace tengu {
         Q_PROPERTY( float minimal_value READ getMinimalValue WRITE setMinimalValue );
         Q_PROPERTY( float maximal_value READ getMaximalValue WRITE setMaximalValue );
         
-        Q_PROPERTY( QVariant value READ __getValue WRITE __setValue );
+        Q_PROPERTY( QVariant value READ getValue WRITE setValue );
         
         signals:
             
@@ -69,10 +69,15 @@ namespace tengu {
             bool isInput();
             bool isOutput();
             
-            void subscribe();
-            void subscribed( QString channel );
-            void unsubscribed( QString channel );
+            virtual void subscribe();
+            virtual void unsubscribe();
+            virtual void subscribed( QString channel );
+            virtual void unsubscribed( QString channel );
             virtual bool handleMessage( QString channel, QString message );     
+            
+            QVariant getValue();
+            void setValue( QVariant value );
+            
             
             float getMinimalValue();
             void setMinimalValue( float min );
@@ -97,10 +102,7 @@ namespace tengu {
             // QString __outputChannel;
             
             QString __signalName;
-            
-            QVariant __getValue();
-            void __setValue( QVariant value );
-            
+                        
             sprout_type_t __sprout_type;                            
             
             float __minimal_value;

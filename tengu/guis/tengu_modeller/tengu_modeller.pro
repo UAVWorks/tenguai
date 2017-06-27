@@ -29,6 +29,7 @@ LIBS += -lLoRedis -L../../loredis/build -ltengu_core -L../../core/build -lhiredi
 
 HEADERS  += src/overboard/XPlaneAgent.h     \ 
         src/overboard/XPlaneProcess.h       \
+        src/overboard/SproutProxy.h         \
         src/overboard/TopLevelEntity.h      \
         src/overboard/WorkSpace.h           \        
         src/schema/AbstractEntityItem.h     \
@@ -64,6 +65,7 @@ HEADERS  += src/overboard/XPlaneAgent.h     \
 SOURCES += src/main.cpp                     \
         src/overboard/XPlaneAgent.cpp       \
         src/overboard/XPlaneProcess.cpp     \
+        src/overboard/SproutProxy.cpp       \
         src/overboard/TopLevelEntity.cpp    \
         src/overboard/WorkSpace.cpp         \
         src/schema/AbstractEntityItem.cpp   \

@@ -68,6 +68,8 @@ tengu::AbstractAgentKernel::AbstractAgentKernel()
     QObject::connect( __connect_timer, SIGNAL( timeout() ), this, SLOT( __on_connect_timer() ) );
     __connect_timer->start( 1000 );        
     
+    __must_be_connected = false;
+    
 }
 
 // ********************************************************************************************************************
@@ -110,6 +112,8 @@ void tengu::AbstractAgentKernel::_got_value( QString sproutName ) {
 // ********************************************************************************************************************
 
 void tengu::AbstractAgentKernel::__on_connect_timer() {
+
+    if ( ! __must_be_connected ) return;
     
     if ( ( ! __pub_redis_connected ) && ( _pub_redis ) ) {
         _pub_redis->connect();
@@ -182,6 +186,7 @@ void tengu::AbstractAgentKernel::__on_ping_timer() {
 
 void tengu::AbstractAgentKernel::__on_pub_redis_connected() {
     __pub_redis_connected = true;
+    qDebug() << "on pub redis connected";
 }
 
 // ********************************************************************************************************************
@@ -194,6 +199,7 @@ void tengu::AbstractAgentKernel::__on_pub_redis_connected() {
 
 void tengu::AbstractAgentKernel::__on_sub_redis_connected() {
     __sub_redis_connected = true;    
+    qDebug() << "on sub redis connected";
 }
 
 // ********************************************************************************************************************
@@ -294,6 +300,9 @@ bool tengu::AbstractAgentKernel::usable() {
 
 void tengu::AbstractAgentKernel::connect() {
     
+    qDebug() << "AbstractAgentKernel::connect()";
+    
+    __must_be_connected = true;
     // Connect redises if they exists.
     // Соединение редисеров, если они есть.
     
@@ -301,6 +310,22 @@ void tengu::AbstractAgentKernel::connect() {
     if ( _sub_redis ) _sub_redis->connect();
     
 }
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                               Disconnect from RedisIO.                                           *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                                Рассоединение с редисом.                                          *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::AbstractAgentKernel::disconnect() {
+    qDebug() << "Abstract agent kernel :: disconnect()";
+    __must_be_connected = false;
+    if ( _pub_redis ) _pub_redis->disconnect();
+    if ( _sub_redis ) _sub_redis->disconnect();
+}
+
 
 // ********************************************************************************************************************
 // *                                                                                                                  *

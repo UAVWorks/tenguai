@@ -178,7 +178,7 @@ void tengu::Sprout::setMaximalValue ( float max ) {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-QVariant tengu::Sprout::__getValue() {    
+QVariant tengu::Sprout::getValue() {    
     return __value;
 }
 
@@ -190,12 +190,37 @@ QVariant tengu::Sprout::__getValue() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::Sprout::__setValue( QVariant val ) {
+void tengu::Sprout::setValue( QVariant val ) {
     
     __value = val;
     
     // This is not the component changes. _changed is not need.
     // Это - не изменение компонента как такового. _changed не нужно.
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                    The possibility to subscribe for this sprout.                                 *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                  Возможность для данного объекта подписаться.                                    *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::Sprout::subscribe() {
+
+    if ( 
+        ( ! __subscribed ) 
+        && ( ! __subscribtion_requested )
+        && ( ! __signalName.isEmpty() )
+        && ( __sprout_type == EXTERNAL_INPUT )
+        && ( __owner )
+        && ( __owner->_sub_redis ) 
+        && ( __owner->__sub_redis_connected )
+    ) {
+        qDebug() << "Sprout::subscribe(" << __signalName << ")";
+        __owner->_sub_redis->subscribe( __signalName );
+        __subscribtion_requested = true;
+    };
 }
 
 // ********************************************************************************************************************
@@ -219,6 +244,21 @@ void tengu::Sprout::subscribed( QString channel ) {
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
+// *                                             Unsubscribe from RedisIO messages.                                   *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                                Отписаться от событий редиса.                                     *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::Sprout::unsubscribe() {
+    if ( ( __owner ) 
+        && ( __owner->_sub_redis ) 
+        && ( ! __signalName.isEmpty() ) 
+    ) __owner->_sub_redis->unsubscribe( __signalName );
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
 // *                                          Somewhat has been unsubscribed.                                         *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                                               Что-то отписалось.                                                 *
@@ -230,30 +270,6 @@ void tengu::Sprout::unsubscribed( QString channel ) {
     if ( _to_me( channel ) ) {
         __subscribed = false;
         __subscribtion_requested = false;
-    };
-}
-
-// ********************************************************************************************************************
-// *                                                                                                                  *
-// *                                    The possibility to subscribe for this sprout.                                 *
-// * ---------------------------------------------------------------------------------------------------------------- *
-// *                                  Возможность для данного объекта подписаться.                                    *
-// *                                                                                                                  *
-// ********************************************************************************************************************
-
-void tengu::Sprout::subscribe() {
-
-    if ( 
-        ( ! __subscribed ) 
-        && ( ! __subscribtion_requested )
-        && ( ! __signalName.isEmpty() )
-        && ( __sprout_type == EXTERNAL_INPUT )
-        && ( __owner )
-        && ( __owner->_sub_redis ) 
-        && ( __owner->__sub_redis_connected )
-    ) {
-        __owner->_sub_redis->subscribe( __signalName );
-        __subscribtion_requested = true;
     };
 }
 
@@ -282,6 +298,7 @@ bool tengu::Sprout::_to_me( QString channel ) {
 bool tengu::Sprout::handleMessage( QString channel, QString value ) {
 
     if ( _to_me( channel ) ) {
+        qDebug() << "Sprout::handleMesssage, value=" << value;
         __value.setValue( value );
         emit signalGotValue( __value );
         return true;
