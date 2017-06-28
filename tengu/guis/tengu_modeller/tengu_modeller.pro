@@ -27,7 +27,7 @@ INCLUDEPATH += src src/schema src/overboard ../../core ../../loredis/src /usr/in
 
 LIBS += -lLoRedis -L../../loredis/build -ltengu_core -L../../core/build -lhiredis -levent -lmongoc-1.0 -L/usr/lib/x86_64-linux-gnu
 
-HEADERS  += src/overboard/XPlaneAgent.h     \ 
+HEADERS  += src/overboard/XPlaneAircraft.h  \ 
         src/overboard/XPlaneProcess.h       \
         src/overboard/SproutProxy.h         \
         src/overboard/TopLevelEntity.h      \
@@ -63,7 +63,7 @@ HEADERS  += src/overboard/XPlaneAgent.h     \
         src/DialogPropertiesTask.h
 
 SOURCES += src/main.cpp                     \
-        src/overboard/XPlaneAgent.cpp       \
+        src/overboard/XPlaneAircraft.cpp    \
         src/overboard/XPlaneProcess.cpp     \
         src/overboard/SproutProxy.cpp       \
         src/overboard/TopLevelEntity.cpp    \

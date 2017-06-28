@@ -6,6 +6,7 @@ This is graphical tool for work with artifical intelligence models. At the momen
 
 # The latest operations.
 
+- **28 jun 2017** Lists of processes and tasks in Sprout's properties dialog.
 - **27 jun 2017** The sprout proxy for the simulation process.
 - **26 jun 2017** X-Plane simulation process.
 - **24 jun 2017** The sprout's properties dialog. Tree-like workspace structure.

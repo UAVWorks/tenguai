@@ -14,6 +14,7 @@
 #include <QDebug>
 
 #include "AbstractAgent.h"
+#include "Task.h"
 #include "SproutProxy.h"
 
 // @todo remake that is the same with X-Tengu.
@@ -24,14 +25,14 @@
 
 namespace tengu {
 
-    class XPlaneAgent : public AbstractAgent {
+    class XPlaneAircraft : public Task {
         
         Q_OBJECT
         
         public:
             
-            XPlaneAgent( int acf_index );
-            virtual ~XPlaneAgent();
+            XPlaneAircraft( int acf_index );
+            virtual ~XPlaneAircraft();
             
             void setName( QString name );
             void setExecutionMode( execution_mode_t mode );

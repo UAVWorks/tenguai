@@ -26,12 +26,15 @@ const QList<QString> tengu::XPlaneProcess::AIRCRAFTS_UUIDS = QList<QString>({
 tengu::XPlaneProcess::XPlaneProcess() 
     : Process()
 {
+    setSystemName( tr("X_Plane_Simulation") );
+    setHumanName( tr("Simulation using X-Plane"));
         
     for ( int idx = 0; idx < XPlaneProcess::AIRCRAFTS_UUIDS.size(); idx++ ) {
-        XPlaneAgent * acf = new XPlaneAgent( idx );
+        XPlaneAircraft * acf = new XPlaneAircraft( idx );
         addChild( acf );
     };
     
+    qDebug() << "XPlaneProcess::XPlaneProcess, childrens=" << children().count();
 }
 
 // ********************************************************************************************************************

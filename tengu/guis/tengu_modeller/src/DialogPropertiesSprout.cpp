@@ -204,22 +204,28 @@ tengu::DialogPropertiesSprout::DialogPropertiesSprout( WorkSpace * workSpace )
     // Filters for processes / tasks / sprouts
     // Фильтры для процессов / задач / отростков.
     
-    __filter_process = new QLineEdit();
-    // __filter_process->setMinimumHeight( 23 );
-    selectorLayout->addWidget( __filter_process, 1 , 0 );
+    __filter_processes = new QLineEdit();
+    QObject::connect( __filter_processes, SIGNAL(textChanged( const QString & )), this, SLOT( __on__filter_processes_text_changed( const QString & ) ) );    
+    selectorLayout->addWidget( __filter_processes, 1 , 0 );
     
-    __filter_task = new QLineEdit();
-    // __filter_task->setMinimumHeight( 23 );
-    selectorLayout->addWidget( __filter_task, 1, 1 );
+    __filter_tasks = new QLineEdit();
+    QObject::connect( __filter_tasks, SIGNAL( textChanged( const QString & ) ), this, SLOT( __on__filter_tasks_text_changed( const QString & ) ) );
+    selectorLayout->addWidget( __filter_tasks, 1, 1 );
     
     __filter_sprouts = new QLineEdit();
-    // __filter_sprouts->setMinimumHeight( 23);
+    QObject::connect( __filter_sprouts, SIGNAL( textChanged( const QString & )), this, SLOT( __on__filter_sprouts_text_changed( const QString & ) ) );
     selectorLayout->addWidget( __filter_sprouts, 1, 2 );
     
     // Tables for processes / tasks / sprouts
     // Таблицы для процессов / задач / отростков.
     
     __table_processes = new QTableWidget();
+    QObject::connect( __table_processes->selectionModel(), 
+        SIGNAL( selectionChanged( const QItemSelection & , const QItemSelection & ) ), 
+        this, 
+        SLOT( __on__table_processes_item_selected( const QItemSelection &, const QItemSelection & ) ) 
+    );
+    
     __init_table( __table_processes );
     selectorLayout->addWidget( __table_processes, 2, 0 );
     
@@ -252,7 +258,10 @@ void tengu::DialogPropertiesSprout::__init_table ( QTableWidget* table ) {
     table->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding );
     table->setColumnCount(1);
     
-    QHeaderView *verticalHeader = table->verticalHeader();
+    QFont font("Arial", 10 );
+    table->setFont( font );
+    
+    QHeaderView * verticalHeader = table->verticalHeader();
     verticalHeader->setSectionResizeMode( QHeaderView::Fixed );
     verticalHeader->setDefaultSectionSize( 20 );
     verticalHeader->hide();
@@ -370,18 +379,12 @@ void tengu::DialogPropertiesSprout::fillFrom( tengu::AbstractEntityItem * item )
 // ********************************************************************************************************************
 
 void tengu::DialogPropertiesSprout::__fill_processes_list() {
+    
+    __table_tasks->clearContents();
+    __table_sprouts->clearContents();
     __table_processes->clearContents();
-    QList< Process * > processList = _workSpace->getEntities< Process * >( __filter_process->text() );
-    qDebug() << "Got " << processList.count() << " process";
-    for ( int i=0; i<processList.count(); i++ ) {
-        Process * p = processList.at(i);
-        __table_processes->setRowCount(i+1);
-        QTableWidgetItem * item = new QTableWidgetItem();
-        item->setText("trata");
-        __table_processes->setItem( i, 0, item );      
-        
-        qDebug() << "Rows now=" << __table_processes->rowCount();
-    };    
+    
+    __fill_one_table< Process * >( _workSpace, __table_processes, __filter_processes );        
 }
 
 // ********************************************************************************************************************
@@ -392,8 +395,13 @@ void tengu::DialogPropertiesSprout::__fill_processes_list() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::DialogPropertiesSprout::__fill_tasks_list() {
-
+void tengu::DialogPropertiesSprout::__fill_tasks_list( Process * process ) {
+    qDebug() << "__fill_tasks_list " << process;
+    __table_tasks->clearContents();
+    __table_sprouts->clearContents();
+    if ( process ) {        
+        __fill_one_table< Task * >( process, __table_tasks, __filter_tasks );                
+    };
 }
 
 // ********************************************************************************************************************
@@ -420,8 +428,8 @@ void tengu::DialogPropertiesSprout::__setManualSelection ( bool manual ) {
     
     __manual_signal_name->setEnabled( manual );
     
-    __filter_process->setEnabled( ! manual );
-    __filter_task->setEnabled( ! manual );
+    __filter_processes->setEnabled( ! manual );
+    __filter_tasks->setEnabled( ! manual );
     __filter_sprouts    ->setEnabled( ! manual );
     
     __table_processes->setEnabled( ! manual );
@@ -453,6 +461,70 @@ void tengu::DialogPropertiesSprout::__setAsTypeInput ( bool isInput ) {
 void tengu::DialogPropertiesSprout::__on__manual_signal_selection_state_changed ( int state ) {
     if ( __do_not_handle_events ) return;
     __setManualSelection( __check_box__manual->isChecked() );
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                      Changing text in process filter editor.                                     *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                   Изменение текста в редакторе фильтра процессов.                                *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::DialogPropertiesSprout::__on__filter_processes_text_changed ( const QString & text ) {
+    if ( __do_not_handle_events ) return;
+    __fill_processes_list();
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                         Item was selected in processes table.                                    *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                        В таблице процессов был выбран элемент.                                   *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::DialogPropertiesSprout::__on__table_processes_item_selected ( const QItemSelection & selected, const QItemSelection & deselected ) {
+    if ( __do_not_handle_events ) return;
+    QModelIndexList ilist = selected.indexes();
+    if ( ilist.size() > 0 ) {
+        QModelIndex first = ilist.at(0);
+        QTableWidgetItem * processItem = __table_processes->item( first.row(), first.column() );
+        if ( processItem ) {
+            Process * process = qvariant_cast< Process * > ( processItem->data( Qt::UserRole ) );
+            if ( process ) {
+                __fill_tasks_list( process );
+                return;
+            };
+        };
+    };
+    __fill_tasks_list();
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                       Changing text in tasks filter editor.                                      *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                    Изменение текста в редакторе фильтра задач.                                   *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::DialogPropertiesSprout::__on__filter_tasks_text_changed ( const QString& text ) {
+    if ( __do_not_handle_events ) return;
+    __fill_tasks_list();
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                      Changing the text in sprout's filter editor.                                *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                      Изменение текста в редакторе фильтра ростков.                               *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::DialogPropertiesSprout::__on__filter_sprouts_text_changed ( const QString& text ) {
+    if ( __do_not_handle_events ) return;
+    __fill_sprouts_list();
 }
 
 // ********************************************************************************************************************

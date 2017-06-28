@@ -17,7 +17,7 @@
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::XPlaneAgentItem::XPlaneAgentItem ( XPlaneAgent * entity, QGraphicsItem * parent ) 
+tengu::XPlaneAgentItem::XPlaneAgentItem ( XPlaneAircraft * entity, QGraphicsItem * parent ) 
     : AbstractEntityItem ( entity , parent )
 {
     setVisible( false );    

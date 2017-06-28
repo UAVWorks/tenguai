@@ -7,7 +7,7 @@
 // * Eugene G. Sysoletin <e.g.sysoletin@gmail.com>                                       Created 11 jun 2017 at 20:24 *
 // ********************************************************************************************************************
 
-#include "XPlaneAgent.h"
+#include "XPlaneAircraft.h"
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
@@ -17,8 +17,8 @@
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::XPlaneAgent::XPlaneAgent( int acf_index ) 
-    : tengu::AbstractAgent()
+tengu::XPlaneAircraft::XPlaneAircraft( int acf_index ) 
+    : tengu::Task()
 {
     
     __aircraft_index = acf_index;
@@ -42,7 +42,7 @@ tengu::XPlaneAgent::XPlaneAgent( int acf_index )
     __conditionGroup = settings.value("ConditionNameGroup", "xtengu.condition").toString();
     settings.endGroup();
     
-    __init_sprout( "Longitude", Sprout::EXTERNAL_INPUT, tr("Longitude") );
+    __init_sprout( "Longitude", Sprout::EXTERNAL_OUTPUT, tr("Longitude") );
     
     // __init_sprout( "LeftAileron", Sprout::EXTERNAL_OUTPUT, tr("Left aileron") );
     /*
@@ -69,7 +69,7 @@ tengu::XPlaneAgent::XPlaneAgent( int acf_index )
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::XPlaneAgent::__init_sprout ( QString settingsGroup, tengu::Sprout::sprout_type_t type, QString name ) {
+void tengu::XPlaneAircraft::__init_sprout ( QString settingsGroup, tengu::Sprout::sprout_type_t type, QString name ) {
     
     
     CREATE_XTENGU_SETTINGS;
@@ -112,8 +112,8 @@ void tengu::XPlaneAgent::__init_sprout ( QString settingsGroup, tengu::Sprout::s
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::XPlaneAgent::setName ( QString name ) {
-    qDebug() << "XPlaneAgent::setName() does not have any effect";
+void tengu::XPlaneAircraft::setName ( QString name ) {
+    qDebug() << "XPlaneAircraft::setName() does not have any effect";
 }
 
 // ********************************************************************************************************************
@@ -124,8 +124,8 @@ void tengu::XPlaneAgent::setName ( QString name ) {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::XPlaneAgent::setExecutionMode ( tengu::AbstractEntity::execution_mode_t mode ) {
-    qDebug() << "XPlaneAgent::setExecutioMode() does not have any effect";
+void tengu::XPlaneAircraft::setExecutionMode ( tengu::AbstractEntity::execution_mode_t mode ) {
+    qDebug() << "XPlaneAircraft::setExecutioMode() does not have any effect";
 }
 
 // ********************************************************************************************************************
@@ -136,8 +136,6 @@ void tengu::XPlaneAgent::setExecutionMode ( tengu::AbstractEntity::execution_mod
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::XPlaneAgent::~XPlaneAgent() {
+tengu::XPlaneAircraft::~XPlaneAircraft() {
 }
-
-
 

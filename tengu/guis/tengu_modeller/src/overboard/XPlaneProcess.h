@@ -13,7 +13,7 @@
 #include <QString>
 
 #include "Process.h"
-#include "XPlaneAgent.h"
+#include "XPlaneAircraft.h"
 
 namespace tengu {
     

@@ -29,61 +29,9 @@ namespace tengu {
             
             WorkSpace();
             virtual ~WorkSpace();
-            
-            /**
-             * @short Get all entities of specified type, whose name or comment contains the mask.
-             * Получить все "сущности" указанного типа, имеющие маску в своем имени или комментарии.
-             */
-            
-            template <class T> QList< T > getEntities ( QString mask ) {
-
-                QList < T > result;
-    
-                foreach( AbstractAgentKernel * oneChild, _children ) {
-        
-                    T entity = __satisfiedTheMask< T >( oneChild, mask );
-                    if ( entity ) result.append( entity );
-        
-                    // Re-enterable call procedure for children of this agent.
-                    // Реентерабельный вызов процедуры для детей этого агента.
-        
-                    QList < AbstractAgentKernel *>  reChildrenList = oneChild->children();
-                    if ( reChildrenList.count() > 0 ) {
-                        for ( int cIndex=0; cIndex < reChildrenList.count(); cIndex ++ ) {
-                            AbstractAgentKernel * reChild = reChildrenList.at( cIndex );
-                            entity = __satisfiedTheMask< T >( reChild, mask );
-                            if ( entity ) result.append( entity );
-                        };
-                    };
-                
-                };
-        
-                return( result );
-            };
-
-            
-        private:
-            
-            /**
-             * @short Check type of this entity and it contains the mask in it's names.
-             * Проверить тип сущности, а так же что она содержит маску в именах.
-             */
                         
-            template <class T > T __satisfiedTheMask ( tengu::AbstractAgentKernel* child, QString mask ) {
-
-                QString sName = child->getSystemName();
-                QString hName = child->getHumanName();
-                QString comment = child->getComment();
-                
-                if ( mask.isEmpty() || ( sName.contains( mask ) ) || ( hName.contains( mask ) ) || ( comment.contains(mask) ) ) {
-        
-                    T och = dynamic_cast< T >( child );
-                    if ( och ) return och;
-        
-                };  
-    
-                return nullptr;
-            };
+        private:
+                        
 
     }; // class WorkSpace
     

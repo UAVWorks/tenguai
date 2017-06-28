@@ -22,9 +22,13 @@ namespace tengu {
         public:
             
             Process ();
+            // Process( const Process & o );
             virtual ~Process();
             
     };
     
 };
+
+// Q_DECLARE_METATYPE( tengu::Process );
+
 

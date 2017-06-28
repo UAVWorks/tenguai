@@ -10,7 +10,7 @@
 #pragma once
 
 #include "AbstractEntityItem.h"
-#include "XPlaneAgent.h"
+#include "XPlaneAircraft.h"
 
 namespace tengu {
     
@@ -20,7 +20,7 @@ namespace tengu {
         
         public:
             
-            XPlaneAgentItem ( XPlaneAgent * entity, QGraphicsItem* parent = nullptr );
+            XPlaneAgentItem ( XPlaneAircraft * entity, QGraphicsItem* parent = nullptr );
             virtual ~XPlaneAgentItem();
             void checkEntity();
             
