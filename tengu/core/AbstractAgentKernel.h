@@ -71,6 +71,7 @@ namespace tengu {
             
             void addChild( AbstractAgentKernel * child );
             bool hasChildren();
+            QList <AbstractAgentKernel * > children();
             
             /**
              * @short Adding or replacing previous (in the sence of focus flow) agent.

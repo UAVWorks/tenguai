@@ -65,6 +65,7 @@ tengu::AbstractAgentKernel::AbstractAgentKernel()
     __ping_timer->start( 100 );
     
     __connect_timer = new QTimer();
+              
     QObject::connect( __connect_timer, SIGNAL( timeout() ), this, SLOT( __on_connect_timer() ) );
     __connect_timer->start( 1000 );        
     
@@ -365,6 +366,25 @@ QString tengu::AbstractAgentKernel::subProcessPath() {
 bool tengu::AbstractAgentKernel::hasChildren() {
     return _children.count() > 0;
 }
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                               Get all his children                                               *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                              Получить всех его детей                                             *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+QList< tengu::AbstractAgentKernel* > tengu::AbstractAgentKernel::children() {
+    
+    QList< AbstractAgentKernel * > result;
+    foreach( AbstractAgentKernel * child, _children ) {
+        result.append( child );
+    };
+    return result;
+    
+}
+
 
 // ********************************************************************************************************************
 // *                                                                                                                  *

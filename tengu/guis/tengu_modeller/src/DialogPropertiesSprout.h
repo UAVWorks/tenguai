@@ -71,6 +71,10 @@ namespace tengu {
             void __setManualSelection( bool manual );
             void __setAsTypeInput( bool isInput );
             
+            void __fill_processes_list();
+            void __fill_tasks_list();
+            void __fill_sprouts_list();
+            
             
         private slots:
             

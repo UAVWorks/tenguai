@@ -32,5 +32,3 @@ tengu::WorkSpace::WorkSpace()
 
 tengu::WorkSpace::~WorkSpace() {
 }
-
-

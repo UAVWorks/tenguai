@@ -15,6 +15,7 @@
 #include <QLayout>
 #include <QPushButton>
 #include <QFrame>
+#include <QHeaderView>
 
 #include "WorkSpace.h"
 #include "AbstractEntityItem.h"

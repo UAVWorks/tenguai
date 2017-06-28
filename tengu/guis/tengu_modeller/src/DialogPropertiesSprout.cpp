@@ -247,8 +247,20 @@ tengu::DialogPropertiesSprout::DialogPropertiesSprout( WorkSpace * workSpace )
 // ********************************************************************************************************************
 
 void tengu::DialogPropertiesSprout::__init_table ( QTableWidget* table ) {
+    
     table->setMinimumWidth( 80 );
     table->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding );
+    table->setColumnCount(1);
+    
+    QHeaderView *verticalHeader = table->verticalHeader();
+    verticalHeader->setSectionResizeMode( QHeaderView::Fixed );
+    verticalHeader->setDefaultSectionSize( 20 );
+    verticalHeader->hide();
+    
+    QHeaderView * horizontalHeader = table->horizontalHeader();
+    horizontalHeader->setSectionResizeMode( QHeaderView::Stretch );
+    horizontalHeader->hide();
+    
 }
 
 // ********************************************************************************************************************
@@ -343,7 +355,58 @@ void tengu::DialogPropertiesSprout::fillFrom( tengu::AbstractEntityItem * item )
         __do_not_handle_events = false;
         
     };
+    
+    __fill_processes_list();
+    __fill_tasks_list();
+    __fill_sprouts_list();
 };
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                     Fill processes table according it's filter                                   *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                            Заполнить таблицу процессов согласно установленному фильтру                           *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::DialogPropertiesSprout::__fill_processes_list() {
+    __table_processes->clearContents();
+    QList< Process * > processList = _workSpace->getEntities< Process * >( __filter_process->text() );
+    qDebug() << "Got " << processList.count() << " process";
+    for ( int i=0; i<processList.count(); i++ ) {
+        Process * p = processList.at(i);
+        __table_processes->setRowCount(i+1);
+        QTableWidgetItem * item = new QTableWidgetItem();
+        item->setText("trata");
+        __table_processes->setItem( i, 0, item );      
+        
+        qDebug() << "Rows now=" << __table_processes->rowCount();
+    };    
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                            Fill tasks list according selected process and task's filter                          *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                      Заполнить список задач согласно выбранному процессу и фильтру для задач.                    *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::DialogPropertiesSprout::__fill_tasks_list() {
+
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                         Fill sprout's list according selected task and sprout's filter.                          *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                     Заполнить список sprout'ов согласно выбранной задаче и фильтру sprout'ов.                    *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::DialogPropertiesSprout::__fill_sprouts_list() {
+
+}
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
