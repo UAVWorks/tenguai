@@ -366,8 +366,9 @@ void tengu::DialogPropertiesSprout::fillFrom( tengu::AbstractEntityItem * item )
     };
     
     __fill_processes_list();
-    __fill_tasks_list();
-    __fill_sprouts_list();
+    
+    // __fill_tasks_list();
+    // __fill_sprouts_list();
 };
 
 // ********************************************************************************************************************
@@ -380,11 +381,34 @@ void tengu::DialogPropertiesSprout::fillFrom( tengu::AbstractEntityItem * item )
 
 void tengu::DialogPropertiesSprout::__fill_processes_list() {
     
-    __table_tasks->clearContents();
-    __table_sprouts->clearContents();
-    __table_processes->clearContents();
+    _clearTable( __table_tasks );
+    _clearTable( __table_sprouts );
+    _clearTable( __table_processes );
     
-    __fill_one_table< Process * >( _workSpace, __table_processes, __filter_processes );        
+    __fill_one_table< Process * >( _workSpace, __table_processes, __filter_processes );
+    
+    // If we have rows in the table - select either first row or early selected.
+    // Если есть строки в таблице - выберем либо первую, либо ранее выбранную.
+    
+    if ( __table_processes->rowCount() > 0 ) {
+        QTableWidgetItem * first = __table_processes->itemAt( 0, 0 );
+        
+        if ( first ) {
+            
+            __do_not_handle_events = true;
+            first->setSelected( true );
+            __fill_tasks_list();
+            __do_not_handle_events = false;
+            
+            //
+            // Process * p = qvariant_cast< Process * >( first->data( Qt::UserRole ) );
+            // if ( p ) {
+            //    qDebug() << "Есть процесс, заполняем задачи для него.";
+            //    __fill_tasks_list( p );
+            //}
+            
+        };
+    };
 }
 
 // ********************************************************************************************************************
@@ -395,12 +419,34 @@ void tengu::DialogPropertiesSprout::__fill_processes_list() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::DialogPropertiesSprout::__fill_tasks_list( Process * process ) {
-    qDebug() << "__fill_tasks_list " << process;
-    __table_tasks->clearContents();
-    __table_sprouts->clearContents();
-    if ( process ) {        
-        __fill_one_table< Task * >( process, __table_tasks, __filter_tasks );                
+void tengu::DialogPropertiesSprout::__fill_tasks_list() {
+    
+    // Define process selected in the process table
+    // Определяем процесс, выбранный в таблице процессов.
+    
+    Process * selectedProcess = nullptr;
+    if ( __table_processes->selectedItems().count() > 0 ) {
+        QTableWidgetItem * selectedItem = __table_processes->selectedItems().at(0);
+        if ( selectedItem ) {
+            selectedProcess = qvariant_cast< Process * >( selectedItem->data( Qt::UserRole ) );
+        };
+    };
+    
+    _clearTable( __table_tasks );
+    _clearTable( __table_sprouts );
+    
+    if ( selectedProcess ) {
+        __fill_one_table< Task * >( selectedProcess, __table_tasks, __filter_tasks );   
+        
+        // Now select - either the first element or early selected.
+        // Выбираем - первый элемент, либо ранее выбранный
+        
+        QTableWidgetItem * first = __table_tasks->itemAt( 0, 0 );
+        if ( first ) {
+            first->setSelected( true );
+            __fill_sprouts_list();                        
+        };
+        
     };
 }
 
@@ -413,7 +459,28 @@ void tengu::DialogPropertiesSprout::__fill_tasks_list( Process * process ) {
 // ********************************************************************************************************************
 
 void tengu::DialogPropertiesSprout::__fill_sprouts_list() {
-
+    
+    // Define selected task
+    // Определение выбранной задачи.
+    
+    Task * selectedTask = nullptr;
+    if ( __table_tasks->selectedItems().count() > 0 ) {
+        QTableWidgetItem * selectedItem = __table_tasks->selectedItems().at(0);
+        if ( selectedItem ) {
+            selectedTask = qvariant_cast< Task * >( selectedItem->data( Qt::UserRole ) );
+        };
+    };
+    
+    if ( selectedTask ) {
+        Sprout testSprout;
+        testSprout.setExecutionMode( __sprout->getExecutionMode() );
+        testSprout.setSproutType( __combo_box__type->itemData( __combo_box__type->currentIndex() ).toInt() );
+        
+        QList < Sprout * > suitableSprouts = selectedTask->sutiableSproutsFor( &testSprout );
+        qDebug() << "Получили sprout'ы" << suitableSprouts;
+        if ( suitableSprouts.count() > 0 ) {
+        };
+    };
 }
 
 // ********************************************************************************************************************
@@ -485,7 +552,10 @@ void tengu::DialogPropertiesSprout::__on__filter_processes_text_changed ( const 
 // ********************************************************************************************************************
 
 void tengu::DialogPropertiesSprout::__on__table_processes_item_selected ( const QItemSelection & selected, const QItemSelection & deselected ) {
+    
     if ( __do_not_handle_events ) return;
+    
+    /*
     QModelIndexList ilist = selected.indexes();
     if ( ilist.size() > 0 ) {
         QModelIndex first = ilist.at(0);
@@ -493,11 +563,16 @@ void tengu::DialogPropertiesSprout::__on__table_processes_item_selected ( const 
         if ( processItem ) {
             Process * process = qvariant_cast< Process * > ( processItem->data( Qt::UserRole ) );
             if ( process ) {
+                qDebug() << "__on__table_processes_item_selected, заполнение задач от процесса";
                 __fill_tasks_list( process );
                 return;
             };
         };
     };
+    */
+    
+    qDebug() << "__on__table_processes_item_selected, заполнение задач пустое. без процесса.";
+    
     __fill_tasks_list();
 }
 
@@ -511,6 +586,7 @@ void tengu::DialogPropertiesSprout::__on__table_processes_item_selected ( const 
 
 void tengu::DialogPropertiesSprout::__on__filter_tasks_text_changed ( const QString& text ) {
     if ( __do_not_handle_events ) return;
+    qDebug() << "__on__filter_tasks_text_changed, заполнение задач пустое, без процесса.";
     __fill_tasks_list();
 }
 

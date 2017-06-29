@@ -73,9 +73,9 @@ namespace tengu {
             void __setAsTypeInput( bool isInput );
             
             void __fill_processes_list();
-            void __fill_tasks_list( Process * process = nullptr );
+            void __fill_tasks_list();
             void __fill_sprouts_list();
-            
+                        
             /**
              * @short Fill any table (processes, tasks, sprouts) from parent's element according filter.
              * Заполнить какую-нибудь таблицу (процессы, задачи, отростки) из родительского элемента с учетом фильтра.

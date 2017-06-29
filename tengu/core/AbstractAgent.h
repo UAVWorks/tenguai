@@ -67,6 +67,11 @@ namespace tengu {
             
             bool isActive();
             
+            // Get sprout list suitable (connectable) for specified sprout
+            // Получить лист sprout'ов, подходящих (соединябельных) с представленным sprout'ом.
+            
+            QList< Sprout * > sutiableSproutsFor( Sprout * sp );
+            
             // Has this agent a "focus", i.e. it think about possibility to launch?
             // Имеет ли агент "фокус", то есть он думает о возможности запуска?
             

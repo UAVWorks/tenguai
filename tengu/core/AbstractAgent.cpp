@@ -248,6 +248,47 @@ int tengu::AbstractAgent::sproutsCount() {
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
+// *                         Get list of sprouts suitable (connectable) to specified sprout.                          *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                          Получить массив sprout'ов, соединябельных с представленным.                             *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+QList< tengu::Sprout* > tengu::AbstractAgent::sutiableSproutsFor ( tengu::Sprout * sp ) {
+    
+    QList < Sprout * > result;
+    foreach ( Sprout * sprout, __sprouts ) {
+        if ( (sp->getExecutionMode() == Sprout::EM_ALWAYS ) 
+            || (sprout->getExecutionMode() == Sprout::EM_ALWAYS) 
+            || ( sprout->getExecutionMode() == sp->getExecutionMode() ) ) 
+        {
+            
+            bool usable = false;
+            Sprout::sprout_type_t eType = sprout->getSproutType();
+            switch ( sp->getSproutType() ) {
+                case Sprout::EXTERNAL_INPUT: {
+                    if ( eType == Sprout::EXTERNAL_OUTPUT ) usable = true;
+                }; break;
+                case Sprout::EXTERNAL_OUTPUT: {
+                    if ( eType == Sprout::EXTERNAL_INPUT ) usable = true;
+                }; break;
+                case Sprout::IN_PROCESS_INPUT: {
+                    if ( eType == Sprout::IN_PROCESS_OUTPUT ) usable = true;
+                }; break;
+                case Sprout::IN_PROCESS_OUTPUT: {
+                    if ( eType == Sprout::IN_PROCESS_INPUT ) usable = true;
+                }; break;
+            };
+            
+            if ( usable ) result.append( sprout );
+        };
+    };
+    return result;
+    
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
 // *                                                Set activity channel                                              *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                                             Установка канала активности.                                         *

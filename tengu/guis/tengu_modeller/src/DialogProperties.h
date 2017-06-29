@@ -16,6 +16,7 @@
 #include <QPushButton>
 #include <QFrame>
 #include <QHeaderView>
+#include <QTableWidget>
 
 #include "WorkSpace.h"
 #include "AbstractEntityItem.h"
@@ -40,6 +41,11 @@ namespace tengu {
             QFrame * _centerWidget;
             QPushButton * _buttonOk;
             QPushButton * _buttonCancel;
+            
+            /**
+             * @short Clear table contents and set it's row count to 0.
+             */
+            void _clearTable( QTableWidget * table );
             
         private:
             
