@@ -6,15 +6,16 @@ This is graphical tool for work with artifical intelligence models. At the momen
 
 # The latest operations.
 
+- **30 jun 2017** Fill sprout's list in dialog. Subscribtion sprout to his signal.
 - **28 jun 2017** Lists of processes and tasks in Sprout's properties dialog.
 - **27 jun 2017** The sprout proxy for the simulation process.
 - **26 jun 2017** X-Plane simulation process.
 - **24 jun 2017** The sprout's properties dialog. Tree-like workspace structure.
+<!--
 - **23 jun 2017** A "Human name" was appended. Links ("sprouts") selection. Sprout's constraints.
 - **22 jun 2017** Bug when cleaning the scene. The schema of the inheritance of elements with links was remade.
 - **21 jun 2017** Redone the rendering of "Sprout". Choice of type and rotation angle for the "Sprout". Remove an element
     from schema. Links from the top and bottom of the task.
-<!--
 - **20 jun 2017** Moving the link together with the task. Changing execution mode for the element.
 - **19 jun 2017** Stoping of the create link process by escape key. The noses for the arrows.
 - **18 jun 2017** ANDor, ORer elements. Changing of the task name. Remade painting method. Creating a link (not completed).
