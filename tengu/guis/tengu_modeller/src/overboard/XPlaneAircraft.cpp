@@ -23,11 +23,10 @@ tengu::XPlaneAircraft::XPlaneAircraft( int acf_index )
     
     __aircraft_index = acf_index;
     
-    QString sName= tr("Aircraft_") + QString::number( acf_index );
-    QString hName = tr("Aircraft") + QString::number( acf_index );
+    QString sName= tr("acf_") + QString::number( acf_index );
+    QString hName = tr("Aircraft ") + QString::number( acf_index );
     
     if ( acf_index == 0 ) {
-        sName = tr("UserAircraft");
         hName = tr("User Aircraft");
     };
     
@@ -82,22 +81,24 @@ void tengu::XPlaneAircraft::__init_sprout ( QString settingsGroup, tengu::Sprout
     QString outputPath = __conditionGroup + ".acf_" + QString::number( __aircraft_index ) + "." + output;
     
     SproutProxy * sp = new SproutProxy( this );
+    sp->setExecutionMode( AbstractAgent::EM_XPLANE );
         
     // The whitespace can be replaced to "_" in this procedurer
     // Пробел будет заменен на "_" в данной процедуре.
-        
-    sp->setSystemName( name );
+            
     sp->setHumanName( name );
     sp->setSproutType( type );
         
     // Crossing. Because output for sprout is an input for X-Plane.
     // Переворот, потому что выход для "ростка" - это вход для X-Plane.
         
-    if ( type == Sprout::EXTERNAL_INPUT ) 
+    if ( type == Sprout::EXTERNAL_INPUT )  {
         sp->setSignalName( outputPath ); 
-    else 
+        sp->setSystemName( output );
+    } else {
         sp->setSignalName( inputPath );
-    
+        sp->setSystemName( input );
+    }
     addSprout( sp );
     
     

@@ -21,6 +21,7 @@
 
 #include "DialogProperties.h"
 #include "SproutItem.h"
+#include "SproutProxy.h"
 
 namespace tengu {
     
@@ -40,6 +41,7 @@ namespace tengu {
             
             SproutItem * __sprout;    
             QComboBox * __combo_box__type;
+            QComboBox * __combo_box__execution_mode;
             QCheckBox * __check_box__manual;
             QLineEdit * __manual_signal_name;
             
@@ -95,7 +97,10 @@ namespace tengu {
                 };    
             };
             
-            
+            Process * __selectedProcess();
+            Task * __selectedTask();
+            Sprout * __selectedSprout();
+                        
         private slots:
             
             void __on__manual_signal_selection_state_changed( int state );
@@ -105,7 +110,10 @@ namespace tengu {
             void __on__minimum_editor_text_changed( const QString & text );
             void __on__maximum_editor_text_changed( const QString & text );
             void __on__table_processes_item_selected( const QItemSelection & selected, const QItemSelection & deselected );
+            void __on__table_tasks_item_selected( const QItemSelection & selected, const QItemSelection & deselected );
+            void __on__table_sprouts_item_selected( const QItemSelection & selected, const QItemSelection & deselected );
             void __on__combo_box_type_activated( int index );
+            void __on__combo_box__execution_mode__activated( int index );
             
     };
 };
