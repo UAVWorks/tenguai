@@ -34,7 +34,6 @@ tengu::XPlaneProcess::XPlaneProcess()
         addChild( acf );        
     };
     
-    qDebug() << "XPlaneProcess::XPlaneProcess, childrens=" << children().count();
 }
 
 // ********************************************************************************************************************

@@ -20,7 +20,9 @@
 tengu::DialogPropertiesSprout::DialogPropertiesSprout( WorkSpace * workSpace ) 
     : DialogProperties( workSpace )
 {
-    __sprout = nullptr;
+    __sproutItem = nullptr;
+    __oldSproutItem = new SproutItem();
+    __oldSproutItem->checkEntity();
     
     setWindowTitle( tr("Sprout's properties") );
     setWindowIcon( QIcon(QPixmap( ":button_navigation_16.png" )) );
@@ -367,6 +369,51 @@ void tengu::DialogPropertiesSprout::__create_editor_widgets() {
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
+// *                             Store sprout properties to have restoring possibility later.                         *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                     Сохранить параметры sprout'а, чтобы иметь потом возможность восстановить их.                 *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::DialogPropertiesSprout::__storeOldSproutParams() {
+    
+    __oldSproutItem->sprout()->setExecutionMode( __sproutItem->sprout()->getExecutionMode() );
+    __oldSproutItem->sprout()->setSproutType( __sproutItem->sprout()->getSproutType() );
+    __oldSproutItem->sprout()->setSignalName( __sproutItem->sprout()->getSignalName() );
+    
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                        Cancelled. Restore old sprout params.                                     *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                  Отменили. Восстанавливаем старые параметры sprout'а.                            *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::DialogPropertiesSprout::__restoreOldSproutParams() {
+
+    __sproutItem->sprout()->unsubscribe();
+    __sproutItem->sprout()->setExecutionMode( __oldSproutItem->sprout()->getExecutionMode() );
+    __sproutItem->sprout()->setSproutType( __oldSproutItem->sprout()->getSproutType() );
+    __sproutItem->sprout()->setSignalName( __oldSproutItem->sprout()->getSignalName() );
+    __sproutItem->sprout()->subscribe();
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                                   Cancel operation.                                              *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                                  Операции при отмене.                                            *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::DialogPropertiesSprout::_on__cancel() {
+    __restoreOldSproutParams();
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
 // *                                            Fill dialog's fields from sprout.                                     *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                                          Заполнение полей диалога из "отростка".                                 *
@@ -375,18 +422,20 @@ void tengu::DialogPropertiesSprout::__create_editor_widgets() {
 
 void tengu::DialogPropertiesSprout::fillFrom( tengu::AbstractEntityItem * item ) {
     
-    SproutItem * sprout = dynamic_cast< SproutItem * > ( item );
-    if ( sprout ) {
+    SproutItem * sproutItem = dynamic_cast< SproutItem * > ( item );
+    if ( sproutItem ) {
         
-        __sprout = sprout;
+        __sproutItem = sproutItem;
+        __sproutItem->checkEntity();
+        __storeOldSproutParams();
         
         // Change widget's looking
         // Изменение внешнего вида виджита.
         
         __do_not_handle_events = true;
         
-        __check_box__manual->setChecked( __sprout->manualSignalNameSelection );
-        __setManualSelection( sprout->manualSignalNameSelection );
+        __check_box__manual->setChecked( __sproutItem->manualSignalNameSelection );
+        __setManualSelection( sproutItem->manualSignalNameSelection );
         
         __do_not_handle_events = false;
         
@@ -568,7 +617,7 @@ void tengu::DialogPropertiesSprout::__fill_sprouts_list() {
         // testSprout.setExecutionMode( ( AbstractAgent::execution_mode_t ) __combo_box__execution_mode->itemData( __combo_box__execution_mode->currentIndex() ).toInt()  );
         // testSprout.setSproutType( ( Sprout::sprout_type_t ) __combo_box__type->itemData( __combo_box__type->currentIndex() ).toInt() );
         
-        QList < Sprout * > suitableSprouts = selectedTask->sutiableSproutsFor( __sprout->sprout() );
+        QList < Sprout * > suitableSprouts = selectedTask->sutiableSproutsFor( __sproutItem->sprout() );
         if ( suitableSprouts.count() > 0 ) {
             for ( int i=0; i<suitableSprouts.count(); i++ ) {
                 Sprout * sprout = suitableSprouts.at(i);
@@ -626,8 +675,12 @@ void tengu::DialogPropertiesSprout::__setAsTypeInput ( bool isInput ) {
 // ********************************************************************************************************************
 
 void tengu::DialogPropertiesSprout::__on__manual_signal_selection_state_changed ( int state ) {
+    
+    Q_UNUSED( state );
+    
     if ( __do_not_handle_events ) return;
     __setManualSelection( __check_box__manual->isChecked() );
+    
 }
 
 // ********************************************************************************************************************
@@ -639,8 +692,12 @@ void tengu::DialogPropertiesSprout::__on__manual_signal_selection_state_changed 
 // ********************************************************************************************************************
 
 void tengu::DialogPropertiesSprout::__on__filter_processes_text_changed ( const QString & text ) {
+    
+    Q_UNUSED( text );
+    
     if ( __do_not_handle_events ) return;
     __fill_processes_list();
+    
 }
 
 // ********************************************************************************************************************
@@ -652,6 +709,9 @@ void tengu::DialogPropertiesSprout::__on__filter_processes_text_changed ( const 
 // ********************************************************************************************************************
 
 void tengu::DialogPropertiesSprout::__on__table_processes_item_selected ( const QItemSelection & selected, const QItemSelection & deselected ) {
+    
+    Q_UNUSED( selected );
+    Q_UNUSED( deselected );
     
     if ( __do_not_handle_events ) return;        
     __fill_tasks_list();
@@ -668,6 +728,9 @@ void tengu::DialogPropertiesSprout::__on__table_processes_item_selected ( const 
 
 void tengu::DialogPropertiesSprout::__on__table_tasks_item_selected ( const QItemSelection& selected, const QItemSelection& deselected ) {
     
+    Q_UNUSED( selected );
+    Q_UNUSED( deselected );
+    
     if ( __do_not_handle_events ) return;
     __fill_sprouts_list();
     
@@ -682,6 +745,9 @@ void tengu::DialogPropertiesSprout::__on__table_tasks_item_selected ( const QIte
 // ********************************************************************************************************************
 
 void tengu::DialogPropertiesSprout::__on__table_sprouts_item_selected ( const QItemSelection& selected, const QItemSelection& deselected ) {
+    
+    Q_UNUSED( selected );
+    Q_UNUSED( deselected );
     
     if ( __do_not_handle_events ) return;
     
@@ -709,9 +775,9 @@ void tengu::DialogPropertiesSprout::__on__table_sprouts_item_selected ( const QI
         };  
         
         if ( ! signalName.isEmpty() ) {
-            __sprout->sprout()->unsubscribe();
-            __sprout->setSignalName( signalName );
-            __sprout->sprout()->subscribe();
+            __sproutItem->sprout()->unsubscribe();
+            __sproutItem->setSignalName( signalName );
+            __sproutItem->sprout()->subscribe();
         };
             
     };
@@ -726,10 +792,13 @@ void tengu::DialogPropertiesSprout::__on__table_sprouts_item_selected ( const QI
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::DialogPropertiesSprout::__on__filter_tasks_text_changed ( const QString& text ) {
+void tengu::DialogPropertiesSprout::__on__filter_tasks_text_changed ( const QString & text ) {
+    
+    Q_UNUSED( text );
+    
     if ( __do_not_handle_events ) return;
-    qDebug() << "__on__filter_tasks_text_changed, заполнение задач пустое, без процесса.";
     __fill_tasks_list();
+    
 }
 
 // ********************************************************************************************************************
@@ -740,9 +809,13 @@ void tengu::DialogPropertiesSprout::__on__filter_tasks_text_changed ( const QStr
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::DialogPropertiesSprout::__on__filter_sprouts_text_changed ( const QString& text ) {
+void tengu::DialogPropertiesSprout::__on__filter_sprouts_text_changed ( const QString & text ) {
+    
+    Q_UNUSED( text );
+    
     if ( __do_not_handle_events ) return;
     __fill_sprouts_list();
+    
 }
 
 // ********************************************************************************************************************
@@ -753,7 +826,7 @@ void tengu::DialogPropertiesSprout::__on__filter_sprouts_text_changed ( const QS
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::DialogPropertiesSprout::__on__minimum_editor_text_changed ( const QString& text ) {
+void tengu::DialogPropertiesSprout::__on__minimum_editor_text_changed ( const QString & text ) {
     if ( __do_not_handle_events ) return;
 }
 
@@ -765,7 +838,7 @@ void tengu::DialogPropertiesSprout::__on__minimum_editor_text_changed ( const QS
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::DialogPropertiesSprout::__on__maximum_editor_text_changed ( const QString& text ) {
+void tengu::DialogPropertiesSprout::__on__maximum_editor_text_changed ( const QString & text ) {
     if ( __do_not_handle_events ) return;
 }
 
@@ -781,7 +854,7 @@ void tengu::DialogPropertiesSprout::__on__combo_box_type_activated ( int index )
 
     if ( __do_not_handle_events ) return;
     
-    __sprout->setSproutType( ( Sprout::sprout_type_t ) index );
+    __sproutItem->setSproutType( ( Sprout::sprout_type_t ) index );
         
     switch ( index ) {
         
@@ -817,7 +890,7 @@ void tengu::DialogPropertiesSprout::__on__combo_box__execution_mode__activated (
     
     if ( __do_not_handle_events ) return;
     
-    __sprout->setExecutionMode( (AbstractAgent::execution_mode_t) index );
+    __sproutItem->setExecutionMode( (AbstractAgent::execution_mode_t) index );
     __fill_sprouts_list();
 }
 
@@ -830,5 +903,7 @@ void tengu::DialogPropertiesSprout::__on__combo_box__execution_mode__activated (
 // ********************************************************************************************************************
 
 tengu::DialogPropertiesSprout::~DialogPropertiesSprout() {
+    delete( __oldSproutItem->sprout() );
+    delete( __oldSproutItem );
 }
 

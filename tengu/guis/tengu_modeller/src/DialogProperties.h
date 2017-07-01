@@ -43,8 +43,17 @@ namespace tengu {
             QPushButton * _buttonCancel;
             
             /**
-             * @short Clear table contents and set it's row count to 0.
+             * Virtual function to cancel operation.
+             * Виртуальная функция для операций при отмене.
              */
+            
+            virtual void _on__cancel();
+            
+            /**
+             * @short Clear table contents and set it's row count to 0.
+             * Очистить содержимое таблицы и установить число строк в 0.
+             */
+            
             void _clearTable( QTableWidget * table );
             
         private:

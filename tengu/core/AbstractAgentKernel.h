@@ -102,7 +102,6 @@ namespace tengu {
     
                 foreach( AbstractAgentKernel * oneChild, _children ) {
         
-                    qDebug() << "Look at child" << oneChild;
                     T entity = __satisfiedTheMask< T >( oneChild, mask );
                     if ( entity ) result.append( entity );
         

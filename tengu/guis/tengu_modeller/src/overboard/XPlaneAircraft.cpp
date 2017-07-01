@@ -77,8 +77,8 @@ void tengu::XPlaneAircraft::__init_sprout ( QString settingsGroup, tengu::Sprout
     QString output = settings.value("output_channel", "").toString(); 
     settings.endGroup();
     
-    QString inputPath = __controlGroup + ".acf_" + QString::number( __aircraft_index ) + "." + input;
-    QString outputPath = __conditionGroup + ".acf_" + QString::number( __aircraft_index ) + "." + output;
+    QString inputPath = __conditionGroup + ".acf_" + QString::number( __aircraft_index ) + "." + input;
+    QString outputPath = __controlGroup + ".acf_" + QString::number( __aircraft_index ) + "." + output;
     
     SproutProxy * sp = new SproutProxy( this );
     sp->setExecutionMode( AbstractAgent::EM_XPLANE );
@@ -100,9 +100,7 @@ void tengu::XPlaneAircraft::__init_sprout ( QString settingsGroup, tengu::Sprout
         sp->setSystemName( input );
     }
     addSprout( sp );
-    
-    
-    qDebug() << "XPlaneAgent::__init_sprout, total sprouts=" << sproutsCount();
+        
 }
 
 // ********************************************************************************************************************
@@ -139,4 +137,3 @@ void tengu::XPlaneAircraft::setExecutionMode ( tengu::AbstractEntity::execution_
 
 tengu::XPlaneAircraft::~XPlaneAircraft() {
 }
-

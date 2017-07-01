@@ -37,9 +37,14 @@ namespace tengu {
             void fillFrom( tengu::AbstractEntityItem * item );
                         
         protected:
+            
+            void _on__cancel();
+            
         private:
             
-            SproutItem * __sprout;    
+            SproutItem * __oldSproutItem;
+            
+            SproutItem * __sproutItem;    
             QComboBox * __combo_box__type;
             QComboBox * __combo_box__execution_mode;
             QCheckBox * __check_box__manual;
@@ -67,6 +72,9 @@ namespace tengu {
             QWidget * __minimum_editor_widget;
             QWidget * __maximum_editor_widget;
             
+            void __storeOldSproutParams();
+            void __restoreOldSproutParams();
+            
             void __init_table( QTableWidget * table );
             void __create_editor_widgets();
             bool __do_not_handle_events;                        
@@ -85,7 +93,6 @@ namespace tengu {
             
             template < class T > void __fill_one_table( AbstractAgentKernel * agent, QTableWidget * table, QLineEdit * filter ) {
                 QList< T > list = agent->getEntities< T >( filter->text() );
-                qDebug() << "Got children count " << list.count();
                 for ( int i=0; i<list.count(); i++ ) {
                     T p = list.at(i);
                     table->setRowCount(i+1);
