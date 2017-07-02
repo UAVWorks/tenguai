@@ -29,9 +29,11 @@ tengu::LibraryTab__processes::LibraryTab__processes ( QWidget* parent, Qt::Windo
     lay->setSpacing( 1 );
     setLayout( lay );
         
+    /*
     button__process_begin = new LibraryTab_Button( QIcon( QPixmap(":process_begin_16.png") ), tr("Begin of process")  );
     button__process_begin->setDrag( ProcessStartItem().toJSON() );
     lay->addWidget( button__process_begin, 0, 0 );
+    */
     
     button__process_end = new LibraryTab_Button( QIcon( QPixmap(":process_end_16.png")), tr("End of process")  );
     button__process_end->setDrag( ProcessStopItem().toJSON() );
@@ -82,12 +84,14 @@ void tengu::LibraryTab__processes::__init_button ( QPushButton * button ) {
 // ********************************************************************************************************************
 
 void tengu::LibraryTab__processes::on__inside_process() {
-    button__process_begin->setEnabled( true );
-    button__process_end->setEnabled( false );
+    
+    // button__process_begin->setEnabled( true );
+    
+    button__process_end->setEnabled( true );
     button__focus_arrow->setEnabled( false );
-    button__focus_andor->setEnabled( false );
-    button__focus_orer->setEnabled( false );
-    button__task->setEnabled( false );
+    button__focus_andor->setEnabled( true );
+    button__focus_orer->setEnabled( true );
+    button__task->setEnabled( true );
     button__sprout->setEnabled( false );
 }
 
@@ -98,7 +102,7 @@ void tengu::LibraryTab__processes::on__inside_process() {
 // *                                         Был создан элемент "начало процесса".                                    *
 // *                                                                                                                  *
 // ********************************************************************************************************************
-
+/*
 void tengu::LibraryTab__processes::on__process_start_created() {
     
     button__process_begin->setEnabled( false );
@@ -110,7 +114,7 @@ void tengu::LibraryTab__processes::on__process_start_created() {
     button__sprout->setEnabled( false );
     
 }
-
+*/
 // ********************************************************************************************************************
 // *                                                                                                                  *
 // *                               Some kind of task has been created, we can use links.                              *

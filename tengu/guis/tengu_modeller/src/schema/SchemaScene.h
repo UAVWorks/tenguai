@@ -31,7 +31,7 @@ namespace tengu {
             
             void signalSomethingChanged();
             void signalInsideProcess();
-            void signalProcessStartCreated();
+            // void signalProcessStartCreated();
             void signalProcessItemWithLinksCreated();
             
             /**
@@ -64,7 +64,7 @@ namespace tengu {
             
             AbstractEntityItem * __rootItem;
             bool __changed;
-            ProcessItem * __rootProcess();
+            ProcessItem * __rootIsProcess();
                         
         private slots:
             

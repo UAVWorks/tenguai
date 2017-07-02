@@ -29,6 +29,7 @@ namespace tengu {
         public:
             
             static AbstractEntity * createEntity( QJsonObject json );
+            static AbstractEntity * createEntity( AbstractAgent * agent );
             
     };
     

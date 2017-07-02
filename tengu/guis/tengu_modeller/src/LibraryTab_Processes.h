@@ -34,7 +34,8 @@ namespace tengu {
             explicit LibraryTab__processes ( QWidget* parent = 0, Qt::WindowFlags f = 0 );
             virtual ~LibraryTab__processes();
             
-            LibraryTab_Button * button__process_begin;
+            // LibraryTab_Button * button__process_begin;
+            
             LibraryTab_Button * button__process_end;
             LibraryTab_Button * button__focus_arrow;
             LibraryTab_Button * button__focus_andor;
@@ -45,7 +46,7 @@ namespace tengu {
         public slots:
             
             void on__inside_process();
-            void on__process_start_created();
+            // void on__process_start_created();
             void on__process_item_with_links_created();
             void on__process_explicit_task_created();
             

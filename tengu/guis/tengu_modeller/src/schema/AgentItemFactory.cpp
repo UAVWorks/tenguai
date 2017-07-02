@@ -9,6 +9,14 @@
 
 #include "AgentItemFactory.h"
 
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                        Create entity from JSON-format.                                           *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                     Создание "сущности" из формата JSON.                                         *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
 tengu::AbstractEntity* tengu::AgentItemFactory::createEntity ( QJsonObject json ) {
 
     AbstractEntity * e = AgentFactory::createEntity( json );
@@ -39,6 +47,22 @@ tengu::AbstractEntity* tengu::AgentItemFactory::createEntity ( QJsonObject json 
 //    };
     
     return e;
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                Create supreme graphics item from abstract agent class                            *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                        Создание надстоящего графического элемента из класса AbstractAgent                        *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+tengu::AbstractEntity* tengu::AgentItemFactory::createEntity ( tengu::AbstractAgent* agent ) {
+    
+    ProcessStart * start = dynamic_cast< ProcessStart * > ( agent );
+    if ( start ) return new ProcessStartItem( start );
+    
+    return nullptr;
 }
 
 

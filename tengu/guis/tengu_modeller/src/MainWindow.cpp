@@ -221,7 +221,7 @@ void tengu::MainWindow::__createLibraryTab() {
     // Сигналы от схемы к табулятору.
     
     QObject::connect( __schemaScene, SIGNAL( signalInsideProcess() ), __library_tab->tab__processes, SLOT( on__inside_process() ) );
-    QObject::connect( __schemaScene, SIGNAL( signalProcessStartCreated() ), __library_tab->tab__processes, SLOT( on__process_start_created() ) );
+    // QObject::connect( __schemaScene, SIGNAL( signalProcessStartCreated() ), __library_tab->tab__processes, SLOT( on__process_start_created() ) );
     QObject::connect( __schemaScene, SIGNAL( signalProcessItemWithLinksCreated() ), __library_tab->tab__processes, SLOT( on__process_item_with_links_created() ) );
     QObject::connect( __schemaScene, SIGNAL( signalProcessExplicitTaskCreated() ), __library_tab->tab__processes, SLOT( on__process_explicit_task_created() ) );            
 }
@@ -354,9 +354,21 @@ void tengu::MainWindow::__createDialogs() {
 
 void tengu::MainWindow::__on__create__process() {
     
+    Process * process = new Process();
+    ProcessItem * processItem = new ProcessItem( process );
+    
+    // Create Process Start block inside new process.
+    // Создание блока начала процесса внутри нового процесса.
+    
+    ProcessStart * start = new ProcessStart();
+    start->setSystemName("NewProcess");
+    start->setHumanName("New Process");
+    ProcessStartItem * startItem = new ProcessStartItem( start );
+    process->addChild( start );
     
     __schemaView->hide();
-    __schemaScene->setRootItem( new ProcessItem() );   
+    __schemaScene->setRootItem( processItem );   
+    __schemaScene->addItem( startItem );
     __schemaView->show();
     
     __library_tab->tab__processes->setEnabled( true );
@@ -478,12 +490,12 @@ void tengu::MainWindow::__on_schema_item_was_dropped ( tengu::AbstractEntity* en
         // Specified items, which has been created.
         // Специфические элементы, которые были созданы.
         
-        ProcessStartItem * start = dynamic_cast<ProcessStartItem * >(entity);
-        TaskItem * task = dynamic_cast<TaskItem *>(entity);
-        ORerItem * orer = dynamic_cast<ORerItem *>(entity);
-        ANDorItem * andor = dynamic_cast<ANDorItem *>(entity);
+        // ProcessStartItem * start = dynamic_cast<ProcessStartItem * >(entity);
+        // TaskItem * task = dynamic_cast<TaskItem *>(entity);
+        // ORerItem * orer = dynamic_cast<ORerItem *>(entity);
+        // ANDorItem * andor = dynamic_cast<ANDorItem *>(entity);
         LinkItem * link = dynamic_cast<LinkItem *>(entity);
-        SproutItem * sprout = dynamic_cast<SproutItem * >( entity );
+        // SproutItem * sprout = dynamic_cast<SproutItem * >( entity );
         
         if ( ( item ) && ( ! link ) ) {
             

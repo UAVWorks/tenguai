@@ -95,7 +95,19 @@ void tengu::SchemaScene::setRootItem ( tengu::AbstractEntityItem * rootItem ) {
     
     clear();
     
-    if ( __rootProcess() ) emit signalInsideProcess();
+    /*
+    // Add children of this root item to schema.
+    // Добавление на схему детей этого корневого элемента.
+    
+    AbstractAgent * agent = dynamic_cast< AbstractAgent * > ( rootItem->entity() );
+    if ( agent ) {
+        for ( int i=0; i<agent->children().count(); i++ ) {
+            AbstractEntityItem * 
+        };
+    };
+    */
+    
+    if ( __rootIsProcess() ) emit signalInsideProcess();
 }
 
 // ********************************************************************************************************************
@@ -106,7 +118,7 @@ void tengu::SchemaScene::setRootItem ( tengu::AbstractEntityItem * rootItem ) {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::ProcessItem* tengu::SchemaScene::__rootProcess() {
+tengu::ProcessItem* tengu::SchemaScene::__rootIsProcess() {
     return dynamic_cast< ProcessItem * > ( __rootItem );
 }
 
@@ -149,12 +161,13 @@ void tengu::SchemaScene::addItem ( tengu::AbstractEntityItem * item ) {
     ProcessStartItem * processStartItem = dynamic_cast<ProcessStartItem *>( item );
     ItemWithLinks * itemWithLinks = dynamic_cast<ItemWithLinks *>(item);
     TaskItem * taskItem = dynamic_cast<TaskItem *>(item);
-    if ( __rootProcess() ) {
+    
+    if ( __rootIsProcess() ) {
         
         // We have opened "a process" as root of the scheme.
         // У нас открыт "процесс" в качестве корня схемы.
         
-        if ( processStartItem ) emit signalProcessStartCreated();
+        // if ( processStartItem ) emit signalProcessStartCreated();
         if ( ( itemWithLinks ) && ( ! processStartItem ) ) emit signalProcessItemWithLinksCreated();
         if ( taskItem ) emit signalProcessExplicitTaskCreated();
     };
