@@ -110,6 +110,8 @@ namespace tengu {
             Process * __selectedProcess();
             Task * __selectedTask();
             Sprout * __selectedSprout();
+            
+            void __stopListen();
                         
         private slots:
             

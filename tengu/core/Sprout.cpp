@@ -208,20 +208,30 @@ void tengu::Sprout::setValue( QVariant val ) {
 
 void tengu::Sprout::subscribe() {
 
-    qDebug() << "Подписка в sprout'е. owner=" << __owner << ", request=" << __subscribtion_requested << ", sginal=" << __signalName << " type=" << __sprout_type << ", input=" << Sprout::EXTERNAL_INPUT;
     if ( 
-        // ( ! __subscribed ) 
+        ( ! __subscribed ) 
         // && ( ! __subscribtion_requested )
-        ( ! __signalName.isEmpty() )
+        && ( ! __signalName.isEmpty() )
         && ( __sprout_type == EXTERNAL_INPUT )
         && ( __owner != nullptr )
         && ( __owner->_sub_redis ) 
         && ( __owner->__sub_redis_connected )
     ) {
-        qDebug() << "Факт, подписываемся. Sprout::subscribe(" << __signalName << ")";
         __owner->_sub_redis->subscribe( __signalName );
         __subscribtion_requested = true;
     };
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                              Get the sprout's owner (the agent, the task usually).                               *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                               Получить владельца sprout'а (агента, обычно - задачу ).                            *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+tengu::AbstractAgentKernel* tengu::Sprout::owner() {
+    return __owner;
 }
 
 // ********************************************************************************************************************
@@ -252,12 +262,34 @@ void tengu::Sprout::subscribed( QString channel ) {
 // ********************************************************************************************************************
 
 void tengu::Sprout::unsubscribe() {
+        
     if ( ( __owner ) 
+        && ( __subscribed )
         && ( __owner->_sub_redis ) 
         && ( ! __signalName.isEmpty() ) 
     ) {
-        __subscribed = false;
+        
         __owner->_sub_redis->unsubscribe( __signalName );
+        
+        // One sprout can be subscribed to only one redis.io signal. Wait until really unsubscribed.
+        // Один sprout может быть подписан только на один сигнал redis'а. Ждем, пока реально не отпишется.
+        
+        int cycles = 10000;
+        
+        while ( (cycles > 0 ) && ( __subscribed ) ) {
+            LoRedis::processEvents();
+            usleep( 1 );
+            cycles --;
+        };
+        
+        // If something goes wrong...
+        // Если что-то пошло не так...
+        
+        if ( __subscribed ) {
+            __subscribed = false;
+            __subscribtion_requested = false;
+        };        
+        
     };
 }
 
@@ -271,6 +303,7 @@ void tengu::Sprout::unsubscribe() {
 
 void tengu::Sprout::unsubscribed( QString channel ) {
 
+    qDebug() << "Sprout::unsubscribed: " << channel;
     if ( _to_me( channel ) ) {
         __subscribed = false;
         __subscribtion_requested = false;
@@ -332,6 +365,30 @@ bool tengu::Sprout::isInput() {
 
 bool tengu::Sprout::isOutput() {
     return ( ( __sprout_type == Sprout::EXTERNAL_OUTPUT ) || ( __sprout_type == Sprout::IN_PROCESS_OUTPUT ) );
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                           Have this sprout external type?                                        *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                          У данного sprout'а - внешний тип?                                       *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+bool tengu::Sprout::isExternal() {
+    return ( ( __sprout_type == Sprout::EXTERNAL_INPUT ) || ( __sprout_type == Sprout::EXTERNAL_OUTPUT ) );
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                         Have this sprout internal type?                                          *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                         У данного спраута - внутренний тип?                                      *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+bool tengu::Sprout::isInternal() {
+    return( ( __sprout_type == Sprout::IN_PROCESS_INPUT ) || ( __sprout_type == Sprout::IN_PROCESS_OUTPUT ) );
 }
 
 // ********************************************************************************************************************

@@ -36,6 +36,8 @@ namespace tengu {
             
             void setName( QString name );
             void setExecutionMode( execution_mode_t mode );
+            void connect();
+            void disconnect();
             
         protected:
             

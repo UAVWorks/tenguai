@@ -292,6 +292,12 @@ void tengu::SproutItem::setSproutType ( tengu::Sprout::sprout_type_t type ) {
     Sprout * s = sprout();
     if ( s ) {
         s->setSproutType( type );
+        if ( s->isExternal() ) {
+            Task * task = dynamic_cast<Task * >( s->owner() );
+            if ( ( task ) && ( ( ! task->isSubscriberConnected() ) || ( ! task->isPublisherConnected() ) ) ) {
+                task->connect();
+            };
+        };
         _somethingChanged();
     };
 }

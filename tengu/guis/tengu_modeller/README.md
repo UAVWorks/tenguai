@@ -6,6 +6,7 @@ This is graphical tool for work with artifical intelligence models. At the momen
 
 # The latest operations.
 
+- **02 jul 2017** Sprout's subscribtion to external signal.
 - **30 jun 2017** Fill sprout's list in dialog. Subscribtion sprout to his signal.
 - **28 jun 2017** Lists of processes and tasks in Sprout's properties dialog.
 - **27 jun 2017** The sprout proxy for the simulation process.

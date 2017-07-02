@@ -70,6 +70,8 @@ namespace tengu {
             sprout_type_t getSproutType();
             bool isInput();
             bool isOutput();
+            bool isExternal();
+            bool isInternal();
             
             virtual void subscribe();
             virtual void unsubscribe();
@@ -84,9 +86,12 @@ namespace tengu {
             float getMinimalValue();
             void setMinimalValue( float min );
             float getMaximalValue();
-            void setMaximalValue( float max );
+            void setMaximalValue( float max );                        
             
-            AbstractAgentKernel * __owner;
+            // Get sprout's owner ( the agent, usual the task )
+            // Получить владельца sprout'а ( агента, обычно - задачу ).
+            
+            AbstractAgentKernel * owner();
             
             
         protected:
@@ -96,9 +101,11 @@ namespace tengu {
         private:
             
             
+            AbstractAgentKernel * __owner;
+            
             QVariant __value;
             
-            bool __subscribed;
+            volatile bool __subscribed;
             bool __subscribtion_requested;
             
             

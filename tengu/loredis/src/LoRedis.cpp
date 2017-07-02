@@ -832,13 +832,27 @@ void LoRedis::unsubscribe ( QString channel ) {
     
     if ( _asyncContext ) {
         
+        
         QString cmd = QString("UNSUBSCRIBE ");
         if ( channel.length() ) {
             cmd += channel;
         };
-        
+                
         redisAsyncCommand( _asyncContext, __cb_subscribed, this, cmd.toLocal8Bit().data() );
         
+        /*
+        redisContext c = _asyncContext->c;
+        qDebug() << "LoRedis::unsubscribe, got context.";
+                        
+        void * vReply = redisCommand( & c, "%s", cmd.toLocal8Bit().data() );
+        qDebug() << "RedisCommand unsubscribe done, got reply " << vReply;
+        if ( vReply ) {
+            redisReply * reply = (redisReply * ) vReply;
+            qDebug() << "In reply type=" << reply->type;
+            freeReplyObject( vReply );
+        };
+        */
+                
     } else __LoRedis::hiHasError( this, QString("LoRedis::unsubscribe(), context was not initialized") );
         
     

@@ -47,7 +47,7 @@ namespace tengu {
              * инициализации агента.
              */
             
-            void connect();
+            virtual void connect();
             
             virtual void disconnect();
             

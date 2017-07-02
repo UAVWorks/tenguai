@@ -79,11 +79,13 @@ void tengu::AbstractAgent::__on_subscribed ( QString channel ) {
 
 void tengu::AbstractAgent::__on_unsubscribed ( QString channel ) {
     
-    qDebug() << "AbstractAgent::unsubscribe: " << channel;
+    qDebug() << "AbstractAgent::on unsubscribed: " << channel;
     
     foreach ( Sprout * sprout, __sprouts ) {
         sprout->unsubscribed( channel );
     };
+    qDebug() << "AbstractAgent::on unsubscribed done.";
+    
 }
 
 // ********************************************************************************************************************
@@ -235,7 +237,13 @@ void tengu::AbstractAgent::addSprout ( tengu::Sprout * sprout ) {
     
     sprout->__owner = this;
     __sprouts[ sprout->getUUID() ] = sprout ;    
-    __subscribe();
+    if ( ( sprout->isExternal() ) && ( ( ! isSubscriberConnected() ) || ( ! isPublisherConnected() ) ) ) {
+        connect();
+    };
+    
+    // Подписку нужно делать отдельно и принудительно.
+    // __subscribe();
+    
     _changed = true;
     
 }

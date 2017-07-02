@@ -377,7 +377,24 @@ void tengu::DialogPropertiesSprout::__create_editor_widgets() {
 
 void tengu::DialogPropertiesSprout::showEvent ( QShowEvent* event ) {
     QDialog::showEvent ( event );
+    __stopListen();    
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                          Stop listen sprout's receiving.                                         *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                          Остановка прослушивания sprout'а.                                       *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::DialogPropertiesSprout::__stopListen() {
+    
     __lcd->display( LCD_NONE );
+    
+    if ( ( __sproutItem != nullptr ) && ( __sproutItem->sprout() != nullptr ) && ( __sproutItem->sprout()->isInput() ) ) {
+        __sproutItem->sprout()->unsubscribe();
+    };
 }
 
 // ********************************************************************************************************************
@@ -406,11 +423,13 @@ void tengu::DialogPropertiesSprout::__storeOldSproutParams() {
 
 void tengu::DialogPropertiesSprout::__restoreOldSproutParams() {
 
-    __sproutItem->sprout()->unsubscribe();
+    __stopListen();
+    
     __sproutItem->sprout()->setExecutionMode( __oldSproutItem->sprout()->getExecutionMode() );
     __sproutItem->sprout()->setSproutType( __oldSproutItem->sprout()->getSproutType() );
     __sproutItem->sprout()->setSignalName( __oldSproutItem->sprout()->getSignalName() );
-    __sproutItem->sprout()->subscribe();
+    
+    if ( __sproutItem->sprout()->isInput() )  __sproutItem->sprout()->subscribe();
 }
 
 // ********************************************************************************************************************
@@ -438,13 +457,15 @@ void tengu::DialogPropertiesSprout::_on__cancel() {
 
 void tengu::DialogPropertiesSprout::fillFrom( tengu::AbstractEntityItem * item ) {
     
-    __lcd->display( LCD_NONE );
+    item->checkEntity();
+    
+    __stopListen();
     
     SproutItem * sproutItem = dynamic_cast< SproutItem * > ( item );
     if ( sproutItem ) {
         
         __sproutItem = sproutItem;
-        __sproutItem->checkEntity();
+        
         __storeOldSproutParams();
         QObject::connect( __sproutItem->sprout(), SIGNAL( signalGotValue( QVariant ) ), this, SLOT( __on__got_value( QVariant ) ) );
         
@@ -479,6 +500,8 @@ void tengu::DialogPropertiesSprout::__fill_processes_list() {
     _clearTable( __table_tasks );
     _clearTable( __table_sprouts );
     _clearTable( __table_processes );
+    
+    __stopListen();
     
     __fill_one_table< Process * >( _workSpace, __table_processes, __filter_processes );
     
@@ -621,6 +644,7 @@ void tengu::DialogPropertiesSprout::__fill_tasks_list() {
 void tengu::DialogPropertiesSprout::__fill_sprouts_list() {
         
     _clearTable( __table_sprouts );
+    __stopListen();
     
     // Define selected task
     // Определение выбранной задачи.
@@ -698,6 +722,7 @@ void tengu::DialogPropertiesSprout::__on__manual_signal_selection_state_changed 
     Q_UNUSED( state );
     
     if ( __do_not_handle_events ) return;
+    __stopListen();
     __setManualSelection( __check_box__manual->isChecked() );
     
 }
@@ -733,7 +758,8 @@ void tengu::DialogPropertiesSprout::__on__table_processes_item_selected ( const 
     Q_UNUSED( deselected );
     
     if ( __do_not_handle_events ) return;    
-    __lcd->display( LCD_NONE );
+    
+    __stopListen();    
     __fill_tasks_list();
     
 }
@@ -750,9 +776,9 @@ void tengu::DialogPropertiesSprout::__on__table_tasks_item_selected ( const QIte
     
     Q_UNUSED( selected );
     Q_UNUSED( deselected );
-    
+        
     if ( __do_not_handle_events ) return;
-    __lcd->display( LCD_NONE );
+    __stopListen();
     __fill_sprouts_list();
     
 }
@@ -772,13 +798,14 @@ void tengu::DialogPropertiesSprout::__on__table_sprouts_item_selected ( const QI
     
     if ( __do_not_handle_events ) return;
     
-    __lcd->display( LCD_NONE );
+    __stopListen();
     
     Process * selectedProcess = __selectedProcess();
     Task * selectedTask = __selectedTask();
     Sprout * selectedSprout = __selectedSprout();
         
     if ( ( selectedProcess != 0 ) & ( selectedTask != 0 ) &  ( selectedSprout != 0 ) ) {
+        
         SproutProxy * proxy = dynamic_cast< SproutProxy * >( selectedSprout );
         QString signalName;
         
@@ -787,21 +814,20 @@ void tengu::DialogPropertiesSprout::__on__table_sprouts_item_selected ( const QI
             // For the proxy just use his signal.
             // Для прокси просто используем его сигнал.
             signalName = selectedSprout->getSignalName();
-            qDebug() << "This is a proxy, signal=" << signalName;
+                        
         } else {
             
             // For a non-proxy, a "real" sprout, we use process name - a dot - task name - a dot - sprout name.
             // Для не-проксевых, "реальных" росточков, используем имя процесса - точка - имя задачи - точка - имя ростка.
             
-            signalName = selectedProcess->getSystemName() + "." + selectedTask->getSystemName() + "." + selectedSprout->getSystemName();
-            qDebug() << "This is not a proxy, signal: " << signalName;
+            signalName = selectedProcess->getSystemName() + "." + selectedTask->getSystemName() + "." + selectedSprout->getSystemName();            
         };  
         
         if ( ! signalName.isEmpty() ) {
-            qDebug() << "Сигнал не пустой, " << signalName << ", подписываемся.";
-            __sproutItem->sprout()->unsubscribe();
             __sproutItem->setSignalName( signalName );
-            __sproutItem->sprout()->subscribe();
+            if ( __sproutItem->sprout()->isInput() ) {
+                __sproutItem->sprout()->subscribe();
+            };
         };
             
     };
@@ -878,6 +904,7 @@ void tengu::DialogPropertiesSprout::__on__combo_box_type_activated ( int index )
 
     if ( __do_not_handle_events ) return;
     
+    __stopListen();
     __sproutItem->setSproutType( ( Sprout::sprout_type_t ) index );
         
     switch ( index ) {
