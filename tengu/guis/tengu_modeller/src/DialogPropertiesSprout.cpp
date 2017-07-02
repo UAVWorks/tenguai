@@ -93,6 +93,7 @@ tengu::DialogPropertiesSprout::DialogPropertiesSprout( WorkSpace * workSpace )
     sliderLayout->addWidget( oclWidget );
         
     __output_slider = new QSlider();
+    QObject::connect( __output_slider, SIGNAL( valueChanged(int) ), this, SLOT( __on__slider_value_changed( int ) ) );
     __output_slider->setOrientation( Qt::Horizontal );
     __output_slider->setTickPosition( QSlider::TicksBothSides );
     sliderLayout->addWidget( __output_slider, Qt::AlignCenter );
@@ -411,6 +412,9 @@ void tengu::DialogPropertiesSprout::__storeOldSproutParams() {
     __oldSproutItem->sprout()->setSproutType( __sproutItem->sprout()->getSproutType() );
     __oldSproutItem->sprout()->setSignalName( __sproutItem->sprout()->getSignalName() );
     
+    __oldSproutItem->sprout()->setMinimalValue( __sproutItem->sprout()->getMinimalValue() );
+    __oldSproutItem->sprout()->setMaximalValue( __sproutItem->sprout()->getMaximalValue() );
+    
 }
 
 // ********************************************************************************************************************
@@ -428,6 +432,9 @@ void tengu::DialogPropertiesSprout::__restoreOldSproutParams() {
     __sproutItem->sprout()->setExecutionMode( __oldSproutItem->sprout()->getExecutionMode() );
     __sproutItem->sprout()->setSproutType( __oldSproutItem->sprout()->getSproutType() );
     __sproutItem->sprout()->setSignalName( __oldSproutItem->sprout()->getSignalName() );
+    
+    __sproutItem->sprout()->setMinimalValue( __oldSproutItem->sprout()->getMinimalValue() );
+    __sproutItem->sprout()->setMaximalValue( __oldSproutItem->sprout()->getMaximalValue() );
     
     if ( __sproutItem->sprout()->isInput() )  __sproutItem->sprout()->subscribe();
 }
@@ -449,6 +456,56 @@ void tengu::DialogPropertiesSprout::_on__cancel() {
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
+// *                       Set slider's min / max / current position according to sprout's values.                    *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *         Установить минимальную / максимальную / текущую позицию слайдера согласно значениям в sprout'е.          *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::DialogPropertiesSprout::__setSlider() {
+    if ( ( __sproutItem ) && ( __sproutItem->sprout() ) ) {
+        float min = __sproutItem->sprout()->getMinimalValue();
+        float max = __sproutItem->sprout()->getMaximalValue();
+        bool unlimited = ( ( min == MINIMUM_CONSTRAINT ) || ( max == MAXIMUM_CONSTRAINT ) );
+        __output_slider->setMinimum( min );
+        __output_slider->setMaximum( max );
+        float val = __sproutItem->sprout()->getValue().toFloat();
+        if ( ( val <= min ) && ( val > max ) ) val = ( max - min ) / 2.0;  
+        
+        __do_not_handle_events = true;
+        __output_slider->setValue( val );
+        __do_not_handle_events = false;
+        
+        if ( unlimited ) __output_slider->setTickPosition( QSlider::NoTicks );
+        else __output_slider->setTickPosition( QSlider::TicksBothSides );
+        
+        __output_current_value_label->setText( QString::number( val ) );
+    };
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                            Show current min and max constraints in the editor's fields.                          *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                      Отобразить текуюие минимальное и максимальное значение в полях редакторов.                  *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::DialogPropertiesSprout::__showMinMaxValues() {
+    
+    float min = __sproutItem->getMinimalValue();
+    float max = __sproutItem->getMaximalValue();
+    
+    if ( min > MINIMUM_CONSTRAINT ) __editor_minimum->setText( QString::number( min ) );
+    else __editor_minimum->setText("");
+    
+    if ( max < MAXIMUM_CONSTRAINT ) __editor_maximum->setText( QString::number( max ) );
+    else __editor_maximum->setText("");
+    
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
 // *                                            Fill dialog's fields from sprout.                                     *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                                          Заполнение полей диалога из "отростка".                                 *
@@ -456,19 +513,24 @@ void tengu::DialogPropertiesSprout::_on__cancel() {
 // ********************************************************************************************************************
 
 void tengu::DialogPropertiesSprout::fillFrom( tengu::AbstractEntityItem * item ) {
-    
-    item->checkEntity();
-    
+        
     __stopListen();
     
     SproutItem * sproutItem = dynamic_cast< SproutItem * > ( item );
     if ( sproutItem ) {
         
-        __sproutItem = sproutItem;
-        
+        __sproutItem = sproutItem;        
         __storeOldSproutParams();
-        QObject::connect( __sproutItem->sprout(), SIGNAL( signalGotValue( QVariant ) ), this, SLOT( __on__got_value( QVariant ) ) );
+        __sproutItem->checkEntity();
         
+        // Default band is 0 ... 100
+        // Диапазон по умолчанию 0 ... 100
+        
+        // if ( __sproutItem->sprout()->getMinimalValue() <= MINIMUM_CONSTRAINT ) __sproutItem->sprout()->setMinimalValue( 0 );
+        // if ( __sproutItem->sprout()->getMaximalValue() >= MAXIMUM_CONSTRAINT ) __sproutItem->sprout()->setMaximalValue( 100 );
+        
+        QObject::connect( __sproutItem->sprout(), SIGNAL( signalGotValue( QVariant ) ), this, SLOT( __on__got_value( QVariant ) ) );
+                
         // Change widget's looking
         // Изменение внешнего вида виджита.
         
@@ -476,6 +538,8 @@ void tengu::DialogPropertiesSprout::fillFrom( tengu::AbstractEntityItem * item )
         
         __check_box__manual->setChecked( __sproutItem->manualSignalNameSelection );
         __setManualSelection( sproutItem->manualSignalNameSelection );
+        __setSlider();
+        __showMinMaxValues();
         
         __do_not_handle_events = false;
         
@@ -813,7 +877,13 @@ void tengu::DialogPropertiesSprout::__on__table_sprouts_item_selected ( const QI
             
             // For the proxy just use his signal.
             // Для прокси просто используем его сигнал.
+            
             signalName = selectedSprout->getSignalName();
+            
+            __sproutItem->setMinimalValue( selectedSprout->getMinimalValue() );
+            __sproutItem->setMaximalValue( selectedSprout->getMaximalValue() );
+            
+            __showMinMaxValues();
                         
         } else {
             
@@ -824,6 +894,7 @@ void tengu::DialogPropertiesSprout::__on__table_sprouts_item_selected ( const QI
         };  
         
         if ( ! signalName.isEmpty() ) {
+            
             __sproutItem->setSignalName( signalName );
             if ( __sproutItem->sprout()->isInput() ) {
                 __sproutItem->sprout()->subscribe();
@@ -877,7 +948,20 @@ void tengu::DialogPropertiesSprout::__on__filter_sprouts_text_changed ( const QS
 // ********************************************************************************************************************
 
 void tengu::DialogPropertiesSprout::__on__minimum_editor_text_changed ( const QString & text ) {
+    
     if ( __do_not_handle_events ) return;
+    
+    if ( text.isEmpty() ) {
+        __sproutItem->sprout()->setMinimalValue( MINIMUM_CONSTRAINT );
+    } else {
+        bool ok = false;
+        float val = text.toFloat( & ok );
+        if ( ok ) {
+            __sproutItem->sprout()->setMinimalValue( val );
+            __setSlider();
+        };
+    };
+    
 }
 
 // ********************************************************************************************************************
@@ -890,6 +974,17 @@ void tengu::DialogPropertiesSprout::__on__minimum_editor_text_changed ( const QS
 
 void tengu::DialogPropertiesSprout::__on__maximum_editor_text_changed ( const QString & text ) {
     if ( __do_not_handle_events ) return;
+    
+    if ( text.isEmpty() ) {
+        __sproutItem->sprout()->setMaximalValue( MAXIMUM_CONSTRAINT );
+    } else {
+        bool ok = false;
+        float val = text.toFloat( & ok );
+        if ( ok ) {
+            __sproutItem->sprout()->setMaximalValue( val );
+            __setSlider();
+        };
+    };
 }
 
 // ********************************************************************************************************************
@@ -958,6 +1053,22 @@ void tengu::DialogPropertiesSprout::__on__got_value ( QVariant value ) {
     float fVal = value.toFloat( & ok );
     if ( ok ) {
         __lcd->display( fVal );
+    };
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                           Output slider's value has been changed.                                *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                         Значение выходного слайдера было изменено.                               *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::DialogPropertiesSprout::__on__slider_value_changed ( int value ) {
+    
+    if ( ( __sproutItem ) && ( __sproutItem->sprout() ) && ( __sproutItem->sprout()->isOutput() ) ) {
+        __output_current_value_label->setText( QString::number( value ) );
+        __sproutItem->sprout()->setValue( value );
     };
 }
 

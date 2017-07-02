@@ -112,6 +112,13 @@ namespace tengu {
             Sprout * __selectedSprout();
             
             void __stopListen();
+            
+            // Set slider min/max/pos according to sprout's values.
+            // Установить min/max/текущую позицию согласно значениям sprout'а.
+            
+            void __setSlider();
+            
+            void __showMinMaxValues();
                         
         private slots:
             
@@ -127,6 +134,7 @@ namespace tengu {
             void __on__combo_box_type_activated( int index );
             void __on__combo_box__execution_mode__activated( int index );
             void __on__got_value( QVariant value );
+            void __on__slider_value_changed( int value );
             
     };
 };

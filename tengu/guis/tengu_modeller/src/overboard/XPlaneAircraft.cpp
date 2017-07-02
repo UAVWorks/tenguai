@@ -42,6 +42,10 @@ tengu::XPlaneAircraft::XPlaneAircraft( int acf_index )
     settings.endGroup();
     
     __init_sprout( "Longitude", Sprout::EXTERNAL_OUTPUT, tr("Longitude") );
+    __init_sprout( "Latitude", Sprout::EXTERNAL_OUTPUT, tr("Latitude") );
+    
+    __init_sprout( "LeftAileron", Sprout::EXTERNAL_INPUT, tr("Left Aileron"), -45, 45 );
+    __init_sprout( "RightAileron", Sprout::EXTERNAL_INPUT, tr("Right Aileron"), -45, 45 );
     
     // __init_sprout( "LeftAileron", Sprout::EXTERNAL_OUTPUT, tr("Left aileron") );
     /*
@@ -68,7 +72,7 @@ tengu::XPlaneAircraft::XPlaneAircraft( int acf_index )
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::XPlaneAircraft::__init_sprout ( QString settingsGroup, tengu::Sprout::sprout_type_t type, QString name ) {
+void tengu::XPlaneAircraft::__init_sprout ( QString settingsGroup, tengu::Sprout::sprout_type_t type, QString name, float min, float max ) {
     
     
     CREATE_XTENGU_SETTINGS;
@@ -96,6 +100,8 @@ void tengu::XPlaneAircraft::__init_sprout ( QString settingsGroup, tengu::Sprout
     if ( type == Sprout::EXTERNAL_INPUT )  {
         sp->setSignalName( outputPath ); 
         sp->setSystemName( output );
+        if ( min >= MINIMUM_CONSTRAINT ) sp->setMinimalValue( min );
+        if ( max <= MAXIMUM_CONSTRAINT ) sp->setMaximalValue( max );
     } else {
         sp->setSignalName( inputPath );
         sp->setSystemName( input );

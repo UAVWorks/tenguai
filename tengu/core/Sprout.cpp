@@ -33,8 +33,11 @@ tengu::Sprout::Sprout( AbstractAgentKernel * owner )
     // Default constraints is 0 ... 100
     // Ограничение значения по умолчанию - 0 ... 100
     
-    __minimal_value = 0.0;
-    __maximal_value = 100.0;
+    // __minimal_value = 0.0;
+    // __maximal_value = 100.0;
+    
+    __minimal_value = MINIMUM_CONSTRAINT;
+    __maximal_value = MAXIMUM_CONSTRAINT;
     
     _className = "Sprout";
 }
@@ -193,6 +196,18 @@ QVariant tengu::Sprout::getValue() {
 void tengu::Sprout::setValue( QVariant val ) {
     
     __value = val;
+    
+    bool ok = false;
+    ( void ) val.toFloat( & ok );        
+    
+    if ( ( ok )
+        && ( ! __signalName.isEmpty() ) 
+        && ( __sprout_type == Sprout::EXTERNAL_OUTPUT ) 
+        && ( __owner ) 
+        && ( __owner->isPublisherConnected() ) ) 
+    {
+        __owner->_pub_redis->publish( __signalName, val.toString() );
+    };
     
     // This is not the component changes. _changed is not need.
     // Это - не изменение компонента как такового. _changed не нужно.

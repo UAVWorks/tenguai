@@ -14,6 +14,7 @@
 #include <QDebug>
 
 #include "AbstractAgent.h"
+#include "Constants.h"
 #include "Task.h"
 #include "SproutProxy.h"
 
@@ -48,7 +49,7 @@ namespace tengu {
             
             int __aircraft_index;
             
-            void __init_sprout( QString settingsGroup, Sprout::sprout_type_t type, QString name );
+            void __init_sprout( QString settingsGroup, Sprout::sprout_type_t type, QString name, float min = MINIMUM_CONSTRAINT, float max = MAXIMUM_CONSTRAINT );
             
     };
 };
