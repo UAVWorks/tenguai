@@ -115,7 +115,7 @@ tengu::DialogPropertiesSprout::DialogPropertiesSprout( WorkSpace * workSpace )
     __lcd->setDigitCount( 10 );
     __lcd->setDecMode();
     __lcd->setSmallDecimalPoint( false );
-    __lcd->display( "0.0" );
+    __lcd->display( LCD_NONE );
     
     lcdLayout->addWidget( __lcd );
     
@@ -369,6 +369,19 @@ void tengu::DialogPropertiesSprout::__create_editor_widgets() {
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
+// *                                                Dialog appearance                                                 *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                                Появление диалога.                                                *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::DialogPropertiesSprout::showEvent ( QShowEvent* event ) {
+    QDialog::showEvent ( event );
+    __lcd->display( LCD_NONE );
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
 // *                             Store sprout properties to have restoring possibility later.                         *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                     Сохранить параметры sprout'а, чтобы иметь потом возможность восстановить их.                 *
@@ -409,7 +422,10 @@ void tengu::DialogPropertiesSprout::__restoreOldSproutParams() {
 // ********************************************************************************************************************
 
 void tengu::DialogPropertiesSprout::_on__cancel() {
+    
+    QObject::disconnect( __sproutItem->sprout(), SIGNAL( signalGotValue( QVariant ) ), this, SLOT( __on__got_value( QVariant ) ) );
     __restoreOldSproutParams();
+    
 }
 
 // ********************************************************************************************************************
@@ -422,12 +438,15 @@ void tengu::DialogPropertiesSprout::_on__cancel() {
 
 void tengu::DialogPropertiesSprout::fillFrom( tengu::AbstractEntityItem * item ) {
     
+    __lcd->display( LCD_NONE );
+    
     SproutItem * sproutItem = dynamic_cast< SproutItem * > ( item );
     if ( sproutItem ) {
         
         __sproutItem = sproutItem;
         __sproutItem->checkEntity();
         __storeOldSproutParams();
+        QObject::connect( __sproutItem->sprout(), SIGNAL( signalGotValue( QVariant ) ), this, SLOT( __on__got_value( QVariant ) ) );
         
         // Change widget's looking
         // Изменение внешнего вида виджита.
@@ -713,7 +732,8 @@ void tengu::DialogPropertiesSprout::__on__table_processes_item_selected ( const 
     Q_UNUSED( selected );
     Q_UNUSED( deselected );
     
-    if ( __do_not_handle_events ) return;        
+    if ( __do_not_handle_events ) return;    
+    __lcd->display( LCD_NONE );
     __fill_tasks_list();
     
 }
@@ -732,6 +752,7 @@ void tengu::DialogPropertiesSprout::__on__table_tasks_item_selected ( const QIte
     Q_UNUSED( deselected );
     
     if ( __do_not_handle_events ) return;
+    __lcd->display( LCD_NONE );
     __fill_sprouts_list();
     
 }
@@ -750,6 +771,8 @@ void tengu::DialogPropertiesSprout::__on__table_sprouts_item_selected ( const QI
     Q_UNUSED( deselected );
     
     if ( __do_not_handle_events ) return;
+    
+    __lcd->display( LCD_NONE );
     
     Process * selectedProcess = __selectedProcess();
     Task * selectedTask = __selectedTask();
@@ -775,6 +798,7 @@ void tengu::DialogPropertiesSprout::__on__table_sprouts_item_selected ( const QI
         };  
         
         if ( ! signalName.isEmpty() ) {
+            qDebug() << "Сигнал не пустой, " << signalName << ", подписываемся.";
             __sproutItem->sprout()->unsubscribe();
             __sproutItem->setSignalName( signalName );
             __sproutItem->sprout()->subscribe();
@@ -892,6 +916,22 @@ void tengu::DialogPropertiesSprout::__on__combo_box__execution_mode__activated (
     
     __sproutItem->setExecutionMode( (AbstractAgent::execution_mode_t) index );
     __fill_sprouts_list();
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                           Slot: got value from sprout.                                           *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                      Слот: со sprout'а было получено значение.                                   *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::DialogPropertiesSprout::__on__got_value ( QVariant value ) {
+    bool ok = false;
+    float fVal = value.toFloat( & ok );
+    if ( ok ) {
+        __lcd->display( fVal );
+    };
 }
 
 // ********************************************************************************************************************

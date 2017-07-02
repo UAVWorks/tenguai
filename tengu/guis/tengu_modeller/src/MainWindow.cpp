@@ -491,11 +491,21 @@ void tengu::MainWindow::__on_schema_item_was_dropped ( tengu::AbstractEntity* en
         // Специфические элементы, которые были созданы.
         
         // ProcessStartItem * start = dynamic_cast<ProcessStartItem * >(entity);
-        // TaskItem * task = dynamic_cast<TaskItem *>(entity);
+        TaskItem * task = dynamic_cast<TaskItem *>(entity);
         // ORerItem * orer = dynamic_cast<ORerItem *>(entity);
         // ANDorItem * andor = dynamic_cast<ANDorItem *>(entity);
         LinkItem * link = dynamic_cast<LinkItem *>(entity);
         // SproutItem * sprout = dynamic_cast<SproutItem * >( entity );
+        
+        if ( task ) {
+            
+            // If we have created the task - connect it to redis.io
+            // Если мы создали задачу - соединяем ее с redis.io
+            
+            task->checkEntity();
+            task->task()->connect();
+            
+        };
         
         if ( ( item ) && ( ! link ) ) {
             

@@ -21,7 +21,9 @@ namespace tengu {
     
     class Sprout : public QObject, public AbstractEntity {
         
-        Q_OBJECT        
+        friend class AbstractAgent;
+        
+        Q_OBJECT
 
         Q_PROPERTY( QString system_name READ getSystemName WRITE setSystemName );
         Q_PROPERTY( QString human_name READ getHumanName WRITE setHumanName );
@@ -84,6 +86,9 @@ namespace tengu {
             float getMaximalValue();
             void setMaximalValue( float max );
             
+            AbstractAgentKernel * __owner;
+            
+            
         protected:
             
             bool _to_me( QString channel );
@@ -96,7 +101,6 @@ namespace tengu {
             bool __subscribed;
             bool __subscribtion_requested;
             
-            AbstractAgentKernel * __owner;
             
             // QString __inputChannel;
             // QString __outputChannel;

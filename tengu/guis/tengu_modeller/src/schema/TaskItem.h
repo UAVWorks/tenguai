@@ -29,10 +29,11 @@ namespace tengu {
             // QJsonObject toJSON();
             // bool fromJSON( QJsonObject json );
             
-        
+            Task * task();
+            
         private:
             
-            Task * __task();                        
+            
             
     };
     

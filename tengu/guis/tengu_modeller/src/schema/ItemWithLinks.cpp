@@ -34,7 +34,7 @@ tengu::ItemWithLinks::ItemWithLinks ( tengu::AbstractEntity * entity, QGraphicsI
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::ItemWithLinks::addOutgoingLink ( tengu::LinkItem* link ) {
+void tengu::ItemWithLinks::addOutgoingLink ( tengu::LinkItem * link ) {
     __linksOutgoingFromThis[ link->getUUID() ] = link;
     QObject::connect( link, SIGNAL(signalLinkRemoved(QString)), this, SLOT(removeLink(QString)) );
     link->__setFrom( this, _iAmSprout );

@@ -65,6 +65,8 @@ namespace tengu {
             bool __withSproutFrom;
             bool __withSproutTo;
             
+            void __checkSproutInsideTask();
+            
     };
     
 };

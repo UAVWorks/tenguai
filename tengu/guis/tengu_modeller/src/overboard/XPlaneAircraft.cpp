@@ -72,6 +72,7 @@ void tengu::XPlaneAircraft::__init_sprout ( QString settingsGroup, tengu::Sprout
     
     
     CREATE_XTENGU_SETTINGS;
+    
     settings.beginGroup( settingsGroup );
     QString input = settings.value("input_channel", "").toString();
     QString output = settings.value("output_channel", "").toString(); 
@@ -99,8 +100,9 @@ void tengu::XPlaneAircraft::__init_sprout ( QString settingsGroup, tengu::Sprout
         sp->setSignalName( inputPath );
         sp->setSystemName( input );
     }
+    
     addSprout( sp );
-        
+            
 }
 
 // ********************************************************************************************************************

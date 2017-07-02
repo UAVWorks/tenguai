@@ -34,6 +34,10 @@ tengu::XPlaneProcess::XPlaneProcess()
         addChild( acf );        
     };
     
+    // There is not necessery to connect because this process contains only proxy.
+    // Здесь не нужно соединение, этот процесс содержит только proxy.
+    // this->connect();
+    
 }
 
 // ********************************************************************************************************************

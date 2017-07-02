@@ -208,16 +208,17 @@ void tengu::Sprout::setValue( QVariant val ) {
 
 void tengu::Sprout::subscribe() {
 
+    qDebug() << "Подписка в sprout'е. owner=" << __owner << ", request=" << __subscribtion_requested << ", sginal=" << __signalName << " type=" << __sprout_type << ", input=" << Sprout::EXTERNAL_INPUT;
     if ( 
-        ( ! __subscribed ) 
-        && ( ! __subscribtion_requested )
-        && ( ! __signalName.isEmpty() )
+        // ( ! __subscribed ) 
+        // && ( ! __subscribtion_requested )
+        ( ! __signalName.isEmpty() )
         && ( __sprout_type == EXTERNAL_INPUT )
-        && ( __owner )
+        && ( __owner != nullptr )
         && ( __owner->_sub_redis ) 
         && ( __owner->__sub_redis_connected )
     ) {
-        qDebug() << "Sprout::subscribe(" << __signalName << ")";
+        qDebug() << "Факт, подписываемся. Sprout::subscribe(" << __signalName << ")";
         __owner->_sub_redis->subscribe( __signalName );
         __subscribtion_requested = true;
     };
@@ -254,7 +255,10 @@ void tengu::Sprout::unsubscribe() {
     if ( ( __owner ) 
         && ( __owner->_sub_redis ) 
         && ( ! __signalName.isEmpty() ) 
-    ) __owner->_sub_redis->unsubscribe( __signalName );
+    ) {
+        __subscribed = false;
+        __owner->_sub_redis->unsubscribe( __signalName );
+    };
 }
 
 // ********************************************************************************************************************

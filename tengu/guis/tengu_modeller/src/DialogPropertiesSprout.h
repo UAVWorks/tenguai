@@ -23,6 +23,8 @@
 #include "SproutItem.h"
 #include "SproutProxy.h"
 
+#define LCD_NONE "0.000"
+
 namespace tengu {
     
     class DialogPropertiesSprout : public DialogProperties {
@@ -39,6 +41,7 @@ namespace tengu {
         protected:
             
             void _on__cancel();
+            void showEvent( QShowEvent * event );
             
         private:
             
@@ -121,6 +124,7 @@ namespace tengu {
             void __on__table_sprouts_item_selected( const QItemSelection & selected, const QItemSelection & deselected );
             void __on__combo_box_type_activated( int index );
             void __on__combo_box__execution_mode__activated( int index );
+            void __on__got_value( QVariant value );
             
     };
 };

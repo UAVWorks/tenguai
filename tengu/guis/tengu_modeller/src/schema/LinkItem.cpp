@@ -55,6 +55,7 @@ void tengu::LinkItem::__setFrom ( tengu::AbstractEntityItem * entity, bool withS
     
     __from = entity;
     __withSproutFrom = withSproutFrom;
+    __checkSproutInsideTask();
     
     // if ( entity ) entity->addOutgoingLink( this );
     
@@ -74,6 +75,7 @@ void tengu::LinkItem::__setTo ( tengu::AbstractEntityItem * entity, bool withSpr
     
     __to = entity;
     __withSproutTo = withSproutTo;
+    __checkSproutInsideTask();
     
     // if ( entity ) entity->addIncommingLink( this );
     
@@ -115,6 +117,41 @@ void tengu::LinkItem::__setTo ( tengu::AbstractEntityItem * entity, bool withSpr
     
     recalculate();
     update();
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                  check we have an sprout and it is inside task                                   *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                      Проверка того, что у нас есть sprout, и если да - то он внутри задачи.                      *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::LinkItem::__checkSproutInsideTask() {
+    
+    if ( ( __from != nullptr ) && ( __to != nullptr ) &&  
+        ( ( __withSproutFrom ) || ( __withSproutTo ) ) 
+    ) {
+        __from->checkEntity();
+        __to->checkEntity();
+        
+        AbstractAgent * agent = nullptr;
+        Sprout * sprout = nullptr;
+        
+        if ( __withSproutFrom ) {
+            agent = dynamic_cast< AbstractAgent * > ( __to->entity() );
+            sprout = dynamic_cast < Sprout * > ( __from->entity() );
+        };
+        
+        if ( __withSproutTo ) {
+            agent = dynamic_cast < AbstractAgent * > ( __from->entity() );
+            sprout = dynamic_cast< Sprout * > ( __to->entity() );
+        };
+        
+        if ( ( agent ) && ( sprout ) ) {
+            agent->addSprout( sprout );
+        }
+    };
 }
 
 // ********************************************************************************************************************
@@ -186,7 +223,7 @@ void tengu::LinkItem::__correctPointsForSprouts( int x, QRect fromRect, QRect to
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                                    Пересчитать графическое представление связи.                                  *
 // *                                                                                                                  *
-// ********************************************************************************************************************
+// *********************************************надстоящий***********************************************************************
 
 void tengu::LinkItem::recalculate() {
         

@@ -62,6 +62,7 @@ void tengu::AbstractAgent::__on_subscriber_connected() {
 
 void tengu::AbstractAgent::__on_subscribed ( QString channel ) {
     
+    qDebug() << "AbstractAgent::subscribe: " << channel;
     foreach ( Sprout * sprout, __sprouts ) {
         sprout->subscribed( channel );
     };
@@ -77,6 +78,8 @@ void tengu::AbstractAgent::__on_subscribed ( QString channel ) {
 // ********************************************************************************************************************
 
 void tengu::AbstractAgent::__on_unsubscribed ( QString channel ) {
+    
+    qDebug() << "AbstractAgent::unsubscribe: " << channel;
     
     foreach ( Sprout * sprout, __sprouts ) {
         sprout->unsubscribed( channel );
@@ -94,7 +97,7 @@ void tengu::AbstractAgent::__on_unsubscribed ( QString channel ) {
 void tengu::AbstractAgent::__on_got_message ( QString channel, QString message ) {
 
     bool handled = false;
-    
+        
     foreach ( Sprout * sprout, __sprouts ) {
         bool res = sprout->handleMessage( channel, message );
         if ( res ) {
@@ -229,9 +232,12 @@ void tengu::AbstractAgent::__unsubscribe() {
 // ********************************************************************************************************************
 
 void tengu::AbstractAgent::addSprout ( tengu::Sprout * sprout ) {
-    __sprouts[ sprout->getUUID() ] = sprout ;
+    
+    sprout->__owner = this;
+    __sprouts[ sprout->getUUID() ] = sprout ;    
     __subscribe();
     _changed = true;
+    
 }
 
 // ********************************************************************************************************************
