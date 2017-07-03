@@ -48,6 +48,26 @@ void tengu::SchemaScene::unselectAll() {
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
+// *                             Set element's visibility according to selected execution mode.                       *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                         Установить видимость элементов согласно выбранному режиму выполнения.                    *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::SchemaScene::setExecutionMode ( tengu::AbstractEntity::execution_mode_t execution_mode ) {
+    
+    for ( int i=0; i<items().count(); i++ ) {
+        AbstractEntityItem * ei = dynamic_cast< AbstractEntityItem * >( items().at(i) );
+        if ( ei ) {
+            AbstractEntity::execution_mode_t eiem = ei->getExecutionMode();
+            if ( ( eiem == AbstractEntity::EM_ALWAYS ) || ( eiem == execution_mode ) ) ei->setVisible( true );
+            else ei->setVisible( false );
+        };
+    };
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
 // *                                           Overrided slot for scene clear.                                        *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                                         Перекрытый слот для очистки сцены.                                       *

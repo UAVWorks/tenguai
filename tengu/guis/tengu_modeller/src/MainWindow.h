@@ -122,6 +122,8 @@ namespace tengu {
             DialogPropertiesSprout * __dialogPropertiesSprout;
             DialogPropertiesTask * __dialogPropertiesTask;
             
+            AbstractEntity::execution_mode_t __execution_mode;
+            
         private slots:
             
             void __on_quit_request();  

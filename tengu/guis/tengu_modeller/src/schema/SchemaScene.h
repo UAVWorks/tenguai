@@ -60,6 +60,11 @@ namespace tengu {
             
             void removeSemiCreatedLinks();
             
+            // Set element's visibility according to selected execution mode
+            // Установить видимость элементов согласно выбранному режиму выполнения.
+            
+            void setExecutionMode( AbstractEntity::execution_mode_t execution_mode );
+            
         private:
             
             AbstractEntityItem * __rootItem;

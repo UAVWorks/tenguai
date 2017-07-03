@@ -152,6 +152,7 @@ void tengu::MainWindow::__createActions() {
     __action__execution_mode_real->setCheckable( true );
     
     __action__execution_mode_xplane->setChecked( true );
+    __execution_mode = AbstractEntity::EM_XPLANE;
     
     // Action for simulation process.
     // Действия для процесса симуляции.
@@ -478,14 +479,23 @@ void tengu::MainWindow::__on_schama_item_moved ( tengu::AbstractEntityItem * ent
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::MainWindow::__on_schema_item_was_dropped ( tengu::AbstractEntity* entity, QPoint pos ) {
+void tengu::MainWindow::__on_schema_item_was_dropped ( tengu::AbstractEntity * entity, QPoint pos ) {
     
     if ( entity ) {
+        
+        entity->setExecutionMode( __execution_mode );
         
         // Common item.
         // общий элемент.
         
         AbstractEntityItem * item = dynamic_cast<AbstractEntityItem * >( entity );   
+        
+        if ( item ) {
+            
+            item->checkEntity();
+            item->setExecutionMode( __execution_mode );            
+            
+        };
         
         // Specified items, which has been created.
         // Специфические элементы, которые были созданы.
@@ -496,45 +506,17 @@ void tengu::MainWindow::__on_schema_item_was_dropped ( tengu::AbstractEntity* en
         // ANDorItem * andor = dynamic_cast<ANDorItem *>(entity);
         LinkItem * link = dynamic_cast<LinkItem *>(entity);
         // SproutItem * sprout = dynamic_cast<SproutItem * >( entity );
-        
-        /*
-        // Соединение задачи унесено в AbstractAgent.
-        if ( task ) {
-            
-            // If we have created the task - connect it to redis.io
-            // Если мы создали задачу - соединяем ее с redis.io
-            
-            task->checkEntity();
-            task->task()->connect();
-            
-        };
-        */
-        
+                
         if ( ( item ) && ( ! link ) ) {
             
             // It was graphical representation somewhat from agents.
             // Это было графическое представление кого-то из агентов.
                         
-            item->checkEntity();
             item->setX( pos.x() );
             item->setY( pos.y() );
-            __schemaView->hide();
-            __schemaScene->addItem( item );
-            __schemaView->show();
             
-            /*
-            // The accessibility of the ToolBar's buttons will vary depending on the element created on the diagram.
-            // В зависимости от созданного на схеме элемента будет меняться доступность кнопок на ToolBar'е.
             
-            if ( start ) __library_tab->tab__processes->on__process_begin_created();
-            
-            if ( task ) __library_tab->tab__processes->on__process_explicit_task_created();
-            
-            if (( task ) || ( orer ) || ( andor )) {
-                __library_tab->tab__processes->on__process_some_task_created();
-            }
-            */
-            
+                        
         };
         
         if ( link ) {
@@ -549,10 +531,11 @@ void tengu::MainWindow::__on_schema_item_was_dropped ( tengu::AbstractEntity* en
                 __schemaView->semiCreatedLink = link;
             };
             
-            __schemaView->hide();
-            __schemaScene->addItem( item );            
-            __schemaView->show();
         };
+        
+        __schemaView->hide();
+        __schemaScene->addItem( item );
+        __schemaView->show();
                 
     };    
     
@@ -579,7 +562,12 @@ void tengu::MainWindow::__on_schema_something_changed() {
 // ********************************************************************************************************************
 
 void tengu::MainWindow::__on_set_execution_mode_real() {
-
+    
+    __execution_mode = AbstractEntity::EM_REAL;
+    __schemaView->hide();
+    __schemaScene->setExecutionMode( AbstractEntity::EM_REAL );
+    __schemaView->show();
+    
 }
 
 // ********************************************************************************************************************
@@ -591,7 +579,12 @@ void tengu::MainWindow::__on_set_execution_mode_real() {
 // ********************************************************************************************************************
 
 void tengu::MainWindow::__on_set_execution_mode_xplane() {
-
+    
+    __execution_mode = AbstractEntity::EM_XPLANE;
+    __schemaView->hide();
+    __schemaScene->setExecutionMode( AbstractEntity::EM_XPLANE );
+    __schemaView->show();
+    
 }
 
 // ********************************************************************************************************************

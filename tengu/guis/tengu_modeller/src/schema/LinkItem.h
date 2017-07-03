@@ -35,6 +35,16 @@ namespace tengu {
             
             void checkEntity();
             
+            virtual QString getSystemName();
+            virtual void setSystemName( QString name );
+            virtual QString getHumanName();
+            virtual void setHumanName( QString name );
+            virtual QString getComment();
+            virtual void setComment( QString comment );
+            virtual AbstractEntity::execution_mode_t getExecutionMode();
+            virtual void setExecutionMode( AbstractEntity::execution_mode_t mode );
+            
+            
             void setTo( QPoint to );
             
             bool semiCreated();
@@ -51,6 +61,11 @@ namespace tengu {
             
             AbstractEntityItem * __from;
             AbstractEntityItem * __to;
+            
+            QString __system_name;
+            QString __human_name;
+            QString __comment;
+            AbstractEntity::execution_mode_t __execution_mode;
             
             void __setFrom( AbstractEntityItem * entity, bool withSproutFrom );
             void __setTo( AbstractEntityItem * entity, bool withSproutTo );     
