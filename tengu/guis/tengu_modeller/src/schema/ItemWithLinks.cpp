@@ -79,12 +79,12 @@ void tengu::ItemWithLinks::removeLink ( QString uuid ) {
     if ( __linksIncommingToThis.contains( uuid ) ) {
         QObject::disconnect( __linksIncommingToThis[uuid], SIGNAL(signalLinkRemoved(QString)), this, SLOT( removeLink( QString) ) );
         __linksIncommingToThis.remove( uuid );
-    }
+    };
     
     if ( __linksOutgoingFromThis.contains( uuid ) ) {
         QObject::disconnect( __linksOutgoingFromThis[uuid], SIGNAL(signalLinkRemoved(QString)), this, SLOT(removeLink(QString)) );
         __linksOutgoingFromThis.remove( uuid );
-    }
+    };
 }
 
 // ********************************************************************************************************************

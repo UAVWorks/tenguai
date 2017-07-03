@@ -407,9 +407,13 @@ void tengu::AbstractAgentKernel::addPreviousByFocus ( tengu::AbstractAgentKernel
 // ********************************************************************************************************************
 
 void tengu::AbstractAgentKernel::removeNeighborByFocus ( tengu::AbstractAgentKernel * agent ) {
-    if ( _previousByFocus.contains( agent->getUUID() ) ) _previousByFocus.remove( agent->getUUID() );
-    if ( _nextByFocus.contains( agent->getUUID() ) ) _nextByFocus.remove( agent->getUUID() );
+    if ( agent ) removeNeighborByFocus( agent->getUUID() );    
 }
+
+void tengu::AbstractAgentKernel::removeNeighborByFocus( QString uuid ) {
+    if ( _previousByFocus.contains( uuid ) ) _previousByFocus.remove( uuid );
+    if ( _nextByFocus.contains( uuid ) ) _nextByFocus.remove( uuid );
+};
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
