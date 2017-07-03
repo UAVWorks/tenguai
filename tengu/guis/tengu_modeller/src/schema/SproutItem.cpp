@@ -36,6 +36,23 @@ tengu::SproutItem::SproutItem ( tengu::Sprout * sprout, QGraphicsItem* parent )
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
+// *                                              Is this sprout item orphan?                                         *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                          Является ли данный sprout - сиротой?                                    *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+bool tengu::SproutItem::isOrphan() {
+    
+    Sprout * sp = sprout();
+    if ( ( ! sp ) || ( ! sp->owner() ) ) return true;
+    return false;
+        
+}
+
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
 // *                                          Make and return transformation matrix.                                  *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                                        Сделать и вернуть матрицу трансформации.                                  *
@@ -88,17 +105,30 @@ void tengu::SproutItem::paint ( QPainter* painter, const QStyleOptionGraphicsIte
     
     QPainter p( & pixmap );
     
-    // No color but alpha-layer
-    // Цвета нет, но есть альфа-слой.
+    // Cleaning. No color but alpha-layer
+    // Очистка. Цвета нет, но есть альфа-слой.
     
     p.setBrush( QColor( 0, 0, 0, 255 ) );
     p.eraseRect( 0, 0, __width + 1, __height + 1 );
     
-    p.setPen( _processDiagram_borderPen() );
+    QPen borderPen = _processDiagram_borderPen();
+    QColor brightColor = _processDiagram_brightFillColor();
+    QColor darkColor = _processDiagram_darkFillColor();
+    
+    if ( isOrphan() ) {
+        // For orphanded sprout colors will be demonstrate it's inaccessibility.
+        // Для "осиротевшего" sprout'а цвета показывают его недоступность.
+        
+        borderPen.setColor( QColor( 128, 128, 128 ) );        
+        brightColor = QColor( 232, 232, 232 );
+        darkColor = QColor( 192, 192, 192 );
+    };
+    
+    p.setPen( borderPen );
     
     QLinearGradient gradient( _boundingRect.topLeft(), _boundingRect.bottomLeft() );
-    gradient.setColorAt(0, _processDiagram_brightFillColor() );
-    gradient.setColorAt(1, _processDiagram_darkFillColor() );
+    gradient.setColorAt(0, brightColor );
+    gradient.setColorAt(1, darkColor );
     gradient.setStart( 1, _boundingRect.height() / 3 );
     QBrush brush( gradient );
     p.setBrush( brush );

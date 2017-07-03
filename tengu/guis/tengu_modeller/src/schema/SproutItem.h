@@ -59,6 +59,8 @@ namespace tengu {
             
             Sprout * sprout();
             
+            bool isOrphan();
+            
             /**
              * @short Get the orientation of this element at the diagram.
              * 
