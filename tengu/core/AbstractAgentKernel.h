@@ -71,6 +71,7 @@ namespace tengu {
             
             void addChild( AbstractAgentKernel * child );
             bool hasChildren();
+            void removeChild( AbstractAgentKernel * child );
             QList <AbstractAgentKernel * > children();
             
             /**
@@ -80,8 +81,8 @@ namespace tengu {
             void addPreviousByFocus( AbstractAgentKernel * previous );            
             void addNextByFocus( AbstractAgentKernel * next );                       
             void removeNeighborByFocus( AbstractAgentKernel * agent );
-            void removeNeighborByFocus( QString uuid );
-                        
+            // void removeNeighborByFocus( QString uuid );
+                                    
             // The agent can be provided either as object in memory
             // or separate process in the operation system for 
             // resource savings.

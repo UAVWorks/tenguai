@@ -338,7 +338,23 @@ void tengu::AbstractAgentKernel::disconnect() {
 
 void tengu::AbstractAgentKernel::addChild ( tengu::AbstractAgentKernel * child ) {
     _children[ child->getUUID() ] = child;
+    child->_parent = this;
     _changed = true;
+}
+
+// ********************************************************************************************************************
+// * *
+// * Remove one child from this parent. *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// * Удалить одного ребенка у этого родителя. *
+// * *
+// ********************************************************************************************************************
+
+void tengu::AbstractAgentKernel::removeChild ( tengu::AbstractAgentKernel* child ) {
+    if ( child ) {
+        if ( _children.contains( child->getUUID() ) ) _children.remove( child->getUUID() );
+        child->_parent = nullptr;
+    };
 }
 
 // ********************************************************************************************************************
@@ -407,13 +423,17 @@ void tengu::AbstractAgentKernel::addPreviousByFocus ( tengu::AbstractAgentKernel
 // ********************************************************************************************************************
 
 void tengu::AbstractAgentKernel::removeNeighborByFocus ( tengu::AbstractAgentKernel * agent ) {
-    if ( agent ) removeNeighborByFocus( agent->getUUID() );    
+    if ( agent ) {
+        // removeNeighborByFocus( agent->getUUID() );    
+        if ( _previousByFocus.contains( agent->getUUID() ) ) _previousByFocus.remove( agent->getUUID() );
+        if ( _nextByFocus.contains( agent->getUUID() ) ) _nextByFocus.remove( agent->getUUID() );
+    };
 }
 
-void tengu::AbstractAgentKernel::removeNeighborByFocus( QString uuid ) {
-    if ( _previousByFocus.contains( uuid ) ) _previousByFocus.remove( uuid );
-    if ( _nextByFocus.contains( uuid ) ) _nextByFocus.remove( uuid );
-};
+//void tengu::AbstractAgentKernel::removeNeighborByFocus( QString uuid ) {
+//    if ( _previousByFocus.contains( uuid ) ) _previousByFocus.remove( uuid );
+//    if ( _nextByFocus.contains( uuid ) ) _nextByFocus.remove( uuid );
+//};
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
@@ -441,11 +461,17 @@ tengu::AbstractAgentKernel::~AbstractAgentKernel() {
     // The children are stored right here. We must clean them.
     // Дети хранятся прямо здесь и их нужно чистить.
     
+    if ( _parent ) {
+        _parent->removeChild( this );
+    };
+    
     if ( _children.size() > 0 ) {
         
         foreach ( AbstractAgentKernel * child, _children ) {
             delete( child );
         };
+        
+        _children.clear();
         
     };
     

@@ -747,11 +747,11 @@ void tengu::AbstractEntityItem::checkEntity() {
 // ********************************************************************************************************************
 
 tengu::AbstractEntityItem::~AbstractEntityItem() {
-        
+    
     if ( _entity ) {
         delete ( _entity );
         _entity = nullptr;
-    };        
+    };
     
 }
 

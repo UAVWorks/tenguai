@@ -92,8 +92,9 @@ void tengu::SchemaScene::clear() {
         };
     };
     */
-    
+
     QGraphicsScene::clear();
+    
 }
 
 // ********************************************************************************************************************
@@ -105,15 +106,16 @@ void tengu::SchemaScene::clear() {
 // ********************************************************************************************************************
 
 void tengu::SchemaScene::setRootItem ( tengu::AbstractEntityItem * rootItem ) {
+
+    clear();
     
     if ( __rootItem ) {
         delete( __rootItem );
         __rootItem = nullptr;
     };
-    
+        
     __rootItem = rootItem;      
-    
-    clear();
+        
     
     /*
     // Add children of this root item to schema.

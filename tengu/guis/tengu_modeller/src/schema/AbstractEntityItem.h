@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include <typeinfo>
+
 #include <QGraphicsObject>
 #include <QGraphicsItem>
 #include <QPainter>
