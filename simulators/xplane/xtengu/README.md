@@ -2,7 +2,7 @@
 
 [Описание на русском языке](README.ru.md)
 
-This is a part of [**Tengu**](https://github.com/unclesal/tengu) project.
+This is a part of [**Tengu**](https://github.com/unclesal/tenguai) project.
 
 Let's suppose you decided to develop your own UAV (this is a good beginning, is'nt it?). Either you want to develop an avionics 
 (on-board instruments), hardware or algorithms to aircraft's control.

@@ -32,5 +32,7 @@ This is graphical tool for work with artifical intelligence models. At the momen
 - ......
 - **27 may 2017** Getted started on this GUI-program.
 
-Currently, the application looks like this:
-![Currently look](pictures/today.png)
+Currently, the application looks like this (**click to watch video**):
+[![Currently look](pictures/today.png)](https://youtu.be/dRRLE0nuRro)
+
+
