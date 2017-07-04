@@ -506,7 +506,7 @@ void tengu::MainWindow::__on_schema_item_was_dropped ( tengu::AbstractEntity * e
         // ANDorItem * andor = dynamic_cast<ANDorItem *>(entity);
         LinkItem * link = dynamic_cast<LinkItem *>(entity);
         // SproutItem * sprout = dynamic_cast<SproutItem * >( entity );
-                
+                        
         if ( ( item ) && ( ! link ) ) {
             
             // It was graphical representation somewhat from agents.

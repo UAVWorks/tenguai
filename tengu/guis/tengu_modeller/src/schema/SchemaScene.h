@@ -55,7 +55,9 @@ namespace tengu {
             void unselectAll();
             void setRootItem( AbstractEntityItem * rootItem );
             
-            void addItem( AbstractEntityItem * item );
+            void addItem( QGraphicsItem * gItem );
+            void removeItem ( QGraphicsItem * gItem );
+            
             bool changed();
             
             void removeSemiCreatedLinks();
@@ -70,6 +72,8 @@ namespace tengu {
             AbstractEntityItem * __rootItem;
             bool __changed;
             ProcessItem * __rootIsProcess();
+            QMap< QString, TaskItem * > __taskItems;
+            QMap< QString, SproutItem * > __sproutItems;
                         
         private slots:
             

@@ -35,9 +35,9 @@ tengu::LibraryTab__processes::LibraryTab__processes ( QWidget* parent, Qt::Windo
     lay->addWidget( button__process_begin, 0, 0 );
     */
     
-    button__process_end = new LibraryTab_Button( QIcon( QPixmap(":process_end_16.png")), tr("End of process")  );
+    button__process_end = new LibraryTab_Button( QIcon( QPixmap(":process_end_16.png")), tr("Successful end of process")  );
     button__process_end->setDrag( ProcessStopItem().toJSON() );
-    lay->addWidget( button__process_end, 1, 0 );
+    lay->addWidget( button__process_end, 0, 0 );
     
     button__focus_arrow = new LibraryTab_Button( QIcon( QPixmap(":arrow_right_16.png") ), tr("Binding arrow") );
     button__focus_arrow->setDrag( LinkItem().toJSON() );
