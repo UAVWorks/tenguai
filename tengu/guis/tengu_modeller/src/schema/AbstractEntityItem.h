@@ -75,7 +75,7 @@ namespace tengu {
             AbstractEntityItem( AbstractEntity * entity = Q_NULLPTR, QGraphicsItem * parent = Q_NULLPTR );
             virtual ~AbstractEntityItem();
         
-            void paint( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = Q_NULLPTR);
+            virtual void paint( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = Q_NULLPTR);
             QRectF boundingRect() const;
             
             // AbstractEntity * entity();

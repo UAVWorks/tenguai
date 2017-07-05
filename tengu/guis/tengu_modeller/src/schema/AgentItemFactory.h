@@ -13,6 +13,7 @@
 #include "AgentFactory.h"
 
 #include "XPlaneAgentItem.h"
+#include "XPlaneSimulatorItem.h"
 #include "ProcessStartItem.h"
 #include "ProcessStopItem.h"
 #include "TaskItem.h"
@@ -32,7 +33,7 @@ namespace tengu {
         public:
             
             static AbstractEntity * createEntity( QJsonObject json );
-            static AbstractEntityItem * createEntity( AbstractAgentKernel * agent );
+            static AbstractEntityItem * createItem( AbstractAgentKernel * agent );
             
     };
     

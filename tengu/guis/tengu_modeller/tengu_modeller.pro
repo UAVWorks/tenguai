@@ -29,6 +29,7 @@ LIBS += -lLoRedis -L../../loredis/build -ltengu_core -L../../core/build -lhiredi
 
 HEADERS  += src/overboard/XPlaneAircraft.h  \ 
         src/overboard/XPlaneProcess.h       \
+        src/overboard/XPlaneSimulator.h     \
         src/overboard/SproutProxy.h         \
         src/overboard/TopLevelEntity.h      \
         src/overboard/WorkSpace.h           \        
@@ -36,6 +37,7 @@ HEADERS  += src/overboard/XPlaneAircraft.h  \
         src/schema/TopLevelItem.h           \
         src/schema/ItemWithLinks.h          \
         src/schema/XPlaneAgentItem.h        \
+        src/schema/XPlaneSimulatorItem.h    \
         src/schema/ProcessStartItem.h       \
         src/schema/ProcessStopItem.h        \
         src/schema/ANDorItem.h              \
@@ -66,6 +68,7 @@ HEADERS  += src/overboard/XPlaneAircraft.h  \
 SOURCES += src/main.cpp                     \
         src/overboard/XPlaneAircraft.cpp    \
         src/overboard/XPlaneProcess.cpp     \
+        src/overboard/XPlaneSimulator.cpp   \
         src/overboard/SproutProxy.cpp       \
         src/overboard/TopLevelEntity.cpp    \
         src/overboard/WorkSpace.cpp         \
@@ -73,6 +76,7 @@ SOURCES += src/main.cpp                     \
         src/schema/TopLevelItem.cpp         \
         src/schema/ItemWithLinks.cpp        \
         src/schema/XPlaneAgentItem.cpp      \
+        src/schema/XPlaneSimulatorItem.cpp  \
         src/schema/ProcessStartItem.cpp     \
         src/schema/ProcessStopItem.cpp      \
         src/schema/ANDorItem.cpp            \

@@ -32,7 +32,7 @@ tengu::VehicleItem::VehicleItem ( tengu::Vehicle * vehicle, QGraphicsItem* paren
 // ********************************************************************************************************************
 
 QRectF tengu::VehicleItem::boundingRect() const {
-    return QRectF( 0.0, 0.0, 256.0, 256.0 );
+    return QRectF( 0.0, 0.0, 66, 66 );
 }
 
 // ********************************************************************************************************************
@@ -44,7 +44,7 @@ QRectF tengu::VehicleItem::boundingRect() const {
 // ********************************************************************************************************************
 
 void tengu::VehicleItem::paint ( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget ) {
-    QPixmap aircraft(":Falcon_256.png");
+    QPixmap aircraft(":Falcon-icon_64.png");
     painter->drawPixmap( 1, 1, aircraft );
 }
 

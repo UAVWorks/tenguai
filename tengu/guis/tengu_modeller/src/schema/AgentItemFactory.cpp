@@ -57,18 +57,19 @@ tengu::AbstractEntity* tengu::AgentItemFactory::createEntity ( QJsonObject json 
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::AbstractEntityItem * tengu::AgentItemFactory::createEntity ( tengu::AbstractAgentKernel * agent ) {
+tengu::AbstractEntityItem * tengu::AgentItemFactory::createItem ( tengu::AbstractAgentKernel * agent ) {
     
-    Process * process = dynamic_cast< Process * > ( agent );            if ( process ) return new ProcessItem( process );
-    ProcessStart * start = dynamic_cast< ProcessStart * > ( agent );    if ( start ) return new ProcessStartItem( start );    
-    Vehicle * vehicle = dynamic_cast< Vehicle * > ( agent ) ;           if ( vehicle ) return new VehicleItem( vehicle );
-    WorkSpace * workSpace = dynamic_cast <WorkSpace * > ( agent );      if ( workSpace ) return new WorkSpaceItem( workSpace );
+    XPlaneSimulator * xplane = dynamic_cast<XPlaneSimulator *> (agent );    if ( xplane ) return new XPlaneSimulatorItem( xplane );
+    Process * process = dynamic_cast< Process * > ( agent );                if ( process ) return new ProcessItem( process );
+    ProcessStart * start = dynamic_cast< ProcessStart * > ( agent );        if ( start ) return new ProcessStartItem( start );    
+    Vehicle * vehicle = dynamic_cast< Vehicle * > ( agent ) ;               if ( vehicle ) return new VehicleItem( vehicle );
+    WorkSpace * workSpace = dynamic_cast <WorkSpace * > ( agent );          if ( workSpace ) return new WorkSpaceItem( workSpace );
     
     
     // Could not recognize the class
     // Не смогли распознать класс.
     
-    if ( agent ) qDebug() << "AgentItemFactory::createEntity, can not create for " << agent->getHumanName();
+    if ( agent ) qDebug() << "AgentItemFactory::createItem, can not create for " << agent->getHumanName();
     
     return nullptr;
 }

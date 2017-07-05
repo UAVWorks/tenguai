@@ -138,7 +138,7 @@ void tengu::SchemaScene::setRootItem ( tengu::AbstractEntityItem * rootItem ) {
         
         for ( int i=0; i<entity->children().count(); i++ ) {
             
-            AbstractEntityItem * item = AgentItemFactory::createEntity( entity->children().at(i) );
+            AbstractEntityItem * item = AgentItemFactory::createItem( entity->children().at(i) );
             
             if ( item ) {
                 addItem( item );

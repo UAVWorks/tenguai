@@ -94,8 +94,11 @@ void tengu::MainWindow::__createWorkspace() {
     
     __workSpace = new WorkSpace();
     
-    XPlaneProcess * xpProcsss = new XPlaneProcess();
-    __workSpace->addChild( xpProcsss );
+    XPlaneSimulator * xplane = new XPlaneSimulator();
+    __workSpace->addChild( xplane );
+    
+    // XPlaneProcess * xpProcsss = new XPlaneProcess();
+    // __workSpace->addChild( xpProcsss );
     
     // In the workspace we always have an x-plane process.
     // Внутри рабочего пространства у нас всегда есть процесс X-Plane.
@@ -666,7 +669,7 @@ void tengu::MainWindow::__on__tree_structure__agent_was_created ( tengu::Abstrac
 
 void tengu::MainWindow::__on__tree_structure__agent_was_selected ( tengu::AbstractAgentKernel * agent ) {
     
-    AbstractEntityItem * item = AgentItemFactory::createEntity( agent );
+    AbstractEntityItem * item = AgentItemFactory::createItem( agent );
     if ( item ) {
         
         __agentPropertyModel->setEntityItem( item );

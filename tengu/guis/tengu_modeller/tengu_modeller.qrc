@@ -37,6 +37,8 @@
     <file alias="chart_organisation_add_16.png">images/chart_organisation_add_16.png</file>
     <file alias="robot_16.png">images/robot_16.png</file>
     <file alias="robot_32.png">images/robot_32.png</file>    
+    <file alias="Falcon-icon_48.png">images/Falcon-icon_48.png</file>
+    <file alias="Falcon-icon_64.png">images/Falcon-icon_64.png</file>
     <file alias="Falcon_256.png">images/Falcon-256.png</file>
 </qresource>
 </RCC>

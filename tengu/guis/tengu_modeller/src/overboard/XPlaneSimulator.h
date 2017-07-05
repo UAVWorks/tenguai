@@ -1,28 +1,28 @@
 // ********************************************************************************************************************
 // *                                                                                                                  *
-// *                   Entity entering the workspace (an aiircraft, an airport. an vehicle e.t.c. )                   *
+// *                             An X-Plane simulator as a top level entity in the WorkSpace.                         *
 // * ---------------------------------------------------------------------------------------------------------------- *
-// *                   Сущность, входящая в рабочее пространство (самолет, аэропорт, машинка и др.)                   *
+// *                   Симулятор X-Plane как "сущность верхнего уровня" внутри рабочего пространства.                 *
 // *                                                                                                                  *
-// * Eugene G. Sysoletin <e.g.sysoletin@gmail.com>                                       Created 24 jun 2017 at 16:07 *
+// * Eugene G. Sysoletin <e.g.sysoletin@gmail.com>                                       Created 05 jun 2017 at 15:25 *
 // ********************************************************************************************************************
 
 #pragma once
 
-#include "Processor.h"
+#include "TopLevelEntity.h"
+#include "XPlaneProcess.h"
 
 namespace tengu {
     
-    class TopLevelEntity : public Processor {
+    class XPlaneSimulator : public TopLevelEntity {
         
         Q_OBJECT
-        
         public:
             
-            TopLevelEntity();
-            virtual ~TopLevelEntity();
+            XPlaneSimulator();
+            virtual ~XPlaneSimulator();
             
-        protected:
-        private:
     };
+    
 };
+

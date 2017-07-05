@@ -30,10 +30,10 @@ namespace tengu {
             // Только для отображения, для человеческого восприятия. 
             
             enum vehicle_types_h {                
-                VT_NONE             = 0,                
-                VT_AIRCRAFT         = 10,
-                VT_HELICOPTER       = 20,
-                VT_QUADROCOPTER     = 30
+                VT_NONE             = 0, 
+                VT_AIRCRAFT         = 20,
+                VT_HELICOPTER       = 30,
+                VT_QUADROCOPTER     = 40
             };
             
             Vehicle ();
