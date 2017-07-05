@@ -13,12 +13,12 @@
 #include <QList>
 #include <QMap>
 
-#include "AbstractEntityItem.h"
+#include "EMChangableItem.h"
 #include "LinkItem.h"
 
 namespace tengu {
     
-    class ItemWithLinks : public AbstractEntityItem {
+    class ItemWithLinks : public EMChangableItem {
         
         Q_OBJECT
         

@@ -17,10 +17,18 @@ namespace tengu {
     class XPlaneSimulator : public TopLevelEntity {
         
         Q_OBJECT
+        
         public:
             
+            static const QString XPLANE_SIMULATOR_UUID;        
+            static const QList<QString> CONTROL_AIRCRAFTS_UUIDS;
+            static const QList<QString> CONDITION_AIRCRAFTS_UUIDS;
+
             XPlaneSimulator();
             virtual ~XPlaneSimulator();
+            
+            XPlaneProcess * condition;
+            XPlaneProcess * control;
             
     };
     

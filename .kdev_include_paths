@@ -16,3 +16,5 @@ simulators/xplane/3d_party/XPSDK-213/CHeaders/XPLM/
 tengu/guis/tengu_modeller/src/
 tengu/guis/tengu_modeller/src/schema/
 tengu/guis/tengu_modeller/src/overboard/
+tengu/guis/tengu_modeller/src/dialogs/
+

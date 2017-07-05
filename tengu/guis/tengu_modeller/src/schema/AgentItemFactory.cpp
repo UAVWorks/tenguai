@@ -59,6 +59,7 @@ tengu::AbstractEntity* tengu::AgentItemFactory::createEntity ( QJsonObject json 
 
 tengu::AbstractEntityItem * tengu::AgentItemFactory::createItem ( tengu::AbstractAgentKernel * agent ) {
     
+    Task * task = dynamic_cast<Task * > ( agent );                          if ( task ) return new TaskItem( task );
     XPlaneSimulator * xplane = dynamic_cast<XPlaneSimulator *> (agent );    if ( xplane ) return new XPlaneSimulatorItem( xplane );
     Process * process = dynamic_cast< Process * > ( agent );                if ( process ) return new ProcessItem( process );
     ProcessStart * start = dynamic_cast< ProcessStart * > ( agent );        if ( start ) return new ProcessStartItem( start );    

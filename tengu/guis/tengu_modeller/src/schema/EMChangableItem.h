@@ -1,10 +1,10 @@
 // ********************************************************************************************************************
 // *                                                                                                                  *
-// *                                   The graphics representation of top-level entity                                *
+// *                                The graphics item which can change executable mode.                               *
 // * ---------------------------------------------------------------------------------------------------------------- *
-// *                                  Графическое представление сущности верхнего уровня.                             *
+// *                            Графический элемент, который может менять режим выполнения.                           *
 // *                                                                                                                  *
-// * Eugene G. Sysoletin <e.g.sysoletin@gmail.com>                                       Created 24 jun 2017 at 16:12 *
+// * Eugene G. Sysoletin <e.g.sysoletin@gmail.com>                                       Created 05 jul 2017 at 21:21 *
 // ********************************************************************************************************************
 
 #pragma once
@@ -13,15 +13,14 @@
 
 namespace tengu {
     
-    class TopLevelItem : public AbstractEntityItem {
+    class EMChangableItem : public AbstractEntityItem {
         
         Q_OBJECT
         
         public:
-            
-            TopLevelItem ( AbstractEntity * entity = nullptr, QGraphicsItem* parent = nullptr );
-            virtual ~TopLevelItem();
+        
+            EMChangableItem ( AbstractEntity* entity = nullptr, QGraphicsItem* parent = nullptr );
+            virtual ~EMChangableItem();
+            virtual QList< QList<AgentPropertyElement> > properties();
     };
-    
 };
-

@@ -20,10 +20,7 @@ namespace tengu {
     class XPlaneProcess : public Process {
         
         Q_OBJECT
-        
-        static const QString XPLANE_PROCESS_UUID;        
-        static const QList<QString> AIRCRAFTS_UUIDS;
-        
+                
         public:
             
             XPlaneProcess();

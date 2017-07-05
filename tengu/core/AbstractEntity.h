@@ -42,7 +42,7 @@ namespace tengu {
             // Действительно уникальный идентификатор для данного объекта.
             
             virtual QString getUUID();
-            // void setUUID( QString uuid );            
+            virtual void setUUID( QString uuid );
             
             // The name of this agent.
             // Имя агента.

@@ -11,12 +11,12 @@
 
 #include <QPixmap>
 
-#include "ItemWithLinks.h"
+#include "TopLevelItem.h"
 #include "Vehicle.h"
 
 namespace tengu {
 
-    class VehicleItem : public ItemWithLinks {
+    class VehicleItem : public TopLevelItem {
         
         Q_OBJECT
         public:

@@ -17,7 +17,7 @@
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::TopLevelIem::TopLevelIem ( tengu::AbstractEntity * entity, QGraphicsItem * parent ) 
+tengu::TopLevelItem::TopLevelItem ( tengu::AbstractEntity * entity, QGraphicsItem * parent ) 
     : AbstractEntityItem ( entity, parent )
 {
 
@@ -31,7 +31,7 @@ tengu::TopLevelIem::TopLevelIem ( tengu::AbstractEntity * entity, QGraphicsItem 
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::TopLevelIem::~TopLevelIem() {
+tengu::TopLevelItem::~TopLevelItem() {
 
 }
 

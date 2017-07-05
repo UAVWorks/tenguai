@@ -40,5 +40,7 @@
     <file alias="Falcon-icon_48.png">images/Falcon-icon_48.png</file>
     <file alias="Falcon-icon_64.png">images/Falcon-icon_64.png</file>
     <file alias="Falcon_256.png">images/Falcon-256.png</file>
+    <file alias="Airplane_icon_128.png">images/Airplane_icon_128.png</file>
+    <file alias="Airplane_icon_64.png">images/Airplane_icon_64.png</file>
 </qresource>
 </RCC>

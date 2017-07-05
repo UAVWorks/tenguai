@@ -17,11 +17,12 @@
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::XPlaneAircraft::XPlaneAircraft( int acf_index ) 
+tengu::XPlaneAircraft::XPlaneAircraft( int acf_index, QString group, Sprout::sprout_type_t sproutsType ) 
     : tengu::Task()
 {
     
     __aircraft_index = acf_index;
+    __group = group;
     
     QString sName= tr("acf_") + QString::number( acf_index );
     QString hName = tr("Aircraft ") + QString::number( acf_index );
@@ -33,19 +34,13 @@ tengu::XPlaneAircraft::XPlaneAircraft( int acf_index )
     AbstractEntity::setSystemName( sName );
     AbstractEntity::setHumanName( hName );    
     AbstractEntity::setExecutionMode( AbstractEntity::EM_XPLANE );
+            
+    __init_sprout( "Longitude", sproutsType, tr("Longitude"), -180.0, 180.0 );
+    __init_sprout( "Latitude", sproutsType, tr("Latitude"), -180.0, 180.0 );
     
+    __init_sprout( "LeftAileron", sproutsType, tr("Left Aileron"), -45, 45 );
+    __init_sprout( "RightAileron", sproutsType, tr("Right Aileron"), -45, 45 );
     
-    CREATE_XTENGU_SETTINGS;
-    settings.beginGroup("CommonControl");
-    __controlGroup = settings.value("ControlNameGroup", "xtengu.control").toString();
-    __conditionGroup = settings.value("ConditionNameGroup", "xtengu.condition").toString();
-    settings.endGroup();
-    
-    __init_sprout( "Longitude", Sprout::EXTERNAL_OUTPUT, tr("Longitude") );
-    __init_sprout( "Latitude", Sprout::EXTERNAL_OUTPUT, tr("Latitude") );
-    
-    __init_sprout( "LeftAileron", Sprout::EXTERNAL_INPUT, tr("Left Aileron"), -45, 45 );
-    __init_sprout( "RightAileron", Sprout::EXTERNAL_INPUT, tr("Right Aileron"), -45, 45 );
     
     // __init_sprout( "LeftAileron", Sprout::EXTERNAL_OUTPUT, tr("Left aileron") );
     /*
@@ -82,8 +77,8 @@ void tengu::XPlaneAircraft::__init_sprout ( QString settingsGroup, tengu::Sprout
     QString output = settings.value("output_channel", "").toString(); 
     settings.endGroup();
     
-    QString inputPath = __conditionGroup + ".acf_" + QString::number( __aircraft_index ) + "." + input;
-    QString outputPath = __controlGroup + ".acf_" + QString::number( __aircraft_index ) + "." + output;
+    QString inputPath = __group + ".acf_" + QString::number( __aircraft_index ) + "." + input;
+    QString outputPath = __group + ".acf_" + QString::number( __aircraft_index ) + "." + output;
     
     SproutProxy * sp = new SproutProxy( this );
     sp->setExecutionMode( AbstractAgentKernel::EM_XPLANE );

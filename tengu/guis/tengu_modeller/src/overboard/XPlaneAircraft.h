@@ -31,7 +31,7 @@ namespace tengu {
         
         public:
             
-            XPlaneAircraft( int acf_index );
+            XPlaneAircraft( int acf_index, QString group, Sprout::sprout_type_t sproutsType );
             virtual ~XPlaneAircraft();
             
             void setName( QString name );
@@ -43,8 +43,7 @@ namespace tengu {
             
         private:
             
-            QString __controlGroup;
-            QString __conditionGroup;
+            QString __group;
             
             int __aircraft_index;
             
