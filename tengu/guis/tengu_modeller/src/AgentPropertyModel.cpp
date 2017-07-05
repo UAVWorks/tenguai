@@ -190,10 +190,10 @@ QVariant tengu::AgentPropertyModel::data( const QModelIndex & index, int role ) 
             }; break;
             
             case AgentPropertyElement::ExecutionModeSelector: {
-                switch ( ( AbstractAgent::execution_mode_t ) oneElement.value.toInt() ) {
-                    case AbstractAgent::EM_ALWAYS:  return QVariant( tr("Always") );
-                    case AbstractAgent::EM_REAL:    return QVariant( tr("Real") );
-                    case AbstractAgent::EM_XPLANE:  return QVariant( tr("X-Plane simulation") );
+                switch ( ( AbstractAgentKernel::execution_mode_t ) oneElement.value.toInt() ) {
+                    case AbstractAgentKernel::EM_ALWAYS:  return QVariant( tr("Always") );
+                    case AbstractAgentKernel::EM_REAL:    return QVariant( tr("Real") );
+                    case AbstractAgentKernel::EM_XPLANE:  return QVariant( tr("X-Plane simulation") );
                 };                                
             }; break;
             
@@ -283,7 +283,7 @@ bool tengu::AgentPropertyModel::setData( const QModelIndex & index, const QVaria
             // Перечислимые значения не хотят устанавливаться как свойство.
             
             case AgentPropertyElement::ExecutionModeSelector : {
-                __item->setExecutionMode( (AbstractAgent::execution_mode_t) value.toInt() );
+                __item->setExecutionMode( (AbstractAgentKernel::execution_mode_t) value.toInt() );
             }; break;
             
             case AgentPropertyElement::SproutTypeSelector : {

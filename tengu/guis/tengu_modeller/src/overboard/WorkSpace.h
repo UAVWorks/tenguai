@@ -11,12 +11,12 @@
 
 #include <QList>
 
-#include "AbstractAgent.h"
+#include "AbstractAgentKernel.h"
 #include "AgentFactory.h"
 
 namespace tengu {
 
-    class WorkSpace : public AbstractAgent {
+    class WorkSpace : public AbstractAgentKernel {
     
         Q_OBJECT
         public:

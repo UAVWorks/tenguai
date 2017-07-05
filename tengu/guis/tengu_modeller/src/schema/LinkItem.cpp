@@ -244,16 +244,16 @@ void tengu::LinkItem::__checkSproutInsideTask() {
         __from->checkEntity();
         __to->checkEntity();
         
-        AbstractAgent * agent = nullptr;
+        SproutableAgent * agent = nullptr;
         Sprout * sprout = nullptr;
         
         if ( __withSproutFrom ) {
-            agent = dynamic_cast< AbstractAgent * > ( __to->entity() );
+            agent = dynamic_cast< SproutableAgent * > ( __to->entity() );
             sprout = dynamic_cast < Sprout * > ( __from->entity() );
         };
         
         if ( __withSproutTo ) {
-            agent = dynamic_cast < AbstractAgent * > ( __from->entity() );
+            agent = dynamic_cast < SproutableAgent * > ( __from->entity() );
             sprout = dynamic_cast< Sprout * > ( __to->entity() );
         };
         

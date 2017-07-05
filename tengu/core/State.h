@@ -10,11 +10,11 @@
 #pragma once
 
 #include <QList>
-#include "AbstractAgent.h"
+#include "AbstractAgentKernel.h"
 
 namespace tengu {
 
-    class State : public AbstractAgent {
+    class State : public AbstractAgentKernel {
         
         Q_OBJECT
         

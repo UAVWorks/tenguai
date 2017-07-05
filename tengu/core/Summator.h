@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "AbstractAgent.h"
+#include "AbstractAgentKernel.h"
 
 namespace tengu {
     
@@ -31,7 +31,7 @@ namespace tengu {
      * инвертор, разветвитель, канал для резервирования и др. 
      */
     
-    class Summator : public AbstractAgent {
+    class Summator : public AbstractAgentKernel {
     
         Q_OBJECT
         

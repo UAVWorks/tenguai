@@ -18,7 +18,7 @@
 // ********************************************************************************************************************
 
 tengu::ProcessStart::ProcessStart () 
-    : AbstractAgent ()
+    : AbstractAgentKernel ()
 {
     // Start element is always in mode EM_ALWAYS
     // Старт всегда в режиме EM_ALWAYS

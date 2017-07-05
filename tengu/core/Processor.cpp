@@ -20,7 +20,7 @@
 // ********************************************************************************************************************
 
 tengu::Processor::Processor () 
-    : AbstractAgent ()
+    : AbstractAgentKernel ()
 {
     
     // _setActivity( false );

@@ -1,15 +1,13 @@
 // ********************************************************************************************************************
 // *                                                                                                                  *
-// *      The abstract agent. Any logical completed piece which can do something. Usually it is a separate process    *
-// *                                              inside operation system.                                            *
+// *                                         The agent which can have a sprouts                                       *
 // * ---------------------------------------------------------------------------------------------------------------- *
-// *    Абстрактный агент. Любой логически законченный кусок, который может что-то делать. Как правило - отдельный    *
-// *                                             процесс операционной системы.                                        *
+// *                                        Агент, который может иметь "отростки".                                    *
 // *                                                                                                                  *
 // * Eugene G. Sysoletin <e.g.sysoletin@gmail.com>                                       Created 26 may 2017 at 11:59 *
 // ********************************************************************************************************************
 
-#include "AbstractAgent.h"
+#include "SproutableAgent.h"
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
@@ -19,7 +17,7 @@
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::AbstractAgent::AbstractAgent () 
+tengu::SproutableAgent::SproutableAgent () 
     : AbstractAgentKernel () 
 {    
     _oActivityChannel = QString("");
@@ -47,8 +45,8 @@ tengu::AbstractAgent::AbstractAgent ()
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::AbstractAgent::__on_subscriber_connected() {
-    qDebug() << "AbstractAgent::on subscriber connected";
+void tengu::SproutableAgent::__on_subscriber_connected() {
+    qDebug() << "SproutableAgent::on subscriber connected";
     __subscribe();
 };
 
@@ -60,9 +58,9 @@ void tengu::AbstractAgent::__on_subscriber_connected() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::AbstractAgent::__on_subscribed ( QString channel ) {
+void tengu::SproutableAgent::__on_subscribed ( QString channel ) {
     
-    qDebug() << "AbstractAgent::subscribe: " << channel;
+    qDebug() << "SproutableAgent::subscribe: " << channel;
     foreach ( Sprout * sprout, __sprouts ) {
         sprout->subscribed( channel );
     };
@@ -77,14 +75,14 @@ void tengu::AbstractAgent::__on_subscribed ( QString channel ) {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::AbstractAgent::__on_unsubscribed ( QString channel ) {
+void tengu::SproutableAgent::__on_unsubscribed ( QString channel ) {
     
-    qDebug() << "AbstractAgent::on unsubscribed: " << channel;
+    qDebug() << "SproutableAgent::on unsubscribed: " << channel;
     
     foreach ( Sprout * sprout, __sprouts ) {
         sprout->unsubscribed( channel );
     };
-    qDebug() << "AbstractAgent::on unsubscribed done.";
+    qDebug() << "SproutableAgent::on unsubscribed done.";
     
 }
 
@@ -96,7 +94,7 @@ void tengu::AbstractAgent::__on_unsubscribed ( QString channel ) {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::AbstractAgent::__on_got_message ( QString channel, QString message ) {
+void tengu::SproutableAgent::__on_got_message ( QString channel, QString message ) {
 
     bool handled = false;
         
@@ -110,7 +108,7 @@ void tengu::AbstractAgent::__on_got_message ( QString channel, QString message )
     }    
     
     if ( ! handled ) {
-        qDebug() << "AbstractAgent::__on_got_message(" << channel << ") was not handled.";
+        qDebug() << "SproutableAgent::__on_got_message(" << channel << ") was not handled.";
     }
 }
 
@@ -122,7 +120,7 @@ void tengu::AbstractAgent::__on_got_message ( QString channel, QString message )
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::AbstractAgent::__tryActivate() {
+void tengu::SproutableAgent::__tryActivate() {
 }
 
 // ********************************************************************************************************************
@@ -153,7 +151,7 @@ void tengu::AbstractAgent::__on_activity_channel_message ( QVariant value ) {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::AbstractAgent::disconnect() {
+void tengu::SproutableAgent::disconnect() {
     __unsubscribe();
     tengu::AbstractAgentKernel::disconnect();
 }
@@ -178,7 +176,7 @@ void tengu::AbstractAgent::disconnect() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-bool tengu::AbstractAgent::isActive() {
+bool tengu::SproutableAgent::isActive() {
     return __activity;
 }
 
@@ -190,7 +188,7 @@ bool tengu::AbstractAgent::isActive() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-bool tengu::AbstractAgent::isFocused() {
+bool tengu::SproutableAgent::isFocused() {
     return __focus;
 }
 
@@ -202,7 +200,7 @@ bool tengu::AbstractAgent::isFocused() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::AbstractAgent::__subscribe() {
+void tengu::SproutableAgent::__subscribe() {
     
     foreach ( Sprout * sprout, __sprouts) {
         sprout->subscribe();
@@ -218,7 +216,7 @@ void tengu::AbstractAgent::__subscribe() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::AbstractAgent::__unsubscribe() {
+void tengu::SproutableAgent::__unsubscribe() {
     foreach( Sprout * sprout, __sprouts ) {
         sprout->unsubscribe();
     };
@@ -233,7 +231,7 @@ void tengu::AbstractAgent::__unsubscribe() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::AbstractAgent::addSprout ( tengu::Sprout * sprout ) {
+void tengu::SproutableAgent::addSprout ( tengu::Sprout * sprout ) {
     
     sprout->__owner = this;
     __sprouts[ sprout->getUUID() ] = sprout ;    
@@ -256,7 +254,7 @@ void tengu::AbstractAgent::addSprout ( tengu::Sprout * sprout ) {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-int tengu::AbstractAgent::sproutsCount() {
+int tengu::SproutableAgent::sproutsCount() {
     return __sprouts.count();
 }
 
@@ -268,7 +266,7 @@ int tengu::AbstractAgent::sproutsCount() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-QList< tengu::Sprout* > tengu::AbstractAgent::sutiableSproutsFor ( tengu::Sprout * sp ) {
+QList< tengu::Sprout* > tengu::SproutableAgent::sutiableSproutsFor ( tengu::Sprout * sp ) {
     
     QList < Sprout * > result;
     foreach ( Sprout * sprout, __sprouts ) {
@@ -330,7 +328,7 @@ void tengu::AbstractAgent::setActivityChannel ( QString activityChannel ) {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::AbstractAgent::~AbstractAgent() {
+tengu::SproutableAgent::~SproutableAgent() {
     
 }
 

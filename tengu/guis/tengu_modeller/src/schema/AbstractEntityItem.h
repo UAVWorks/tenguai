@@ -32,7 +32,6 @@
 #include <QComboBox>
 
 #include "AbstractEntity.h"
-#include "AbstractAgent.h"
 #include "Sprout.h"
 #include "AgentFactory.h"
 #include "../AgentPropertyElement.h"

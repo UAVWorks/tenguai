@@ -15,7 +15,7 @@
 #include <QString>
 #include <QSettings>
 
-#include "AbstractAgent.h"
+#include "SproutableAgent.h"
 #include "Constants.h"
 
 // All of regulators are on board. There is nothing to regulate on the ground.
@@ -25,7 +25,7 @@
 
 namespace tengu {
     
-    class SimpleRegulator : public AbstractAgent {
+    class SimpleRegulator : public SproutableAgent {
         
         Q_OBJECT
         

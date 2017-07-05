@@ -18,7 +18,7 @@
 // ********************************************************************************************************************
 
 tengu::ProcessStop::ProcessStop () 
-    : AbstractAgent ()
+    : AbstractAgentKernel ()
 {
     _className = "ProcessStop";
 }

@@ -161,9 +161,9 @@ tengu::DialogPropertiesSprout::DialogPropertiesSprout( WorkSpace * workSpace )
     
     __combo_box__execution_mode = new QComboBox();
     QObject::connect( __combo_box__execution_mode, SIGNAL( activated( int ) ), this, SLOT( __on__combo_box__execution_mode__activated( int ) ) );
-    __combo_box__execution_mode->addItem( QIcon( QPixmap(":attach_32.png") ), tr("Always"), AbstractAgent::EM_ALWAYS );
-    __combo_box__execution_mode->addItem( QIcon( QPixmap(":cog_32.png")), tr("Real"), AbstractAgent::EM_REAL );
-    __combo_box__execution_mode->addItem( QIcon( QPixmap(":xplane10_32.png")), tr("X-Plane"), AbstractAgent::EM_XPLANE );
+    __combo_box__execution_mode->addItem( QIcon( QPixmap(":attach_32.png") ), tr("Always"), AbstractAgentKernel::EM_ALWAYS );
+    __combo_box__execution_mode->addItem( QIcon( QPixmap(":cog_32.png")), tr("Real"), AbstractAgentKernel::EM_REAL );
+    __combo_box__execution_mode->addItem( QIcon( QPixmap(":xplane10_32.png")), tr("X-Plane"), AbstractAgentKernel::EM_XPLANE );
     layoutType->addWidget( __combo_box__execution_mode );
     
     // Settings the sprout's type 
@@ -1036,7 +1036,7 @@ void tengu::DialogPropertiesSprout::__on__combo_box__execution_mode__activated (
     
     if ( __do_not_handle_events ) return;
     
-    __sproutItem->setExecutionMode( (AbstractAgent::execution_mode_t) index );
+    __sproutItem->setExecutionMode( (AbstractAgentKernel::execution_mode_t) index );
     __fill_sprouts_list();
 }
 

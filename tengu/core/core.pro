@@ -48,7 +48,7 @@ HEADERS += MongoStorage.h               \
         AbstractEntity.h                \
         AbstractAgentKernel.h           \
         Sprout.h                        \
-        AbstractAgent.h                 \
+        SproutableAgent.h               \
         ORer.h                          \
         ANDor.h                         \
         Task.h                          \
@@ -65,7 +65,7 @@ SOURCES += MongoStorage.cpp             \
         AbstractEntity.cpp              \
         AbstractAgentKernel.cpp         \
         Sprout.cpp                      \
-        AbstractAgent.cpp               \
+        SproutableAgent.cpp             \
         ORer.cpp                        \
         ANDor.cpp                       \
         Task.cpp                        \

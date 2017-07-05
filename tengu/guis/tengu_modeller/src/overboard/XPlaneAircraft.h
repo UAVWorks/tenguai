@@ -13,7 +13,6 @@
 #include <QString>
 #include <QDebug>
 
-#include "AbstractAgent.h"
 #include "Constants.h"
 #include "Task.h"
 #include "SproutProxy.h"

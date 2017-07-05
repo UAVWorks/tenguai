@@ -6,6 +6,7 @@ This is graphical tool for work with artifical intelligence models. At the momen
 
 # The latest operations.
 
+- **05 jul 2017** Entering SproutableAgent class.
 - **04 jul 2017** Fix a bug with cleaning the scene. Automatical naming for the tasks and the sprouts.
 - **03 jul 2017** Execution mode for graphical link item. Orphanded sprout.
 - **02 jul 2017** Sprout's subscribtion to external signal.

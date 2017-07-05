@@ -57,7 +57,7 @@ tengu::AbstractEntity* tengu::AgentItemFactory::createEntity ( QJsonObject json 
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::AbstractEntity* tengu::AgentItemFactory::createEntity ( tengu::AbstractAgent* agent ) {
+tengu::AbstractEntity* tengu::AgentItemFactory::createEntity ( tengu::AbstractAgentKernel * agent ) {
     
     ProcessStart * start = dynamic_cast< ProcessStart * > ( agent );
     if ( start ) return new ProcessStartItem( start );

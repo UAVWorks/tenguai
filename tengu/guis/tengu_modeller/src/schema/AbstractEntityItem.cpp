@@ -475,7 +475,7 @@ bool tengu::AbstractEntityItem::isDecomposite() {
     // "Decomposite" mean either forcibly decomposition or this base is exactly an agent and he has children.
     // "Декомпозиция" означает либо принудительную декомпозицию, либо в основании лежит точно агент и он имеет детей.
     
-    AbstractAgent * agent = dynamic_cast<AbstractAgent * >( _entity );
+    AbstractAgentKernel * agent = dynamic_cast<AbstractAgentKernel * >( _entity );
     bool agentHasChildren = false;
     if ( agent ) agentHasChildren = agent->hasChildren();
     return ( _decomposite || agentHasChildren  );

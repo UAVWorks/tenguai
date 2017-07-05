@@ -9,11 +9,11 @@
 
 #pragma once
 
-#include "AbstractAgent.h"
+#include "AbstractAgentKernel.h"
 
 namespace tengu {
 
-    class ProcessStop : public AbstractAgent {
+    class ProcessStop : public AbstractAgentKernel {
         
         Q_OBJECT
         

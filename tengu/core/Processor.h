@@ -19,13 +19,13 @@
 #include <QProcess>
 #include <QVector>
 
-#include "AbstractAgent.h"
+#include "AbstractAgentKernel.h"
 
 #define PROCESSOR_CONFIG_FILE   "/etc/tengu/processor.conf"
 
 namespace tengu {
     
-    class Processor : public AbstractAgent {
+    class Processor : public AbstractAgentKernel {
         
         Q_OBJECT
                 

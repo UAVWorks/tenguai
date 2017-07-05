@@ -86,7 +86,7 @@ void tengu::XPlaneAircraft::__init_sprout ( QString settingsGroup, tengu::Sprout
     QString outputPath = __controlGroup + ".acf_" + QString::number( __aircraft_index ) + "." + output;
     
     SproutProxy * sp = new SproutProxy( this );
-    sp->setExecutionMode( AbstractAgent::EM_XPLANE );
+    sp->setExecutionMode( AbstractAgentKernel::EM_XPLANE );
         
     // The whitespace can be replaced to "_" in this procedurer
     // Пробел будет заменен на "_" в данной процедуре.

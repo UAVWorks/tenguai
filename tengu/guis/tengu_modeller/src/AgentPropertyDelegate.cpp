@@ -49,9 +49,9 @@ QWidget * tengu::AgentPropertyDelegate::createEditor ( QWidget* parent, const QS
             
             QComboBox * editor = new QComboBox( parent );
             editor->setFont( oneElement.font );
-            editor->addItem( tr("Always"), QVariant( AbstractAgent::EM_ALWAYS ) );
-            editor->addItem( tr("Real"), QVariant( AbstractAgent::EM_REAL ) );
-            editor->addItem( tr("X-Plane simulation"), QVariant( AbstractAgent::EM_XPLANE ) );
+            editor->addItem( tr("Always"), QVariant( AbstractAgentKernel::EM_ALWAYS ) );
+            editor->addItem( tr("Real"), QVariant( AbstractAgentKernel::EM_REAL ) );
+            editor->addItem( tr("X-Plane simulation"), QVariant( AbstractAgentKernel::EM_XPLANE ) );
             return editor;
             
         }; break;

@@ -9,11 +9,11 @@
 
 #pragma once
 
-#include "AbstractAgent.h"
+#include "SproutableAgent.h"
 
 namespace tengu {
     
-    class Task : public AbstractAgent {
+    class Task : public SproutableAgent {
         Q_OBJECT
         public:
             

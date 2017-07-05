@@ -1,10 +1,8 @@
 // ********************************************************************************************************************
 // *                                                                                                                  *
-// *      The abstract agent. Any logical completed piece which can do something. Usually it is a separate process    *
-// *                       inside operation system. This is "kernel" plus communication capability                    *
+// *                                           The agent which can have a sprouts.                                    *
 // * ---------------------------------------------------------------------------------------------------------------- *
-// *    Абстрактный агент. Любой логически законченный кусок, который может что-то делать. Как правило - отдельный    *
-// *               процесс операционной системы. Представляет собой "ядро" агента плюс способность общаться.          *
+// *                                          Агент, который может иметь "отростки".                                  *
 // *                                                                                                                  *
 // * Eugene G. Sysoletin <e.g.sysoletin@gmail.com>                                       Created 26 may 2017 at 11:57 *
 // ********************************************************************************************************************
@@ -24,16 +22,10 @@
 
 namespace tengu {
 
-    class AbstractAgent : public AbstractAgentKernel {
+    class SproutableAgent : public AbstractAgentKernel {
         
         Q_OBJECT
-        
-        Q_PROPERTY( QString system_name READ getSystemName WRITE setSystemName );
-        Q_PROPERTY( QString human_name READ getHumanName WRITE setHumanName );
-        Q_PROPERTY( QString comment READ getComment WRITE setComment );
-        Q_PROPERTY( QString uuid READ getUUID );
-        Q_PROPERTY( AbstractEntity::execution_mode_t execution_mode READ getExecutionMode WRITE setExecutionMode );
-
+                
         signals:
             
             void signalSproutGotValue( QString sproutName, QVariant value );
@@ -44,8 +36,8 @@ namespace tengu {
             // ------------------------------------------------------------------------------------
             // Имя лучше бы было уникальным в пределах системы. 
             
-            AbstractAgent ();
-            virtual ~AbstractAgent();
+            SproutableAgent ();
+            virtual ~SproutableAgent();
                         
             // Add "the sprout", reaction to redises messages.
             // Добавить "веточку" реакции на сообщения редиса.

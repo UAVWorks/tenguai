@@ -18,7 +18,7 @@
 // ********************************************************************************************************************
 
 tengu::SimpleRegulator::SimpleRegulator(float min_value, float max_value ) 
-    : AbstractAgent() 
+    : SproutableAgent() 
 {
 
     // The PID-regulator and it's values.

@@ -21,7 +21,7 @@ namespace tengu {
     
     class Sprout : public QObject, public AbstractEntity {
         
-        friend class AbstractAgent;
+        friend class SproutableAgent;
         
         Q_OBJECT
 
