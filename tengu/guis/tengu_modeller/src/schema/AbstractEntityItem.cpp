@@ -433,6 +433,7 @@ QList< QList< tengu::AgentPropertyElement > > tengu::AbstractEntityItem::propert
     commentElement.append( commentValue );    
     result.append( commentElement );
     
+    /*
     // Agent execution mode selector. This is an combo-box.
     // Выбор режима выполнения данного агента. Это - комбо-бокс.
     
@@ -443,20 +444,12 @@ QList< QList< tengu::AgentPropertyElement > > tengu::AbstractEntityItem::propert
     executionModeValue.readOnly = false;
     executionModeValue.propertyName = "execution_mode";
     executionModeValue.value = QVariant( (int) getExecutionMode() );
-    executionModeValue.backgroundColor = executionModeValue.widgetBackground();
-    
-    // QComboBox * cb = new QComboBox();
-    /*
-    cb->addItem( tr("Always"), QVariant( AbstractAgent::EM_ALWAYS ) );
-    cb->addItem( tr("Real"), QVariant( AbstractAgent::EM_REAL ) );
-    cb->addItem( tr("X-Plane"), QVariant( AbstractAgent::EM_XPLANE ) );
-    */
-    // executionModeValue.editorWidget = cb; 
-    
+    executionModeValue.backgroundColor = executionModeValue.widgetBackground();        
     
     executionModeElement.append( executionModeValue );
     
     result.append( executionModeElement );
+    */    
         
     return result;
     
@@ -747,11 +740,14 @@ void tengu::AbstractEntityItem::checkEntity() {
 // ********************************************************************************************************************
 
 tengu::AbstractEntityItem::~AbstractEntityItem() {
+
+    // Not here. Here must be graphics area only, but not a core.
+    // Не здесь. Здесь должна быть только зона графики, но не ядра.
     
-    if ( _entity ) {
-        delete ( _entity );
-        _entity = nullptr;
-    };
+    // if ( _entity ) {
+    //    delete ( _entity );
+    //    _entity = nullptr;
+    //};
     
 }
 

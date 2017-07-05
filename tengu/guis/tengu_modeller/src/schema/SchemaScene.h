@@ -72,8 +72,9 @@ namespace tengu {
             AbstractEntityItem * __rootItem;
             bool __changed;
             ProcessItem * __rootIsProcess();
-            QMap< QString, TaskItem * > __taskItems;
-            QMap< QString, SproutItem * > __sproutItems;
+            
+            // QMap< QString, TaskItem * > __taskItems;
+            // QMap< QString, SproutItem * > __sproutItems;
                         
         private slots:
             

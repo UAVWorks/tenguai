@@ -26,6 +26,10 @@ namespace tengu {
             virtual ~LibraryTab();
         
             LibraryTab__processes * tab__processes;
+        
+        public slots:
+            
+            void on__inside_process();
             
         protected:
         private:

@@ -42,9 +42,9 @@ tengu::AbstractEntity* tengu::AgentItemFactory::createEntity ( QJsonObject json 
 
     if ( e ) e->fromJSON( json );
     
-//    else {
-//        qDebug() << "AgentFactory::hasAgent(), unhandled agent name " << json;
-//    };
+    // else {
+    //    qDebug() << "AgentItemFactory::createEntity(), unhandled agent name " << json;
+    // };
     
     return e;
 }
@@ -57,10 +57,18 @@ tengu::AbstractEntity* tengu::AgentItemFactory::createEntity ( QJsonObject json 
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::AbstractEntity* tengu::AgentItemFactory::createEntity ( tengu::AbstractAgentKernel * agent ) {
+tengu::AbstractEntityItem * tengu::AgentItemFactory::createEntity ( tengu::AbstractAgentKernel * agent ) {
     
-    ProcessStart * start = dynamic_cast< ProcessStart * > ( agent );
-    if ( start ) return new ProcessStartItem( start );
+    Process * process = dynamic_cast< Process * > ( agent );            if ( process ) return new ProcessItem( process );
+    ProcessStart * start = dynamic_cast< ProcessStart * > ( agent );    if ( start ) return new ProcessStartItem( start );    
+    Vehicle * vehicle = dynamic_cast< Vehicle * > ( agent ) ;           if ( vehicle ) return new VehicleItem( vehicle );
+    WorkSpace * workSpace = dynamic_cast <WorkSpace * > ( agent );      if ( workSpace ) return new WorkSpaceItem( workSpace );
+    
+    
+    // Could not recognize the class
+    // Не смогли распознать класс.
+    
+    if ( agent ) qDebug() << "AgentItemFactory::createEntity, can not create for " << agent->getHumanName();
     
     return nullptr;
 }

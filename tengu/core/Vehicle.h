@@ -23,6 +23,7 @@ namespace tengu {
     class Vehicle : public Processor {
         
         Q_OBJECT
+        
         public:
             
             // Only for displaying, for human perception.
@@ -40,6 +41,8 @@ namespace tengu {
             
             vehicle_types_h vehicleType();
             QString vehicleTypeAsString();
+            
+            void addChild( AbstractAgentKernel * child );
             
         protected:
             

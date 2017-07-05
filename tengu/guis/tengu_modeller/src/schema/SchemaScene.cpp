@@ -101,8 +101,8 @@ void tengu::SchemaScene::clear() {
     };
     */
 
-    __taskItems.clear();
-    __sproutItems.clear();
+    // __taskItems.clear();
+    // __sproutItems.clear();
     
     QGraphicsScene::clear();        
     
@@ -128,17 +128,23 @@ void tengu::SchemaScene::setRootItem ( tengu::AbstractEntityItem * rootItem ) {
     __rootItem = rootItem;      
         
     
-    /*
+    
     // Add children of this root item to schema.
     // Добавление на схему детей этого корневого элемента.
     
-    AbstractAgent * agent = dynamic_cast< AbstractAgent * > ( rootItem->entity() );
-    if ( agent ) {
-        for ( int i=0; i<agent->children().count(); i++ ) {
-            AbstractEntityItem * 
+    AbstractAgentKernel * entity = dynamic_cast< AbstractAgentKernel * > ( rootItem->entity() );
+    
+    if ( ( entity ) && ( entity->hasChildren() ) ) {
+        
+        for ( int i=0; i<entity->children().count(); i++ ) {
+            
+            AbstractEntityItem * item = AgentItemFactory::createEntity( entity->children().at(i) );
+            
+            if ( item ) {
+                addItem( item );
+            };
         };
-    };
-    */
+    };    
     
     if ( __rootIsProcess() ) emit signalInsideProcess();
 }
@@ -186,6 +192,12 @@ void tengu::SchemaScene::addItem ( QGraphicsItem * gItem ) {
     
     if ( item ) {
         
+        item->checkEntity();
+        
+        AbstractAgentKernel * rootAgent = dynamic_cast<AbstractAgentKernel * > ( __rootItem->entity() );
+        AbstractAgentKernel * curAgent = dynamic_cast<AbstractAgentKernel * > ( item->entity() );
+        if ( ( rootAgent ) && ( curAgent ) ) rootAgent->addChild( curAgent );
+        
         QObject::connect( item, SIGNAL( signalSomethingChanged() ), this, SLOT( __on__something_changed() ) );
         
         // Add an X-Plane agent does not come to changes.
@@ -199,16 +211,16 @@ void tengu::SchemaScene::addItem ( QGraphicsItem * gItem ) {
         ProcessStartItem * processStartItem = dynamic_cast<ProcessStartItem *>( item );
         ItemWithLinks * itemWithLinks = dynamic_cast<ItemWithLinks *>(item);
         TaskItem * taskItem = dynamic_cast<TaskItem *>(item);
-        SproutItem * sproutItem = dynamic_cast<SproutItem * > ( item );
+        // SproutItem * sproutItem = dynamic_cast<SproutItem * > ( item );
         
         if ( __rootIsProcess() ) {
             
             // We have opened "a process" as root of the scheme.
             // У нас открыт "процесс" в качестве корня схемы.
             
-            // if ( processStartItem ) emit signalProcessStartCreated();
-            if ( ( itemWithLinks ) && ( ! processStartItem ) ) emit signalProcessItemWithLinksCreated();            
+            if ( ( itemWithLinks ) && ( ! processStartItem ) ) emit signalProcessItemWithLinksCreated();
         };
+        
         
         // Caching added component. Automatic naming if there are none.
         // Кэширование добавленного компонента. Автоматическое присвоение имен, если их нет.
@@ -219,11 +231,12 @@ void tengu::SchemaScene::addItem ( QGraphicsItem * gItem ) {
             // Это была задача.
             
             emit signalProcessExplicitTaskCreated();
-            __taskItems[ taskItem->getUUID() ] = taskItem ;
-            if ( taskItem->getSystemName().isEmpty() ) taskItem->setSystemName( tr("Task_") + QString::number( __taskItems.count() ) );
-            if ( taskItem->getHumanName().isEmpty() ) taskItem->setHumanName( tr("Task ") + QString::number( __taskItems.count() ) );
+            // __taskItems[ taskItem->getUUID() ] = taskItem ;
+            // if ( taskItem->getSystemName().isEmpty() ) taskItem->setSystemName( tr("Task_") + QString::number( __taskItems.count() ) );
+            // if ( taskItem->getHumanName().isEmpty() ) taskItem->setHumanName( tr("Task ") + QString::number( __taskItems.count() ) );
         }
         
+        /*
         if ( sproutItem ) {
             
             // There was a sprout.
@@ -234,6 +247,7 @@ void tengu::SchemaScene::addItem ( QGraphicsItem * gItem ) {
             if ( sproutItem->getHumanName().isEmpty() ) sproutItem->setHumanName( tr("Sprout ") + QString::number( __sproutItems.count() ) );
             
         };
+        */        
         
         // If this is a link, it can be in "semi-added" state.
         // Если это связь, то она может находиться в "полу-добавленном" состоянии.
@@ -259,10 +273,11 @@ void tengu::SchemaScene::removeItem ( QGraphicsItem* gItem ) {
     AbstractEntityItem * item = dynamic_cast < AbstractEntityItem * > ( gItem );
     if ( item ) {
         QObject::disconnect( item, SIGNAL( signalSomethingChanged() ), this, SLOT( __on__something_changed() ) );
-        TaskItem * taskItem = dynamic_cast < TaskItem * > ( item );
-        SproutItem * sproutItem = dynamic_cast <SproutItem * > ( item );
-        if ( taskItem )  __taskItems.remove( taskItem->getUUID() );
-        if ( sproutItem ) __sproutItems.remove( sproutItem->getUUID() );
+        
+        // TaskItem * taskItem = dynamic_cast < TaskItem * > ( item );
+        // SproutItem * sproutItem = dynamic_cast <SproutItem * > ( item );
+        // if ( taskItem )  __taskItems.remove( taskItem->getUUID() );
+        // if ( sproutItem ) __sproutItems.remove( sproutItem->getUUID() );
     };
     
     QGraphicsScene::removeItem( gItem );

@@ -19,6 +19,7 @@
     <file alias="folder_16.png">images/folder_16.png</file>
     <file alias="folder_brick_16.png">images/folder_brick_16.png</file>
     <file alias="note_add_16.png">images/note_add_16.png</file>
+    <file alias="package_16.png">images/package_16.png</file>
     <file alias="package_add_16.png">images/package_add_16.png</file>    
     <file alias="diskette_16.png">images/diskette_16.png</file>    
     <file alias="box_16.png">images/box_16.png</file>    
@@ -32,9 +33,10 @@
     <file alias="button_navigation_16.png">images/button_navigation_16.png</file>
     <file alias="accept_button_32.png">images/accept_button_32.png</file>
     <file alias="cancel_32.png">images/cancel_32.png</file>
-    <file alias="chart_organization_16.png">images/chart_organization_16.png</file>
+    <file alias="chart_organisation_16.png">images/chart_organisation_16.png</file>
+    <file alias="chart_organisation_add_16.png">images/chart_organisation_add_16.png</file>
     <file alias="robot_16.png">images/robot_16.png</file>
-    <file alias="robot_32.png">images/robot_32.png</file>
+    <file alias="robot_32.png">images/robot_32.png</file>    
     <file alias="Falcon_256.png">images/Falcon-256.png</file>
 </qresource>
 </RCC>

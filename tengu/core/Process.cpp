@@ -39,6 +39,34 @@ tengu::Process::Process ( const tengu::Process & o )
 
 }
 */
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                    Overrided function for add a child to this process.                           *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                    Перекрытая функция добавления дитя в данный процесс.                          *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::Process::addChild ( tengu::AbstractAgentKernel* child ) {
+    
+    tengu::AbstractAgentKernel::addChild ( child );
+    
+    QList<AbstractAgentKernel * > hisChildren = children();
+    
+    Task * task = dynamic_cast<Task*> ( child );
+    if ( task ) {
+        int taskCount = 0;
+        for ( int i=0; i<hisChildren.count(); i++ ) {
+            Task * t = dynamic_cast<Task * > ( hisChildren.at(i) );
+            if ( t ) taskCount ++;
+        };
+        if ( child->getSystemName().isEmpty() ) child->setSystemName( tr("New_Task_") + QString::number( taskCount ) );
+        if ( child->getHumanName().isEmpty() ) child->setHumanName( tr("New Task ") + QString::number( taskCount ) );
+    };
+    
+}
+
 // ********************************************************************************************************************
 // *                                                                                                                  *
 // *                                                   The destructor.                                                *

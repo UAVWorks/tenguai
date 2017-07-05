@@ -24,11 +24,17 @@ namespace tengu {
             // Graphics item types. To avoid checking every time through dynamic_cast only
             
             enum graphics_item_types_t {
-                GI_WorkSpace
+                GI_Sprout,
+                GI_Task,
+                GI_Process,
+                GI_Vehicle,
+                GI_WorkSpace                
             };                        
             
             WorkSpace();
             virtual ~WorkSpace();
+            
+            void addChild( AbstractAgentKernel * child );
                         
         private:
                         

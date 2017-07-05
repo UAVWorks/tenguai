@@ -93,6 +93,9 @@ void tengu::LibraryTab__processes::on__inside_process() {
     button__focus_orer->setEnabled( true );
     button__task->setEnabled( true );
     button__sprout->setEnabled( false );
+    
+    // setEnabled( true );
+    // __library_tab->setCurrentWidget( __library_tab->tab__processes );
 }
 
 // ********************************************************************************************************************

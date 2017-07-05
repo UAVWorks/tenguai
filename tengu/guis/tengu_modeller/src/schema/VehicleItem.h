@@ -23,7 +23,7 @@ namespace tengu {
             
             VehicleItem ( Vehicle * vehicle, QGraphicsItem* parent = nullptr );
             virtual ~VehicleItem();
-            
+                        
             void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = Q_NULLPTR);
             QRectF boundingRect() const;
             void checkEntity();

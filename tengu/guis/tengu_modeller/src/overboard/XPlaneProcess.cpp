@@ -27,7 +27,7 @@ tengu::XPlaneProcess::XPlaneProcess()
     : Process()
 {
     setSystemName( tr("xtengu") );
-    setHumanName( tr("Simulation using X-Plane"));
+    setHumanName( tr("X-Plane simulation process"));
         
     for ( int idx = 0; idx < XPlaneProcess::AIRCRAFTS_UUIDS.size(); idx++ ) {
         XPlaneAircraft * acf = new XPlaneAircraft( idx );       

@@ -20,6 +20,40 @@
 tengu::WorkSpace::WorkSpace()
     : AbstractAgentKernel()
 {
+    setSystemName( tr("Workspace") );
+    setHumanName( tr("Workspace") );
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                   Overrided function for add a child into workspace                              *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                            Перекрытая функция для добавления ребенка в рабочее пространство.                     *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::WorkSpace::addChild ( tengu::AbstractAgentKernel* child ) {
+    
+    tengu::AbstractAgentKernel::addChild ( child );
+    
+    QList<AbstractAgentKernel * > hisChildren = children();
+    
+    Vehicle * vehicle = dynamic_cast<Vehicle * > ( child );
+    if ( vehicle ) {
+        
+        // Automatic naming for vehicles.
+        // Автоматическое именование "самоходок".
+        
+        int vehiclesCount = 0;
+        for ( int i=0; i<hisChildren.count(); i++ ) {
+            AbstractAgentKernel * och = hisChildren.at(i);
+            Vehicle * vch = dynamic_cast< Vehicle * > ( och );
+            if ( vch ) vehiclesCount ++;
+        };
+        
+        if ( child->getSystemName().isEmpty() ) child->setSystemName( tr("Vehicle_") + QString::number( vehiclesCount ) );
+        if ( child->getHumanName().isEmpty() ) child->setHumanName( tr("Vehicle ") + QString::number( vehiclesCount ) ) ;
+    };
 }
 
 // ********************************************************************************************************************

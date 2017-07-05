@@ -36,6 +36,39 @@ tengu::Vehicle::Vehicle ()
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
+// *                              Overrided function for add a child to vehicle.                                      *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                            Перекрытая функция добавления ребенка в "самоходку"                                   *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::Vehicle::addChild ( tengu::AbstractAgentKernel * child ) {
+    
+    tengu::AbstractAgentKernel::addChild ( child );
+    
+    QList<AbstractAgentKernel * > hisChildren = children();
+    
+    Process * process = dynamic_cast< Process * > ( child );
+    if ( process ) {
+        
+        // Automatic naming the process
+        // Автоматическое именование процесса.
+        
+        int processCount = 0;
+        
+        for ( int i=0; i<hisChildren.count(); i++ ) {
+            AbstractAgentKernel * och = hisChildren.at(i);
+            Process * pch = dynamic_cast<Process *>( och );
+            if ( pch ) processCount ++;
+        };
+        
+        if ( process->getSystemName().isEmpty() ) process->setSystemName( tr("New_Process_") + QString::number( processCount ) );
+        if ( process->getHumanName().isEmpty() ) process->setHumanName( tr("New Process ") + QString::number( processCount) );
+    };
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
 // *                                                 Get type of this vehicle.                                        *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                                              Получить тип этой "самоходки".                                      *

@@ -12,6 +12,7 @@
 #pragma once
 
 #include "AbstractAgentKernel.h"
+#include "Task.h"
 
 namespace tengu {
     
@@ -24,6 +25,8 @@ namespace tengu {
             Process ();
             // Process( const Process & o );
             virtual ~Process();
+            
+            void addChild( AbstractAgentKernel * child );
             
     };
     

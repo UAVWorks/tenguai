@@ -20,6 +20,7 @@
 #include <QVector>
 
 #include "AbstractAgentKernel.h"
+#include "Process.h"
 
 #define PROCESSOR_CONFIG_FILE   "/etc/tengu/processor.conf"
 

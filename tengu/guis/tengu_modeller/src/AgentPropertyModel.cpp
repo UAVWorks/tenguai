@@ -33,6 +33,7 @@ tengu::AgentPropertyModel::AgentPropertyModel()
 // ********************************************************************************************************************
 
 int tengu::AgentPropertyModel::columnCount(const QModelIndex & parent ) const {
+    Q_UNUSED( parent );
     return 2;
 }
 
@@ -45,6 +46,7 @@ int tengu::AgentPropertyModel::columnCount(const QModelIndex & parent ) const {
 // ********************************************************************************************************************
 
 int tengu::AgentPropertyModel::rowCount( const QModelIndex & parent ) const {
+    Q_UNUSED( parent );
     return __properties.count();
 };
 
@@ -58,6 +60,7 @@ int tengu::AgentPropertyModel::rowCount( const QModelIndex & parent ) const {
 
 QModelIndex tengu::AgentPropertyModel::index(int row, int column, const QModelIndex & parent ) const {
 
+    Q_UNUSED( parent );
     QModelIndex res = createIndex( row, column );
     return res;
 };
@@ -71,7 +74,7 @@ QModelIndex tengu::AgentPropertyModel::index(int row, int column, const QModelIn
 // ********************************************************************************************************************
 
 QModelIndex tengu::AgentPropertyModel::parent( const QModelIndex & child ) const {
-
+    
     QModelIndex res;
     return res;
 };

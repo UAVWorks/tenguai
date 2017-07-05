@@ -55,10 +55,17 @@ tengu::MainWindow::MainWindow(QWidget *parent)
     
     lay->addWidget( __hSplitter );
     
+    // Left part of the application
+    // Левая часть приложения.
+    
     __left = new MainWindowLeft( __workSpace );    
+    QObject::connect( __left->treeStructure, SIGNAL( signalAgentCreated( AbstractAgentKernel * ) ), this, SLOT( __on__tree_structure__agent_was_created( AbstractAgentKernel * ) ) );
+    QObject::connect( __left->treeStructure, SIGNAL( signalAgentSelected( AbstractAgentKernel * ) ), this, SLOT( __on__tree_structure__agent_was_selected( AbstractAgentKernel * ) ) );
     
-    __right = new MainWindowRight();
+    // Right part of the application
+    // Правая часть приложения.
     
+    __right = new MainWindowRight();    
     __right->propertyView->setModel( __agentPropertyModel );
     __right->propertyView->setItemDelegateForColumn( 1, __agentPropertyDelegate );
     
@@ -71,10 +78,8 @@ tengu::MainWindow::MainWindow(QWidget *parent)
     __createMainMenu();
     __createToolBar();
     __createStatusBar();    
-    __createDialogs();
-            
-    // __mongo->store( task );
-    
+    __createDialogs();                
+
 }
 
 // ********************************************************************************************************************
@@ -221,7 +226,9 @@ void tengu::MainWindow::__createLibraryTab() {
     // Signals from schema to tabulator
     // Сигналы от схемы к табулятору.
     
+    QObject::connect( __schemaScene, SIGNAL( signalInsideProcess() ), __library_tab, SLOT( on__inside_process() ) );
     QObject::connect( __schemaScene, SIGNAL( signalInsideProcess() ), __library_tab->tab__processes, SLOT( on__inside_process() ) );
+    
     // QObject::connect( __schemaScene, SIGNAL( signalProcessStartCreated() ), __library_tab->tab__processes, SLOT( on__process_start_created() ) );
     QObject::connect( __schemaScene, SIGNAL( signalProcessItemWithLinksCreated() ), __library_tab->tab__processes, SLOT( on__process_item_with_links_created() ) );
     QObject::connect( __schemaScene, SIGNAL( signalProcessExplicitTaskCreated() ), __library_tab->tab__processes, SLOT( on__process_explicit_task_created() ) );            
@@ -355,6 +362,7 @@ void tengu::MainWindow::__createDialogs() {
 
 void tengu::MainWindow::__on__create__process() {
     
+    /*
     Process * process = new Process();
     ProcessItem * processItem = new ProcessItem( process );
     
@@ -375,6 +383,7 @@ void tengu::MainWindow::__on__create__process() {
     __library_tab->tab__processes->setEnabled( true );
     __library_tab->setCurrentWidget( __library_tab->tab__processes );
     // __library_tab->tab__processes->on__process_created();
+    */
     
 }
 
@@ -633,6 +642,39 @@ void tengu::MainWindow::__on__simulation_pause() {
 
 void tengu::MainWindow::__on__simulation_stop() {
 
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                  An agent was created in tree-like structure view.                               *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                       В древовидной структуре был создан агент.                                  *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindow::__on__tree_structure__agent_was_created ( tengu::AbstractAgentKernel * agent ) {
+
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                An agent was selected in tree-like structure view.                                *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                        В древовидной структуре был изменен выбранный (текущий ) агент                            *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindow::__on__tree_structure__agent_was_selected ( tengu::AbstractAgentKernel * agent ) {
+    
+    AbstractEntityItem * item = AgentItemFactory::createEntity( agent );
+    if ( item ) {
+        
+        __agentPropertyModel->setEntityItem( item );
+        __schemaView->hide();
+        __schemaScene->setRootItem( item );   
+        __schemaView->show();    
+        
+    };
 }
 
 // ********************************************************************************************************************

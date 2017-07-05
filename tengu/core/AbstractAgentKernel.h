@@ -75,9 +75,9 @@ namespace tengu {
             
             virtual bool usable();
             
-            void addChild( AbstractAgentKernel * child );
+            virtual void addChild( AbstractAgentKernel * child );
             bool hasChildren();
-            void removeChild( AbstractAgentKernel * child );
+            virtual void removeChild( AbstractAgentKernel * child );
             QList <AbstractAgentKernel * > children();
             
             /**

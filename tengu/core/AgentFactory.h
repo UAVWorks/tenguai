@@ -16,6 +16,7 @@
 #include "ProcessStart.h"
 #include "ProcessStop.h"
 #include "Process.h"
+#include "Vehicle.h"
 #include "Task.h"
 #include "ANDor.h"
 #include "ORer.h"

@@ -21,6 +21,9 @@
 #include "ORerItem.h"
 #include "LinkItem.h"
 #include "SproutItem.h"
+#include "VehicleItem.h"
+#include "WorkSpace.h"
+#include "WorkSpaceItem.h"
 
 namespace tengu {
     
@@ -29,7 +32,7 @@ namespace tengu {
         public:
             
             static AbstractEntity * createEntity( QJsonObject json );
-            static AbstractEntity * createEntity( AbstractAgentKernel * agent );
+            static AbstractEntityItem * createEntity( AbstractAgentKernel * agent );
             
     };
     

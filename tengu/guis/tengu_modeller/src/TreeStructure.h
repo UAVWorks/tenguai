@@ -19,12 +19,18 @@
 #include <QAction>
 
 #include "WorkSpace.h"
+#include "AgentFactory.h"
 
 namespace tengu {
     
     class TreeStructure : public QTreeWidget {
         
         Q_OBJECT
+        
+        signals:
+            
+            void signalAgentCreated( AbstractAgentKernel * agent );
+            void signalAgentSelected( AbstractAgentKernel * agent );
         
         public:
             
@@ -39,14 +45,25 @@ namespace tengu {
             
             WorkSpace * __workSpace;
             QTreeWidgetItem * __rootItem;
+            QTreeWidgetItem * __selectedItem;
+            AbstractAgentKernel * __selectedAgent;
+            
+            bool __do_not_handle_events;
             
             QAction * __action__create__vehicle;
+            QAction * __action__create__process;
+            
+            void __select_forcibly_with_expanding( QTreeWidgetItem * parent, QTreeWidgetItem * selected );
             
             void __create_actions();
             
         private slots:
             
             void __on__create__vehicle();
+            void __on__create__process();
+            
+            void __on__tree_item_selected( const QItemSelection & current, const QItemSelection & previous );
+            
     };
     
 };
