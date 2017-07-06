@@ -69,11 +69,11 @@ void tengu::SchemaView::__createMenus() {
     __contextMenu__create = new QMenu( tr("Create") );
     __contextMenu__create->setIcon( QIcon( QPixmap(":bricks_16.png") ) );
     
-    __action__create_task = new QAction( QIcon(QPixmap("page_gear_16.png")), tr("Task"), this );
+    __action__create_task = new QAction( QIcon(QPixmap(":page_gear_16.png")), tr("Task"), this );
     QObject::connect( __action__create_task, SIGNAL( triggered()), this, SLOT( __on__action__create_task() ) );
     __contextMenu__create->addAction( __action__create_task );
     
-    __action__delete_item = new QAction( QIcon(), tr("Delete"), this );
+    __action__delete_item = new QAction( QIcon( QPixmap(":chart_organisation_delete_16.png") ), tr("Delete"), this );
     QObject::connect( __action__delete_item, SIGNAL( triggered() ), this, SLOT( __on__action__delete_item() ) );
     
     // __contextMenu->addMenu( __contextMenu__create );

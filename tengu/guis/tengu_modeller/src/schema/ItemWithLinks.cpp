@@ -18,7 +18,7 @@
 // ********************************************************************************************************************
 
 tengu::ItemWithLinks::ItemWithLinks ( tengu::AbstractEntity * entity, QGraphicsItem* parent ) 
-    : EMChangableItem ( entity, parent )
+    : AbstractEntityItem ( entity, parent )
 {
     __linksOutgoingFromThis = QMap< QString, LinkItem * >();
     __linksIncommingToThis = QMap< QString, LinkItem * >();    

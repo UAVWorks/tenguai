@@ -26,6 +26,7 @@ tengu::AbstractEntityItem::AbstractEntityItem( AbstractEntity * entity, QGraphic
     _selected = false;
     _decomposite = false;
     _changed = false;
+    _canChangeExecuteMode = false;
     
     __mousePressed = false;        
     __mousePressedPoint = QPoint( 0, 0 );
@@ -111,6 +112,24 @@ int tengu::AbstractEntityItem::_brighter ( int color ) {
     if ( color > 255 ) color = 255;
     return color;
 }
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                      Make R-G-B content of color to some darker.                                 *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                    Сделать R-G-B составляющую цвета чуть потемнее.                               *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+int tengu::AbstractEntityItem::_darker ( int color ) {
+    
+    int dcl = qRound( color * 0.3 );
+    color -= dcl;
+    if ( color < 0 ) color = 0;
+    return color;
+    
+}
+
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
@@ -433,23 +452,25 @@ QList< QList< tengu::AgentPropertyElement > > tengu::AbstractEntityItem::propert
     commentElement.append( commentValue );    
     result.append( commentElement );
     
-    /*
-    // Agent execution mode selector. This is an combo-box.
-    // Выбор режима выполнения данного агента. Это - комбо-бокс.
     
-    QList<AgentPropertyElement> executionModeElement;    
-    executionModeElement.append( AgentPropertyElement::captionElement(  tr("Execution mode") ) );    
-    AgentPropertyElement executionModeValue;
-    executionModeValue.type = AgentPropertyElement::ExecutionModeSelector;
-    executionModeValue.readOnly = false;
-    executionModeValue.propertyName = "execution_mode";
-    executionModeValue.value = QVariant( (int) getExecutionMode() );
-    executionModeValue.backgroundColor = executionModeValue.widgetBackground();        
-    
-    executionModeElement.append( executionModeValue );
-    
-    result.append( executionModeElement );
-    */    
+    if ( _canChangeExecuteMode ) {
+        
+        // Agent execution mode selector. This is an combo-box.
+        // Выбор режима выполнения данного агента. Это - комбо-бокс.
+        
+        QList<AgentPropertyElement> executionModeElement;    
+        executionModeElement.append( AgentPropertyElement::captionElement(  tr("Execution mode") ) );    
+        AgentPropertyElement executionModeValue;
+        executionModeValue.type = AgentPropertyElement::ExecutionModeSelector;
+        executionModeValue.readOnly = false;
+        executionModeValue.propertyName = "execution_mode";
+        executionModeValue.value = QVariant( (int) getExecutionMode() );
+        executionModeValue.backgroundColor = executionModeValue.widgetBackground();        
+        
+        executionModeElement.append( executionModeValue );
+        
+        result.append( executionModeElement );
+    };
         
     return result;
     

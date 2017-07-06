@@ -23,12 +23,13 @@ tengu::SproutItem::SproutItem ( tengu::Sprout * sprout, QGraphicsItem* parent )
 {
     __width = 72;
     __height = 33;
-    __orientation = SPO_0;
+    __orientation = SPO_0;    
     
     _iAmSprout = true;
     
     _boundingRect = QRect( 0, 0, __width, __height );
     _className = "SproutItem";   
+    _canChangeExecuteMode = true;
     
     manualSignalNameSelection = false;
     

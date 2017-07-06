@@ -35,6 +35,7 @@
     <file alias="cancel_32.png">images/cancel_32.png</file>
     <file alias="chart_organisation_16.png">images/chart_organisation_16.png</file>
     <file alias="chart_organisation_add_16.png">images/chart_organisation_add_16.png</file>
+    <file alias="chart_organisation_delete_16.png">images/chart_organisation_delete_16.png</file>
     <file alias="robot_16.png">images/robot_16.png</file>
     <file alias="robot_32.png">images/robot_32.png</file>    
     <file alias="Falcon-icon_48.png">images/Falcon-icon_48.png</file>

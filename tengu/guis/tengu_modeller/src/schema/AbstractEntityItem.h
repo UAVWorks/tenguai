@@ -128,8 +128,11 @@ namespace tengu {
             
             AbstractEntity * _entity;
             QRectF _boundingRect;
+            
+            bool _canChangeExecuteMode;
                         
             int _brighter( int color );
+            int _darker( int color );
             
             bool _selected;                        
             

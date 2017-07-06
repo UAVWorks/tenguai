@@ -22,6 +22,8 @@ tengu::LinkItem::LinkItem()
 {
     _boundingRect = QRect(0, 0, 64, 22);
     _className = "LinkItem";    
+    _canChangeExecuteMode = true;
+    
     __from = nullptr;
     __to = nullptr;
     __posFrom = QPoint( MINIMUM_CONSTRAINT, MINIMUM_CONSTRAINT );

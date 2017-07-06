@@ -22,6 +22,8 @@ namespace tengu {
             ProcessItem ( AbstractEntity* entity = Q_NULLPTR, QGraphicsItem * parent = Q_NULLPTR );
             virtual ~ProcessItem();
             
+            void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = Q_NULLPTR);
+            
             void checkEntity();
             
     };

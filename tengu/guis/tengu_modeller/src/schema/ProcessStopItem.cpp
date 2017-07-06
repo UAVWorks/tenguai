@@ -31,6 +31,7 @@ tengu::ProcessStopItem::ProcessStopItem ( tengu::ProcessStop * entity, QGraphics
     _boundingRect = QRect( 0,0, rectSize, rectSize );
     
     _className = "ProcessStopItem";
+    _canChangeExecuteMode = true;
 }
 
 // ********************************************************************************************************************

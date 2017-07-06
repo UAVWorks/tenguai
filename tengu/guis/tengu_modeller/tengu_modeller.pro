@@ -35,7 +35,6 @@ HEADERS  += src/overboard/XPlaneAircraft.h      \
         src/overboard/WorkSpace.h               \
         src/schema/AbstractEntityItem.h         \
         src/schema/TopLevelItem.h               \
-        src/schema/EMChangableItem.h            \
         src/schema/ItemWithLinks.h              \
         src/schema/XPlaneAgentItem.h            \
         src/schema/XPlaneSimulatorItem.h        \
@@ -75,7 +74,6 @@ SOURCES += src/main.cpp                         \
         src/overboard/WorkSpace.cpp             \
         src/schema/AbstractEntityItem.cpp       \
         src/schema/TopLevelItem.cpp             \
-        src/schema/EMChangableItem.cpp          \
         src/schema/ItemWithLinks.cpp            \
         src/schema/XPlaneAgentItem.cpp          \
         src/schema/XPlaneSimulatorItem.cpp      \
