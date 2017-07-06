@@ -87,6 +87,13 @@ namespace tengu {
             
             virtual bool hasClass( QJsonObject json, QString class_name );                        
             
+            int getX();
+            void setX( int x );
+            
+            int getY();
+            void setY( int y );
+
+            
         protected:
             
             bool _changed;            
@@ -94,7 +101,7 @@ namespace tengu {
             QString _className;
             
             void _somethingChanged();
-            
+                                    
         private:
             
             // Entity name
@@ -123,6 +130,9 @@ namespace tengu {
             // Всемирная дата-время последнего изменения.
             
             QDateTime __lastModified;
+            
+            int __x;
+            int __y;
             
     };
 };

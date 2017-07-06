@@ -46,7 +46,7 @@ INCLUDEPATH += ../loredis/src /usr/include/libbson-1.0 /usr/include/libmongoc-1.
 
 HEADERS += MongoStorage.h               \
         AbstractEntity.h                \
-        AbstractAgentKernel.h           \
+        AbstractAgent.h                 \
         Sprout.h                        \
         SproutableAgent.h               \
         ORer.h                          \
@@ -63,7 +63,7 @@ HEADERS += MongoStorage.h               \
             
 SOURCES += MongoStorage.cpp             \
         AbstractEntity.cpp              \
-        AbstractAgentKernel.cpp         \
+        AbstractAgent.cpp               \
         Sprout.cpp                      \
         SproutableAgent.cpp             \
         ORer.cpp                        \

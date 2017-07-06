@@ -20,7 +20,7 @@
 // ********************************************************************************************************************
 
 tengu::Processor::Processor () 
-    : AbstractAgentKernel ()
+    : AbstractAgent ()
 {
     
     // _setActivity( false );
@@ -61,8 +61,8 @@ bool tengu::Processor::_loadConfig ( QString fileName ) {
         QString mode = settings.value("execution_mode", "" ).toString();
         if ( ! mode.isEmpty() ) {
             if ( mode.toUpper() == "REAL" ) setExecutionMode( AbstractEntity::EM_REAL );
-            else if ( mode.toUpper() == "XPLANE" ) setExecutionMode( AbstractAgentKernel::EM_XPLANE );
-            // else if ( mode.toUpper() == "PREPAR3D" ) setExecutionMode( AbstractAgentKernel::EM_PREPAR3D );
+            else if ( mode.toUpper() == "XPLANE" ) setExecutionMode( AbstractAgent::EM_XPLANE );
+            // else if ( mode.toUpper() == "PREPAR3D" ) setExecutionMode( AbstractAgent::EM_PREPAR3D );
         };
                 
         return true;
@@ -169,7 +169,7 @@ tengu::Processor::execution_mode_t tengu::Processor::executionMode() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::Processor::_startSubagentProcess( AbstractAgentKernel * child ) {
+void tengu::Processor::_startSubagentProcess( AbstractAgent * child ) {
     subagent_process_t subagent;
     subagent.child = child;
     subagent.state = AST_WAIT_STARTING;

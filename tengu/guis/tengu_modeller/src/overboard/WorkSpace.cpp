@@ -18,7 +18,7 @@
 // ********************************************************************************************************************
 
 tengu::WorkSpace::WorkSpace()
-    : AbstractAgentKernel()
+    : AbstractAgent()
 {
     setSystemName( tr("Workspace") );
     setHumanName( tr("Workspace") );
@@ -32,11 +32,11 @@ tengu::WorkSpace::WorkSpace()
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::WorkSpace::addChild ( tengu::AbstractAgentKernel* child ) {
+void tengu::WorkSpace::addChild ( tengu::AbstractAgent * child ) {
     
-    tengu::AbstractAgentKernel::addChild ( child );
+    tengu::AbstractAgent::addChild ( child );
     
-    QList<AbstractAgentKernel * > hisChildren = children();
+    QList<AbstractAgent * > hisChildren = children();
     
     Vehicle * vehicle = dynamic_cast<Vehicle * > ( child );
     if ( vehicle ) {
@@ -46,7 +46,7 @@ void tengu::WorkSpace::addChild ( tengu::AbstractAgentKernel* child ) {
         
         int vehiclesCount = 0;
         for ( int i=0; i<hisChildren.count(); i++ ) {
-            AbstractAgentKernel * och = hisChildren.at(i);
+            AbstractAgent * och = hisChildren.at(i);
             Vehicle * vch = dynamic_cast< Vehicle * > ( och );
             if ( vch ) vehiclesCount ++;
         };

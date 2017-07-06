@@ -123,6 +123,11 @@ namespace tengu {
             AbstractEntity * entity();
                         
             virtual void recalculate();
+            
+            // int getX();
+            void setX( int x );
+            // int getY();
+            void setY( int y );
                         
         protected:
             

@@ -29,8 +29,8 @@ namespace tengu {
         
         signals:
             
-            void signalAgentCreated( AbstractAgentKernel * agent );
-            void signalAgentSelected( AbstractAgentKernel * agent );
+            void signalAgentCreated( AbstractAgent * agent );
+            void signalAgentSelected( AbstractAgent * agent );
         
         public:
             
@@ -46,7 +46,7 @@ namespace tengu {
             WorkSpace * __workSpace;
             QTreeWidgetItem * __rootItem;
             QTreeWidgetItem * __selectedItem;
-            AbstractAgentKernel * __selectedAgent;
+            AbstractAgent * __selectedAgent;
             
             bool __do_not_handle_events;
             

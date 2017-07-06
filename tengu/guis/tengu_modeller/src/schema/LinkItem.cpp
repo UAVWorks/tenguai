@@ -547,8 +547,8 @@ void tengu::LinkItem::recalculate() {
     
     // qDebug() << "Итого после recalculate x=" << x << ",y=" << y << ",w=" << w << ",h=" << h << ", fromPoint=" << __posFrom << ", toPoint=" << __posTo;
     
-    setX( x );
-    setY( y );
+    QGraphicsObject::setX( x );
+    QGraphicsObject::setY( y );
     _boundingRect.setWidth( w );
     _boundingRect.setHeight( h );
             

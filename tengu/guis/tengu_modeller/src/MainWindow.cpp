@@ -59,8 +59,8 @@ tengu::MainWindow::MainWindow(QWidget *parent)
     // Левая часть приложения.
     
     __left = new MainWindowLeft( __workSpace );    
-    QObject::connect( __left->treeStructure, SIGNAL( signalAgentCreated( AbstractAgentKernel * ) ), this, SLOT( __on__tree_structure__agent_was_created( AbstractAgentKernel * ) ) );
-    QObject::connect( __left->treeStructure, SIGNAL( signalAgentSelected( AbstractAgentKernel * ) ), this, SLOT( __on__tree_structure__agent_was_selected( AbstractAgentKernel * ) ) );
+    QObject::connect( __left->treeStructure, SIGNAL( signalAgentCreated( AbstractAgent * ) ), this, SLOT( __on__tree_structure__agent_was_created( AbstractAgent * ) ) );
+    QObject::connect( __left->treeStructure, SIGNAL( signalAgentSelected( AbstractAgent * ) ), this, SLOT( __on__tree_structure__agent_was_selected( AbstractAgent * ) ) );
     
     // Right part of the application
     // Правая часть приложения.
@@ -460,6 +460,7 @@ void tengu::MainWindow::__on_schama_item_moved ( tengu::AbstractEntityItem * ent
         
         entity->setX( pos.x() );
         entity->setY( pos.y() );  
+        
         entity->recalculate();
         entity->update(); 
         
@@ -523,11 +524,9 @@ void tengu::MainWindow::__on_schema_item_was_dropped ( tengu::AbstractEntity * e
             
             // It was graphical representation somewhat from agents.
             // Это было графическое представление кого-то из агентов.
-                        
+               
             item->setX( pos.x() );
-            item->setY( pos.y() );
-            
-            
+            item->setY( pos.y() );                        
                         
         };
         
@@ -655,7 +654,7 @@ void tengu::MainWindow::__on__simulation_stop() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::MainWindow::__on__tree_structure__agent_was_created ( tengu::AbstractAgentKernel * agent ) {
+void tengu::MainWindow::__on__tree_structure__agent_was_created ( tengu::AbstractAgent * agent ) {
 
 }
 
@@ -667,7 +666,7 @@ void tengu::MainWindow::__on__tree_structure__agent_was_created ( tengu::Abstrac
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::MainWindow::__on__tree_structure__agent_was_selected ( tengu::AbstractAgentKernel * agent ) {
+void tengu::MainWindow::__on__tree_structure__agent_was_selected ( tengu::AbstractAgent * agent ) {
     
     AbstractEntityItem * item = AgentItemFactory::createItem( agent );
     if ( item ) {

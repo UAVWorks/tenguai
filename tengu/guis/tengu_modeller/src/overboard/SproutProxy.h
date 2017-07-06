@@ -19,7 +19,7 @@ namespace tengu {
         
         public:
             
-            SproutProxy ( AbstractAgentKernel * owner = nullptr );
+            SproutProxy ( AbstractAgent * owner = nullptr );
             virtual ~SproutProxy();
             
             virtual void subscribe();

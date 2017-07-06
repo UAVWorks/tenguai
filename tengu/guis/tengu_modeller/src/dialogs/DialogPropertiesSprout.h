@@ -94,7 +94,7 @@ namespace tengu {
              * Заполнить какую-нибудь таблицу (процессы, задачи, отростки) из родительского элемента с учетом фильтра.
              */
             
-            template < class T > void __fill_one_table( AbstractAgentKernel * agent, QTableWidget * table, QLineEdit * filter ) {
+            template < class T > void __fill_one_table( AbstractAgent * agent, QTableWidget * table, QLineEdit * filter ) {
                 QList< T > list = agent->getEntities< T >( filter->text() );
                 for ( int i=0; i<list.count(); i++ ) {
                     T p = list.at(i);

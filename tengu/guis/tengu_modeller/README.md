@@ -6,7 +6,7 @@ This is graphical tool for work with artifical intelligence models. At the momen
 
 # The latest operations.
 
-- **06 jul 2017** The process graphics item.
+- **06 jul 2017** The process graphics item. Graphical coordinates moved into AbstractEntity.
 - **05 jul 2017** Entering SproutableAgent class. Creating some agents from structure tree context menu.
 - **04 jul 2017** Fix a bug with cleaning the scene. Automatical naming for the tasks and the sprouts.
 - **03 jul 2017** Execution mode for graphical link item. Orphanded sprout.

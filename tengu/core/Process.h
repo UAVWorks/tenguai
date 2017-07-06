@@ -11,12 +11,12 @@
 
 #pragma once
 
-#include "AbstractAgentKernel.h"
+#include "AbstractAgent.h"
 #include "Task.h"
 
 namespace tengu {
     
-    class Process : public AbstractAgentKernel {
+    class Process : public AbstractAgent {
         
         Q_OBJECT
         
@@ -26,7 +26,7 @@ namespace tengu {
             // Process( const Process & o );
             virtual ~Process();
             
-            void addChild( AbstractAgentKernel * child );
+            void addChild( AbstractAgent * child );
             
     };
     

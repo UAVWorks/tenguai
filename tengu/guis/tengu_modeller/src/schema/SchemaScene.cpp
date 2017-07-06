@@ -132,7 +132,7 @@ void tengu::SchemaScene::setRootItem ( tengu::AbstractEntityItem * rootItem ) {
     // Add children of this root item to schema.
     // Добавление на схему детей этого корневого элемента.
     
-    AbstractAgentKernel * entity = dynamic_cast< AbstractAgentKernel * > ( rootItem->entity() );
+    AbstractAgent * entity = dynamic_cast< AbstractAgent * > ( rootItem->entity() );
     
     if ( ( entity ) && ( entity->hasChildren() ) ) {
         
@@ -141,6 +141,12 @@ void tengu::SchemaScene::setRootItem ( tengu::AbstractEntityItem * rootItem ) {
             AbstractEntityItem * item = AgentItemFactory::createItem( entity->children().at(i) );
             
             if ( item ) {
+                AbstractEntity * cent = item->entity();
+                if ( cent ) {
+                    QGraphicsItem * qgr = ( QGraphicsItem * ) item;
+                    qgr->setX( cent->getX() );
+                    qgr->setY( cent->getY() );
+                };
                 addItem( item );
             };
         };
@@ -194,8 +200,8 @@ void tengu::SchemaScene::addItem ( QGraphicsItem * gItem ) {
         
         item->checkEntity();
         
-        AbstractAgentKernel * rootAgent = dynamic_cast<AbstractAgentKernel * > ( __rootItem->entity() );
-        AbstractAgentKernel * curAgent = dynamic_cast<AbstractAgentKernel * > ( item->entity() );
+        AbstractAgent * rootAgent = dynamic_cast<AbstractAgent * > ( __rootItem->entity() );
+        AbstractAgent * curAgent = dynamic_cast<AbstractAgent * > ( item->entity() );
         if ( ( rootAgent ) && ( curAgent ) ) rootAgent->addChild( curAgent );
         
         QObject::connect( item, SIGNAL( signalSomethingChanged() ), this, SLOT( __on__something_changed() ) );

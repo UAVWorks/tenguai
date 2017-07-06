@@ -52,7 +52,7 @@ void tengu::TaskItem::paint ( QPainter * painter, const QStyleOptionGraphicsItem
     // Картинка режима выполнения.
     
     QPixmap pm = _executionModePixmap();
-    if ( getExecutionMode() == AbstractAgentKernel::EM_XPLANE ) p.drawPixmap( _boundingRect.width() - 42, 6, pm );
+    if ( getExecutionMode() == AbstractAgent::EM_XPLANE ) p.drawPixmap( _boundingRect.width() - 42, 6, pm );
     else p.drawPixmap( _boundingRect.width() - 36, 6, pm );
     
     // Name of this task.

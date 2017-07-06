@@ -11,12 +11,12 @@
 
 #include <QList>
 
-#include "AbstractAgentKernel.h"
+#include "AbstractAgent.h"
 #include "AgentFactory.h"
 
 namespace tengu {
 
-    class WorkSpace : public AbstractAgentKernel {
+    class WorkSpace : public AbstractAgent {
     
         Q_OBJECT
         public:
@@ -34,7 +34,7 @@ namespace tengu {
             WorkSpace();
             virtual ~WorkSpace();
             
-            void addChild( AbstractAgentKernel * child );
+            void addChild( AbstractAgent * child );
                         
         private:
                         

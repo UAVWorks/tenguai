@@ -1,8 +1,8 @@
 // ********************************************************************************************************************
 // *                                                                                                                  *
-// *    The "kernel" of abstract agent. Class has been introduced to automatically work of properties (sprouts).      *
+// *                                                 The Abstract Agent.                                              *
 // * ---------------------------------------------------------------------------------------------------------------- *
-// *  "Ядро" абстрактного агента. Класс был введен для автоматической работы "свойств" (они же "отростки" - Sprout).  *
+// *                                                  Абстрактный агент.                                              *
 // *                                                                                                                  *
 // * Eugene G. Sysoletin <e.g.sysoletin@gmail.com>                                       Created 27 may 2017 at 08:28 *
 // ********************************************************************************************************************
@@ -23,7 +23,7 @@
 
 namespace tengu {
 
-    class AbstractAgentKernel : public QObject, public AbstractEntity {
+    class AbstractAgent : public QObject, public AbstractEntity {
     
         friend class Sprout;
                                 
@@ -41,8 +41,8 @@ namespace tengu {
         
         public:
                         
-            AbstractAgentKernel();
-            virtual ~AbstractAgentKernel();
+            AbstractAgent();
+            virtual ~AbstractAgent();
             
             /**
              * @short Public connect procedure.
@@ -75,18 +75,18 @@ namespace tengu {
             
             virtual bool usable();
             
-            virtual void addChild( AbstractAgentKernel * child );
+            virtual void addChild( AbstractAgent * child );
             bool hasChildren();
-            virtual void removeChild( AbstractAgentKernel * child );
-            QList <AbstractAgentKernel * > children();
+            virtual void removeChild( AbstractAgent * child );
+            QList <AbstractAgent * > children();
             
             /**
              * @short Adding or replacing previous (in the sence of focus flow) agent.
              */
             
-            void addPreviousByFocus( AbstractAgentKernel * previous );            
-            void addNextByFocus( AbstractAgentKernel * next );                       
-            void removeNeighborByFocus( AbstractAgentKernel * agent );
+            void addPreviousByFocus( AbstractAgent * previous );            
+            void addNextByFocus( AbstractAgent * next );                       
+            void removeNeighborByFocus( AbstractAgent * agent );
             // void removeNeighborByFocus( QString uuid );
                                     
             // The agent can be provided either as object in memory
@@ -108,7 +108,7 @@ namespace tengu {
 
                 QList < T > result;
     
-                foreach( AbstractAgentKernel * oneChild, _children ) {
+                foreach( AbstractAgent * oneChild, _children ) {
         
                     T entity = __satisfiedTheMask< T >( oneChild, mask );
                     if ( entity ) result.append( entity );
@@ -116,10 +116,10 @@ namespace tengu {
                     // Re-enterable call procedure for children of this agent.
                     // Реентерабельный вызов процедуры для детей этого агента.
         
-                    QList < AbstractAgentKernel *>  reChildrenList = oneChild->children();
+                    QList < AbstractAgent *>  reChildrenList = oneChild->children();
                     if ( reChildrenList.count() > 0 ) {
                         for ( int cIndex=0; cIndex < reChildrenList.count(); cIndex ++ ) {
-                            AbstractAgentKernel * reChild = reChildrenList.at( cIndex );
+                            AbstractAgent * reChild = reChildrenList.at( cIndex );
                             entity = __satisfiedTheMask< T >( reChild, mask );
                             if ( entity ) result.append( entity );
                         };
@@ -128,8 +128,7 @@ namespace tengu {
                 };
         
                 return( result );
-            };
-            
+            };                        
             
         protected:
                         
@@ -158,14 +157,14 @@ namespace tengu {
             // Tree-like ("the space" or "the volume", 3d) structure of agents.
             // Деревообразная ("объемная", 3d) структура агентов.
             
-            AbstractAgentKernel * _parent;
-            QMap< QString, AbstractAgentKernel * > _children;
+            AbstractAgent * _parent;
+            QMap< QString, AbstractAgent * > _children;
             
             // Line-like (flat, 2d, by time flow) structure of agents. Key for map is an UUID.            
             // Линейная (плоская, 2d, по времени) структура агентов. Ключ для словарика - это UUID.
             
-            QMap< QString, AbstractAgentKernel * > _previousByFocus;
-            QMap< QString, AbstractAgentKernel * > _nextByFocus;
+            QMap< QString, AbstractAgent * > _previousByFocus;
+            QMap< QString, AbstractAgent * > _nextByFocus;
                         
             // Tree-like structure of agents. For loading entire "tree branch" completely.
             // Древовидная структура агентов. Для загрузки всей "ветки" дерева целиком.
@@ -180,8 +179,8 @@ namespace tengu {
         private:
             
             bool __pub_redis_connected;
-            bool __sub_redis_connected;                        
-            
+            bool __sub_redis_connected;     
+                        
             QTimer * __connect_timer;
             QTimer * __ping_timer;
             
@@ -192,7 +191,7 @@ namespace tengu {
              * Проверить тип сущности, а так же что она содержит маску в именах.
              */
                         
-            template <class T > T __satisfiedTheMask ( tengu::AbstractAgentKernel* child, QString mask ) {
+            template <class T > T __satisfiedTheMask ( tengu::AbstractAgent * child, QString mask ) {
 
                 QString sName = child->getSystemName();
                 QString hName = child->getHumanName();

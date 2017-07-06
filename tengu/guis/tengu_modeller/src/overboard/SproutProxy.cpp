@@ -17,7 +17,7 @@
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::SproutProxy::SproutProxy ( tengu::AbstractAgentKernel* owner ) 
+tengu::SproutProxy::SproutProxy ( tengu::AbstractAgent * owner ) 
     : Sprout ( owner )
 {
 

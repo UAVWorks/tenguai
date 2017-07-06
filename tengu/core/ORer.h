@@ -9,11 +9,11 @@
 
 #pragma once
 
-#include "AbstractAgentKernel.h"
+#include "AbstractAgent.h"
 
 namespace tengu {
     
-    class ORer : public AbstractAgentKernel {
+    class ORer : public AbstractAgent {
         
         Q_OBJECT
         

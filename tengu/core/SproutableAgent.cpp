@@ -18,7 +18,7 @@
 // ********************************************************************************************************************
 
 tengu::SproutableAgent::SproutableAgent () 
-    : AbstractAgentKernel () 
+    : AbstractAgent () 
 {    
     _oActivityChannel = QString("");
     _iFocusChannel = QString("");
@@ -153,7 +153,7 @@ void tengu::AbstractAgent::__on_activity_channel_message ( QVariant value ) {
 
 void tengu::SproutableAgent::disconnect() {
     __unsubscribe();
-    tengu::AbstractAgentKernel::disconnect();
+    tengu::AbstractAgent::disconnect();
 }
 
 // ********************************************************************************************************************

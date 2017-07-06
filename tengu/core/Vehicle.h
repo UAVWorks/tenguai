@@ -42,7 +42,7 @@ namespace tengu {
             vehicle_types_h vehicleType();
             QString vehicleTypeAsString();
             
-            void addChild( AbstractAgentKernel * child );
+            void addChild( AbstractAgent * child );
             
         protected:
             

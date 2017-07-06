@@ -13,7 +13,7 @@
 
 #include <QObject>
 #include <QVariant>
-#include "AbstractAgentKernel.h"
+#include "AbstractAgent.h"
 #include "AbstractEntity.h"
 #include "Constants.h"
 
@@ -57,7 +57,7 @@ namespace tengu {
             // The name should be unique in the parent (owner) namespace.
             // Имя лучше бы было уникальным в пределах родителя (владельца).
             
-            Sprout( AbstractAgentKernel * owner = Q_NULLPTR );
+            Sprout( AbstractAgent * owner = Q_NULLPTR );
             virtual ~Sprout();
             
             // void setInputChannel( QString channel );
@@ -91,7 +91,7 @@ namespace tengu {
             // Get sprout's owner ( the agent, usual the task )
             // Получить владельца sprout'а ( агента, обычно - задачу ).
             
-            AbstractAgentKernel * owner();
+            AbstractAgent * owner();
             
             
         protected:
@@ -101,7 +101,7 @@ namespace tengu {
         private:
             
             
-            AbstractAgentKernel * __owner;
+            AbstractAgent * __owner;
             
             QVariant __value;
             

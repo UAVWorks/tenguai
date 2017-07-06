@@ -19,14 +19,14 @@
 #include <QProcess>
 #include <QVector>
 
-#include "AbstractAgentKernel.h"
+#include "AbstractAgent.h"
 #include "Process.h"
 
 #define PROCESSOR_CONFIG_FILE   "/etc/tengu/processor.conf"
 
 namespace tengu {
     
-    class Processor : public AbstractAgentKernel {
+    class Processor : public AbstractAgent {
         
         Q_OBJECT
                 
@@ -47,12 +47,12 @@ namespace tengu {
             // Qt-процесс, который мы породили в операционной системе.
             QProcess * process;
             // Для кого конкретно из детей (коллекция _children) был поднят этот процесс.
-            AbstractAgentKernel * child;
+            AbstractAgent * child;
         };
         
         signals:
             
-            // void signalAgentStarted( AbstractAgentKernel * agent );
+            // void signalAgentStarted( AbstractAgent * agent );
             
         public:
             
@@ -77,7 +77,7 @@ namespace tengu {
             // Create child (agent) as separate operation system process.
             // Создание ребенка (агента) как отдельного процесса в операционной системе.
             
-            void _startSubagentProcess( AbstractAgentKernel * child );
+            void _startSubagentProcess( AbstractAgent * child );
             
             // Load configuration for this processor (from config file).
             // Загрузить конфигурацию для данного процессора (из конфигурационного файла).
@@ -104,7 +104,7 @@ namespace tengu {
             void __on_subprocess_started();
             void __on_subprocess_error( QProcess::ProcessError error );
             void __on_subprocess_finished( int exitCode, QProcess::ExitStatus exitStatus );
-            // void __on_agent_started( AbstractAgentKernel * agent );            
+            // void __on_agent_started( AbstractAgent * agent );            
             
     };
     

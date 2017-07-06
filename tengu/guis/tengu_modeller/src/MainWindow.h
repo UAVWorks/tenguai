@@ -136,8 +136,8 @@ namespace tengu {
             void __on_schema_item_was_dropped( AbstractEntity * entity, QPoint pos );
             void __on_schema_something_changed();
             
-            void __on__tree_structure__agent_was_selected( AbstractAgentKernel * agent );
-            void __on__tree_structure__agent_was_created( AbstractAgentKernel * agent );
+            void __on__tree_structure__agent_was_selected( AbstractAgent * agent );
+            void __on__tree_structure__agent_was_created( AbstractAgent * agent );
             
             void __on__create__process();
             

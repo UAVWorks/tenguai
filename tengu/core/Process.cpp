@@ -20,7 +20,7 @@
 // ********************************************************************************************************************
 
 tengu::Process::Process () 
-    : AbstractAgentKernel ()
+    : AbstractAgent ()
 {
 
 }
@@ -48,11 +48,11 @@ tengu::Process::Process ( const tengu::Process & o )
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::Process::addChild ( tengu::AbstractAgentKernel* child ) {
+void tengu::Process::addChild ( tengu::AbstractAgent * child ) {
     
-    tengu::AbstractAgentKernel::addChild ( child );
+    tengu::AbstractAgent::addChild ( child );
     
-    QList<AbstractAgentKernel * > hisChildren = children();
+    QList<AbstractAgent * > hisChildren = children();
     
     Task * task = dynamic_cast<Task*> ( child );
     if ( task ) {

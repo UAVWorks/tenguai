@@ -489,7 +489,7 @@ bool tengu::AbstractEntityItem::isDecomposite() {
     // "Decomposite" mean either forcibly decomposition or this base is exactly an agent and he has children.
     // "Декомпозиция" означает либо принудительную декомпозицию, либо в основании лежит точно агент и он имеет детей.
     
-    AbstractAgentKernel * agent = dynamic_cast<AbstractAgentKernel * >( _entity );
+    AbstractAgent * agent = dynamic_cast<AbstractAgent * >( _entity );
     bool agentHasChildren = false;
     if ( agent ) agentHasChildren = agent->hasChildren();
     return ( _decomposite || agentHasChildren  );
@@ -629,6 +629,35 @@ void tengu::AbstractEntityItem::setExecutionMode ( tengu::AbstractEntity::execut
     };
     
 }
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                               The X coordinate setter.                                           *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                                Установка координаты X                                            *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::AbstractEntityItem::setX ( int x ) {
+    QGraphicsObject::setX( x );
+    if ( _entity ) _entity->setX( x );
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                               The Y coordinate setter.                                           *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                                 Установка координаты Y                                           *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::AbstractEntityItem::setY ( int y ) {
+    
+    QGraphicsObject::setY ( y );
+    if ( _entity ) _entity->setY( y );
+    
+}
+
 
 // ********************************************************************************************************************
 // *                                                                                                                  *

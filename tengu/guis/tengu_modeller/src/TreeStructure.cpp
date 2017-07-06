@@ -34,7 +34,7 @@ tengu::TreeStructure::TreeStructure ( tengu::WorkSpace* ws )
     __rootItem = new QTreeWidgetItem( WorkSpace::GI_WorkSpace );
     __rootItem->setText(0, tr("The Workspace") );
     __rootItem->setIcon(0, QIcon( QPixmap(":chart_organisation_16.png") ) );
-    __rootItem->setData( 0, Qt::UserRole, QVariant::fromValue<AbstractAgentKernel * >( ws ) );
+    __rootItem->setData( 0, Qt::UserRole, QVariant::fromValue<AbstractAgent * >( ws ) );
     
     addTopLevelItem( __rootItem );
     setCurrentItem( __rootItem );
@@ -115,7 +115,7 @@ void tengu::TreeStructure::__select_forcibly_with_expanding ( QTreeWidgetItem * 
     if ( ! parent->isExpanded() ) parent->setExpanded( true );    
     setCurrentItem( selected );    
     __selectedItem = selected;
-    AbstractAgentKernel * agent = qvariant_cast< AbstractAgentKernel * > ( selected->data( 0, Qt::UserRole ) );
+    AbstractAgent * agent = qvariant_cast< AbstractAgent * > ( selected->data( 0, Qt::UserRole ) );
     __selectedAgent = agent ;
     if ( agent ) emit signalAgentSelected( agent );
         
@@ -140,7 +140,7 @@ void tengu::TreeStructure::__on__create__vehicle() {
     QTreeWidgetItem * item = new QTreeWidgetItem( WorkSpace::GI_Vehicle );
     item->setText( 0, vehicle->getHumanName() );
     item->setIcon( 0, QIcon( QPixmap( ":robot_16.png" )));
-    item->setData( 0, Qt::UserRole, QVariant::fromValue< AbstractAgentKernel * >( vehicle ) );
+    item->setData( 0, Qt::UserRole, QVariant::fromValue< AbstractAgent * >( vehicle ) );
     
     __rootItem->addChild( item );
     __select_forcibly_with_expanding( __rootItem, item );
@@ -174,7 +174,7 @@ void tengu::TreeStructure::__on__create__process() {
         QTreeWidgetItem * item = new QTreeWidgetItem( WorkSpace::GI_Process );
         item->setText( 0, process->getHumanName() );
         item->setIcon( 0, QIcon( QPixmap(":package_16.png") ) );
-        item->setData( 0, Qt::UserRole, QVariant::fromValue< AbstractAgentKernel * > ( process ) );
+        item->setData( 0, Qt::UserRole, QVariant::fromValue< AbstractAgent * > ( process ) );
         __selectedItem->addChild( item );
         __select_forcibly_with_expanding( __selectedItem, item );
         emit signalAgentCreated( process );
@@ -204,7 +204,7 @@ void tengu::TreeStructure::__on__tree_item_selected ( const QItemSelection & cur
     if ( sList.count() > 0 ) {
         __selectedItem = sList.at( 0 );
         if ( __selectedItem ) {
-            __selectedAgent = qvariant_cast< AbstractAgentKernel * >( __selectedItem->data( 0, Qt::UserRole ) );
+            __selectedAgent = qvariant_cast< AbstractAgent * >( __selectedItem->data( 0, Qt::UserRole ) );
             if ( __selectedAgent ) emit signalAgentSelected( __selectedAgent );
         };
     };        

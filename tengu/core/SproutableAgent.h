@@ -17,12 +17,12 @@
 #include <QMutex>
 #include <QDebug>
 
-#include "AbstractAgentKernel.h"
+#include "AbstractAgent.h"
 #include "Sprout.h"
 
 namespace tengu {
 
-    class SproutableAgent : public AbstractAgentKernel {
+    class SproutableAgent : public AbstractAgent {
         
         Q_OBJECT
                 

@@ -42,11 +42,11 @@ tengu::Vehicle::Vehicle ()
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::Vehicle::addChild ( tengu::AbstractAgentKernel * child ) {
+void tengu::Vehicle::addChild ( tengu::AbstractAgent * child ) {
     
-    tengu::AbstractAgentKernel::addChild ( child );
+    tengu::AbstractAgent::addChild ( child );
     
-    QList<AbstractAgentKernel * > hisChildren = children();
+    QList<AbstractAgent * > hisChildren = children();
     
     Process * process = dynamic_cast< Process * > ( child );
     if ( process ) {
@@ -57,7 +57,7 @@ void tengu::Vehicle::addChild ( tengu::AbstractAgentKernel * child ) {
         int processCount = 0;
         
         for ( int i=0; i<hisChildren.count(); i++ ) {
-            AbstractAgentKernel * och = hisChildren.at(i);
+            AbstractAgent * och = hisChildren.at(i);
             Process * pch = dynamic_cast<Process *>( och );
             if ( pch ) processCount ++;
         };
