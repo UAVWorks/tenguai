@@ -23,6 +23,7 @@
 #include <QJsonDocument>
 
 #include "AbstractEntity.h"
+#include "Constants.h"
 
 namespace tengu {
     
@@ -35,6 +36,9 @@ namespace tengu {
             virtual ~MongoStorage();    
             
             void store( AbstractEntity * e );
+            void store( QJsonObject o );
+            bool storageable( QJsonObject o );
+            bool storageable( AbstractEntity * e );
             
         protected:
         private:

@@ -339,7 +339,7 @@ void tengu::AbstractAgent::disconnect() {
 void tengu::AbstractAgent::addChild ( tengu::AbstractAgent * child ) {
     _children[ child->getUUID() ] = child;
     child->_parent = this;
-    _changed = true;
+    _somethingChanged();
 }
 
 // ********************************************************************************************************************

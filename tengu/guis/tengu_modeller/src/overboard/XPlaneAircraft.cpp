@@ -115,6 +115,7 @@ void tengu::XPlaneAircraft::__init_sprout ( QString settingsGroup, tengu::Sprout
 // ********************************************************************************************************************
 
 void tengu::XPlaneAircraft::setName ( QString name ) {
+    Q_UNUSED( name );
     qDebug() << "XPlaneAircraft::setName() does not have any effect";
 }
 
@@ -127,6 +128,7 @@ void tengu::XPlaneAircraft::setName ( QString name ) {
 // ********************************************************************************************************************
 
 void tengu::XPlaneAircraft::setExecutionMode ( tengu::AbstractEntity::execution_mode_t mode ) {
+    Q_UNUSED( mode );
     qDebug() << "XPlaneAircraft::setExecutioMode() does not have any effect";
 }
 

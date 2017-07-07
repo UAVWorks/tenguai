@@ -74,7 +74,6 @@ bson_t * tengu::MongoStorage::__create_bson ( QJsonObject o ) {
     // char * str = bson_as_json ( doc , NULL );
     // qDebug() << "Bson to insert: " << QString(str) ;
     // bson_free( str );
-        
     
     return doc;
 }
@@ -90,10 +89,24 @@ bson_t * tengu::MongoStorage::__create_bson ( QJsonObject o ) {
 
 void tengu::MongoStorage::store ( tengu::AbstractEntity * e ) {
     
+    QJsonObject o = e->toJSON();
+    store( o );
+
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                      Store the JSON-presented object, procedure can be reenterable                               *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                Сохранить объект, представленный JSON'ом. Процедура может быть реентерабельной.                   *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MongoStorage::store( QJsonObject o ) {
+    
     // We can not insert a set of separate object at once.
     // Мы не можем вставлять множество разных объектов за один раз.
-    
-    QJsonObject o = e->toJSON();
+
     QStringList keys = o.keys();
     
     for ( int i=0; i<keys.size(); i++ ) {
@@ -101,14 +114,21 @@ void tengu::MongoStorage::store ( tengu::AbstractEntity * e ) {
         QJsonValue val = o.value( keys.at(i) );
         
         if ( val.isObject() ) {
+            
+            // reenterable call, store child's object.
+            // Реентерабельный вызов, запись дитяти.
+            
+            qDebug() << "MongoStorage::store, reenterable call";
+            store( o );
             o.remove( keys.at(i) );
             continue;
         };
+        
     };
     
     __insert_single_object( o );
+    
 }
-
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
@@ -119,8 +139,11 @@ void tengu::MongoStorage::store ( tengu::AbstractEntity * e ) {
 // ********************************************************************************************************************
 
 void tengu::MongoStorage::__insert_single_object ( QJsonObject jsonObject ) {
+
+    qDebug() << "MongoStorage::__insert_single_object: " << jsonObject ;
     
-    if ( ( ! jsonObject.contains("database") ) || ( ! jsonObject.contains("collection") ) || ( ! jsonObject.contains("uuid")  ) ) {
+    // if ( ( ! jsonObject.contains("database") ) || ( ! jsonObject.contains("collection") ) || ( ! jsonObject.contains("uuid")  ) ) {
+    if ( ! storageable( jsonObject ) ) {
         qDebug() << "MongoStorage::store( QJsonObject ), object does not contains uuid | database | collection";
         qDebug() << jsonObject;
         return;
@@ -131,12 +154,6 @@ void tengu::MongoStorage::__insert_single_object ( QJsonObject jsonObject ) {
         return;
     };
     
-    // Replace UUID <-> _id
-    // Заменяем UUID <-> _id
-    
-    // QString uuid = jsonObject.value("uuid").toString();
-    // jsonObject.remove("uuid");
-    // jsonObject.insert("_id", uuid );
         
     QString databaseName = jsonObject.take("database").toString();
     QString collectionName = jsonObject.take("collection").toString();
@@ -175,6 +192,36 @@ void tengu::MongoStorage::__insert_single_object ( QJsonObject jsonObject ) {
         
     } else qDebug() << "MongoStorage::__insert_single_object( QJsonObject ), collection is empty";
 }
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                       Can this JSON object representation to be stored into database?                            *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                    Может ли данное JSON-представление объекта быть записано в базу данных?                       *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+bool tengu::MongoStorage::storageable(QJsonObject o) {
+    
+    return ( o.contains( JSON_DATABASE_ELEMENT ) && o.contains( JSON_COLLECTION_ELEMENT ) && o.contains( JSON_UUID_ELEMENT ) );
+
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                    Can this object to be stored into database?                                   *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                 Может ли данный объект быть записан в базу данных?                               *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+bool tengu::MongoStorage::storageable(tengu::AbstractEntity* e) {
+    
+    QJsonObject o = e->toJSON();
+    return storageable( o );
+    
+}
+
 
 // ********************************************************************************************************************
 // *                                                                                                                  *

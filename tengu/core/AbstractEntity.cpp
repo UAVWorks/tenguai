@@ -35,7 +35,10 @@ tengu::AbstractEntity::AbstractEntity ()
     
     __execution_mode = EM_ALWAYS;    
     
-    _changed = false;
+    // We have changes because the object was created.
+    // У нас уже есть изменения, потому что объект был создан.
+    
+    _changed = true;
     _className = QString("");       
     
     __x = 0;

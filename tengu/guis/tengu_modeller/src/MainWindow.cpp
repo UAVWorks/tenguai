@@ -97,6 +97,12 @@ void tengu::MainWindow::__createWorkspace() {
     XPlaneSimulator * xplane = new XPlaneSimulator();
     __workSpace->addChild( xplane );
     
+    // Connection goes after add an xplane as a child.
+    // Соединение происходит после добавления xplane в качестве ребенка.
+    
+    QObject::connect( __workSpace, SIGNAL( signalSomethingChanged() ), this, SLOT( __on__something_changed() ) );
+    
+    
     // XPlaneProcess * xpProcsss = new XPlaneProcess();
     // __workSpace->addChild( xpProcsss );
     
@@ -143,6 +149,7 @@ void tengu::MainWindow::__createActions() {
     __action__open_schema__process = new QAction( QIcon( QPixmap(":folder_brick_16.png") ), tr("Open the process"), this );
     
     __action__save_schema = new QAction( QIcon(QPixmap(":diskette_16.png")), tr("Save"), this );
+    QObject::connect( __action__save_schema, SIGNAL( triggered() ), this, SLOT( __on__save() ) );
     __action__save_schema->setEnabled( false );
     // QObject::connect(
     
@@ -338,7 +345,7 @@ void tengu::MainWindow::__createSchemaScene() {
     
     __schemaScene = new SchemaScene();
     
-    QObject::connect( __schemaScene, SIGNAL( signalSomethingChanged() ), this, SLOT( __on_schema_something_changed() ) );            
+    QObject::connect( __schemaScene, SIGNAL( signalSomethingChanged() ), this, SLOT( __on__something_changed() ) );            
 
 }
 
@@ -560,7 +567,7 @@ void tengu::MainWindow::__on_schema_item_was_dropped ( tengu::AbstractEntity * e
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::MainWindow::__on_schema_something_changed() {
+void tengu::MainWindow::__on__something_changed() {
     __action__save_schema->setEnabled( true );
 }
 
@@ -748,6 +755,36 @@ void tengu::MainWindow::__restoreSettings() {
     s.endGroup();
     
 }
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                                Save to database.                                                 *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                             Сохранение в базу данных                                             *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindow::__on__save() {
+    qDebug() << "MainWindow::__on_save()";
+    QList< AbstractAgent * > elements = __workSpace->children();
+    qDebug() << "Elements = " << elements.count();
+    
+    for ( int ei=0; ei<elements.size(); ei++ ) {
+        AbstractAgent * element = elements.at( ei );
+        qDebug() << "Got one element: " << element->getHumanName() << ", changed=" << element->hasChanged() << ", storageable=" << __mongo->storageable( element );
+        if ( element->hasChanged() )  {
+            
+            // Not every each existing element must be stored.
+            // Не каждый существующий элемент должен быть записан.
+            
+            if ( __mongo->storageable( element ) ) {
+                qDebug() << "Want to store: " << element->toJSON();
+                __mongo->store( element );                
+            };
+        };
+    };
+}
+
 
 // ********************************************************************************************************************
 // *                                                                                                                  *

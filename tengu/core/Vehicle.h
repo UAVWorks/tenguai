@@ -29,7 +29,7 @@ namespace tengu {
             // Only for displaying, for human perception.
             // Только для отображения, для человеческого восприятия. 
             
-            enum vehicle_types_h {                
+            enum vehicle_types_t {                
                 VT_NONE             = 0, 
                 VT_AIRCRAFT         = 20,
                 VT_HELICOPTER       = 30,
@@ -39,14 +39,17 @@ namespace tengu {
             Vehicle ();
             virtual ~Vehicle();
             
-            vehicle_types_h vehicleType();
+            vehicle_types_t vehicleType();
             QString vehicleTypeAsString();
+            
+            virtual QJsonObject toJSON();
+            virtual bool fromJSON( QJsonObject o );
             
             void addChild( AbstractAgent * child );
             
         protected:
             
-            vehicle_types_h _vehicleType;
+            vehicle_types_t _vehicleType;
             
     };
     

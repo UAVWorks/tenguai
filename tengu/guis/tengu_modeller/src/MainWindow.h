@@ -134,12 +134,13 @@ namespace tengu {
             void __on_schema_item_double_clicked( AbstractEntityItem * item, bool controlPressed );
             void __on_schama_item_moved( AbstractEntityItem * entity, QPoint pos );
             void __on_schema_item_was_dropped( AbstractEntity * entity, QPoint pos );
-            void __on_schema_something_changed();
+            void __on__something_changed();
             
             void __on__tree_structure__agent_was_selected( AbstractAgent * agent );
             void __on__tree_structure__agent_was_created( AbstractAgent * agent );
             
             void __on__create__process();
+            void __on__save();
             
             void __on_set_execution_mode_xplane();
             void __on_set_execution_mode_real();
