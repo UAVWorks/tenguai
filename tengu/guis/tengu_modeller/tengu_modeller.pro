@@ -61,9 +61,11 @@ HEADERS  += src/overboard/XPlaneAircraft.h      \
         src/MainWindowRight.h                   \
         src/schema/SchemaScene.h                \
         src/schema/SchemaView.h                 \
+        src/dialogs/DialogWithButtons.h         \
         src/dialogs/DialogProperties.h          \
         src/dialogs/DialogPropertiesSprout.h    \
-        src/dialogs/DialogPropertiesTask.h
+        src/dialogs/DialogPropertiesTask.h      \
+        src/dialogs/DialogOpenSaveModel.h
 
 SOURCES += src/main.cpp                         \
         src/overboard/XPlaneAircraft.cpp        \
@@ -101,8 +103,10 @@ SOURCES += src/main.cpp                         \
         src/MainWindowRight.cpp                 \
         src/schema/SchemaScene.cpp              \
         src/schema/SchemaView.cpp               \
+        src/dialogs/DialogWithButtons.cpp       \
         src/dialogs/DialogProperties.cpp        \
         src/dialogs/DialogPropertiesSprout.cpp  \
-        src/dialogs/DialogPropertiesTask.cpp
+        src/dialogs/DialogPropertiesTask.cpp    \
+        src/dialogs/DialogOpenSaveModel.cpp
 
 RESOURCES += tengu_modeller.qrc

@@ -44,6 +44,7 @@
 #include "../guis.h"
 #include "DialogPropertiesSprout.h"
 #include "DialogPropertiesTask.h"
+#include "DialogOpenSaveModel.h"
 #include "XPlaneProcess.h"
 
 namespace tengu {
@@ -121,8 +122,12 @@ namespace tengu {
             void showEvent( QShowEvent * event );
             void keyPressEvent( QKeyEvent * event );
             
+            // The main window's dialogs
+            // Диалоги главного окна.
+            
             DialogPropertiesSprout * __dialogPropertiesSprout;
             DialogPropertiesTask * __dialogPropertiesTask;
+            DialogOpenSaveModel * __dialogOpenSaveModel;
             
             AbstractEntity::execution_mode_t __execution_mode;
             
@@ -141,6 +146,7 @@ namespace tengu {
             
             void __on__create__process();
             void __on__save();
+            void __on__open();
             
             void __on_set_execution_mode_xplane();
             void __on_set_execution_mode_real();

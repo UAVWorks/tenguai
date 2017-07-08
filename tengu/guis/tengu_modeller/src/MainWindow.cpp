@@ -84,45 +84,6 @@ tengu::MainWindow::MainWindow(QWidget *parent)
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
-// *                                               Create workspace object.                                           *
-// * ---------------------------------------------------------------------------------------------------------------- *
-// *                                         Создание объекта рабочего пространства.                                  *
-// *                                                                                                                  *
-// ********************************************************************************************************************
-
-void tengu::MainWindow::__createWorkspace() {
-    
-    __workSpace = new WorkSpace();
-    
-    XPlaneSimulator * xplane = new XPlaneSimulator();
-    __workSpace->addChild( xplane );
-    
-    // Connection goes after add an xplane as a child.
-    // Соединение происходит после добавления xplane в качестве ребенка.
-    
-    QObject::connect( __workSpace, SIGNAL( signalSomethingChanged() ), this, SLOT( __on__something_changed() ) );
-    
-    
-    // XPlaneProcess * xpProcsss = new XPlaneProcess();
-    // __workSpace->addChild( xpProcsss );
-    
-    // In the workspace we always have an x-plane process.
-    // Внутри рабочего пространства у нас всегда есть процесс X-Plane.
-    
-    // We always have invisible X-Plane schema item for modelling.
-    // У нас всегда есть невидимый компонент схемы - X-Plane. Он для моделирования.
-    
-    /*
-    XPlaneAgent * xplane = new XPlaneAgent();
-    XPlaneAgentItem * xpItem = new XPlaneAgentItem( xplane );
-    xpItem->setX( 0 );
-    xpItem->setY( 0 );
-    __schemaScene->addItem( xpItem );
-    */
-}
-
-// ********************************************************************************************************************
-// *                                                                                                                  *
 // *                                                  Action's constructor.                                           *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                                              Конструктор действий программы.                                     *
@@ -144,7 +105,11 @@ void tengu::MainWindow::__createActions() {
     __action__create_schema__process = new QAction( QIcon(":package_add_16.png"), tr("Create the process"), this );
     QObject::connect( __action__create_schema__process, SIGNAL( triggered() ), this, SLOT( __on__create__process() ) );
     
+    // Open (vehicle, process, task e.t.c.)
+    // Открыть ("самоходку", процесс, задачу и др)
+    
     __action__open_schema = new QAction( QIcon( QPixmap(":folder_16.png") ), tr("Open..."), this );
+    QObject::connect( __action__open_schema, SIGNAL( triggered() ), this, SLOT( __on__open() ) );
     
     __action__open_schema__process = new QAction( QIcon( QPixmap(":folder_brick_16.png") ), tr("Open the process"), this );
     
@@ -187,8 +152,62 @@ void tengu::MainWindow::__createActions() {
     __action__simulation_pause = new QAction( QIcon( QPixmap(":control_play_pause_blue_16.png") ), tr("Pause a simulation process"), this );
     QObject::connect( __action__simulation_pause, SIGNAL( triggered() ), this, SLOT( __on__simulation_pause() ) );
     __action__simulation_pause->setEnabled( false );
-
     
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                                   Create dialogs.                                                *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                                 Создание диалогов.                                               *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindow::__createDialogs() {
+    
+    __dialogPropertiesSprout = new DialogPropertiesSprout( __workSpace );
+    __dialogPropertiesTask = new DialogPropertiesTask( __workSpace );
+    __dialogOpenSaveModel = new DialogOpenSaveModel( __mongo );
+    
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                               Create workspace object.                                           *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                         Создание объекта рабочего пространства.                                  *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindow::__createWorkspace() {
+    
+    __workSpace = new WorkSpace();
+    
+    XPlaneSimulator * xplane = new XPlaneSimulator();
+    __workSpace->addChild( xplane );
+    
+    // Connection goes after add an xplane as a child.
+    // Соединение происходит после добавления xplane в качестве ребенка.
+    
+    QObject::connect( __workSpace, SIGNAL( signalSomethingChanged() ), this, SLOT( __on__something_changed() ) );
+    
+    
+    // XPlaneProcess * xpProcsss = new XPlaneProcess();
+    // __workSpace->addChild( xpProcsss );
+    
+    // In the workspace we always have an x-plane process.
+    // Внутри рабочего пространства у нас всегда есть процесс X-Plane.
+    
+    // We always have invisible X-Plane schema item for modelling.
+    // У нас всегда есть невидимый компонент схемы - X-Plane. Он для моделирования.
+    
+    /*
+    XPlaneAgent * xplane = new XPlaneAgent();
+    XPlaneAgentItem * xpItem = new XPlaneAgentItem( xplane );
+    xpItem->setX( 0 );
+    xpItem->setY( 0 );
+    __schemaScene->addItem( xpItem );
+    */
 }
 
 // ********************************************************************************************************************
@@ -204,7 +223,10 @@ void tengu::MainWindow::__createMainMenu() {
     QMenuBar * mb = menuBar();
     
     QMenu * menuMain = new QMenu("File");
-    menuMain->addAction( __actionQuit );
+    menuMain->addAction( __action__open_schema );
+    
+    menuMain->addAction( __actionQuit );    
+    
     mb->addMenu( menuMain );
     
 }
@@ -270,16 +292,18 @@ void tengu::MainWindow::__createToolBar() {
     QToolButton * createSchemaButton = dynamic_cast<QToolButton*>( __toolbar_file->widgetForAction( __action__create_schema ));
     createSchemaButton->setPopupMode( QToolButton::InstantPopup );
     createSchemaButton->removeAction( __action__create_schema );
-    createSchemaButton->addAction( __action__create_schema__process );
+    // createSchemaButton->addAction( __action__create_schema__process );
     
     // Open button
     // Кнопка открытия
     
     __toolbar_file->addAction( __action__open_schema );
-    QToolButton * openSchemaButton = dynamic_cast< QToolButton * > ( __toolbar_file->widgetForAction( __action__open_schema ) );
-    openSchemaButton->setPopupMode( QToolButton::InstantPopup );
-    openSchemaButton->removeAction( __action__open_schema );
-    openSchemaButton->addAction( __action__open_schema__process );
+    
+    
+    //QToolButton * openSchemaButton = dynamic_cast< QToolButton * > ( __toolbar_file->widgetForAction( __action__open_schema ) );
+    //openSchemaButton->setPopupMode( QToolButton::InstantPopup );
+    //openSchemaButton->removeAction( __action__open_schema );
+    //openSchemaButton->addAction( __action__open_schema__process );
     
     __toolbar_file->addAction( __action__save_schema );
         
@@ -347,19 +371,6 @@ void tengu::MainWindow::__createSchemaScene() {
     
     QObject::connect( __schemaScene, SIGNAL( signalSomethingChanged() ), this, SLOT( __on__something_changed() ) );            
 
-}
-
-// ********************************************************************************************************************
-// *                                                                                                                  *
-// *                                                   Create dialogs.                                                *
-// * ---------------------------------------------------------------------------------------------------------------- *
-// *                                                 Создание диалогов.                                               *
-// *                                                                                                                  *
-// ********************************************************************************************************************
-
-void tengu::MainWindow::__createDialogs() {
-    __dialogPropertiesSprout = new DialogPropertiesSprout( __workSpace );
-    __dialogPropertiesTask = new DialogPropertiesTask( __workSpace );
 }
 
 // ********************************************************************************************************************
@@ -754,6 +765,18 @@ void tengu::MainWindow::__restoreSettings() {
         
     s.endGroup();
     
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                                  Open the model.                                                 *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                                  Открытие модели.                                                *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindow::__on__open() {
+    __dialogOpenSaveModel->exec();
 }
 
 // ********************************************************************************************************************
