@@ -295,6 +295,44 @@ QJsonObject tengu::AbstractEntity::toJSON() {
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
+// *                                           Get mongo indexes for this class.                                      *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                      Получить индексы монги для этого класса.                                    *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+QMap<QString, tengu::MongoIndex> tengu::AbstractEntity::indexes() {
+    
+    QMap<QString, tengu::MongoIndex> result;
+    
+    MongoIndex idx_id;
+    idx_id.name = "_id_";
+    idx_id.key.append( MongoIndex::one_key_t ({ name : "_id", asc : 1 }));
+    idx_id.unique = true;
+    result[ idx_id.name ] = idx_id;
+    
+    // By system name
+    // По системному имени.
+    
+    /*
+    MongoIndex idx_sname;
+    idx_sname.name = "idx_system_name";
+    idx_sname.key.append( MongoIndex::one_key_t({ name : "system_name", asc: 1 } ) );
+    result[ idx_sname.name ] = idx_sname;
+    */
+    
+    /*
+    result["_id"] = 1;
+    result["system_name"] = 1;
+    result["human_name"] = 1;
+    result["execution_mode"] = 1;
+    */
+    
+    return result;
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
 // *                                        Does json object have this class_name?                                    *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                                       Имеет ли JSON-объект данное class_name?                                    *

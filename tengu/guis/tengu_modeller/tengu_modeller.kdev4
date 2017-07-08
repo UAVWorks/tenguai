@@ -1,3 +1,4 @@
 [Project]
-Manager=KDevGenericManager
+CreatedFrom=tengu_modeller.pro
+Manager=KDevQMakeManager
 Name=tengu_modeller

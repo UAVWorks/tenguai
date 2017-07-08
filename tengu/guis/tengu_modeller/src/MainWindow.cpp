@@ -24,7 +24,7 @@ tengu::MainWindow::MainWindow(QWidget *parent)
     setWindowTitle( tr("Tengu modeller") );
     setWindowIcon( QIcon( QPixmap(":tengu_32.png") ) );
     
-    __mongo = new MongoStorage();
+    __createMongoStorage();
     
     // Workspace must be created before widgets based on it
     // Рабочее пространство должно быть создано до виджитов, которые на нем базируются.
@@ -229,6 +229,26 @@ void tengu::MainWindow::__createMainMenu() {
     
     mb->addMenu( menuMain );
     
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                            Create local mongo storage.                                           *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// * Создание локального хранилища монго. *
+// * *
+// ********************************************************************************************************************
+
+void tengu::MainWindow::__createMongoStorage() {
+    
+    __mongo = new MongoStorage();
+    
+    // Check actuality of existing indexes for the classes (ORM-like behaviour).
+    // Проверка актуальности существующих индексов для классов (ORM-подобное поведение).
+    
+    Task t; __mongo->checkIndexes( & t );
+    Process p; __mongo->checkIndexes( & p );
+    Vehicle v; __mongo->checkIndexes( & v );
 }
 
 // ********************************************************************************************************************

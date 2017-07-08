@@ -21,7 +21,9 @@
 #include <QJsonObject>
 #include <QList>
 #include <QJsonDocument>
+#include <QJsonArray>
 
+#include "MongoIndex.h"
 #include "AbstractEntity.h"
 #include "Constants.h"
 
@@ -30,6 +32,7 @@ namespace tengu {
     class MongoStorage : public QObject {
         
         Q_OBJECT
+        
         public:
             
             MongoStorage ( QString host = "localhost", int port = 27017 );
@@ -40,16 +43,24 @@ namespace tengu {
             bool storageable( QJsonObject o );
             bool storageable( AbstractEntity * e );
             
+            void checkIndexes( AbstractEntity * e );
+            
         protected:
         private:
             
-            void __insert_single_object( QJsonObject jsonObject );
             
             mongoc_client_t * __client;
+            QList<QString> __alreadyIndexedCollections;
             
             bson_t * __create_bson( QJsonObject o );
+            void __insert_single_object( QJsonObject jsonObject );
+            mongoc_collection_t * __getCollection( QJsonObject o );
+            QMap<QString, tengu::MongoIndex > __getExistingIndexes( QJsonObject o );
             
-            QList<QString> __alreadyIndexedCollections;
+            // Add index to the mongo collection
+            // Добавить индекс в коллекцию монги.
+            
+            void __addIndex( QJsonObject o, tengu::MongoIndex idx );
             
             // mongoc_database_t * __database;
             // mongoc_collection_t * __collection;

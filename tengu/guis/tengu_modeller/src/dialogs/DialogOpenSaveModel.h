@@ -55,6 +55,8 @@ namespace tengu {
             QFrame * __createElementsList();
             QFrame * __createStorageSelector();
             QWidget * __createStorageLabel( QPixmap pixmap, QString text );
+            
+            void __fill_table_of_elements();
     };
     
 };

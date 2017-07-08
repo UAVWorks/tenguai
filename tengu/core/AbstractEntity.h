@@ -10,11 +10,15 @@
 #pragma once
 
 #include <QObject>
+#include <QMap>
+#include <QString>
 #include <QUuid>
 #include <QJsonObject>
 #include <QDateTime>
 
 // #include "AbstractStorageableEntity.h"
+
+#include "MongoIndex.h"
 
 namespace tengu {
     
@@ -89,6 +93,11 @@ namespace tengu {
             // Обратное преобразование, из JSONа в объект. Все поля будут изменены.
             
             virtual bool fromJSON( QJsonObject json );
+            
+            // Indexes for mongo collection of this class.
+            // Иднексы для монговой коллекции этого класса.
+            
+            virtual QMap<QString, tengu::MongoIndex> indexes();
             
             virtual bool hasClass( QJsonObject json, QString class_name );                        
             

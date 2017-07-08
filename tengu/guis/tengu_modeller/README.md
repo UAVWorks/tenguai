@@ -6,6 +6,7 @@ This is graphical tool for work with artifical intelligence models. At the momen
 
 # The latest operations.
 
+- **08 jul 2017** Mongo indexes (not completed).
 - **07 jul 2017** The vehicle was stored into database.
 - **06 jul 2017** The process graphics item. Graphical coordinates moved into AbstractEntity.
 - **05 jul 2017** Entering SproutableAgent class. Creating some agents from structure tree context menu.

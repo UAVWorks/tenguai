@@ -33,7 +33,7 @@ tengu::MongoStorage::MongoStorage( QString host, int port )
     };
     
     mongoc_client_set_error_api( __client, MONGOC_ERROR_API_VERSION_2 );
-    
+        
 }
 
 // ********************************************************************************************************************
@@ -64,7 +64,17 @@ bson_t * tengu::MongoStorage::__create_bson ( QJsonObject o ) {
             QJsonValue val = o.value( key );
             if ( val.isString() ) bson_append_utf8( doc, ckey, ckey_len, val.toString().toUtf8(), -1 );
             else if ( val.isDouble() ) bson_append_double( doc, ckey, ckey_len, val.toDouble() );
-            else {
+            else if ( val.isArray() ) {
+                QJsonArray arr = val.toArray();
+                for ( int aIndex=0; aIndex < arr.size(); aIndex ++ ) {
+                    QJsonValue aElement = arr.at( aIndex );
+                    if ( aElement.isObject() ) {
+                        bson_t * adoc = __create_bson( aElement.toObject() );
+                    } else {
+                        qDebug() << "MongoStorage::__create_bson, array element is not object: " << aElement;
+                    };
+                };
+            } else {
                 qDebug() << "MongoStorage::__create_bson: field " << key << " was not added, type=" << val.type();
             };
         };
@@ -78,6 +88,193 @@ bson_t * tengu::MongoStorage::__create_bson ( QJsonObject o ) {
     return doc;
 }
 
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                    Get mongoc collection for specified element                                   *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                Получить mongoc-коллекцию для указанного элемента.                                *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+mongoc_collection_t * tengu::MongoStorage::__getCollection(QJsonObject o) {
+    
+    QString databaseName = o.value("database").toString();
+    QString collectionName = o.value("collection").toString();
+    
+    mongoc_collection_t * collection = mongoc_client_get_collection( 
+        __client, 
+        databaseName.toLatin1().data(), 
+        collectionName.toLatin1().data() 
+    );
+    
+    if ( ! collection ) {
+    
+        qDebug() << "MongoStorage::__getCollection(), empty collection for element:";
+        qDebug() << o;
+    };
+    
+    return collection;
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                       Get existing indexes for collection                                        *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                    Получить существующие индексы для коллекции.                                  *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+QMap< QString, tengu::MongoIndex > tengu::MongoStorage::__getExistingIndexes( QJsonObject o ) {
+    
+    QMap< QString, tengu::MongoIndex > result;
+    
+    mongoc_collection_t * collection = __getCollection( o );
+    
+    if ( collection ) {
+        
+        bson_t * command = BCON_NEW("listIndexes", BCON_UTF8( o.value( JSON_COLLECTION_ELEMENT ).toString().toLocal8Bit().data() ) );
+        bson_t reply;
+        bson_error_t error;
+        
+        if (mongoc_collection_command_simple ( collection, command, NULL, & reply, & error)) {
+            
+            char * str = bson_as_json ( &reply, NULL);
+            QJsonDocument adoc = QJsonDocument::fromJson( str );
+            QJsonObject answer = adoc.object();
+            if ( answer.contains("cursor") ) {
+                
+                QJsonObject aCursor = answer.value("cursor").toObject();
+                if ( aCursor.contains("firstBatch") ) {
+                    
+                    // Array of existing mongo indexes.
+                    // Массив существующих индексов монги.
+                    
+                    QJsonArray firstBatch = aCursor.value("firstBatch").toArray();
+                    
+                    for ( int k=0; k<firstBatch.size(); k++ ) {
+                        
+                        // Representation of one index.
+                        // Представление одного индекса.
+                        
+                        QJsonObject oik = firstBatch.at( k ).toObject();
+                        tengu::MongoIndex idx;
+                        idx.fromJSON( oik );
+                        if ( ! idx.name.isEmpty() ) result[ idx.name ] = idx;
+                        
+                        /*
+                        if ( oik.contains("key") ) {
+                            QJsonObject existing_key = oik.value("key").toObject();
+                            if ( existing_key.keys().count() != 1 ) {
+                                qDebug() << "MongoStorage::__getExistingIndexes, object 'key' has more than one key.";
+                                qDebug() << existing_key;
+                            } else {
+                                QString kName = existing_key.keys().at(0);
+                                int kValue = existing_key.value( kName ).toInt();
+                                result[kName] = kValue;
+                            }                            
+                        };
+                        */
+                        
+                    };
+                    
+                    
+                };
+                
+            };
+            
+            // printf ("%s\n", str);
+            bson_free (str);
+            
+        } else {
+            
+            qDebug() << "MongoStorage::__getExistingIndexes, failed to run command, error=" << QString(error.message);
+        }
+        
+        bson_destroy (command);
+        bson_destroy (&reply);
+        mongoc_collection_destroy( collection );
+    };
+    
+    return result;
+};
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                     Add the index to the existing mongo collection.                              *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                     Добавить индекс в существующую коллекцию монги.                              *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MongoStorage::__addIndex( QJsonObject o, tengu::MongoIndex idx ) {
+    
+    
+    mongoc_collection_t * collection = __getCollection( o );
+    
+    if ( collection ) {
+    
+        QJsonObject cmd_jso;
+        cmd_jso["createIndexes"] = o.value( JSON_COLLECTION_ELEMENT ).toString();
+        QJsonArray arr;
+        arr.append( idx.toJSON() );
+        cmd_jso["indexes"] = arr;
+        
+        bson_t * cmd = __create_bson( cmd_jso );
+        if ( cmd ) {
+            
+            bson_t reply;
+            bson_error_t error;
+            /*
+            if (mongoc_collection_command_simple ( collection, command, NULL, & reply, & error)) {
+                
+                char * str = bson_as_json ( &reply, NULL);
+                
+                printf ("%s\n", str);
+                bson_free (str);
+                
+            } else {
+                
+                qDebug() << "MongoStorage::__addIndex, failed to run command, error=" << QString(error.message);
+            }
+            */
+            bson_destroy (cmd);
+            bson_destroy (&reply);
+            
+        };
+        
+        mongoc_collection_destroy( collection );
+    };
+    
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                   Check indexes for this element collection.                                     *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                               Проверка индексов для коллекции данного элемента.                                  *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MongoStorage::checkIndexes( tengu::AbstractEntity * e ) {
+    
+    if ( ! storageable( e ) ) return;
+    QJsonObject o = e->toJSON();
+    if ( __alreadyIndexedCollections.contains( o[ JSON_COLLECTION_ELEMENT ].toString() ) ) return;
+        
+    QMap<QString, tengu::MongoIndex > existing_indexes = __getExistingIndexes( o );
+    QMap<QString, tengu::MongoIndex > indexes = e->indexes();
+    
+    // Add those indices that are not in the collection.
+    // Добавляем те индексы, которых нет в коллекции.
+        
+    QMapIterator<QString, tengu::MongoIndex> idx( indexes );
+    while (idx.hasNext()) {
+        idx.next();
+        tengu::MongoIndex toCreate = idx.value();
+        if ( ! existing_indexes.contains( toCreate.name ) ) __addIndex( o, toCreate );
+    };
+
+}
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
@@ -88,6 +285,11 @@ bson_t * tengu::MongoStorage::__create_bson ( QJsonObject o ) {
 // ********************************************************************************************************************
 
 void tengu::MongoStorage::store ( tengu::AbstractEntity * e ) {
+    
+    if ( ! storageable( e ) ) {
+        qDebug() << "MongoStorage::store( AbstractEntity * ), object is not storageable";
+        return;
+    };
     
     QJsonObject o = e->toJSON();
     store( o );
@@ -103,6 +305,12 @@ void tengu::MongoStorage::store ( tengu::AbstractEntity * e ) {
 // ********************************************************************************************************************
 
 void tengu::MongoStorage::store( QJsonObject o ) {
+    
+    if ( ! storageable( o ) ) {
+        qDebug() << "MongoStorage::store( QJsonObject ), object is not storageable";
+        qDebug() << o;
+        return;
+    };
     
     // We can not insert a set of separate object at once.
     // Мы не можем вставлять множество разных объектов за один раз.
@@ -154,11 +362,8 @@ void tengu::MongoStorage::__insert_single_object ( QJsonObject jsonObject ) {
         return;
     };
     
-        
-    QString databaseName = jsonObject.take("database").toString();
-    QString collectionName = jsonObject.take("collection").toString();
-    
-    mongoc_collection_t * collection = mongoc_client_get_collection( __client, databaseName.toLatin1().data(), collectionName.toLatin1().data() );
+    mongoc_collection_t * collection = __getCollection( jsonObject );
+            
     if ( collection ) {
         
         // qDebug() << "Was create collection: " << collection;

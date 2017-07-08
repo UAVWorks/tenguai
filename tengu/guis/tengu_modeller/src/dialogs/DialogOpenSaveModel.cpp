@@ -167,9 +167,28 @@ QWidget * tengu::DialogOpenSaveModel::__createStorageLabel ( QPixmap pixmap, QSt
 
 void tengu::DialogOpenSaveModel::showEvent ( QShowEvent* event ) {
     QDialog::showEvent ( event );
-    _clearTable( __table_of_elements );
-
+    __fill_table_of_elements();
 }
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                            Fill element's table according selector, filter and element type.                     *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                          Заполнить таблицу элементов согласно селектору, фильтру и типу элемента                 *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::DialogOpenSaveModel::__fill_table_of_elements() {
+    _clearTable( __table_of_elements );
+    QString collectionName = QString("");
+    switch ( __combo_box__type_of_elements->currentData( Qt::UserRole).toInt() ) {
+        case OSM_PROCESS: collectionName = "vehicles"; break;
+        
+    };
+    
+    if ( ! collectionName.isEmpty() ) {
+    };
+};
 
 // ********************************************************************************************************************
 // *                                                                                                                  *

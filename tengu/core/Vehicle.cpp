@@ -124,8 +124,11 @@ QJsonObject tengu::Vehicle::toJSON() {
 
 bool tengu::Vehicle::fromJSON(QJsonObject o) {
 
-    Processor::fromJSON( o );
-    if ( o.contains("vehicle_type") ) _vehicleType = ( vehicle_types_t ) o.value("vehicle_type").toInt();
+    bool result = Processor::fromJSON( o );
+    if ( result ) {
+        if ( o.contains("vehicle_type") ) _vehicleType = ( vehicle_types_t ) o.value("vehicle_type").toInt();
+    };
+    return result;
 }
 
 // ********************************************************************************************************************
