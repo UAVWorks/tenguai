@@ -56,7 +56,7 @@ bson_t * tengu::MongoStorage::__create_bson ( QJsonObject o ) {
         strcpy( ckey, key.toLatin1().data() );
         int ckey_len = keys.at(i).length();
         
-        // qDebug() << "Key: " << key << ", bson key: " << ckey << ", len=" << ckey_len;
+        qDebug() << "Key: " << key << ", bson key: " << ckey << ", len=" << ckey_len;
                 
         if ( key == "uuid" ) bson_append_utf8( doc, "_id", -1, o.value( key ).toString().toUtf8(), -1  );
         else {
@@ -64,16 +64,49 @@ bson_t * tengu::MongoStorage::__create_bson ( QJsonObject o ) {
             QJsonValue val = o.value( key );
             if ( val.isString() ) bson_append_utf8( doc, ckey, ckey_len, val.toString().toUtf8(), -1 );
             else if ( val.isDouble() ) bson_append_double( doc, ckey, ckey_len, val.toDouble() );
-            else if ( val.isArray() ) {
+            else if ( val.isBool() ) bson_append_bool( doc, ckey, ckey_len, val.toBool() );
+            else if ( val.isObject() ) {
+                qDebug() << "Реентерабельный вызов для объекта документа." << val ;
+                bson_t * bson_as_object = __create_bson( val.toObject() );
+                bson_append_document( doc, ckey, ckey_len, bson_as_object );
+                
+            } else if ( val.isArray() ) {
+                
+                // An array of elements
+                // Массив элементов.
+                
+                bson_t * bson_array = bson_new(); 
+                bson_append_array_begin( doc, ckey, ckey_len, bson_array );
+                
                 QJsonArray arr = val.toArray();
                 for ( int aIndex=0; aIndex < arr.size(); aIndex ++ ) {
+                    
+                    // Массив с точки зрения bson'а имеет индексы, представленные строкой и начинающиеся с 1.
+                    
+                    QString arrKey = QString::number( aIndex + 1 );
+                    char arr_key[32];
+                    memset( arr_key, 0, sizeof( arr_key ) );
+                    strcpy( arr_key, arrKey.toLatin1().data() );
+                    int arr_key_len = arrKey.length();
+                    
                     QJsonValue aElement = arr.at( aIndex );
+                    
                     if ( aElement.isObject() ) {
+                        qDebug() << "Реентерабельный вызов для объекта массива" << aElement;
                         bson_t * adoc = __create_bson( aElement.toObject() );
-                    } else {
+                        bson_append_document( bson_array, arr_key, arr_key_len, adoc );
+                        
+                    } else if ( aElement.isString() ) bson_append_utf8( bson_array, arr_key, arr_key_len, aElement.toString().toUtf8(), -1 );
+                    else if ( aElement.isDouble() ) bson_append_double( bson_array, arr_key, arr_key_len, aElement.toDouble() );
+                    else if ( aElement.isBool() ) bson_append_bool( bson_array, arr_key, arr_key_len, aElement.toBool() );
+                    else {
                         qDebug() << "MongoStorage::__create_bson, array element is not object: " << aElement;
                     };
                 };
+                
+                bson_append_array_end( doc, bson_array );
+                
+                
             } else {
                 qDebug() << "MongoStorage::__create_bson: field " << key << " was not added, type=" << val.type();
             };
@@ -81,9 +114,12 @@ bson_t * tengu::MongoStorage::__create_bson ( QJsonObject o ) {
         
     };
     
-    // char * str = bson_as_json ( doc , NULL );
-    // qDebug() << "Bson to insert: " << QString(str) ;
-    // bson_free( str );
+    // To see it on the screen.
+    // Чтобы посмотреть на экране.
+    
+    char * str = bson_as_json ( doc , NULL );
+    qDebug() << "Bson to insert: " << QString(str) ;
+    bson_free( str );
     
     return doc;
 }
@@ -218,12 +254,13 @@ void tengu::MongoStorage::__addIndex( QJsonObject o, tengu::MongoIndex idx ) {
         QJsonArray arr;
         arr.append( idx.toJSON() );
         cmd_jso["indexes"] = arr;
-        
+
+        qDebug() << "Формируем команду bson'а";
         bson_t * cmd = __create_bson( cmd_jso );
+        qDebug() << "Готовы ее выполнять";
         if ( cmd ) {
             
             bson_t reply;
-            bson_error_t error;
             /*
             if (mongoc_collection_command_simple ( collection, command, NULL, & reply, & error)) {
                 
@@ -237,8 +274,11 @@ void tengu::MongoStorage::__addIndex( QJsonObject o, tengu::MongoIndex idx ) {
                 qDebug() << "MongoStorage::__addIndex, failed to run command, error=" << QString(error.message);
             }
             */
+            
+            qDebug() << "bson_destroy( cmd )... ";
             bson_destroy (cmd);
-            bson_destroy (&reply);
+            // qDebug() << "bson_destroy( reply )...";
+            // bson_destroy (&reply);
             
         };
         
