@@ -314,12 +314,11 @@ QMap<QString, tengu::MongoIndex> tengu::AbstractEntity::indexes() {
     // By system name
     // По системному имени.
     
-    /*
     MongoIndex idx_sname;
     idx_sname.name = "idx_system_name";
     idx_sname.key.append( MongoIndex::one_key_t({ name : "system_name", asc: 1 } ) );
     result[ idx_sname.name ] = idx_sname;
-    */
+    
     
     /*
     result["_id"] = 1;

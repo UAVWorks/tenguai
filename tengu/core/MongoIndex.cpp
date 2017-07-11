@@ -37,14 +37,18 @@ QJsonObject tengu::MongoIndex::toJSON() {
     QJsonObject o;
     
     o["name"] = name;
-    QJsonArray arr;
+    
+    QJsonObject keys_object;
     for ( int i=0; i<key.size(); i++ ) {
         one_key_t ok = key.at(i);
-        QJsonObject okjo ;
-        okjo[ ok.name ] = ok.asc;
-        arr.append( okjo );
+        keys_object[ ok.name ] = ok.asc; 
+        
+        // QJsonObject okjo ;
+        // okjo[ ok.name ] = ok.asc;
+        // arr.append( okjo );
     };
-    o["key"] = arr; 
+    
+    o["key"] = keys_object; 
     o["background"] = background;
     o["unique"] = unique;
     
