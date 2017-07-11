@@ -177,6 +177,7 @@ QMap< QString, tengu::MongoIndex > tengu::MongoStorage::__getExistingIndexes( QJ
         if (mongoc_collection_command_simple ( collection, command, NULL, & reply, & error)) {
             
             char * str = bson_as_json ( &reply, NULL);
+            
             QJsonDocument adoc = QJsonDocument::fromJson( str );
             QJsonObject answer = adoc.object();
             if ( answer.contains("cursor") ) {
@@ -198,21 +199,7 @@ QMap< QString, tengu::MongoIndex > tengu::MongoStorage::__getExistingIndexes( QJ
                         tengu::MongoIndex idx;
                         idx.fromJSON( oik );
                         if ( ! idx.name.isEmpty() ) result[ idx.name ] = idx;
-                        
-                        /*
-                        if ( oik.contains("key") ) {
-                            QJsonObject existing_key = oik.value("key").toObject();
-                            if ( existing_key.keys().count() != 1 ) {
-                                qDebug() << "MongoStorage::__getExistingIndexes, object 'key' has more than one key.";
-                                qDebug() << existing_key;
-                            } else {
-                                QString kName = existing_key.keys().at(0);
-                                int kValue = existing_key.value( kName ).toInt();
-                                result[kName] = kValue;
-                            }                            
-                        };
-                        */
-                        
+                                                
                     };
                     
                     
@@ -225,7 +212,9 @@ QMap< QString, tengu::MongoIndex > tengu::MongoStorage::__getExistingIndexes( QJ
             
         } else {
             
-            qDebug() << "MongoStorage::__getExistingIndexes, failed to run command, error=" << QString(error.message);
+            // An error can be only collection does not exists or database iteslf does not exists.
+            // Ошибки, которые могут быть, это отсутствие базы данных или коллекции.
+            // qDebug() << "MongoStorage::__getExistingIndexes, failed to run command, error=" << QString(error.message);
         }
         
         bson_destroy (command);
@@ -338,6 +327,150 @@ void tengu::MongoStorage::store ( tengu::AbstractEntity * e ) {
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
+// *                    Pick up one storageable object from QJsonValue and store it to database.                      *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                        Выцепить один хранимый объект из QJsonValue и записать его в базу.                        *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+bool tengu::MongoStorage::__simplify( QJsonValue & val ) {
+
+    if ( ( ! val.isObject() ) && ( ! val.isArray() ) ) return false;
+    
+    bool result = false;
+    qDebug() << "\n__simplify:\n" << val << "\n";
+    
+    if ( val.isObject() ) {
+        
+        QJsonObject oval = val.toObject();
+        // qDebug() << "+++ We have an object, is storageable? " << storageable( oval ) << ", object=" << oval;
+        
+        // reenterable call, store child's object.
+        // Реентерабельный вызов, запись дитяти.
+            
+        bool modified = true;
+        while ( modified ) {
+                
+            modified = false;
+                
+            for ( int i=0; i<oval.keys().count(); i++ ) {
+                
+                QString one_key = oval.keys().at(i);
+                QJsonValue one_value = oval[ one_key ];
+                
+                if ( ( one_value.isObject() ) || ( one_value.isArray() ) ) {
+                    
+                    qDebug() << "-- in object, before simplify, look at " << one_key << ", object=\n" << one_value << "\n";
+                    bool one_element_simplified = __simplify( one_value );
+                    qDebug() << "-- in object, after simplify: \n" << one_value << "\n";
+                
+                    if ( one_element_simplified ) {
+                        
+                        result = true;
+                        
+                        if ( 
+                            ( one_value.isNull() ) 
+                            || ( one_value.isObject() ) 
+                            || ( ( one_value.isArray() ) && ( one_value.toArray().count() == 0 ) ) 
+                        ) { 
+                            
+                            qDebug() << "Remove one key " << one_key ;
+                            qDebug() << "Before remove oval=";
+                            qDebug() << oval; 
+                            oval.remove( one_key );
+                            qDebug() << "After remove oval=";
+                            qDebug() << oval;
+                        
+                        } else {
+                            qDebug() << "Не вошло в условие " << one_key;
+                            oval[ one_key ] = one_value;
+                            qDebug() << "После того, как оно не вошло в условие, головной объект стал\n";
+                            qDebug() << oval;
+                            // oval.remove( one_key );
+                        };
+                        modified = true;
+                        qDebug() << "Модифицировано, брейк из цикла.";
+                        break;
+                    };
+                };
+            };
+            
+            if ( modified ) {
+                val = oval;
+            };
+                
+        };
+            
+        if ( storageable( oval ) ) {
+            __insert_single_object( oval );
+            result = true;
+        };
+        
+        if ( result ) return result;
+    };
+    
+    if ( val.isArray() ) {
+                 
+        // qDebug() << "+++ We have an array.";
+             
+        QJsonArray arr = val.toArray();
+        bool modified = true;
+        while ( modified ) {
+            
+            modified = false;
+            
+            for ( int aIndex=0; aIndex < arr.size(); aIndex ++ ) {
+                QJsonValue array_element = arr.at( aIndex );
+                
+                // If the element of the array is an object containing uuid, then replace this element to his 
+                // uuid for subsequent reference search.
+                
+                // Если элементом массива является объект, содержащий uuid, то замещаем этот элемент на его
+                // uuid для последующего поиска ссылок.
+                
+                QString array_element_uuid;
+                if ( array_element.isObject() ) {
+                    QJsonObject aelobject = array_element.toObject();
+                    if ( aelobject.contains( JSON_UUID_ELEMENT ) ) array_element_uuid = aelobject.value( JSON_UUID_ELEMENT ).toString();
+                };
+                
+                // qDebug() << "-- in array, look at " << array_element;
+                if ( ( array_element.isObject() ) || ( array_element.isArray() ) ) {
+                    // qDebug() << "  key " <<  in array, before simplify: " << array_element;
+                    bool one_element_simplified = __simplify( array_element );
+                    // qDebug() << "-- in array, after simplify: " << array_element;
+                    if ( one_element_simplified ) {
+                        result = true;
+                        modified = true;
+                    
+                        // if ( ! array_element_uuid.isEmpty() ) arr.replace( aIndex, array_element_uuid );
+                        // else 
+                        qDebug() << "Remove one array element, count=" << arr.count() << ", idx=" << aIndex << ", before remove array=";
+                        qDebug() << arr;
+                        arr.removeAt( aIndex );
+                        
+                        qDebug() << "After remove, count=" << arr.count() << ", array=";
+                        qDebug() << arr;
+                        break;
+                        
+                    };
+                };
+            };
+            
+            if ( modified ) {
+                val = arr;
+            };
+            
+        };
+        
+    };
+    
+    return result;
+
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
 // *                      Store the JSON-presented object, procedure can be reenterable                               *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                Сохранить объект, представленный JSON'ом. Процедура может быть реентерабельной.                   *
@@ -355,24 +488,62 @@ void tengu::MongoStorage::store( QJsonObject o ) {
     // We can not insert a set of separate object at once.
     // Мы не можем вставлять множество разных объектов за один раз.
 
+    qDebug() << "** MongoStorage::store() **";
+    qDebug() << o ;
+    qDebug() << "\n";
+    
     QStringList keys = o.keys();
     
-    for ( int i=0; i<keys.size(); i++ ) {
+    bool modified = true;
+    while ( modified ) {
         
-        QJsonValue val = o.value( keys.at(i) );
+        modified = false;
         
-        if ( val.isObject() ) {
+        for ( int i=0; i<keys.size(); i++ ) {            
+            QJsonValue val = o.value( keys.at(i) );
+            if ( val.isObject() || val.isArray() ) {
+                
+                qDebug() << "On the top level, try to simplify: \n";
+                qDebug() << val << "\n";
+                
+                if ( __simplify( val ) ) {
+                
+                    qDebug() << "On the top level, after simplify: \n";
+                    qDebug() << val;
+                    
+                    modified = true;
+                
+                    if ( 
+                        ( val.isNull() ) 
+                        || ( val.isObject() ) 
+                        || ( ( val.isArray() ) && ( val.toArray().count() == 0 ) ) 
+                    ) {
+                    
+                        qDebug() << "On the top level, key=" << keys.at(i);
+                        qDebug() << "Before remove: ";
+                        qDebug() << o;
+                        o.remove( keys.at(i) );
+                        qDebug() << "After remove:";
+                        qDebug() << o;
+                        qDebug() << "\n";
+                    } else {
+                        qDebug() << "On the top level, key=" << keys.at(i);
+                        qDebug() << "Not removed, object is not empty.";
+                        qDebug() << o;
+                        qDebug() << "\n";
+                        o[ keys.at(i) ] = val;
+                    };
+                    break;
+                };
             
-            // reenterable call, store child's object.
-            // Реентерабельный вызов, запись дитяти.
+            };
             
-            qDebug() << "MongoStorage::store, reenterable call";
-            store( o );
-            o.remove( keys.at(i) );
-            continue;
         };
         
     };
+    
+    qDebug() << "At the top level, insert single object o:";
+    qDebug() << o;
     
     __insert_single_object( o );
     
@@ -388,7 +559,8 @@ void tengu::MongoStorage::store( QJsonObject o ) {
 
 void tengu::MongoStorage::__insert_single_object ( QJsonObject jsonObject ) {
 
-    qDebug() << "MongoStorage::__insert_single_object: " << jsonObject ;
+    qDebug() << "\nMongoStorage::__insert_single_object: \n" << jsonObject ;
+    qDebug() << "\n";
     
     // if ( ( ! jsonObject.contains("database") ) || ( ! jsonObject.contains("collection") ) || ( ! jsonObject.contains("uuid")  ) ) {
     if ( ! storageable( jsonObject ) ) {
@@ -427,12 +599,13 @@ void tengu::MongoStorage::__insert_single_object ( QJsonObject jsonObject ) {
         bool ok = mongoc_collection_insert( collection, MONGOC_INSERT_NONE, document, NULL, & error );
         if ( ! ok ) {
             qDebug() << "MongoStorage::__insert_single_object, insertion was failed. Error code=" << error.code << ", message=" << error.message;
-        } else qDebug() << "MongoStorage::__insert_single_object: Inserted one ok";
+        } else {
+            // qDebug() << "MongoStorage::__insert_single_object: Inserted one ok";
+        }
             
         bson_destroy( document );
         // bson_destroy( insert );
             
-        
         mongoc_collection_destroy( collection );
         
     } else qDebug() << "MongoStorage::__insert_single_object( QJsonObject ), collection is empty";

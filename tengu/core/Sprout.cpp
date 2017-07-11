@@ -83,7 +83,6 @@ tengu::Sprout::sprout_type_t tengu::Sprout::getSproutType() {
     return __sprout_type;
 }
 
-
 // ********************************************************************************************************************
 // *                                                                                                                  *
 // *                                          Set sprout's signal direction.                                          *
@@ -404,6 +403,27 @@ bool tengu::Sprout::isExternal() {
 
 bool tengu::Sprout::isInternal() {
     return( ( __sprout_type == Sprout::IN_PROCESS_INPUT ) || ( __sprout_type == Sprout::IN_PROCESS_OUTPUT ) );
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                         Convert the sprout to JSON-form.                                         *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                  Преобразование данного "отростка" в JSON-форму.                                 *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+QJsonObject tengu::Sprout::toJSON() {
+    
+    QJsonObject o = AbstractEntity::toJSON();
+    
+    // Commented. Sprout now is not storageable.
+    // Забито. Отросток нонче - не записывабельный.
+    // o[ JSON_COLLECTION_ELEMENT ] = "sprouts";
+    
+    if ( __owner ) o["owner_uuid"] = __owner->getUUID();
+    
+    return o;
 }
 
 // ********************************************************************************************************************

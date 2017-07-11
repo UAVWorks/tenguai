@@ -279,6 +279,8 @@ QJsonObject tengu::AbstractEntity::toJSON() {
     o.insert("comment", __comment );
     o.insert("execution_mode", (int) __execution_mode );
     o.insert("last_modified", __lastModified.toString("t yyyy-MM-dd hh:mm:ss:zzz") );
+    o.insert("x", __x );
+    o.insert("y", __y );
     if ( ! _className.isEmpty() ) o["class_name"] = _className;
     
     /*
@@ -291,6 +293,19 @@ QJsonObject tengu::AbstractEntity::toJSON() {
     
     return o;
     
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                              Make this object unmodified                                         *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                       Сделать данный объект не-модифицированным.                                 *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::AbstractEntity::unmodify() {
+
+    _changed = false;
 }
 
 // ********************************************************************************************************************

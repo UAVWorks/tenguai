@@ -80,6 +80,9 @@ namespace tengu {
             virtual void removeChild( AbstractAgent * child );
             QList <AbstractAgent * > children();
             
+            virtual QJsonObject toJSON();
+            virtual void unmodify();
+            
             /**
              * @short Adding or replacing previous (in the sence of focus flow) agent.
              */

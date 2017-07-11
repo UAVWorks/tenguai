@@ -62,6 +62,8 @@ namespace tengu {
             
             void __addIndex( QJsonObject o, tengu::MongoIndex idx );
             
+            bool __simplify( QJsonValue & val );
+            
             // mongoc_database_t * __database;
             // mongoc_collection_t * __collection;
     };

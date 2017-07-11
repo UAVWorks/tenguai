@@ -93,6 +93,11 @@ namespace tengu {
             
             AbstractAgent * owner();
             
+            // Convert the object to JSON form.
+            // Преобразование объекта в JSON-форму.
+            
+            QJsonObject toJSON();
+            
             
         protected:
             

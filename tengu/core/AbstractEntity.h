@@ -23,12 +23,7 @@
 namespace tengu {
     
     class AbstractEntity {
-        
-        // The mongo is friend, it can change a non-public fields of this class such a _changed.
-        // Монго является другом, он может менять не-публичные поля этого класса, такие как _changed.
-        
-        friend class MongoStorage;
-        
+                
         public:
             
             // The execution mode for the model, processor, task e.t.c
@@ -83,6 +78,7 @@ namespace tengu {
             // Вернуть последнее время модификации (в UTC) данного объекта.
             
             virtual QDateTime lastModified();
+            virtual void unmodify();
             
             // Convert this object to JSON form.
             // Преобразование данного объекта в формат JSON.

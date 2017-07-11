@@ -808,24 +808,29 @@ void tengu::MainWindow::__on__open() {
 // ********************************************************************************************************************
 
 void tengu::MainWindow::__on__save() {
-    qDebug() << "MainWindow::__on_save()";
+    
     QList< AbstractAgent * > elements = __workSpace->children();
-    qDebug() << "Elements = " << elements.count();
     
     for ( int ei=0; ei<elements.size(); ei++ ) {
+        
         AbstractAgent * element = elements.at( ei );
-        qDebug() << "Got one element: " << element->getHumanName() << ", changed=" << element->hasChanged() << ", storageable=" << __mongo->storageable( element );
+        
         if ( element->hasChanged() )  {
             
             // Not every each existing element must be stored.
             // Не каждый существующий элемент должен быть записан.
             
             if ( __mongo->storageable( element ) ) {
-                qDebug() << "Want to store: " << element->toJSON();
-                __mongo->store( element );                
+                __mongo->store( element );
+                element->unmodify();
             };
         };
     };
+    
+    // The store action become to disabled status after store process.
+    // После записи действие записи становится недоступным.
+    
+    __action__save_schema->setEnabled( false );
 }
 
 

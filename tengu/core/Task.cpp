@@ -31,15 +31,17 @@ tengu::Task::Task ()
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-/*
 QJsonObject tengu::Task::toJSON() {
     
     QJsonObject o = AbstractAgent::toJSON();
-    o[ "collection" ] = "tasks";
-    o[ "class_name" ] = "Task";
+    
+    o[ JSON_COLLECTION_ELEMENT ] = "tasks";
+    
+    //if ( _parent ) o["parent_uuid"] = _parent->getUUID();
+    
     return o;
+    
 }
-*/
 
 // ********************************************************************************************************************
 // *                                                                                                                  *

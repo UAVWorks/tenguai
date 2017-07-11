@@ -343,14 +343,14 @@ void tengu::AbstractAgent::addChild ( tengu::AbstractAgent * child ) {
 }
 
 // ********************************************************************************************************************
-// * *
-// * Remove one child from this parent. *
+// *                                                                                                                  *
+// *                                          Remove one child from this parent.                                      *
 // * ---------------------------------------------------------------------------------------------------------------- *
-// * Удалить одного ребенка у этого родителя. *
-// * *
+// *                                       Удалить одного ребенка у этого родителя.                                   *
+// *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::AbstractAgent::removeChild ( tengu::AbstractAgent* child ) {
+void tengu::AbstractAgent::removeChild ( tengu::AbstractAgent * child ) {
     if ( child ) {
         if ( _children.contains( child->getUUID() ) ) _children.remove( child->getUUID() );
         child->_parent = nullptr;
@@ -447,6 +447,49 @@ void tengu::AbstractAgent::addNextByFocus ( tengu::AbstractAgent * next ) {
     _nextByFocus[ next->getUUID() ] = next;
 }
 
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                      toJSON: reenterable call for his children.                                  *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                      toJSON: реентерабельный вызов для его детей.                                *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+QJsonObject tengu::AbstractAgent::toJSON() {
+    
+    QJsonObject obj = AbstractEntity::toJSON();
+    
+    if ( hasChildren() ) {
+        
+        QJsonArray array_of_children;
+        QList< AbstractAgent * > hisChildren = children();
+        for ( int i=0; i< hisChildren.count(); i++ ) {
+            AbstractAgent * oneChild = hisChildren.at(i);
+            array_of_children.append( oneChild->toJSON() );
+        };
+        obj["children"] = array_of_children;
+        
+    };
+    
+    return obj;
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                         Mark this object as non-modified.                                        *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                   Пометить данный объект как не-модифицированный.                                *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::AbstractAgent::unmodify() {
+
+    AbstractEntity::unmodify();
+    
+    foreach ( AbstractAgent * child, _children ) {
+        child->unmodify();
+    };
+}
 
 // ********************************************************************************************************************
 // *                                                                                                                  *

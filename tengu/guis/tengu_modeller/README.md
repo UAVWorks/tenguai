@@ -6,7 +6,7 @@ This is graphical tool for work with artifical intelligence models. At the momen
 
 # The latest operations.
 
-- **11 jul 2017** Index has been created automatically.
+- **11 jul 2017** Index has been created automatically. Dirty, but tasks and processes does store in his own collections.
 - **08 jul 2017** Mongo indexes (not completed).
 - **07 jul 2017** The vehicle was stored into database.
 - **06 jul 2017** The process graphics item. Graphical coordinates moved into AbstractEntity.

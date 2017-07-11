@@ -25,6 +25,7 @@ namespace tengu {
             Process ();
             // Process( const Process & o );
             virtual ~Process();
+            virtual QJsonObject toJSON();
             
             void addChild( AbstractAgent * child );
             
