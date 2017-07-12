@@ -19,3 +19,14 @@
 #define JSON_COLLECTION_ELEMENT     "collection"
 #define JSON_DATABASE_ELEMENT       "database"
 #define JSON_UUID_ELEMENT           "uuid"
+
+namespace tengu {
+    
+    enum error_level_t {
+        EL_INFO,
+        EL_WARNING,
+        EL_CRITICAL
+    };
+    
+};
+

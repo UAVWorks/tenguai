@@ -6,14 +6,15 @@ This is graphical tool for work with artifical intelligence models. At the momen
 
 # The latest operations.
 
+- **12 jul 2017** Message about errors.
 - **11 jul 2017** Index has been created automatically. Dirty, but tasks and processes does store in his own collections.
 - **08 jul 2017** Mongo indexes (not completed).
 - **07 jul 2017** The vehicle was stored into database.
 - **06 jul 2017** The process graphics item. Graphical coordinates moved into AbstractEntity.
+<!--
 - **05 jul 2017** Entering SproutableAgent class. Creating some agents from structure tree context menu.
 - **04 jul 2017** Fix a bug with cleaning the scene. Automatical naming for the tasks and the sprouts.
 - **03 jul 2017** Execution mode for graphical link item. Orphanded sprout.
-<!--
 - **02 jul 2017** Sprout's subscribtion to external signal.
 - **30 jun 2017** Fill sprout's list in dialog. Subscribtion sprout to his signal.
 - **28 jun 2017** Lists of processes and tasks in Sprout's properties dialog.

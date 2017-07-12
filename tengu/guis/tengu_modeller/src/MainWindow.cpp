@@ -243,12 +243,15 @@ void tengu::MainWindow::__createMongoStorage() {
     
     __mongo = new MongoStorage();
     
-    // Check actuality of existing indexes for the classes (ORM-like behaviour).
+    QObject::connect( __mongo, SIGNAL( signalError( tengu::error_level_t, QString, QString ) ), this, SLOT( __on__error( tengu::error_level_t, QString, QString ) ) );        
+    
+    // Check actuality of existing indexes for the classes (ORM-like behaviour).    
     // Проверка актуальности существующих индексов для классов (ORM-подобное поведение).
     
     Task t; __mongo->checkIndexes( & t );
     Process p; __mongo->checkIndexes( & p );
     Vehicle v; __mongo->checkIndexes( & v );
+
 }
 
 // ********************************************************************************************************************
@@ -789,6 +792,25 @@ void tengu::MainWindow::__restoreSettings() {
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
+// *                                              Some errors occured.                                                *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                            Возникли какие-то ошибки.                                             *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindow::__on__error ( tengu::error_level_t errorLevel, QString procedureName, QString errorMessage ) {
+    QMessageBox msg;
+    msg.setText( procedureName + "\n" + errorMessage );
+    switch ( errorLevel ) {
+        case EL_INFO: msg.setIcon( QMessageBox::Information ); break;
+        case EL_WARNING: msg.setIcon( QMessageBox::Warning ); break;
+        case EL_CRITICAL: msg.setIcon( QMessageBox::Critical ); break;
+    };
+    msg.exec();
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
 // *                                                  Open the model.                                                 *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                                                  Открытие модели.                                                *
@@ -843,8 +865,11 @@ void tengu::MainWindow::__on__save() {
 // ********************************************************************************************************************
 
 void tengu::MainWindow::showEvent( QShowEvent * event ) {
-    __restoreSettings();
+    
     QMainWindow::showEvent( event );    
+    
+    __restoreSettings();   
+                
 }
 
 // ********************************************************************************************************************

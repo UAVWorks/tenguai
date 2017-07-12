@@ -33,6 +33,10 @@ namespace tengu {
         
         Q_OBJECT
         
+        signals:
+            
+            void signalError( tengu::error_level_t errorLevel, QString procedureName, QString errorMessage );
+        
         public:
             
             MongoStorage ( QString host = "localhost", int port = 27017 );
@@ -63,6 +67,14 @@ namespace tengu {
             void __addIndex( QJsonObject o, tengu::MongoIndex idx );
             
             bool __simplify( QJsonValue & val );
+            
+            // There were already attempts to do something with the indexes and they led to an error. 
+            // Most likely, the version of MongoDB is too old. There is no point in continuing to do things with the indices.
+            
+            // Уже были попытки делать что-то с индексами и они привели к ошибке. Скорее всего,
+            // версия монги - слишком старая. Нет смысла продолжать делать что-то с индексами.
+            
+            bool __indexesErrorOccured;
             
             // mongoc_database_t * __database;
             // mongoc_collection_t * __collection;

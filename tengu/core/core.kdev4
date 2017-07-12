@@ -1,4 +1,4 @@
 [Project]
 CreatedFrom=core.pro
-Manager=KDevQMakeManager
+Manager=KDevGenericManager
 Name=core

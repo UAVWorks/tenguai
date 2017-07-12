@@ -23,6 +23,7 @@ tengu::MongoStorage::MongoStorage( QString host, int port )
     mongoc_init();
     __client = nullptr;
     __alreadyIndexedCollections = QList<QString>();
+    __indexesErrorOccured = false;
     
     QString connectionString = QString("mongodb://") + host + ":" + QString::number( port );
     __client = mongoc_client_new ( connectionString.toLocal8Bit().data() );
@@ -242,6 +243,7 @@ void tengu::MongoStorage::__addIndex( QJsonObject o, tengu::MongoIndex idx ) {
     
         QJsonObject cmd_jso;
         cmd_jso["createIndexes"] = o.value( JSON_COLLECTION_ELEMENT ).toString();
+        cmd_jso["createIndexes.createdCollectionAutomatically"] = true;
         QJsonArray arr;
         arr.append( idx.toJSON() );
         cmd_jso["indexes"] = arr;
@@ -262,8 +264,12 @@ void tengu::MongoStorage::__addIndex( QJsonObject o, tengu::MongoIndex idx ) {
                 // bson_free (str);
                 
             } else {
-                
-                qDebug() << "MongoStorage::__addIndex, failed to run command, error=" << QString(error.message);
+                if ( ! __indexesErrorOccured ) {
+                    __indexesErrorOccured = true;
+                    QString message = QString(error.message) + "\n" + tr("It seems you need update your MongoDB server.");
+                    emit signalError( EL_WARNING, "MongoStorage::addIndex()", message );
+                    // qDebug() << "MongoStorage::__addIndex, failed to run command, error=" << QString(error.message);
+                };
             }
             
             bson_destroy (cmd);
@@ -287,6 +293,8 @@ void tengu::MongoStorage::__addIndex( QJsonObject o, tengu::MongoIndex idx ) {
 void tengu::MongoStorage::checkIndexes( tengu::AbstractEntity * e ) {
     
     if ( ! storageable( e ) ) return;
+    if ( __indexesErrorOccured ) return;
+    
     QJsonObject o = e->toJSON();
     if ( __alreadyIndexedCollections.contains( o[ JSON_COLLECTION_ELEMENT ].toString() ) ) return;
         
@@ -300,7 +308,7 @@ void tengu::MongoStorage::checkIndexes( tengu::AbstractEntity * e ) {
     while (idx.hasNext()) {
         idx.next();
         tengu::MongoIndex toCreate = idx.value();
-        if ( ! existing_indexes.contains( toCreate.name ) ) __addIndex( o, toCreate );
+        if ( ( ! existing_indexes.contains( toCreate.name ) ) && ( ! __indexesErrorOccured ) ) __addIndex( o, toCreate );
     };
 
 }

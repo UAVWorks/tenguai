@@ -29,6 +29,7 @@
 #include <QSettings>
 #include <QRect>
 #include <QDrag>
+#include <QMessageBox>
 
 #include "MongoStorage.h"
 #include "AgentFactory.h"
@@ -54,8 +55,19 @@ namespace tengu {
         Q_OBJECT
 
         public:
+            
             explicit MainWindow(QWidget *parent = 0);
             ~MainWindow();
+            
+        protected:
+            
+            // Overrided widget's functions
+            // Перекрытые функции виджита.
+            
+            void closeEvent( QCloseEvent * event );
+            void showEvent( QShowEvent * event );
+            void keyPressEvent( QKeyEvent * event );
+            
             
         private:
         
@@ -115,14 +127,7 @@ namespace tengu {
             
             AgentPropertyModel * __agentPropertyModel;
             AgentPropertyDelegate * __agentPropertyDelegate;
-            
-            // Overrided widget's functions
-            // Перекрытые функции виджита.
-            
-            void closeEvent( QCloseEvent * event );
-            void showEvent( QShowEvent * event );
-            void keyPressEvent( QKeyEvent * event );
-            
+                        
             // The main window's dialogs
             // Диалоги главного окна.
             
@@ -148,6 +153,7 @@ namespace tengu {
             void __on__create__process();
             void __on__save();
             void __on__open();
+            void __on__error( tengu::error_level_t errorLevel, QString procedureName, QString errorMessage );
             
             void __on_set_execution_mode_xplane();
             void __on_set_execution_mode_real();
