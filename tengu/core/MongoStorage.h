@@ -78,6 +78,15 @@ namespace tengu {
             
             // mongoc_database_t * __database;
             // mongoc_collection_t * __collection;
+            
+            bool __valueMustBeDeleted( QJsonValue val );
+            
+            bool __simplifyable( QJsonValue val );
+            
+            // Get "the reference": collection name and uuid for this object
+            // Получить "ссылку": имя коллекции и uuid данного объекта.
+            
+            QJsonObject __getReference( QJsonValue val );
     };
     
 };
