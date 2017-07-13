@@ -49,6 +49,11 @@ namespace tengu {
             
             void checkIndexes( AbstractEntity * e );
             
+            // Get some or all objects from collection.
+            // Получить некоторые или все объекты из коллекции.
+            
+            QList<QJsonObject> read( QJsonObject selector, bool recursive );
+            
         protected:
         private:
             
@@ -87,6 +92,11 @@ namespace tengu {
             // Получить "ссылку": имя коллекции и uuid данного объекта.
             
             QJsonObject __getReference( QJsonValue val );
+            
+            // Add to hiuse element, for later using references between collections.
+            // Добавить к элементу hiuse, для последующего использования ссылок между коллекциями.
+            
+            // void __hiuse( QJsonObject obj, QJsonObject ref );
     };
     
 };

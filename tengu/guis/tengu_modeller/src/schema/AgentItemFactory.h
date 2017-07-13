@@ -34,6 +34,7 @@ namespace tengu {
             
             static AbstractEntity * createEntity( QJsonObject json );
             static AbstractEntityItem * createItem( AbstractAgent * agent );
+            static QString getClassName( QString collectionName );
             
     };
     

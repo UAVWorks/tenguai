@@ -37,16 +37,19 @@ tengu::AbstractEntity * tengu::AgentFactory::createEntity ( QJsonObject json ) {
     
     AbstractEntity * e = nullptr;
     
-    if ( json.contains("class_name" ) ) {
+    QString className;
+    if ( json.contains("class_name") ) className = json[ "class_name" ].toString();
+    else if ( json.contains( JSON_COLLECTION_ELEMENT ) ) className = AgentFactory::getClassName( json[ JSON_COLLECTION_ELEMENT ].toString() );
         
-        QString cName = json.value("class_name").toString();
+    if ( ! className.isEmpty() )  {
         
-        if ( cName == "ProcessStart" )  e = new ProcessStart();
-        if ( cName == "ProcessStop" )   e = new ProcessStop();
-        if ( cName == "Task" )          e = new Task(); 
-        if ( cName == "Sprout" )        e = new Sprout();
-        if ( cName == "ORer" )          e = new ORer();
-        if ( cName == "ANDor" )         e = new ANDor();
+        
+        if ( className == "ProcessStart" )  e = new ProcessStart();
+        if ( className == "ProcessStop" )   e = new ProcessStop();
+        if ( className == "Task" )          e = new Task(); 
+        if ( className == "Sprout" )        e = new Sprout();
+        if ( className == "ORer" )          e = new ORer();
+        if ( className == "ANDor" )         e = new ANDor();
         
     };
 
@@ -60,3 +63,16 @@ tengu::AbstractEntity * tengu::AgentFactory::createEntity ( QJsonObject json ) {
     
 }
 
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                        Get class name for this collection name                                   *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                        Получить имя класса по имени коллекции.                                   *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+QString tengu::AgentFactory::getClassName( QString collectionName ) {
+    if ( collectionName == "tasks" ) return "Task";
+    if ( collectionName == "processes" ) return "Process";
+    return "";
+}

@@ -15,9 +15,11 @@
 #include <QFrame>
 #include <QComboBox>
 #include <QTableWidget>
+#include <QHeaderView>
 
 #include "DialogWithButtons.h"
 #include "MongoStorage.h"
+#include "AgentItemFactory.h"
 
 namespace tengu {
     
@@ -57,6 +59,10 @@ namespace tengu {
             QWidget * __createStorageLabel( QPixmap pixmap, QString text );
             
             void __fill_table_of_elements();
+        
+        private slots:
+            
+            void __on__type_of_elements_changed( int type );
     };
     
 };

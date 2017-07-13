@@ -67,11 +67,26 @@ QFrame * tengu::DialogOpenSaveModel::__createElementsList() {
     frame->setLayout( lay );
     
     __combo_box__type_of_elements = new QComboBox();
+    QObject::connect( __combo_box__type_of_elements, SIGNAL( activated( int ) ), this, SLOT( __on__type_of_elements_changed( int ) ) );
+    
     __combo_box__type_of_elements->addItem( QIcon( QPixmap(":robot_32.png") ), tr("Vehicle (a car, an aircraft, a helicopter e.t.c.)"), OSM_VEHICLE );
+    __combo_box__type_of_elements->addItem( QIcon( QPixmap( ":package_16.png" ) ) , tr("Process"), OSM_PROCESS );
+    __combo_box__type_of_elements->addItem( QIcon( QPixmap( ":box_16.png" ) ) , tr("Task"), OSM_TASK );
     
     lay->addWidget( __combo_box__type_of_elements );
     
     __table_of_elements = new QTableWidget();
+    __table_of_elements->setColumnCount( 1 );
+    __table_of_elements->horizontalHeader()->hide();
+    __table_of_elements->verticalHeader()->hide();
+    
+    QHeaderView * hh = __table_of_elements->horizontalHeader();
+    hh->setSectionResizeMode( QHeaderView::Stretch );
+    
+    QHeaderView * vh = __table_of_elements->verticalHeader();
+    vh->setSectionResizeMode(QHeaderView::Fixed);
+    vh->setDefaultSectionSize( 16 );    
+    
     lay->addWidget( __table_of_elements );
     
     // Top element is searcher.
@@ -166,8 +181,24 @@ QWidget * tengu::DialogOpenSaveModel::__createStorageLabel ( QPixmap pixmap, QSt
 // ********************************************************************************************************************
 
 void tengu::DialogOpenSaveModel::showEvent ( QShowEvent* event ) {
+    
     QDialog::showEvent ( event );
     __fill_table_of_elements();
+    
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                     The desired element type has been changed.                                   *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                          Желаемый тип элемента был изменен.                                      *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::DialogOpenSaveModel::__on__type_of_elements_changed( int type ) {
+    
+    __fill_table_of_elements();
+    
 }
 
 // ********************************************************************************************************************
@@ -180,13 +211,43 @@ void tengu::DialogOpenSaveModel::showEvent ( QShowEvent* event ) {
 
 void tengu::DialogOpenSaveModel::__fill_table_of_elements() {
     _clearTable( __table_of_elements );
+    int rows = 0;
     QString collectionName = QString("");
     switch ( __combo_box__type_of_elements->currentData( Qt::UserRole).toInt() ) {
-        case OSM_PROCESS: collectionName = "vehicles"; break;
+        case OSM_VEHICLE: collectionName = "vehicles"; break;
+        case OSM_PROCESS: collectionName = "processes"; break;
+        case OSM_TASK: collectionName = "tasks"; break;
         
     };
     
     if ( ! collectionName.isEmpty() ) {
+        QJsonObject selector;
+        selector[ JSON_DATABASE_ELEMENT ] = "tengu";
+        selector[ JSON_COLLECTION_ELEMENT ] = collectionName;
+        QList< QJsonObject > elements = __mongo->read( selector, false );
+        if ( elements.count() > 0 ) {
+            for ( int i=0; i<elements.count(); i++ ) {
+                QJsonObject element = elements.at( i );
+                AbstractEntity * entity = AgentItemFactory::createEntity( element );
+                if ( entity ) {
+                    
+                    __table_of_elements->insertRow( rows );
+                    
+                    QTableWidgetItem * item = new QTableWidgetItem();
+                    item->setText( entity->getHumanName() );
+                    item->setToolTip( entity->getComment() );
+                    item->setData( Qt::UserRole, QVariant( entity->getUUID() ) );
+                    __table_of_elements->setItem( rows, 0, item );
+                    
+                    rows ++;
+                    
+                    // We did it for visibility only, the object itself is not need, the memory must be cleared.
+                    // Мы это делали только для того, чтобы показать. Объект сам по себе не нужен, память нужно освободить.
+                    
+                    delete( entity );
+                };
+            };
+        };
     };
 };
 

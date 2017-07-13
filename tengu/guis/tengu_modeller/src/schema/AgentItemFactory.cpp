@@ -22,17 +22,19 @@ tengu::AbstractEntity* tengu::AgentItemFactory::createEntity ( QJsonObject json 
     AbstractEntity * e = AgentFactory::createEntity( json );
     if ( e ) return e;    
     
-    if ( json.contains("class_name" ) ) {
+    QString className;
+    if ( json.contains("class_name") ) className = json["class_name"].toString();
+    else if (json.contains(JSON_COLLECTION_ELEMENT) ) className = AgentItemFactory::getClassName( json[JSON_COLLECTION_ELEMENT].toString() );
+    if ( ! className.isEmpty() ) {
         
-        QString cName = json.value("class_name").toString();
-        
-        if ( cName == "ProcessStartItem" )  e = new ProcessStartItem();
-        if ( cName == "ProcessStopItem" )   e = new ProcessStopItem();
-        if ( cName == "TaskItem" )          e = new TaskItem();
-        if ( cName == "SproutItem" )        e = new SproutItem();
-        if ( cName == "ANDorItem" )         e = new ANDorItem();
-        if ( cName == "ORerItem" )          e = new ORerItem();
-        if ( cName == "LinkItem" )          e = new LinkItem();
+        if ( className == "ProcessStartItem" )  e = new ProcessStartItem();
+        if ( className == "ProcessStopItem" )   e = new ProcessStopItem();
+        if ( className == "TaskItem" )          e = new TaskItem();
+        if ( className == "SproutItem" )        e = new SproutItem();
+        if ( className == "ANDorItem" )         e = new ANDorItem();
+        if ( className == "ORerItem" )          e = new ORerItem();
+        if ( className == "LinkItem" )          e = new LinkItem();
+        if ( className == "Vehicle" )           e = new Vehicle();
         
         // XPlaneAgent does not birth yet.
         // XPlaneAgent не порождается пока что.
@@ -47,6 +49,22 @@ tengu::AbstractEntity* tengu::AgentItemFactory::createEntity ( QJsonObject json 
     // };
     
     return e;
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                       Return class name by his collection name                                   *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                          Вернуть имя класса по его коллекции                                     *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+QString tengu::AgentItemFactory::getClassName( QString collectionName ) {
+    QString cname = AgentFactory::getClassName( collectionName );
+    if ( cname.isEmpty() ) {
+        if ( collectionName == "vehicles" ) return "Vehicle";
+    };
+    return cname;
 }
 
 // ********************************************************************************************************************

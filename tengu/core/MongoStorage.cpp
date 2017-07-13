@@ -292,6 +292,8 @@ void tengu::MongoStorage::__addIndex( QJsonObject o, tengu::MongoIndex idx ) {
 
 void tengu::MongoStorage::checkIndexes( tengu::AbstractEntity * e ) {
     
+    // @todo mongoc_collection_create_index_with_opts.
+    
     if ( ! storageable( e ) ) return;
     if ( __indexesErrorOccured ) return;
     
@@ -478,8 +480,9 @@ bool tengu::MongoStorage::__simplify( QJsonValue & val ) {
                         result = true;
                         modified = true;
                     
-                        if ( ! reference.isEmpty() ) arr.replace( aIndex, reference );
-                        else arr.removeAt( aIndex );
+                        if ( ! reference.isEmpty() ) {
+                            arr.replace( aIndex, reference );
+                        } else arr.removeAt( aIndex );
                         
                         break;
                         
@@ -535,7 +538,9 @@ void tengu::MongoStorage::store( QJsonObject o ) {
                     modified = true;
                     if ( __valueMustBeDeleted( val ) ) {
                         o.remove( keys.at(i) );
-                        if ( ! reference.isEmpty() ) o[ keys.at(i) ] = reference;
+                        if ( ! reference.isEmpty() ) {
+                            o[ keys.at(i) ] = reference;
+                        }
                     } else {
                         o[ keys.at(i) ] = val;
                     };
@@ -596,7 +601,83 @@ void tengu::MongoStorage::__insert_single_object ( QJsonObject jsonObject ) {
             
         mongoc_collection_destroy( collection );
         
-    } else qDebug() << "MongoStorage::__insert_single_object( QJsonObject ), collection is empty";
+    } else {
+        // qDebug() << "MongoStorage::__insert_single_object( QJsonObject ), collection is empty";
+        emit signalError( EL_WARNING, "MongoStorage::insert single object", tr("The database or collection was not specified") ); 
+    };
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                          Get all element's from collection.                                      *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                          Получить все элементы из коллекции.                                     *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+QList<QJsonObject> tengu::MongoStorage::read( QJsonObject selector, bool recursive ) {
+
+    QList<QJsonObject> result;
+    const bson_t * doc;
+    
+    mongoc_collection_t * collection = __getCollection( selector );
+    if ( collection ) {
+        bson_t * query = bson_new();
+        
+        // put the UUID if exists
+        // uuid, если он существует.
+        
+        char uuid[128];
+        memset( uuid, 0, sizeof( uuid ) );
+        if ( selector.contains("_id") ) strcpy( uuid, selector.value("_id").toString().toLatin1().data() );
+        if ( selector.contains("uuid") ) strcpy( uuid, selector.value("uuid").toString().toLatin1().data() );
+        if ( strlen( uuid ) > 0  ) BSON_APPEND_UTF8( query, "_id", uuid );
+        
+        // The query itself
+        // Сам запрос.
+        
+        mongoc_cursor_t * cursor = mongoc_collection_find_with_opts( collection, query, NULL, NULL );
+        if ( cursor ) {
+            
+            while ( mongoc_cursor_next ( cursor, & doc ) ) {
+                
+                // Convert got bson to json object.
+                // Преобразование полученного bson в JSON объект.
+                
+                char * str = bson_as_json (doc, NULL);
+                QJsonDocument adoc = QJsonDocument::fromJson( str );
+                QJsonObject answer = adoc.object();
+                
+                // Replace the _id to uuid 
+                // Заменяем _id на uuid.
+                
+                if ( answer.contains( JSON_MONGOID_ELEMENT ) ) {
+                    QString uuid = answer.value( JSON_MONGOID_ELEMENT ).toString();
+                    answer[ JSON_UUID_ELEMENT ] = uuid;
+                    answer.remove( JSON_MONGOID_ELEMENT );
+                }
+                
+                // Add collection name
+                // Добавляем имя коллекции
+                
+                answer[ JSON_COLLECTION_ELEMENT ] = selector[ JSON_COLLECTION_ELEMENT ];
+                
+                result.append( answer );
+                
+                bson_free (str);
+            }
+            mongoc_cursor_destroy( cursor );
+        };
+        
+        bson_destroy( query );
+        mongoc_collection_destroy( collection );
+        
+    } else {
+        emit signalError( EL_WARNING, "MongoStorage::read", tr("The database or collection was not specified") );
+    };
+    
+    return result;
+    
 }
 
 // ********************************************************************************************************************

@@ -28,6 +28,7 @@ namespace tengu {
         public:
             // static bool hasAgent( QJsonObject json );
             static AbstractEntity * createEntity( QJsonObject json );
+            static QString getClassName( QString collectionName );
         
     };
     
