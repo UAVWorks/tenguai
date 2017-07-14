@@ -31,7 +31,7 @@ tengu::TreeStructure::TreeStructure ( tengu::WorkSpace* ws )
     // Create root tree item.
     // Создание "корневого узла" дерева.
     
-    __rootItem = new QTreeWidgetItem( AbstractEntity::WorkspaceTreeItem );
+    __rootItem = new QTreeWidgetItem( AbstractEntity::ET_WorkspaceTreeItem );
     __rootItem->setText(0, tr("The Workspace") );
     __rootItem->setIcon(0, QIcon( QPixmap(":chart_organisation_16.png") ) );
     __rootItem->setData( 0, Qt::UserRole, QVariant::fromValue<AbstractAgent * >( ws ) );
@@ -82,11 +82,11 @@ void tengu::TreeStructure::contextMenuEvent ( QContextMenuEvent * event ) {
         
         switch ( curItem->type() ) {
             
-            case AbstractEntity::VehicleTreeItem : {
+            case AbstractEntity::ET_VehicleTreeItem : {
                 createMenu.addAction( __action__create__process );
             }; break;
             
-            case AbstractEntity::WorkspaceTreeItem: {
+            case AbstractEntity::ET_WorkspaceTreeItem: {
                 createMenu.addAction( __action__create__vehicle );
             }; break;
                         
@@ -117,6 +117,9 @@ void tengu::TreeStructure::addAgent( AbstractAgent * agent ) {
     
     if ( ! agent ) return;
     
+    // First we try to find his parent in the tree.
+    // Сначала пытаемся найти его родителя в дереве.
+    
     QTreeWidgetItem * parentItem = __rootItem;
     
     if ( agent->parent() ) {
@@ -130,26 +133,45 @@ void tengu::TreeStructure::addAgent( AbstractAgent * agent ) {
             }
         }
     };
-            
-    QTreeWidgetItem * item = new QTreeWidgetItem();
-    item->setData( 0, Qt::UserRole, QVariant::fromValue<AbstractAgent * >( agent ) );
-    item->setText( 0, agent->getHumanName() );
+    
+    // The constructor itself goes later because there will be an element type.
+    // Сам конструктор идет потом, потому что там указывается тип элемента.
+    
+    QTreeWidgetItem * item = nullptr; 
+    
     switch ( agent->entityType() ) {
         
-        case AbstractEntity::Vehicle: {
+        case AbstractEntity::ET_Vehicle: {
+            item = new QTreeWidgetItem( AbstractEntity::ET_VehicleTreeItem );
             item->setIcon( 0, QIcon( QPixmap( ":robot_16.png") ) );
         }; break;
         
-        case AbstractEntity::Process: {
+        case AbstractEntity::ET_Process: {
+            item = new QTreeWidgetItem( AbstractEntity::ET_ProcessTreeItem );
             item->setIcon( 0, QIcon( QPixmap( ":package_add_16" ) ) );
         }; break;
         
-        case AbstractEntity::Task: {
+        case AbstractEntity::ET_Task: {
+            item = new QTreeWidgetItem( AbstractEntity::ET_TaskTreeItem );
             item->setIcon( 0, QIcon( QPixmap( ":box_16.png" ) ) );
         }; break;
         
         default: qDebug() << "TreeStructure::addAgent, unhandled type " << (int) agent->entityType();
     };
+    
+    // Set the text and add element to the parent if element has been created. 
+    // Если элемент был порожден - устанавливаем ему текст и добавляем в родителя.
+    
+    if ( item ) {
+        
+        item->setData( 0, Qt::UserRole, QVariant::fromValue<AbstractAgent * >( agent ) );
+        item->setText( 0, agent->getHumanName() );
+        
+        if ( parentItem ) {
+            parentItem->addChild( item );
+        };
+    };
+        
 }
 
 // ********************************************************************************************************************
@@ -239,7 +261,7 @@ void tengu::TreeStructure::__on__create__vehicle() {
     
     emit signalAgentCreated( vehicle );
     */
-    emit signalWantCreateAgent( __selectedAgent, AbstractEntity::Vehicle );
+    emit signalWantCreateAgent( __selectedAgent, AbstractEntity::ET_Vehicle );
 }
 
 // ********************************************************************************************************************
@@ -277,7 +299,7 @@ void tengu::TreeStructure::__on__create__process() {
     };
     */
     
-    emit signalWantCreateAgent( __selectedAgent, AbstractEntity::Process );
+    emit signalWantCreateAgent( __selectedAgent, AbstractEntity::ET_Process );
 }
 
 // ********************************************************************************************************************

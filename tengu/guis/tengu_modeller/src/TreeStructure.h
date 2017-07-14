@@ -31,9 +31,12 @@ namespace tengu {
         signals:
             
             // void signalAgentCreated( AbstractAgent * agent );
-            void signalWantCreateAgent( AbstractEntity * parent, AbstractEntity::entity_types_t type );
+            
+            void signalWantCreateAgent( AbstractAgent * parent, AbstractEntity::entity_types_t type );
             void signalAgentSelected( AbstractAgent * agent );
+            
             // void signalAgentDeleted( QString uuid );
+            
             void signalClearAgent( AbstractAgent * agent );
         
         public:

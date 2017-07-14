@@ -63,7 +63,7 @@ tengu::MainWindow::MainWindow(QWidget *parent)
     __left = new MainWindowLeft( __workSpace );    
     // QObject::connect( __left->treeStructure, SIGNAL( signalAgentCreated( AbstractAgent * ) ), this, SLOT( __on__tree_structure__agent_was_created( AbstractAgent * ) ) );
     
-    QObject::connect( __left->treeStructure, SIGNAL( signalWantCreateAgent( AbstractAgent *, AbstractEntity::entity_types_t ) ),
+    QObject::connect( __left->treeStructure, SIGNAL( signalWantCreateAgent( AbstractAgent *,AbstractEntity::entity_types_t)),
         this, SLOT( __on__want__create_agent( AbstractAgent *, AbstractEntity::entity_types_t ) ) );
     
     QObject::connect( __left->treeStructure, SIGNAL( signalAgentSelected( AbstractAgent * ) ), this, SLOT( __on__tree_structure__agent_was_selected( AbstractAgent * ) ) );
@@ -945,18 +945,18 @@ void tengu::MainWindow::__on__save() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::MainWindow::__on__want__create_agent( AbstractAgent * parent, AbstractEntityItem::graphics_item_types_t type ) {
+void tengu::MainWindow::__on__want__create_agent( AbstractAgent * parent, AbstractEntity::entity_types_t type ) {
 
     QJsonObject json;
     
     switch ( type ) {
-        case Vehicle: json[ JSON_CLASS_NAME_ELEMENT ] = "Vehicle"; break;
-        case Process: json[ JSON_CLASS_NAME_ELEMENT ] = "Process"; break;
-        case Task: json[ JSON_CLASS_NAME_ELEMENT ] = "Task"; break;
+        case AbstractEntity::ET_Vehicle: json[ JSON_CLASS_NAME_ELEMENT ] = "Vehicle"; break;
+        case AbstractEntity::ET_Process: json[ JSON_CLASS_NAME_ELEMENT ] = "Process"; break;
+        case AbstractEntity::ET_Task: json[ JSON_CLASS_NAME_ELEMENT ] = "Task"; break;
         default: __on__error( EL_WARNING, "MainWindow::on__want__create_agent()", "Unknown agent type" + QString::number( type ) );
     };
     
-    AbstractAgent * agent = AgentItemFactory::createEntity( type );
+    AbstractAgent * agent = AgentItemFactory::createEntity( json );
     if ( agent ) {
         
         if ( parent ) parent->addChild( agent );
@@ -967,7 +967,11 @@ void tengu::MainWindow::__on__want__create_agent( AbstractAgent * parent, Abstra
         
         __left->treeStructure->addAgent( agent );
         
-    } else __on__error( EL_WARNING, "MainWindow::on__want__create_agent()", "Agent was not ben created.");
+    } else __on__error( 
+        EL_WARNING, 
+        "MainWindow::on__want__create_agent()", 
+        "Agent was not ben created, type=" + QString::number( type ) + ", class_name=" + json[ JSON_CLASS_NAME_ELEMENT ].toString() 
+    );
     
 }
 

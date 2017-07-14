@@ -43,7 +43,7 @@ tengu::AbstractEntity * tengu::AgentFactory::createEntity ( QJsonObject json ) {
         
     if ( ! className.isEmpty() )  {
         
-        
+        if ( className == "Process" )       e = new Process();
         if ( className == "ProcessStart" )  e = new ProcessStart();
         if ( className == "ProcessStop" )   e = new ProcessStop();
         if ( className == "Task" )          e = new Task(); 
