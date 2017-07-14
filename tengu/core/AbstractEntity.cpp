@@ -39,7 +39,8 @@ tengu::AbstractEntity::AbstractEntity ()
     // У нас уже есть изменения, потому что объект был создан.
     
     _changed = true;
-    _className = QString("");       
+    _class_name = QString("");       
+    _entity_type = AbstractEntity::ET_Unknown;
     
     __x = 0;
     __y = 0;
@@ -281,7 +282,7 @@ QJsonObject tengu::AbstractEntity::toJSON() {
     o.insert("last_modified", __lastModified.toString("t yyyy-MM-dd hh:mm:ss:zzz") );
     o.insert("x", __x );
     o.insert("y", __y );
-    if ( ! _className.isEmpty() ) o["class_name"] = _className;
+    if ( ! _class_name.isEmpty() ) o[ JSON_CLASS_NAME_ELEMENT ] = _class_name;
     
     /*
     QJsonArray indexes;
@@ -293,6 +294,19 @@ QJsonObject tengu::AbstractEntity::toJSON() {
     
     return o;
     
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                           Return type of this entity.                                            *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                          Вернуть тип данной сущности.                                            *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+tengu::AbstractEntity::entity_types_t tengu::AbstractEntity::entityType() {
+
+    return _entity_type;
 }
 
 // ********************************************************************************************************************
@@ -374,8 +388,8 @@ bool tengu::AbstractEntity::hasClass ( QJsonObject json, QString class_name ) {
 
 bool tengu::AbstractEntity::fromJSON ( QJsonObject json ) {
     
-    if ( ! _className.isEmpty() ) {
-        if ( ! hasClass( json, _className ) ) return false;
+    if ( ! _class_name.isEmpty() ) {
+        if ( ! hasClass( json, _class_name ) ) return false;
     };
     
     if ( json.contains("uuid" ) ) __uuid = json.value("uuid").toString();

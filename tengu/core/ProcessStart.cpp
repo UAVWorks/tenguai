@@ -24,7 +24,8 @@ tengu::ProcessStart::ProcessStart ()
     // Старт всегда в режиме EM_ALWAYS
     
     setExecutionMode( EM_ALWAYS );
-    _className = "ProcessStart";
+    _class_name = "ProcessStart";
+    _entity_type = ET_ProcessStart;
 }
 
 // ********************************************************************************************************************

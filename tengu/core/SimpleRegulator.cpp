@@ -20,6 +20,8 @@
 tengu::SimpleRegulator::SimpleRegulator(float min_value, float max_value ) 
     : SproutableAgent() 
 {
+    _class_name = "SimpleRegulator";
+    _entity_type = ET_SimpleRegulator;
 
     // The PID-regulator and it's values.
     // ПИД-регулятор и его значения.
@@ -78,7 +80,7 @@ void tengu::SimpleRegulator::setInputChannel ( QString channel ) {
     
     if ( ! channel.isEmpty() ) {
         _inputChannel = channel;
-        Sprout * iSprout = new Sprout();
+        tengu::Sprout * iSprout = new tengu::Sprout();
         iSprout->setSignalName( channel );
         QObject::connect( iSprout, SIGNAL( signalGotValue(QVariant)), this, SLOT( __on_input_received( QVariant ) ) );
         addSprout( iSprout );

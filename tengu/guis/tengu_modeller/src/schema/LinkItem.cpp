@@ -21,7 +21,7 @@ tengu::LinkItem::LinkItem()
     : AbstractEntityItem()
 {
     _boundingRect = QRect(0, 0, 64, 22);
-    _className = "LinkItem";    
+    _class_name = "LinkItem";    
     _canChangeExecuteMode = true;
     
     __from = nullptr;

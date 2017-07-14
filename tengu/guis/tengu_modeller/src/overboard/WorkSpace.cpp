@@ -22,6 +22,7 @@ tengu::WorkSpace::WorkSpace()
 {
     setSystemName( tr("Workspace") );
     setHumanName( tr("Workspace") );
+    _entity_type = ET_Workspace;
 }
 
 // ********************************************************************************************************************

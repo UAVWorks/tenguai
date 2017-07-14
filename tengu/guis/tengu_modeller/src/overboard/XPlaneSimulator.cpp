@@ -32,7 +32,7 @@ const QList<QString> tengu::XPlaneSimulator::CONDITION_AIRCRAFTS_UUIDS = QList<Q
 tengu::XPlaneSimulator::XPlaneSimulator() 
     : TopLevelEntity()
 {
-    _className = "XPlaneSimulator";
+    _class_name = "XPlaneSimulator";
     AbstractEntity::setUUID( XPLANE_SIMULATOR_UUID );
     
     setSystemName( tr("xtengu") );

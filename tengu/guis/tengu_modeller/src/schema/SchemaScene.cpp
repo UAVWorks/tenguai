@@ -21,6 +21,7 @@ tengu::SchemaScene::SchemaScene ( QObject* parent )
     : QGraphicsScene ( parent )
 {
     __rootItem = nullptr;
+    __rootEntity = nullptr;
     __changed = false;
 }
 
@@ -78,36 +79,44 @@ void tengu::SchemaScene::clear() {
     
     QList< QGraphicsItem * > gItems = items();
     for ( int i=0; i<gItems.count(); i++ ) {
-        AbstractEntityItem * aitem = dynamic_cast< AbstractEntityItem * > ( gItems.at(i) );
-        if ( aitem ) {
-            QObject::disconnect( aitem, SIGNAL( signalSomethingChanged() ), this, SLOT( __on__something_changed() ) );
-        };
-    };
-    
-    /*
-    bool removed = true;
-    while (removed) {
         
-        removed = false;
-        QList<QGraphicsItem *> children = items();
-        for ( int i=0; i<children.count(); i++ ) {
-            LinkItem * link = dynamic_cast< LinkItem * > ( children.at(i) );
-            if ( link ) {
-                delete( link );
-                removed = true;
-                break;
-            };            
-        };
+        QGraphicsItem * item = gItems.at(i);
+        removeItem( item );
     };
-    */
-
-    // __taskItems.clear();
-    // __sproutItems.clear();
-    
-    QGraphicsScene::clear();        
     
 }
 
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                         Get the entity for root scene item.                                      *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// * Получить "сущность" для корневого элемента схемы. *
+// * *
+// ********************************************************************************************************************
+
+tengu::AbstractEntity * tengu::SchemaScene::rootEntity() {
+    return __rootEntity;
+};
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                    Cleanup the whole scene, overrided function.                                  *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                      Очистка всей сцены, перекрытая функция.                                     *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+/*
+void tengu::SchemaScene::clear() {
+
+    QList<QGraphicsItem * > items = items();
+    for ( int i=0; i<items.count(); i++ ) {
+        QGraphicsItem * item = items.at(i);
+        removeItem( item );
+        delete( item );
+    };
+    
+}
+*/
 // ********************************************************************************************************************
 // *                                                                                                                  *
 // *                                            Set root entity item for scene.                                       *
@@ -126,8 +135,7 @@ void tengu::SchemaScene::setRootItem ( tengu::AbstractEntityItem * rootItem ) {
     };
         
     __rootItem = rootItem;      
-        
-    
+    __rootEntity = rootItem->entity();
     
     // Add children of this root item to schema.
     // Добавление на схему детей этого корневого элемента.
@@ -152,7 +160,7 @@ void tengu::SchemaScene::setRootItem ( tengu::AbstractEntityItem * rootItem ) {
         };
     };    
     
-    if ( __rootIsProcess() ) emit signalInsideProcess();
+    if ( rootAsProcess() ) emit signalInsideProcess();
 }
 
 // ********************************************************************************************************************
@@ -163,7 +171,7 @@ void tengu::SchemaScene::setRootItem ( tengu::AbstractEntityItem * rootItem ) {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::ProcessItem* tengu::SchemaScene::__rootIsProcess() {
+tengu::ProcessItem * tengu::SchemaScene::rootAsProcess() {
     return dynamic_cast< ProcessItem * > ( __rootItem );
 }
 
@@ -219,7 +227,7 @@ void tengu::SchemaScene::addItem ( QGraphicsItem * gItem ) {
         TaskItem * taskItem = dynamic_cast<TaskItem *>(item);
         // SproutItem * sproutItem = dynamic_cast<SproutItem * > ( item );
         
-        if ( __rootIsProcess() ) {
+        if ( rootAsProcess() ) {
             
             // We have opened "a process" as root of the scheme.
             // У нас открыт "процесс" в качестве корня схемы.
@@ -274,7 +282,7 @@ void tengu::SchemaScene::addItem ( QGraphicsItem * gItem ) {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::SchemaScene::removeItem ( QGraphicsItem* gItem ) {
+void tengu::SchemaScene::removeItem ( QGraphicsItem * gItem ) {
     
     AbstractEntityItem * item = dynamic_cast < AbstractEntityItem * > ( gItem );
     if ( item ) {

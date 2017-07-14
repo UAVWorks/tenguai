@@ -21,7 +21,8 @@ tengu::ANDorItem::ANDorItem ( tengu::ANDor * entity, QGraphicsItem* parent )
     : ItemWithLinks ( entity , parent )
 {
     _boundingRect = QRect( 0, 0, 40, 144 );
-    _className = "ANDorItem";
+    _class_name = "ANDorItem";
+    _entity_type = AbstractEntity::ET_ANDorItem;
 }
 
 // ********************************************************************************************************************

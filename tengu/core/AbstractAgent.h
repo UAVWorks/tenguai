@@ -79,6 +79,7 @@ namespace tengu {
             bool hasChildren();
             virtual void removeChild( AbstractAgent * child );
             QList <AbstractAgent * > children();
+            AbstractAgent * parent();
             
             virtual QJsonObject toJSON();
             virtual void unmodify();

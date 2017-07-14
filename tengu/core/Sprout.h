@@ -11,10 +11,13 @@
 
 #pragma once
 
+// #ifndef TENGU_CORE_SPROUT_H
+// #define TENGU_CORE_SPROUT_H
+
 #include <QObject>
 #include <QVariant>
+
 #include "AbstractAgent.h"
-#include "AbstractEntity.h"
 #include "Constants.h"
 
 namespace tengu {
@@ -57,7 +60,7 @@ namespace tengu {
             // The name should be unique in the parent (owner) namespace.
             // Имя лучше бы было уникальным в пределах родителя (владельца).
             
-            Sprout( AbstractAgent * owner = Q_NULLPTR );
+            Sprout( AbstractAgent * owner = nullptr );
             virtual ~Sprout();
             
             // void setInputChannel( QString channel );
@@ -128,3 +131,4 @@ namespace tengu {
     
 };
 
+// #endif

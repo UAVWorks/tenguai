@@ -20,7 +20,8 @@
 tengu::ProcessStop::ProcessStop () 
     : AbstractAgent ()
 {
-    _className = "ProcessStop";
+    _class_name = "ProcessStop";
+    _entity_type = ET_ProcessStop;
 }
 
 // ********************************************************************************************************************

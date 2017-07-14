@@ -24,7 +24,8 @@ tengu::Vehicle::Vehicle ()
 {
     
     _vehicleType = VT_NONE;
-    _className = "Vehicle";
+    _class_name = "Vehicle";
+    _entity_type = ET_Vehicle;
     
     // If configuration was not loaded from the processor.conf file, then load it from the vehicle.conf file
     // Если из файла processor.conf загружено не было, то загружаем из файла vehicle.conf

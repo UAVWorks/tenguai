@@ -24,7 +24,7 @@ tengu::ProcessStartItem::ProcessStartItem ( tengu::ProcessStart * entity, QGraph
     
     _boundingRect = QRect( 0, 0, __radius * 2 + 1, __radius * 2 + 1 );    
     
-    _className = "ProcessStartItem";
+    _class_name = "ProcessStartItem";
 }
 
 // ********************************************************************************************************************

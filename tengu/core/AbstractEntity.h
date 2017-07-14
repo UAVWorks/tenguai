@@ -19,6 +19,7 @@
 // #include "AbstractStorageableEntity.h"
 
 #include "MongoIndex.h"
+#include "Constants.h"
 
 namespace tengu {
     
@@ -38,6 +39,51 @@ namespace tengu {
                 // EM_PREPAR3D     = 3
                 
             };
+            
+            // Entity types. To avoid checking every time through dynamic_cast only
+            // Типы сущностей. Чтобы не делать каждый раз dynamic_cast.
+            
+            enum entity_types_t {
+                
+                ET_Unknown, 
+                
+                // Entities itself
+                // Собственно "сущности".
+                
+                ET_ANDor,
+                ET_ORer,
+                ET_Sprout,
+                ET_Task,
+                ET_Process,
+                ET_ProcessStart,
+                ET_ProcessStop,
+                ET_SimpleRegulator,
+                ET_Vehicle,
+                ET_Workspace,
+                
+                // Graphics items
+                // Графические элементы.
+                
+                ET_ANDorItem,
+                ET_ORerItem,
+                ET_SproutItem,
+                ET_TaskItem,
+                ET_ProcessItem,
+                ET_ProcessStartItem,
+                ET_ProcessStopItem,
+                ET_SimpleRegulatorItem,
+                ET_VehicleItem,
+                ET_WorkspaceItem,
+                
+                // Tree-like representation
+                // Древовидное представление.
+                
+                ET_TaskTreeItem,
+                ET_ProcessTreeItem,
+                ET_VehicleTreeItem,
+                ET_WorkspaceTreeItem
+            };                        
+            
             
             AbstractEntity ();
             virtual ~AbstractEntity();
@@ -95,7 +141,8 @@ namespace tengu {
             
             virtual QMap<QString, tengu::MongoIndex> indexes();
             
-            virtual bool hasClass( QJsonObject json, QString class_name );                        
+            virtual bool hasClass( QJsonObject json, QString class_name );
+            virtual entity_types_t entityType();
             
             int getX();
             void setX( int x );
@@ -108,7 +155,8 @@ namespace tengu {
             
             bool _changed;            
             
-            QString _className;
+            QString _class_name;
+            entity_types_t _entity_type;
             
             void _somethingChanged();
                                     

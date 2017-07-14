@@ -57,6 +57,9 @@ namespace tengu {
             
             void addItem( QGraphicsItem * gItem );
             void removeItem ( QGraphicsItem * gItem );
+            AbstractEntity * rootEntity();
+            ProcessItem * rootAsProcess();
+            
             
             bool changed();
             
@@ -70,8 +73,8 @@ namespace tengu {
         private:
             
             AbstractEntityItem * __rootItem;
+            AbstractEntity * __rootEntity;
             bool __changed;
-            ProcessItem * __rootIsProcess();
             
             // QMap< QString, TaskItem * > __taskItems;
             // QMap< QString, SproutItem * > __sproutItems;

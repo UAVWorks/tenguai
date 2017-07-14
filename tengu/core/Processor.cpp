@@ -25,7 +25,7 @@ tengu::Processor::Processor ()
     
     // _setActivity( false );
     _configLoaded = _loadConfig( QString( PROCESSOR_CONFIG_FILE ) );    
-        
+
 }
 
 // ********************************************************************************************************************

@@ -39,7 +39,8 @@ tengu::Sprout::Sprout( AbstractAgent * owner )
     __minimal_value = MINIMUM_CONSTRAINT;
     __maximal_value = MAXIMUM_CONSTRAINT;
     
-    _className = "Sprout";
+    _class_name = "Sprout";
+    _entity_type = ET_Sprout;
 }
 
 // ********************************************************************************************************************

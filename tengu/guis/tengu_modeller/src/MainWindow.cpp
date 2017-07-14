@@ -20,6 +20,8 @@
 tengu::MainWindow::MainWindow(QWidget *parent) 
     : QMainWindow(parent)
 {
+
+    __do_not_handle_events = true;
     
     setWindowTitle( tr("Tengu modeller") );
     setWindowIcon( QIcon( QPixmap(":tengu_32.png") ) );
@@ -59,8 +61,14 @@ tengu::MainWindow::MainWindow(QWidget *parent)
     // Левая часть приложения.
     
     __left = new MainWindowLeft( __workSpace );    
-    QObject::connect( __left->treeStructure, SIGNAL( signalAgentCreated( AbstractAgent * ) ), this, SLOT( __on__tree_structure__agent_was_created( AbstractAgent * ) ) );
+    // QObject::connect( __left->treeStructure, SIGNAL( signalAgentCreated( AbstractAgent * ) ), this, SLOT( __on__tree_structure__agent_was_created( AbstractAgent * ) ) );
+    
+    QObject::connect( __left->treeStructure, SIGNAL( signalWantCreateAgent( AbstractAgent *, AbstractEntity::entity_types_t ) ),
+        this, SLOT( __on__want__create_agent( AbstractAgent *, AbstractEntity::entity_types_t ) ) );
+    
     QObject::connect( __left->treeStructure, SIGNAL( signalAgentSelected( AbstractAgent * ) ), this, SLOT( __on__tree_structure__agent_was_selected( AbstractAgent * ) ) );
+    // QObject::connect( __left->treeStructure, SIGNAL( signalAgentDeleted( QString ) ), this, SLOT( __on__tree_structure__agent_was_deleted( QString ) ) );
+    QObject::connect( __left->treeStructure, SIGNAL( signalClearAgent( AbstractAgent * ) ), this, SLOT( __on__clear_agent( AbstractAgent * ) ) );
     
     // Right part of the application
     // Правая часть приложения.
@@ -80,6 +88,7 @@ tengu::MainWindow::MainWindow(QWidget *parent)
     __createStatusBar();    
     __createDialogs();                
 
+    __do_not_handle_events = false;
 }
 
 // ********************************************************************************************************************
@@ -694,11 +703,11 @@ void tengu::MainWindow::__on__simulation_stop() {
 // *                                       В древовидной структуре был создан агент.                                  *
 // *                                                                                                                  *
 // ********************************************************************************************************************
-
+/*
 void tengu::MainWindow::__on__tree_structure__agent_was_created ( tengu::AbstractAgent * agent ) {
 
 }
-
+*/
 // ********************************************************************************************************************
 // *                                                                                                                  *
 // *                                An agent was selected in tree-like structure view.                                *
@@ -709,6 +718,8 @@ void tengu::MainWindow::__on__tree_structure__agent_was_created ( tengu::Abstrac
 
 void tengu::MainWindow::__on__tree_structure__agent_was_selected ( tengu::AbstractAgent * agent ) {
     
+    if ( __do_not_handle_events ) return;
+    
     AbstractEntityItem * item = AgentItemFactory::createItem( agent );
     if ( item ) {
         
@@ -718,6 +729,77 @@ void tengu::MainWindow::__on__tree_structure__agent_was_selected ( tengu::Abstra
         __schemaView->show();    
         
     };
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                  Agent was deleted in tree-like structure view.                                  *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                   В древовидной структуре был удален агент.                                      *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+/*
+void tengu::MainWindow::__on__tree_structure__agent_was_deleted( QString uuid ) {
+}
+*/
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                     Clear agent. Independed of signal sender.                                    *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                  Очистка агента. Независимо от источника сигнала.                                *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindow::__on__clear_agent( AbstractAgent * agent ) {
+    
+    __do_not_handle_events = true;
+    
+    // Cleanup at the schema.
+    // Очистка на схеме.
+    
+    if ( ( __schemaScene->rootEntity() ) && ( __schemaScene->rootEntity()->getUUID() == agent->getUUID() ) ) {
+        __schemaView->hide();
+        __schemaScene->clear();        
+        __schemaView->show();
+    };
+            
+    // Cleanup in the tree-like structure.
+    // Очистка в древовидной структуре.
+    
+    QList<QTreeWidgetItem * > structure = __left->treeStructure->getAllItems();
+    for ( int i=0; i<structure.count(); i++ ) {
+        AbstractAgent * itemAgent = qvariant_cast< AbstractAgent * > ( structure.at(i)->data( 0, Qt::UserRole) );
+        if ( ( itemAgent ) && ( itemAgent->parent() ) && ( itemAgent->parent()->getUUID() == agent->getUUID() ) ) {
+            delete( structure.at(i) );
+            structure.replace( i, nullptr );
+        };
+    };
+    
+    // Delete children's elements physically
+    // Физическое удаление детей.
+    
+    QList< AbstractAgent * > children_list = agent->children();
+    for ( int i=0; i<children_list.count(); i++ ) {
+        AbstractAgent * oneChild = children_list.at(i);
+        agent->removeChild( oneChild );
+        delete( oneChild );
+    };
+    
+    // If we have process as root, we need add ProcessStart element at least
+    // Если у нас в качестве корневого - процесс, то нужно как минимум добавить ему элемент начала процесса
+    
+    Process * process = dynamic_cast< Process * > ( agent );
+    if ( process ) {
+        ProcessStart * start = new ProcessStart();
+        start->setSystemName( process->getSystemName() );
+        start->setHumanName( process->getHumanName() );
+        start->setComment( process->getComment() );
+        ProcessStartItem * si = new ProcessStartItem( start );
+        __schemaScene->addItem( si );
+    }
+    
+    __do_not_handle_events = false;
 }
 
 // ********************************************************************************************************************
@@ -855,6 +937,39 @@ void tengu::MainWindow::__on__save() {
     __action__save_schema->setEnabled( false );
 }
 
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                           Someone want create an agent.                                          *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                            Кто-то хочет создать агента.                                          *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindow::__on__want__create_agent( AbstractAgent * parent, AbstractEntityItem::graphics_item_types_t type ) {
+
+    QJsonObject json;
+    
+    switch ( type ) {
+        case Vehicle: json[ JSON_CLASS_NAME_ELEMENT ] = "Vehicle"; break;
+        case Process: json[ JSON_CLASS_NAME_ELEMENT ] = "Process"; break;
+        case Task: json[ JSON_CLASS_NAME_ELEMENT ] = "Task"; break;
+        default: __on__error( EL_WARNING, "MainWindow::on__want__create_agent()", "Unknown agent type" + QString::number( type ) );
+    };
+    
+    AbstractAgent * agent = AgentItemFactory::createEntity( type );
+    if ( agent ) {
+        
+        if ( parent ) parent->addChild( agent );
+        else __workSpace->addChild( agent );
+        
+        // Add new agent to tree-like structure
+        // Добавить нового агента в древовидную структуру.
+        
+        __left->treeStructure->addAgent( agent );
+        
+    } else __on__error( EL_WARNING, "MainWindow::on__want__create_agent()", "Agent was not ben created.");
+    
+}
 
 // ********************************************************************************************************************
 // *                                                                                                                  *

@@ -20,6 +20,7 @@
 #define JSON_DATABASE_ELEMENT       "database"
 #define JSON_UUID_ELEMENT           "uuid"
 #define JSON_MONGOID_ELEMENT        "_id"
+#define JSON_CLASS_NAME_ELEMENT     "class_name"
 
 namespace tengu {
     

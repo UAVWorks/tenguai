@@ -20,7 +20,8 @@
 tengu::ORer::ORer () 
     : AbstractAgent () 
 {
-    _className = "ORer";
+    _class_name = "ORer";
+    _entity_type = AbstractEntity::ET_ORer;
 }
 
 // ********************************************************************************************************************

@@ -22,7 +22,8 @@
 tengu::Process::Process () 
     : AbstractAgent ()
 {
-
+    _class_name = "Process";
+    _entity_type = AbstractEntity::ET_Process;
 }
 
 // ********************************************************************************************************************

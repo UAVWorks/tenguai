@@ -17,12 +17,11 @@
 #include <QMutex>
 #include <QDebug>
 
-#include "AbstractAgent.h"
 #include "Sprout.h"
 
 namespace tengu {
 
-    class SproutableAgent : public AbstractAgent {
+    class SproutableAgent : public tengu::AbstractAgent {
         
         Q_OBJECT
                 
@@ -42,7 +41,7 @@ namespace tengu {
             // Add "the sprout", reaction to redises messages.
             // Добавить "веточку" реакции на сообщения редиса.
             
-            void addSprout( Sprout * sprout );
+            void addSprout( tengu::Sprout * sprout );
             
             // Total sprout's count for this agent.
             // Общее число "ростков" агента.
@@ -62,7 +61,7 @@ namespace tengu {
             // Get sprout list suitable (connectable) for specified sprout
             // Получить лист sprout'ов, подходящих (соединябельных) с представленным sprout'ом.
             
-            QList< Sprout * > sutiableSproutsFor( Sprout * sp );
+            QList< tengu::Sprout * > sutiableSproutsFor( tengu::Sprout * sp );
             
             // Has this agent a "focus", i.e. it think about possibility to launch?
             // Имеет ли агент "фокус", то есть он думает о возможности запуска?
@@ -96,7 +95,7 @@ namespace tengu {
              * "Ростки" данного агента, связь с окружающей средой.
              */
             
-            QMap < QString, Sprout * > __sprouts;
+            QMap < QString, tengu::Sprout * > __sprouts;
             
             // The subscribtion function. Call at the moment subsciber redis connection.            
             // Функция подписки. Вызывается на момент соединения подписчика редиса.

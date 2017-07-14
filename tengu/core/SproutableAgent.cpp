@@ -61,7 +61,7 @@ void tengu::SproutableAgent::__on_subscriber_connected() {
 void tengu::SproutableAgent::__on_subscribed ( QString channel ) {
     
     qDebug() << "SproutableAgent::subscribe: " << channel;
-    foreach ( Sprout * sprout, __sprouts ) {
+    foreach ( tengu::Sprout * sprout, __sprouts ) {
         sprout->subscribed( channel );
     };
     
@@ -79,7 +79,7 @@ void tengu::SproutableAgent::__on_unsubscribed ( QString channel ) {
     
     qDebug() << "SproutableAgent::on unsubscribed: " << channel;
     
-    foreach ( Sprout * sprout, __sprouts ) {
+    foreach ( tengu::Sprout * sprout, __sprouts ) {
         sprout->unsubscribed( channel );
     };
     qDebug() << "SproutableAgent::on unsubscribed done.";
@@ -98,7 +98,7 @@ void tengu::SproutableAgent::__on_got_message ( QString channel, QString message
 
     bool handled = false;
         
-    foreach ( Sprout * sprout, __sprouts ) {
+    foreach ( tengu::Sprout * sprout, __sprouts ) {
         bool res = sprout->handleMessage( channel, message );
         if ( res ) {
             QString sproutName = sprout->getSystemName();
@@ -202,7 +202,7 @@ bool tengu::SproutableAgent::isFocused() {
 
 void tengu::SproutableAgent::__subscribe() {
     
-    foreach ( Sprout * sprout, __sprouts) {
+    foreach ( tengu::Sprout * sprout, __sprouts) {
         sprout->subscribe();
     };
     
@@ -217,7 +217,7 @@ void tengu::SproutableAgent::__subscribe() {
 // ********************************************************************************************************************
 
 void tengu::SproutableAgent::__unsubscribe() {
-    foreach( Sprout * sprout, __sprouts ) {
+    foreach( tengu::Sprout * sprout, __sprouts ) {
         sprout->unsubscribe();
     };
 }
@@ -268,8 +268,8 @@ int tengu::SproutableAgent::sproutsCount() {
 
 QList< tengu::Sprout* > tengu::SproutableAgent::sutiableSproutsFor ( tengu::Sprout * sp ) {
     
-    QList < Sprout * > result;
-    foreach ( Sprout * sprout, __sprouts ) {
+    QList < tengu::Sprout * > result;
+    foreach ( tengu::Sprout * sprout, __sprouts ) {
         if ( (sp->getExecutionMode() == Sprout::EM_ALWAYS ) 
             || (sprout->getExecutionMode() == Sprout::EM_ALWAYS) 
             || ( sprout->getExecutionMode() == sp->getExecutionMode() ) ) 

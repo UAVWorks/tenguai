@@ -21,7 +21,7 @@ tengu::TaskItem::TaskItem ( tengu::Task * task, QGraphicsItem * parent )
     : ItemWithLinks ( task , parent )
 {
     _boundingRect = QRectF( 0.0, 0.0, 400.0, 144.0 );
-    _className = "TaskItem";
+    _class_name = "TaskItem";
     _canChangeExecuteMode = true;
 }
 

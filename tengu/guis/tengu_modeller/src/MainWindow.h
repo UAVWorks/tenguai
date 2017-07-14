@@ -71,6 +71,8 @@ namespace tengu {
             
         private:
         
+            bool __do_not_handle_events;
+            
             // Horizontal splitter for main window's elements.
             // Горизонтальный сплиттер для элементов главного окна.
             QSplitter * __hSplitter;
@@ -148,7 +150,14 @@ namespace tengu {
             void __on__something_changed();
             
             void __on__tree_structure__agent_was_selected( AbstractAgent * agent );
-            void __on__tree_structure__agent_was_created( AbstractAgent * agent );
+            // void __on__tree_structure__agent_was_created( AbstractAgent * agent );
+            // void __on__tree_structure__agent_was_deleted( QString uuid );
+            
+            // Clear agent. Independed of signal sender.
+            // Очистка агента. Независимо от источника сигнала.
+            void __on__clear_agent( AbstractAgent * agent );
+            
+            void __on__want__create_agent( AbstractAgent * parent, AbstractEntity::entity_types_t type );
             
             void __on__create__process();
             void __on__save();

@@ -20,7 +20,8 @@
 tengu::ANDor::ANDor () 
     : AbstractAgent ()
 {
-    _className = "ANDor";
+    _class_name = "ANDor";
+    _entity_type = AbstractEntity::ET_ANDor;
 }
 
 // ********************************************************************************************************************

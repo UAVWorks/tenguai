@@ -20,6 +20,7 @@
 
 #include "WorkSpace.h"
 #include "AgentFactory.h"
+#include "AbstractEntityItem.h"
 
 namespace tengu {
     
@@ -29,13 +30,19 @@ namespace tengu {
         
         signals:
             
-            void signalAgentCreated( AbstractAgent * agent );
+            // void signalAgentCreated( AbstractAgent * agent );
+            void signalWantCreateAgent( AbstractEntity * parent, AbstractEntity::entity_types_t type );
             void signalAgentSelected( AbstractAgent * agent );
+            // void signalAgentDeleted( QString uuid );
+            void signalClearAgent( AbstractAgent * agent );
         
         public:
             
             TreeStructure ( WorkSpace * ws );
             virtual ~TreeStructure();
+            
+            QList< QTreeWidgetItem * > getAllItems();
+            void addAgent( AbstractAgent * agent );
             
         protected:
             
@@ -52,15 +59,18 @@ namespace tengu {
             
             QAction * __action__create__vehicle;
             QAction * __action__create__process;
+            QAction * __action__clear;
             
             void __select_forcibly_with_expanding( QTreeWidgetItem * parent, QTreeWidgetItem * selected );
             
             void __create_actions();
+            void __iterable_append_item( QList<QTreeWidgetItem * > * result, QTreeWidgetItem * item );
             
         private slots:
             
             void __on__create__vehicle();
             void __on__create__process();
+            void __on__clear();
             
             void __on__tree_item_selected( const QItemSelection & current, const QItemSelection & previous );
             

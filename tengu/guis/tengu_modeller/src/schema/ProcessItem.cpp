@@ -21,7 +21,7 @@ tengu::ProcessItem::ProcessItem ( tengu::AbstractEntity * entity, QGraphicsItem 
     : ItemWithLinks ( entity, parent )
 {
     _boundingRect = QRectF( 0.0, 0.0, 440.0, 164.0 );
-    _className = "ProcessItem";
+    _class_name = "ProcessItem";
 }
 
 // ********************************************************************************************************************
