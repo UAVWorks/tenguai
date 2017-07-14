@@ -139,6 +139,8 @@ namespace tengu {
             
             AbstractEntity::execution_mode_t __execution_mode;
             
+            void __check_start_element_in_process( AbstractAgent * agent );
+            
         private slots:
             
             void __on_quit_request();  

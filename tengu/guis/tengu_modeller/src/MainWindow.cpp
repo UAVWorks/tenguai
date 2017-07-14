@@ -745,6 +745,52 @@ void tengu::MainWindow::__on__tree_structure__agent_was_deleted( QString uuid ) 
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
+// *                           Check start element in process. Create one if does not exists.                         *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                    Проверка элемента "начало" в процессе. Создание, если его еще не существует.                  *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindow::__check_start_element_in_process ( tengu::AbstractAgent * agent ) {
+    
+    Process * process = dynamic_cast< Process * > ( agent );
+    if ( process ) {
+    
+        // Have this process start element?
+        // Есть в этом процессе элемент "начало"?
+        
+        bool have = false;
+        QList<AbstractAgent *> hisChildren = agent->children();
+        for ( int i=0; i<hisChildren.count(); i++ ) {
+            if ( hisChildren.at(i)->entityType() == AbstractEntity::ET_ProcessStart ) {
+                have = true;
+                break;
+            };
+        };
+        
+        // Create process start if we have not one
+        // Создание начала процесса, если у нас его еще нет.
+        
+        if ( ! have ) {
+            
+            ProcessStart * start = new ProcessStart();
+            start->setSystemName( process->getSystemName() );
+            start->setHumanName( process->getHumanName() );
+            start->setComment( process->getComment() );
+            agent->addChild( start );
+            
+            if ( ( __schemaScene->rootEntity() ) && ( __schemaScene->rootEntity()->getUUID() == agent->getUUID() ) ) {
+                ProcessStartItem * si = new ProcessStartItem( start );
+                __schemaScene->addItem( si );
+            };
+        }
+    }
+    
+    
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
 // *                                     Clear agent. Independed of signal sender.                                    *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                                  Очистка агента. Независимо от источника сигнала.                                *
@@ -789,15 +835,7 @@ void tengu::MainWindow::__on__clear_agent( AbstractAgent * agent ) {
     // If we have process as root, we need add ProcessStart element at least
     // Если у нас в качестве корневого - процесс, то нужно как минимум добавить ему элемент начала процесса
     
-    Process * process = dynamic_cast< Process * > ( agent );
-    if ( process ) {
-        ProcessStart * start = new ProcessStart();
-        start->setSystemName( process->getSystemName() );
-        start->setHumanName( process->getHumanName() );
-        start->setComment( process->getComment() );
-        ProcessStartItem * si = new ProcessStartItem( start );
-        __schemaScene->addItem( si );
-    }
+    __check_start_element_in_process( agent );
     
     __do_not_handle_events = false;
 }
@@ -966,6 +1004,7 @@ void tengu::MainWindow::__on__want__create_agent( AbstractAgent * parent, Abstra
         // Добавить нового агента в древовидную структуру.
         
         __left->treeStructure->addAgent( agent );
+        __check_start_element_in_process( agent );
         
     } else __on__error( 
         EL_WARNING, 
