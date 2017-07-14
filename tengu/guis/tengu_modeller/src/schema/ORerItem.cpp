@@ -21,6 +21,7 @@ tengu::ORerItem::ORerItem ( tengu::ORer * entity, QGraphicsItem * parent )
     : ItemWithLinks ( entity , parent )
 {
     _class_name = "ORerItem";
+    _entity_type = ET_ORerItem;
     _boundingRect = QRect( 0, 0, 40, 144 );
 }
 

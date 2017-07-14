@@ -20,7 +20,8 @@
 tengu::VehicleItem::VehicleItem ( tengu::Vehicle * vehicle, QGraphicsItem* parent ) 
     : TopLevelItem ( vehicle , parent )
 {
-
+    _class_name = "VehicleItem";
+    _entity_type = ET_VehicleItem;
 }
 
 // ********************************************************************************************************************

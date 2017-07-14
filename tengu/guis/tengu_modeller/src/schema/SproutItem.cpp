@@ -33,6 +33,9 @@ tengu::SproutItem::SproutItem ( tengu::Sprout * sprout, QGraphicsItem* parent )
     
     manualSignalNameSelection = false;
     
+    _class_name = "SproutItem";
+    _entity_type = ET_SproutItem;
+    
 }
 
 // ********************************************************************************************************************

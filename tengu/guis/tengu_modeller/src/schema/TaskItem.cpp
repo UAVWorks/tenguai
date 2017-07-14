@@ -22,6 +22,7 @@ tengu::TaskItem::TaskItem ( tengu::Task * task, QGraphicsItem * parent )
 {
     _boundingRect = QRectF( 0.0, 0.0, 400.0, 144.0 );
     _class_name = "TaskItem";
+    _entity_type = ET_TaskItem;
     _canChangeExecuteMode = true;
 }
 

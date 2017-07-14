@@ -20,7 +20,8 @@
 tengu::WorkSpaceItem::WorkSpaceItem ( tengu::AbstractEntity* entity, QGraphicsItem* parent ) 
     : AbstractEntityItem ( entity, parent ) 
 {
-
+    _class_name = "WorkSpaceItem";
+    _entity_type = ET_WorkspaceItem;
 }
 
 // ********************************************************************************************************************
