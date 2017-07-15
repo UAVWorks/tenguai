@@ -13,8 +13,8 @@
 #define MAXIMUM_CONSTRAINT 100500
 
 #define TENGU_ORGANIZATION  "Tengu"
-
 #define TENGU_MODELLER_APPLICATION "Modeller"
+#define TENGU_DATABASE      "tengu"
 
 #define JSON_COLLECTION_ELEMENT     "collection"
 #define JSON_DATABASE_ELEMENT       "database"

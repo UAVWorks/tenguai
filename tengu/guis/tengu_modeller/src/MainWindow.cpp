@@ -69,6 +69,7 @@ tengu::MainWindow::MainWindow(QWidget *parent)
     QObject::connect( __left->treeStructure, SIGNAL( signalAgentSelected( AbstractAgent * ) ), this, SLOT( __on__tree_structure__agent_was_selected( AbstractAgent * ) ) );
     // QObject::connect( __left->treeStructure, SIGNAL( signalAgentDeleted( QString ) ), this, SLOT( __on__tree_structure__agent_was_deleted( QString ) ) );
     QObject::connect( __left->treeStructure, SIGNAL( signalClearAgent( AbstractAgent * ) ), this, SLOT( __on__clear_agent( AbstractAgent * ) ) );
+    QObject::connect( __left->treeStructure, SIGNAL(signalError(tengu::error_level_t,QString,QString)), this, SLOT( __on__error( tengu::error_level_t, QString, QString ) ) );
     
     // Right part of the application
     // Правая часть приложения.
@@ -112,13 +113,13 @@ void tengu::MainWindow::__createActions() {
     // QObject::connect();
     
     __action__create_schema__process = new QAction( QIcon(":package_add_16.png"), tr("Create the process"), this );
-    QObject::connect( __action__create_schema__process, SIGNAL( triggered() ), this, SLOT( __on__create__process() ) );
+    // QObject::connect( __action__create_schema__process, SIGNAL( triggered() ), this, SLOT( __on__create__process() ) );
     
     // Open (vehicle, process, task e.t.c.)
     // Открыть ("самоходку", процесс, задачу и др)
     
     __action__open_schema = new QAction( QIcon( QPixmap(":folder_16.png") ), tr("Open..."), this );
-    QObject::connect( __action__open_schema, SIGNAL( triggered() ), this, SLOT( __on__open() ) );
+    QObject::connect( __action__open_schema, SIGNAL( triggered() ), this, SLOT( __on__want__open() ) );
     
     __action__open_schema__process = new QAction( QIcon( QPixmap(":folder_brick_16.png") ), tr("Open the process"), this );
     
@@ -175,8 +176,13 @@ void tengu::MainWindow::__createActions() {
 void tengu::MainWindow::__createDialogs() {
     
     __dialogPropertiesSprout = new DialogPropertiesSprout( __workSpace );
+    QObject::connect( __dialogPropertiesSprout, SIGNAL(signalError(tengu::error_level_t,QString,QString)), this, SLOT( __on__error( tengu::error_level_t, QString, QString ) ) );
+    
     __dialogPropertiesTask = new DialogPropertiesTask( __workSpace );
+    QObject::connect( __dialogPropertiesTask, SIGNAL(signalError(tengu::error_level_t,QString,QString)), this, SLOT( __on__error( tengu::error_level_t, QString, QString ) ) );
+    
     __dialogOpenSaveModel = new DialogOpenSaveModel( __mongo );
+    QObject::connect( __dialogOpenSaveModel, SIGNAL(signalError(tengu::error_level_t,QString,QString)), this, SLOT( __on__error( tengu::error_level_t, QString, QString ) ) );
     
 }
 
@@ -413,9 +419,10 @@ void tengu::MainWindow::__createSchemaScene() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
+/*
 void tengu::MainWindow::__on__create__process() {
     
-    /*
+    
     Process * process = new Process();
     ProcessItem * processItem = new ProcessItem( process );
     
@@ -436,9 +443,10 @@ void tengu::MainWindow::__on__create__process() {
     __library_tab->tab__processes->setEnabled( true );
     __library_tab->setCurrentWidget( __library_tab->tab__processes );
     // __library_tab->tab__processes->on__process_created();
-    */
+  
     
 }
+*/
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
@@ -937,8 +945,37 @@ void tengu::MainWindow::__on__error ( tengu::error_level_t errorLevel, QString p
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::MainWindow::__on__open() {
-    __dialogOpenSaveModel->exec();
+void tengu::MainWindow::__on__want__open() {
+    __dialogOpenSaveModel->setCurrentMode( DialogOpenSaveModel::DM_OPEN );
+    if ( __dialogOpenSaveModel->exec() == QDialog::Accepted ) {
+        AbstractAgent * result = __dialogOpenSaveModel->result_agent;
+        if ( result ) {
+            __on__agent__opened( result );
+        };
+    }
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                     The element was opened (taked from database).                                *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                       Элемент был открыт (взят из базы данных).                                  *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindow::__on__agent__opened ( tengu::AbstractAgent * agent ) {
+    
+    // Insert it into workspace
+    // Добавляем его в рабочее пространство.
+    
+    AbstractAgent * parent = __workSpace;
+    AbstractAgent * selectedTreeAgent = __left->treeStructure->selectedAgent();
+    
+    if ( selectedTreeAgent ) parent = selectedTreeAgent;
+    parent->addChild( agent );
+    
+    __left->treeStructure->addAgent( agent, true );
+    
 }
 
 // ********************************************************************************************************************
@@ -1003,7 +1040,7 @@ void tengu::MainWindow::__on__want__create_agent( AbstractAgent * parent, Abstra
         // Add new agent to tree-like structure
         // Добавить нового агента в древовидную структуру.
         
-        __left->treeStructure->addAgent( agent );
+        __left->treeStructure->addAgent( agent, true );
         __check_start_element_in_process( agent );
         
     } else __on__error( 

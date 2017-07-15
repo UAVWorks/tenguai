@@ -12,7 +12,7 @@
 #include <QJsonObject>
 #include <QDebug>
 
-// #include "SproutableAgent.h"
+#include "Constants.h"
 #include "ProcessStart.h"
 #include "ProcessStop.h"
 #include "Process.h"
@@ -29,6 +29,10 @@ namespace tengu {
             // static bool hasAgent( QJsonObject json );
             static AbstractEntity * createEntity( QJsonObject json );
             static QString getClassName( QString collectionName );
+        
+        protected:
+            static void _readFromJSON( AbstractEntity * entity, QJsonObject json );
+            static void _append_object( AbstractEntity * entity, QString key, QJsonObject json );
         
     };
     

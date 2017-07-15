@@ -30,6 +30,8 @@ namespace tengu {
         
         signals:
             
+            void signalError( tengu::error_level_t errorLevel, QString procedureName, QString errorMessage );
+            
             // void signalAgentCreated( AbstractAgent * agent );
             
             void signalWantCreateAgent( AbstractAgent * parent, AbstractEntity::entity_types_t type );
@@ -45,7 +47,8 @@ namespace tengu {
             virtual ~TreeStructure();
             
             QList< QTreeWidgetItem * > getAllItems();
-            void addAgent( AbstractAgent * agent );
+            void addAgent( AbstractAgent * agent, bool focusToHim );
+            AbstractAgent * selectedAgent();
             
         protected:
             

@@ -93,6 +93,8 @@ namespace tengu {
             
             QJsonObject __getReference( QJsonValue val );
             
+            bool __read_recursive( QString database, QJsonValue & val );
+            
             // Add to hiuse element, for later using references between collections.
             // Добавить к элементу hiuse, для последующего использования ссылок между коллекциями.
             

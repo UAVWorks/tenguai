@@ -161,9 +161,10 @@ namespace tengu {
             
             void __on__want__create_agent( AbstractAgent * parent, AbstractEntity::entity_types_t type );
             
-            void __on__create__process();
+            // void __on__create__process();
             void __on__save();
-            void __on__open();
+            void __on__want__open();
+            void __on__agent__opened( AbstractAgent * agent );
             void __on__error( tengu::error_level_t errorLevel, QString procedureName, QString errorMessage );
             
             void __on_set_execution_mode_xplane();

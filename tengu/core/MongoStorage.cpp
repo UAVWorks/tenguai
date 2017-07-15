@@ -609,6 +609,81 @@ void tengu::MongoStorage::__insert_single_object ( QJsonObject jsonObject ) {
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
+// *                                      Recursive read from another collections                                     *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                      Рекурсивное чтение из других коллекций.                                     *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+bool tengu::MongoStorage::__read_recursive ( QString database, QJsonValue & val ) {
+
+    if ( ! __simplifyable( val ) ) return false;
+        
+    if ( val.isObject() ) {
+    
+        QJsonObject oval = val.toObject();
+        
+        if ( 
+            ( oval.keys().count() == 2 ) 
+            && ( oval.contains( JSON_COLLECTION_ELEMENT ) )
+            && ( 
+                    ( oval.contains( JSON_UUID_ELEMENT ) )
+                    || ( oval.contains( JSON_MONGOID_ELEMENT ) )
+                )
+            ) 
+        {
+            
+            // This is a reference to another collection, object will be modified
+            // Это ссылка на другую коллекцию, объект будет модифицирован.
+            QJsonObject selector;
+            selector[ JSON_DATABASE_ELEMENT ] = database;
+            selector[ JSON_COLLECTION_ELEMENT ] = oval[ JSON_COLLECTION_ELEMENT ].toString();
+            QString uuid;
+            if ( oval.contains( JSON_UUID_ELEMENT ) ) uuid = oval[ JSON_UUID_ELEMENT ].toString();
+            else uuid = oval[ JSON_MONGOID_ELEMENT ].toString();
+            selector[ JSON_UUID_ELEMENT ] = uuid;
+            QList<QJsonObject> result = read( selector, true );
+                        
+            if ( result.isEmpty() ) {
+                
+                // Invalid reference, empty object.
+                // Неправильная ссылка, пустой объект.
+                
+                val = QJsonValue();
+                
+            } else {
+                
+                val = result.at(0);
+            };
+            
+            return true;
+        };
+    };
+    
+    if ( val.isArray() ) {
+        
+        QJsonArray aval = val.toArray();
+        bool result = false;
+        
+        for ( int i=0; i<aval.count(); i++ ) {
+            QJsonValue arr_value = aval.at(i);
+            if ( __read_recursive( database, arr_value ) ) {
+                aval.replace( i, arr_value );
+                result = true;
+            };
+        };
+        
+        if ( result ) {
+            val = aval;
+            return true;
+        };
+    };
+    
+    return false;
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
 // *                                          Get all element's from collection.                                      *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                                          Получить все элементы из коллекции.                                     *
@@ -616,7 +691,7 @@ void tengu::MongoStorage::__insert_single_object ( QJsonObject jsonObject ) {
 // ********************************************************************************************************************
 
 QList<QJsonObject> tengu::MongoStorage::read( QJsonObject selector, bool recursive ) {
-
+    
     QList<QJsonObject> result;
     const bson_t * doc;
     
@@ -662,10 +737,31 @@ QList<QJsonObject> tengu::MongoStorage::read( QJsonObject selector, bool recursi
                 
                 answer[ JSON_COLLECTION_ELEMENT ] = selector[ JSON_COLLECTION_ELEMENT ];
                 
+                // Recursive filling fields from another collections
+                // Рекурсивное заполнение полей из других коллекций.
+                
+                if ( recursive ) {
+                    QList<QString> keylist = answer.keys();
+                    for ( int i=0; i<keylist.size(); i++ ) {
+                        
+                        QString key = keylist.at(i);
+                        QJsonValue val = answer.value( key );
+                        
+                        if ( __simplifyable( val ) ) {
+                                                        
+                            if ( __read_recursive( selector[JSON_DATABASE_ELEMENT].toString(), val ) ) {
+                                answer[ key ] = val ;
+                            }
+                            
+                        }                        
+                    }
+                };
+                
                 result.append( answer );
                 
                 bson_free (str);
             }
+            
             mongoc_cursor_destroy( cursor );
         };
         

@@ -273,8 +273,8 @@ QJsonObject tengu::AbstractEntity::toJSON() {
     
     QJsonObject o;
     
-    o.insert("database", "tengu");
-    o.insert("uuid", __uuid );
+    o.insert(JSON_DATABASE_ELEMENT, TENGU_DATABASE );
+    o.insert(JSON_UUID_ELEMENT, __uuid );
     o["system_name"] = __system_name;
     o["human_name"] = __human_name;
     o.insert("comment", __comment );

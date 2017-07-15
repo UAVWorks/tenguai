@@ -20,6 +20,10 @@
 tengu::DialogOpenSaveModel::DialogOpenSaveModel( MongoStorage * mongo ) {
     
     __mongo = mongo;
+    __selector[ JSON_DATABASE_ELEMENT ] = TENGU_DATABASE;
+    __current_mode = DM_OPEN;
+    result_agent = nullptr;
+    
     setWindowIcon( QIcon(QPixmap(":folder_16.png")) );
     setWindowTitle( tr("Open...") );
     _buttonOk->setText( tr("Open") );
@@ -76,6 +80,7 @@ QFrame * tengu::DialogOpenSaveModel::__createElementsList() {
     lay->addWidget( __combo_box__type_of_elements );
     
     __table_of_elements = new QTableWidget();
+    QObject::connect( __table_of_elements->selectionModel(), SIGNAL( selectionChanged( QItemSelection ,QItemSelection )), this, SLOT( __on__table_element_selected( QItemSelection , QItemSelection ) ) );
     __table_of_elements->setColumnCount( 1 );
     __table_of_elements->horizontalHeader()->hide();
     __table_of_elements->verticalHeader()->hide();
@@ -210,7 +215,10 @@ void tengu::DialogOpenSaveModel::__on__type_of_elements_changed( int type ) {
 // ********************************************************************************************************************
 
 void tengu::DialogOpenSaveModel::__fill_table_of_elements() {
+    
     _clearTable( __table_of_elements );
+    _buttonOk->setEnabled( false );
+    
     int rows = 0;
     QString collectionName = QString("");
     switch ( __combo_box__type_of_elements->currentData( Qt::UserRole).toInt() ) {
@@ -221,10 +229,11 @@ void tengu::DialogOpenSaveModel::__fill_table_of_elements() {
     };
     
     if ( ! collectionName.isEmpty() ) {
-        QJsonObject selector;
-        selector[ JSON_DATABASE_ELEMENT ] = "tengu";
-        selector[ JSON_COLLECTION_ELEMENT ] = collectionName;
-        QList< QJsonObject > elements = __mongo->read( selector, false );
+        
+        __selector[ JSON_COLLECTION_ELEMENT ] = collectionName;
+        __selector.remove( JSON_UUID_ELEMENT );
+        
+        QList< QJsonObject > elements = __mongo->read( __selector, false );
         if ( elements.count() > 0 ) {
             for ( int i=0; i<elements.count(); i++ ) {
                 QJsonObject element = elements.at( i );
@@ -250,6 +259,66 @@ void tengu::DialogOpenSaveModel::__fill_table_of_elements() {
         };
     };
 };
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                    Operation which goes after "Ok" button pressed.                               *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                         Операции после нажатия на кнопку "Ок".                                   *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::DialogOpenSaveModel::_on__ok() {
+    
+    result_agent = nullptr;
+    
+    QList<QJsonObject> readed = __mongo->read( __selector, true );
+    if ( readed.isEmpty() ) emit signalError( EL_WARNING, "DialogOpenSaveModel::_on__ok()", tr("Empty set of object was readed") );
+    else {
+        
+        result_agent = AgentItemFactory::createEntity( readed.at(0) );
+        
+        if ( ! result_agent ) {
+            emit signalError( EL_WARNING, "DialogOpenSaveModel::_on__ok()", tr("Result agent is empty") );
+        }
+    }
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                      The element was selected in element's table.                                *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                                В таблице выбрали элемент                                         *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::DialogOpenSaveModel::__on__table_element_selected ( QItemSelection current, QItemSelection previous ) {
+    
+    __selector.remove( JSON_UUID_ELEMENT );
+    _buttonOk->setEnabled( false );
+    QList<QTableWidgetItem * > selectedList = __table_of_elements->selectedItems();
+    
+    if ( selectedList.count() > 0 ) {
+        QString uuid = selectedList.at(0)->data( Qt::UserRole ).toString();
+        if ( ! uuid.isEmpty() ) {
+            _buttonOk->setEnabled( true );
+            __selector[ JSON_UUID_ELEMENT ] = uuid;
+        };
+    };
+    
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                           Set current mode of this dialog.                                       *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                       Установить текущий режим данного диалога.                                  *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::DialogOpenSaveModel::setCurrentMode ( tengu::DialogOpenSaveModel::dialog_mode_t mode ) {
+    __current_mode = mode;
+}
 
 // ********************************************************************************************************************
 // *                                                                                                                  *

@@ -25,6 +25,7 @@ tengu::AbstractEntity* tengu::AgentItemFactory::createEntity ( QJsonObject json 
     QString className;
     if ( json.contains("class_name") ) className = json["class_name"].toString();
     else if (json.contains(JSON_COLLECTION_ELEMENT) ) className = AgentItemFactory::getClassName( json[JSON_COLLECTION_ELEMENT].toString() );
+    
     if ( ! className.isEmpty() ) {
         
         if ( className == "ProcessStartItem" )  e = new ProcessStartItem();
@@ -42,7 +43,7 @@ tengu::AbstractEntity* tengu::AgentItemFactory::createEntity ( QJsonObject json 
         
     };
 
-    if ( e ) e->fromJSON( json );
+    if ( e ) _readFromJSON( e, json );
     
     // else {
     //    qDebug() << "AgentItemFactory::createEntity(), unhandled agent name " << json;
@@ -62,7 +63,7 @@ tengu::AbstractEntity* tengu::AgentItemFactory::createEntity ( QJsonObject json 
 QString tengu::AgentItemFactory::getClassName( QString collectionName ) {
     QString cname = AgentFactory::getClassName( collectionName );
     if ( cname.isEmpty() ) {
-        if ( collectionName == "vehicles" ) return "Vehicle";
+        
     };
     return cname;
 }
@@ -81,14 +82,14 @@ tengu::AbstractEntityItem * tengu::AgentItemFactory::createItem ( tengu::Abstrac
     XPlaneSimulator * xplane = dynamic_cast<XPlaneSimulator *> (agent );    if ( xplane ) return new XPlaneSimulatorItem( xplane );
     Process * process = dynamic_cast< Process * > ( agent );                if ( process ) return new ProcessItem( process );
     ProcessStart * start = dynamic_cast< ProcessStart * > ( agent );        if ( start ) return new ProcessStartItem( start );    
+    ProcessStop * stop = dynamic_cast< ProcessStop * > ( agent );           if ( stop ) return new ProcessStopItem( stop );
     Vehicle * vehicle = dynamic_cast< Vehicle * > ( agent ) ;               if ( vehicle ) return new VehicleItem( vehicle );
     WorkSpace * workSpace = dynamic_cast <WorkSpace * > ( agent );          if ( workSpace ) return new WorkSpaceItem( workSpace );
-    
-    
+        
     // Could not recognize the class
     // Не смогли распознать класс.
     
-    if ( agent ) qDebug() << "AgentItemFactory::createItem, can not create for " << agent->getHumanName();
+    if ( agent ) qDebug() << "AgentItemFactory::createItem, can not create for class " << agent->_class_name << ", human name=" << agent->getHumanName();
     
     return nullptr;
 }

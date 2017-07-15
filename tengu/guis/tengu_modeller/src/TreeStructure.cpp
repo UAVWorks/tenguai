@@ -60,7 +60,7 @@ void tengu::TreeStructure::__create_actions() {
     __action__create__process = new QAction( QIcon( QPixmap(":package_add_16.png") ), tr("Process"), this );
     QObject::connect( __action__create__process, SIGNAL( triggered() ), this, SLOT( __on__create__process() ) );
     
-    __action__clear = new QAction( QIcon(QPixmap()), tr("Clear"), this );
+    __action__clear = new QAction( QIcon(QPixmap(":Eraser_16.png")), tr("Clear"), this );
     QObject::connect( __action__clear, SIGNAL( triggered() ), this, SLOT( __on__clear() ) );
 }
 
@@ -113,7 +113,7 @@ void tengu::TreeStructure::contextMenuEvent ( QContextMenuEvent * event ) {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::TreeStructure::addAgent( AbstractAgent * agent ) {
+void tengu::TreeStructure::addAgent( AbstractAgent * agent, bool focusToHim ) {
     
     if ( ! agent ) return;
     
@@ -151,10 +151,20 @@ void tengu::TreeStructure::addAgent( AbstractAgent * agent ) {
             item->setIcon( 0, QIcon( QPixmap( ":package_add_16" ) ) );
         }; break;
         
+        case AbstractEntity::ET_ProcessStart: {
+            item = new QTreeWidgetItem( AbstractEntity::ET_ProcessStartTreeItem );
+            item->setIcon( 0, QIcon( QPixmap(":process_begin_16.png") ));
+        }; break;
+        
+        case AbstractEntity::ET_ProcessStop: {
+            item = new QTreeWidgetItem( AbstractEntity::ET_ProcessStopTreeItem );
+            item->setIcon( 0, QIcon( QPixmap(":process_end_16.png") ));
+        }; break;
+        
         case AbstractEntity::ET_Task: {
             item = new QTreeWidgetItem( AbstractEntity::ET_TaskTreeItem );
             item->setIcon( 0, QIcon( QPixmap( ":box_16.png" ) ) );
-        }; break;
+        }; break;                
         
         default: qDebug() << "TreeStructure::addAgent, unhandled type " << (int) agent->entityType();
     };
@@ -167,11 +177,32 @@ void tengu::TreeStructure::addAgent( AbstractAgent * agent ) {
         item->setData( 0, Qt::UserRole, QVariant::fromValue<AbstractAgent * >( agent ) );
         item->setText( 0, agent->getHumanName() );
         
-        if ( parentItem ) {
-            parentItem->addChild( item );
+        parentItem->addChild( item );
+        
+        if ( focusToHim ) {
+            __select_forcibly_with_expanding( parentItem, item );
+        };
+    };  
+    
+    if ( agent->hasChildren() ) {
+        QList< AbstractAgent * > hisChildren = agent->children();
+        for ( int i=0; i<hisChildren.count(); i++ ) {
+            addAgent( hisChildren.at(i), false );
         };
     };
-        
+    
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                         Get selected agent (not tree item)                                       *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                             Вернуть выбранного в дереве агента (а не элемент дерева)                             *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+tengu::AbstractAgent * tengu::TreeStructure::selectedAgent() {
+    return __selectedAgent;
 }
 
 // ********************************************************************************************************************

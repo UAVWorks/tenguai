@@ -24,6 +24,12 @@
 namespace tengu {
     
     class AbstractEntity {
+        
+        // For debug purposes, must be deleted later
+        // Для отладки, потом надо удалить.
+        
+        friend class AgentFactory;
+        friend class AgentItemFactory;
                 
         public:
             
@@ -80,6 +86,8 @@ namespace tengu {
                 
                 ET_TaskTreeItem,
                 ET_ProcessTreeItem,
+                ET_ProcessStartTreeItem,
+                ET_ProcessStopTreeItem,
                 ET_VehicleTreeItem,
                 ET_WorkspaceTreeItem
             };                        

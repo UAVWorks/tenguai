@@ -18,11 +18,17 @@
 #include <QHeaderView>
 #include <QTableWidget>
 
+#include "Constants.h"
+
 namespace tengu {
     
     class DialogWithButtons : public QDialog {
         
         Q_OBJECT
+        
+        signals:
+            
+            void signalError( tengu::error_level_t errorLevel, QString procedureName, QString errorMessage );
         
         public:
             
@@ -41,6 +47,8 @@ namespace tengu {
              */
             
             virtual void _on__cancel();
+            
+            virtual void _on__ok();
             
             /**
              * @short Clear table contents and set it's row count to 0.
