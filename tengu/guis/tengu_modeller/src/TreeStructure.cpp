@@ -195,6 +195,57 @@ void tengu::TreeStructure::addAgent( AbstractAgent * agent, bool focusToHim ) {
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
+// *                             Recursively delete an agent itself and all his children.                             *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                            Рекурсивное удаление агента как такового и всех его детей.                            *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::TreeStructure::deleteAgent ( tengu::AbstractAgent * agent ) {
+    
+    // His children firstly.
+    // Сначала - всех его детей.
+    
+    if ( agent->hasChildren() ) {
+        QList<AbstractAgent * > his_children = agent->children();
+        for ( int i=0; i<his_children.count(); i++ ) {
+            AbstractAgent * child = his_children.at( i );
+            deleteAgent( child );
+        };
+    }
+    
+    // Agent itself.
+    // Сам агент.            
+    
+    QList<QTreeWidgetItem * > all_items = getAllItems();
+    
+    for ( int i=0; i<all_items.count(); i++ ) {
+        QTreeWidgetItem * item = all_items.at(i);
+        AbstractAgent * item_agent = qvariant_cast<AbstractAgent * >( item->data(0, Qt::UserRole ) );        
+        if ( ( item_agent ) && ( item_agent->getUUID()  == agent->getUUID() ) ) {
+            delete( item );
+            break;
+        };
+    };
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                   Clear agent (remove all his children from tree )                               *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                 Очистка агента (удаление всех его детей из дерева)                               *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::TreeStructure::clearAgent ( tengu::AbstractAgent * agent ) {
+    QList<AbstractAgent * > his_children = agent->children();
+    for ( int i=0; i<his_children.count(); i++ ) {
+        deleteAgent( his_children.at(i) );
+    };
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
 // *                                         Get selected agent (not tree item)                                       *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                             Вернуть выбранного в дереве агента (а не элемент дерева)                             *

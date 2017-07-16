@@ -49,6 +49,8 @@ namespace tengu {
             QList< QTreeWidgetItem * > getAllItems();
             void addAgent( AbstractAgent * agent, bool focusToHim );
             AbstractAgent * selectedAgent();
+            void clearAgent( AbstractAgent * agent );
+            void deleteAgent( AbstractAgent * agent );
             
         protected:
             

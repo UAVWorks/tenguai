@@ -6,7 +6,7 @@ This is graphical tool for work with artifical intelligence models. At the momen
 
 # The latest operations.
 
-- **16 jul 2017** Bug with coordinates. Upsert (insert or update if exists).
+- **16 jul 2017** Bug with item coordinates. Upsert (insert or update if exists). Bug with cleaning tree item.
 - **15 jul 2017** With remarks, but model was opened.
 - **14 jul 2017** Cleaning of selected tree element. Creating element process was remade.
 - **13 jul 2017** Some elements was appear in open dialog.

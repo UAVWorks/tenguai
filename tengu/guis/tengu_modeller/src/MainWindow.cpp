@@ -821,6 +821,9 @@ void tengu::MainWindow::__on__clear_agent( AbstractAgent * agent ) {
     // Cleanup in the tree-like structure.
     // Очистка в древовидной структуре.
     
+    __left->treeStructure->clearAgent( agent );
+    
+    /*
     QList<QTreeWidgetItem * > structure = __left->treeStructure->getAllItems();
     for ( int i=0; i<structure.count(); i++ ) {
         AbstractAgent * itemAgent = qvariant_cast< AbstractAgent * > ( structure.at(i)->data( 0, Qt::UserRole) );
@@ -829,16 +832,21 @@ void tengu::MainWindow::__on__clear_agent( AbstractAgent * agent ) {
             structure.replace( i, nullptr );
         };
     };
+    */
     
     // Delete children's elements physically
     // Физическое удаление детей.
     
+    agent->deleteChildren();
+    
+    /*
     QList< AbstractAgent * > children_list = agent->children();
     for ( int i=0; i<children_list.count(); i++ ) {
         AbstractAgent * oneChild = children_list.at(i);
         agent->removeChild( oneChild );
         delete( oneChild );
     };
+    */
     
     // If we have process as root, we need add ProcessStart element at least
     // Если у нас в качестве корневого - процесс, то нужно как минимум добавить ему элемент начала процесса

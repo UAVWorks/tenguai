@@ -401,6 +401,23 @@ QList< tengu::AbstractAgent* > tengu::AbstractAgent::children() {
     
 }
 
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                       Recursive delete children for this agent.                                  *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                       Рекурсивное удаление детей этого агента.                                   *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::AbstractAgent::deleteChildren() {
+    
+    foreach( AbstractAgent * child, _children ) {
+        removeChild( child );
+        delete( child );
+    };
+    
+    _children.clear();    
+}
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
@@ -523,6 +540,7 @@ tengu::AbstractAgent::~AbstractAgent() {
     if ( _children.size() > 0 ) {
         
         foreach ( AbstractAgent * child, _children ) {
+            removeChild( child );
             delete( child );
         };
         
