@@ -397,6 +397,8 @@ bool tengu::AbstractEntity::fromJSON ( QJsonObject json ) {
     if ( json.contains("human_name" ) ) __human_name = json.value("human_name").toString();
     if ( json.contains("execution_mode") ) __execution_mode = ( execution_mode_t ) json.value("execution_mode").toInt();
     if ( json.contains("last_modified") ) __lastModified = QDateTime::fromString( json.value("last_modified").toString(), "t yyyy-MM-dd hh:mm:ss:zzz" );
+    if ( json.contains("x") ) __x = json.value("x").toInt();
+    if ( json.contains("y") ) __y = json.value("y").toInt();
     
     return true;
     

@@ -149,13 +149,15 @@ void tengu::SchemaScene::setRootItem ( tengu::AbstractEntityItem * rootItem ) {
             AbstractEntityItem * item = AgentItemFactory::createItem( entity->children().at(i) );
             
             if ( item ) {
+                /*
                 AbstractEntity * cent = item->entity();
                 if ( cent ) {
                     QGraphicsItem * qgr = ( QGraphicsItem * ) item;
                     qgr->setX( cent->getX() );
                     qgr->setY( cent->getY() );
                 };
-                addItem( item );
+                */
+                addItem( item );                
             };
         };
     };    
@@ -208,6 +210,12 @@ void tengu::SchemaScene::addItem ( QGraphicsItem * gItem ) {
         
         item->checkEntity();
         
+        tengu::AbstractEntity * cent = item->entity();
+        if ( cent ) {
+            gItem->setX( cent->getX() );
+            gItem->setY( cent->getY() );
+        };
+        
         AbstractAgent * rootAgent = dynamic_cast<AbstractAgent * > ( __rootItem->entity() );
         AbstractAgent * curAgent = dynamic_cast<AbstractAgent * > ( item->entity() );
         if ( ( rootAgent ) && ( curAgent ) ) rootAgent->addChild( curAgent );
@@ -217,8 +225,8 @@ void tengu::SchemaScene::addItem ( QGraphicsItem * gItem ) {
         // Add an X-Plane agent does not come to changes.
         // Добавление X-Plane агента - не приводит к изменениям.
         
-        XPlaneAgentItem * xp = dynamic_cast<XPlaneAgentItem * >(item);
-        if ( ! xp ) __on__something_changed();
+        // XPlaneAgentItem * xp = dynamic_cast<XPlaneAgentItem * >(item);
+        // if ( ! xp ) __on__something_changed();
         
         // ProcessItem * processItem = dynamic_cast< ProcessItem * > ( item );
         

@@ -639,8 +639,10 @@ void tengu::AbstractEntityItem::setExecutionMode ( tengu::AbstractEntity::execut
 // ********************************************************************************************************************
 
 void tengu::AbstractEntityItem::setX ( int x ) {
+    
     QGraphicsObject::setX( x );
     if ( _entity ) _entity->setX( x );
+    
 }
 
 // ********************************************************************************************************************

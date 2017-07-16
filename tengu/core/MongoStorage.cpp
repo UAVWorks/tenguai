@@ -454,7 +454,7 @@ bool tengu::MongoStorage::__simplify( QJsonValue & val ) {
         };
             
         if ( storageable( oval ) ) {
-            __insert_single_object( oval );
+            __upsert_single_object( oval );
             result = true;
         };
         
@@ -553,7 +553,7 @@ void tengu::MongoStorage::store( QJsonObject o ) {
         
     };
     
-    __insert_single_object( o );
+    __upsert_single_object( o );
     
 }
 
@@ -564,7 +564,7 @@ void tengu::MongoStorage::store( QJsonObject o ) {
 // *                                       Сохранить один JSON-объект в базе данных.                                  *
 // *                                                                                                                  *
 // ********************************************************************************************************************
-
+/*
 void tengu::MongoStorage::__insert_single_object ( QJsonObject jsonObject ) {
 
     if ( ! storageable( jsonObject ) ) {
@@ -605,6 +605,102 @@ void tengu::MongoStorage::__insert_single_object ( QJsonObject jsonObject ) {
         // qDebug() << "MongoStorage::__insert_single_object( QJsonObject ), collection is empty";
         emit signalError( EL_WARNING, "MongoStorage::insert single object", tr("The database or collection was not specified") ); 
     };
+}
+*/
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                    Modify object if exists by his UUID (_id).                                    *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                          Модифицировать объект, если он существует, по его UUID (_id)                            *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+bool tengu::MongoStorage::__upsert_single_object ( QJsonObject json ) {
+    
+    bool result = false;
+    
+    if ( ! storageable( json ) ) {
+        qDebug() << "MongoStorage::__upsert_single_object, object is not storageable: " << json;
+        emit signalError( EL_WARNING, "MongoStorage::update_single_object", tr("Object is not storageable") );
+        return false;
+    };
+    
+    // Object identifier.
+    // Идентификатор объекта.
+    
+    QString oid;
+    if ( json.contains( JSON_UUID_ELEMENT ) ) oid = json[ JSON_UUID_ELEMENT ].toString();
+    else if ( json.contains( JSON_MONGOID_ELEMENT ) ) oid = json[ JSON_MONGOID_ELEMENT ].toString();
+    char cid[128];
+    memset( cid, 0, sizeof( cid ) );
+    strcpy( cid, oid.toLatin1().data() );
+    
+    if ( oid.isEmpty() ) {
+        qDebug() << "MongoStorage::__upsert_single_object, empty uuid for " << json;
+        return false;
+    };
+    
+    mongoc_collection_t * collection = __getCollection( json );
+    
+    if ( collection ) {
+        
+        // Create query object, _id only.
+        // Создание объекта запроса, только _id
+        
+        bson_t * query = bson_new();        
+        BSON_APPEND_UTF8( query, "_id", cid );
+        
+        // Create update object, $set ... - all fields except the _id
+        // Создание объекта для модификации, $set ... - все поля кроме _id
+        
+        QJsonObject update_json;
+        QJsonObject update_json_body;
+        QList<QString> okeys = json.keys();        
+        for ( int i=0; i<okeys.size(); i++ ) {
+            QString one_key = okeys.at(i);
+            if ( ( one_key != JSON_UUID_ELEMENT ) && ( one_key != JSON_MONGOID_ELEMENT ) ) {
+                update_json_body[ one_key ] = json[ one_key ];
+            };
+        };
+        
+        update_json["$set"] = update_json_body;
+        bson_t * update = __create_bson( update_json_body );
+        
+        mongoc_find_and_modify_opts_t * opts = mongoc_find_and_modify_opts_new ();
+
+        mongoc_find_and_modify_opts_set_update (opts, update);
+
+        mongoc_find_and_modify_opts_set_flags ( opts, MONGOC_FIND_AND_MODIFY_UPSERT );
+        // | MONGOC_FIND_AND_MODIFY_RETURN_NEW );
+
+        bson_t reply;
+        bson_error_t error;
+        
+        bool success = mongoc_collection_find_and_modify_with_opts (collection, query, opts, &reply, &error);
+
+        if (success) {
+            
+            result = true;
+            
+            /*
+            char *str;
+            str = bson_as_json (&reply, NULL);
+            printf ("Upsert done: %s\n", str);
+            bson_free (str);
+            */
+            
+        } else {
+            emit signalError( EL_CRITICAL, "MongoStorage::upsert_single_object", error.message );            
+        }
+        
+        mongoc_find_and_modify_opts_destroy( opts );
+        bson_destroy( query );
+        bson_destroy( update );
+        mongoc_collection_destroy( collection );
+        
+    } else emit signalError( EL_CRITICAL, "MongoStorage::upsert_single_object", tr("The database name or the collection name was not specified.") );
+    
+    return result;
 }
 
 // ********************************************************************************************************************

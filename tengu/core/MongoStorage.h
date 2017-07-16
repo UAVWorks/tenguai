@@ -62,7 +62,11 @@ namespace tengu {
             QList<QString> __alreadyIndexedCollections;
             
             bson_t * __create_bson( QJsonObject o );
-            void __insert_single_object( QJsonObject jsonObject );
+            
+            // void __insert_single_object( QJsonObject jsonObject );
+            
+            bool __upsert_single_object( QJsonObject json );
+            
             mongoc_collection_t * __getCollection( QJsonObject o );
             QMap<QString, tengu::MongoIndex > __getExistingIndexes( QJsonObject o );
             
