@@ -70,18 +70,29 @@ void tengu::Process::addChild ( tengu::AbstractAgent * child ) {
     
     tengu::AbstractAgent::addChild ( child );
     
-    QList<AbstractAgent * > hisChildren = children();
+    // Automatically names
+    // Автоматические имена.
     
     Task * task = dynamic_cast<Task*> ( child );
-    if ( task ) {
-        int taskCount = 0;
-        for ( int i=0; i<hisChildren.count(); i++ ) {
-            Task * t = dynamic_cast<Task * > ( hisChildren.at(i) );
-            if ( t ) taskCount ++;
+    ProcessStop * stop = dynamic_cast< ProcessStop * > ( child );
+    
+    bool systemNameEmpty = child->getSystemName().isEmpty();
+    bool humanNameEmpty = child->getHumanName().isEmpty();
+    
+    if ( systemNameEmpty | humanNameEmpty ) {
+        
+        if( task ) {        
+            int taskCount = childrenCountOf< Task * >() + 1;
+            if ( systemNameEmpty ) child->setSystemName( tr("New_Task_") + QString::number( taskCount ) );
+            if ( humanNameEmpty ) child->setHumanName( tr("New Task ") + QString::number( taskCount ) );
         };
-        if ( child->getSystemName().isEmpty() ) child->setSystemName( tr("New_Task_") + QString::number( taskCount ) );
-        if ( child->getHumanName().isEmpty() ) child->setHumanName( tr("New Task ") + QString::number( taskCount ) );
-    };
+    
+        if ( stop ) {
+            int stopCount = childrenCountOf<ProcessStop * >() + 1;
+            if ( systemNameEmpty ) child->setSystemName( tr("ProcessStop_") + QString::number( stopCount ) );
+            if ( humanNameEmpty ) child->setHumanName( tr("Process Stop ") + QString::number( stopCount ) );
+        };
+    }
     
 }
 

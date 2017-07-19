@@ -243,6 +243,7 @@ void tengu::DialogOpenSaveModel::__fill_table_of_elements() {
                     __table_of_elements->insertRow( rows );
                     
                     QTableWidgetItem * item = new QTableWidgetItem();
+                    item->setFlags( item->flags() & ~Qt::ItemIsEditable );
                     item->setText( entity->getHumanName() );
                     item->setToolTip( entity->getComment() );
                     item->setData( Qt::UserRole, QVariant( entity->getUUID() ) );
@@ -273,12 +274,16 @@ void tengu::DialogOpenSaveModel::_on__ok() {
     result_agent = nullptr;
     
     QList<QJsonObject> readed = __mongo->read( __selector, true );
+    qDebug() << "Selector is:" << __selector;    
+    
     if ( readed.isEmpty() ) emit signalError( EL_WARNING, "DialogOpenSaveModel::_on__ok()", tr("Empty set of object was readed") );
     else {
         
-        result_agent = AgentItemFactory::createEntity( readed.at(0) );
+        qDebug() << "readed is not empty: " << readed.at(0);
+        result_agent = dynamic_cast< AbstractAgent * > ( AgentItemFactory::createEntity( readed.at(0) ) );
         
         if ( ! result_agent ) {
+            qDebug() << "In result agent uuid=" << result_agent->getUUID();        
             emit signalError( EL_WARNING, "DialogOpenSaveModel::_on__ok()", tr("Result agent is empty") );
         }
     }
@@ -295,7 +300,7 @@ void tengu::DialogOpenSaveModel::_on__ok() {
 void tengu::DialogOpenSaveModel::__on__table_element_selected ( QItemSelection current, QItemSelection previous ) {
     
     __selector.remove( JSON_UUID_ELEMENT );
-    _buttonOk->setEnabled( false );
+    _buttonOk->setEnabled( true );
     QList<QTableWidgetItem * > selectedList = __table_of_elements->selectedItems();
     
     if ( selectedList.count() > 0 ) {

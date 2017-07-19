@@ -149,20 +149,13 @@ void tengu::SchemaScene::setRootItem ( tengu::AbstractEntityItem * rootItem ) {
             AbstractEntityItem * item = AgentItemFactory::createItem( entity->children().at(i) );
             
             if ( item ) {
-                /*
-                AbstractEntity * cent = item->entity();
-                if ( cent ) {
-                    QGraphicsItem * qgr = ( QGraphicsItem * ) item;
-                    qgr->setX( cent->getX() );
-                    qgr->setY( cent->getY() );
-                };
-                */
-                addItem( item );                
+                addItem( item );          
             };
         };
     };    
     
     if ( rootAsProcess() ) emit signalInsideProcess();
+    
 }
 
 // ********************************************************************************************************************
@@ -212,8 +205,10 @@ void tengu::SchemaScene::addItem ( QGraphicsItem * gItem ) {
         
         tengu::AbstractEntity * cent = item->entity();
         if ( cent ) {
+            cent->silent( true );
             gItem->setX( cent->getX() );
             gItem->setY( cent->getY() );
+            cent->silent( false );
         };
         
         AbstractAgent * rootAgent = dynamic_cast<AbstractAgent * > ( __rootItem->entity() );

@@ -175,7 +175,7 @@ namespace tengu {
             void _somethingChanged();                        
                         
         private:
-            
+                        
             bool __mousePressed;
             QPoint __mousePressedPoint;
             

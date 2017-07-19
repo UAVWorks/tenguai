@@ -240,7 +240,51 @@ void tengu::MongoStorage::__addIndex( QJsonObject o, tengu::MongoIndex idx ) {
     mongoc_collection_t * collection = __getCollection( o );
     
     if ( collection ) {
+        
+        // A variant using mongoc_collection_create_index function
+        // Вариант с использованием функции mongoc_collection_create_index
+        
+        bson_t * keys;
+        
+        keys = bson_new();
+        for ( int i=0; i<idx.key.count(); i++ ) {
+            char one_key_name[128];
+            memset( one_key_name, 0, sizeof( one_key_name ) );
+            strcpy( one_key_name, idx.key.at(i).name.toLocal8Bit().data() );
+            bson_append_int32( keys, one_key_name, strlen( one_key_name ), idx.key.at(i).asc );
+        };
     
+        mongoc_index_opt_t opt;
+        mongoc_index_opt_init( & opt );
+        
+        opt.background = true; // I want background building always
+        opt.unique = idx.unique;
+        
+        char index_name[256];
+        memset( index_name, 0, sizeof( index_name ) );
+        strcpy( index_name, idx.name.toLocal8Bit().data() );
+        opt.name = index_name;
+        
+        // Creating the index
+        // Создание индекса.
+        
+        bson_error_t error;
+        
+        if ( ! mongoc_collection_create_index ( collection, keys, &opt, &error ) ) {
+            emit signalError( EL_WARNING, "MongoStorage::addIndex()", error.message );
+        }
+        
+        bson_destroy( keys );
+        
+            
+        // -- end of mongoc_collection_create_index variant
+        // -- конец варианта с mongoc_collection_create_index
+        
+        /*
+        
+        // A variant using createIndex command.
+        // Вариант с использованием команды createIndex. 
+        
         QJsonObject cmd_jso;
         cmd_jso["createIndexes"] = o.value( JSON_COLLECTION_ELEMENT ).toString();
         cmd_jso["createIndexes.createdCollectionAutomatically"] = true;
@@ -277,6 +321,11 @@ void tengu::MongoStorage::__addIndex( QJsonObject o, tengu::MongoIndex idx ) {
             
         };
         
+        */
+        
+        // end of createIndex variant
+        // Конец варианта с createIndex.
+        
         mongoc_collection_destroy( collection );
     };
     
@@ -292,10 +341,11 @@ void tengu::MongoStorage::__addIndex( QJsonObject o, tengu::MongoIndex idx ) {
 
 void tengu::MongoStorage::checkIndexes( tengu::AbstractEntity * e ) {
     
-    // @todo mongoc_collection_create_index_with_opts.
-    
     if ( ! storageable( e ) ) return;
     if ( __indexesErrorOccured ) return;
+    
+    // Was this collection already checked?
+    // Была ли эта коллекция уже проверена?
     
     QJsonObject o = e->toJSON();
     if ( __alreadyIndexedCollections.contains( o[ JSON_COLLECTION_ELEMENT ].toString() ) ) return;
@@ -631,9 +681,12 @@ bool tengu::MongoStorage::__upsert_single_object ( QJsonObject json ) {
     QString oid;
     if ( json.contains( JSON_UUID_ELEMENT ) ) oid = json[ JSON_UUID_ELEMENT ].toString();
     else if ( json.contains( JSON_MONGOID_ELEMENT ) ) oid = json[ JSON_MONGOID_ELEMENT ].toString();
+    
     char cid[128];
     memset( cid, 0, sizeof( cid ) );
     strcpy( cid, oid.toLatin1().data() );
+    
+    qDebug() << "At upsert, oid=" << oid;
     
     if ( oid.isEmpty() ) {
         qDebug() << "MongoStorage::__upsert_single_object, empty uuid for " << json;
@@ -654,17 +707,18 @@ bool tengu::MongoStorage::__upsert_single_object ( QJsonObject json ) {
         // Создание объекта для модификации, $set ... - все поля кроме _id
         
         QJsonObject update_json;
+        
+        /*
         QJsonObject update_json_body;
         QList<QString> okeys = json.keys();        
         for ( int i=0; i<okeys.size(); i++ ) {
             QString one_key = okeys.at(i);
-            if ( ( one_key != JSON_UUID_ELEMENT ) && ( one_key != JSON_MONGOID_ELEMENT ) ) {
-                update_json_body[ one_key ] = json[ one_key ];
-            };
+            update_json_body[ one_key ] = json[ one_key ];            
         };
+        */
         
-        update_json["$set"] = update_json_body;
-        bson_t * update = __create_bson( update_json_body );
+        update_json["$set"] = json; // update_json_body;
+        bson_t * update = __create_bson( json ); // update_json_body );
         
         mongoc_find_and_modify_opts_t * opts = mongoc_find_and_modify_opts_new ();
 
@@ -819,14 +873,30 @@ QList<QJsonObject> tengu::MongoStorage::read( QJsonObject selector, bool recursi
                 QJsonDocument adoc = QJsonDocument::fromJson( str );
                 QJsonObject answer = adoc.object();
                 
+                qDebug() << "Mongo::read original: " << answer << "\n";
+                
                 // Replace the _id to uuid 
                 // Заменяем _id на uuid.
                 
                 if ( answer.contains( JSON_MONGOID_ELEMENT ) ) {
-                    QString uuid = answer.value( JSON_MONGOID_ELEMENT ).toString();
+                    QJsonValue his_mongo_id = answer.value( JSON_MONGOID_ELEMENT );
+                    qDebug() << "hid mongo id=" << his_mongo_id << "\n";
+                    
+                    QString uuid;
+                    
+                    if ( his_mongo_id.isString() ) uuid = his_mongo_id.toString();                    
+                    else if ( his_mongo_id.isObject() ) {
+                        QJsonObject his_mongo_oid = his_mongo_id.toObject();
+                        if ( his_mongo_oid.contains("$oid") ) uuid=his_mongo_oid[ "$oid" ].toString();
+                    };
+                    
+                    qDebug() << "Founded uuid=" << uuid;
+                    
                     answer[ JSON_UUID_ELEMENT ] = uuid;
                     answer.remove( JSON_MONGOID_ELEMENT );
                 }
+                
+                qDebug() << "Mongo::readed " << answer << "\n";                
                 
                 // Add collection name
                 // Добавляем имя коллекции

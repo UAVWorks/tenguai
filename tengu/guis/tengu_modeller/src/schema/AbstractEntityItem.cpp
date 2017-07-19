@@ -338,7 +338,9 @@ QPixmap tengu::AbstractEntityItem::_executionModePixmap( bool forSize32 ) {
 
 void tengu::AbstractEntityItem::_somethingChanged() {
     AbstractEntity::_somethingChanged();    
-    emit signalSomethingChanged();
+    bool silent = false;
+    if ( ( entity() == nullptr ) || ( entity()->silent() ) ) silent = true;
+    if ( ! silent ) emit signalSomethingChanged();
     update();
 }
 

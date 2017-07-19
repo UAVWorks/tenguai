@@ -13,6 +13,7 @@
 
 #include "AbstractAgent.h"
 #include "Task.h"
+#include "ProcessStop.h"
 
 namespace tengu {
     

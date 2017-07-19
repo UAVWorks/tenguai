@@ -117,72 +117,96 @@ void tengu::TreeStructure::addAgent( AbstractAgent * agent, bool focusToHim ) {
     
     if ( ! agent ) return;
     
-    // First we try to find his parent in the tree.
-    // Сначала пытаемся найти его родителя в дереве.
+    QList<QTreeWidgetItem * > treeItems = getAllItems();
+    bool added = false;
+        
+    // First this can be already opened agent.
+    // Для начала - это может быть уже открытый агент.
     
-    QTreeWidgetItem * parentItem = __rootItem;
-    
-    if ( agent->parent() ) {
-        QList<QTreeWidgetItem * > treeItems = getAllItems();
-        for ( int i=0; i<treeItems.count(); i++ ) {
-            QTreeWidgetItem * item = treeItems.at( i );
-            AbstractAgent * treeAgent = qvariant_cast< AbstractAgent * >( item->data( 0, Qt::UserRole ) );
-            if ( ( treeAgent ) && ( treeAgent->getUUID() == agent->parent()->getUUID() ) ) {
-                parentItem = item;
-                break;
-            }
+    for ( int i=0; i<treeItems.count(); i++ ) {
+        QTreeWidgetItem * item = treeItems.at( i );
+        AbstractAgent * treeAgent = qvariant_cast< AbstractAgent * >( item->data( 0, Qt::UserRole ) );
+        if ( ( treeAgent ) && ( treeAgent->getUUID() == agent->getUUID() ) ) {
+            
+            // This is the same agent. We can only change it's attributes.
+            // это - тот же самый агент. И мы можем только поменять ему атрибуты.
+            item->setText( 0, agent->getHumanName() );
+            added = true;
+            if ( focusToHim ) __select_forcibly_with_expanding( item->parent(), item );
+            break;
         }
-    };
+    }
     
-    // The constructor itself goes later because there will be an element type.
-    // Сам конструктор идет потом, потому что там указывается тип элемента.
+    if ( ! added ) {
     
-    QTreeWidgetItem * item = nullptr; 
-    
-    switch ( agent->entityType() ) {
+        // try to find his parent in the tree.
+        // пытаемся найти его родителя в дереве.
         
-        case AbstractEntity::ET_Vehicle: {
-            item = new QTreeWidgetItem( AbstractEntity::ET_VehicleTreeItem );
-            item->setIcon( 0, QIcon( QPixmap( ":robot_16.png") ) );
-        }; break;
+        QTreeWidgetItem * parentItem = __rootItem;
         
-        case AbstractEntity::ET_Process: {
-            item = new QTreeWidgetItem( AbstractEntity::ET_ProcessTreeItem );
-            item->setIcon( 0, QIcon( QPixmap( ":package_add_16" ) ) );
-        }; break;
-        
-        case AbstractEntity::ET_ProcessStart: {
-            item = new QTreeWidgetItem( AbstractEntity::ET_ProcessStartTreeItem );
-            item->setIcon( 0, QIcon( QPixmap(":process_begin_16.png") ));
-        }; break;
-        
-        case AbstractEntity::ET_ProcessStop: {
-            item = new QTreeWidgetItem( AbstractEntity::ET_ProcessStopTreeItem );
-            item->setIcon( 0, QIcon( QPixmap(":process_end_16.png") ));
-        }; break;
-        
-        case AbstractEntity::ET_Task: {
-            item = new QTreeWidgetItem( AbstractEntity::ET_TaskTreeItem );
-            item->setIcon( 0, QIcon( QPixmap( ":box_16.png" ) ) );
-        }; break;                
-        
-        default: qDebug() << "TreeStructure::addAgent, unhandled type " << (int) agent->entityType();
-    };
-    
-    // Set the text and add element to the parent if element has been created. 
-    // Если элемент был порожден - устанавливаем ему текст и добавляем в родителя.
-    
-    if ( item ) {
-        
-        item->setData( 0, Qt::UserRole, QVariant::fromValue<AbstractAgent * >( agent ) );
-        item->setText( 0, agent->getHumanName() );
-        
-        parentItem->addChild( item );
-        
-        if ( focusToHim ) {
-            __select_forcibly_with_expanding( parentItem, item );
+        if ( agent->parent() ) {
+            
+            for ( int i=0; i<treeItems.count(); i++ ) {
+                QTreeWidgetItem * item = treeItems.at( i );
+                AbstractAgent * treeAgent = qvariant_cast< AbstractAgent * >( item->data( 0, Qt::UserRole ) );
+                if ( ( treeAgent ) && ( treeAgent->getUUID() == agent->parent()->getUUID() ) ) {
+                    parentItem = item;
+                    break;
+                }
+            }
         };
-    };  
+        
+        // The constructor itself goes later because there will be an element type.
+        // Сам конструктор идет потом, потому что там указывается тип элемента.
+        
+        QTreeWidgetItem * item = nullptr; 
+        
+        switch ( agent->entityType() ) {
+            
+            case AbstractEntity::ET_Vehicle: {
+                item = new QTreeWidgetItem( AbstractEntity::ET_VehicleTreeItem );
+                item->setIcon( 0, QIcon( QPixmap( ":robot_16.png") ) );
+            }; break;
+            
+            case AbstractEntity::ET_Process: {
+                item = new QTreeWidgetItem( AbstractEntity::ET_ProcessTreeItem );
+                item->setIcon( 0, QIcon( QPixmap( ":package_add_16" ) ) );
+            }; break;
+            
+            case AbstractEntity::ET_ProcessStart: {
+                item = new QTreeWidgetItem( AbstractEntity::ET_ProcessStartTreeItem );
+                item->setIcon( 0, QIcon( QPixmap(":process_begin_16.png") ));
+            }; break;
+            
+            case AbstractEntity::ET_ProcessStop: {
+                item = new QTreeWidgetItem( AbstractEntity::ET_ProcessStopTreeItem );
+                item->setIcon( 0, QIcon( QPixmap(":process_end_16.png") ));
+            }; break;
+            
+            case AbstractEntity::ET_Task: {
+                item = new QTreeWidgetItem( AbstractEntity::ET_TaskTreeItem );
+                item->setIcon( 0, QIcon( QPixmap( ":box_16.png" ) ) );
+            }; break;                
+            
+            default: qDebug() << "TreeStructure::addAgent, unhandled type " << (int) agent->entityType();
+        };
+        
+        // Set the text and add element to the parent if element has been created. 
+        // Если элемент был порожден - устанавливаем ему текст и добавляем в родителя.
+        
+        if ( item ) {
+            
+            item->setData( 0, Qt::UserRole, QVariant::fromValue<AbstractAgent * >( agent ) );
+            item->setText( 0, agent->getHumanName() );
+            
+            parentItem->addChild( item );
+            
+            if ( focusToHim ) {
+                __select_forcibly_with_expanding( parentItem, item );
+            };
+        };  
+        
+    }; // if ( ! added )
     
     if ( agent->hasChildren() ) {
         QList< AbstractAgent * > hisChildren = agent->children();
@@ -396,6 +420,8 @@ void tengu::TreeStructure::__on__tree_item_selected ( const QItemSelection & cur
     
     Q_UNUSED( current );
     Q_UNUSED( previous );
+    
+    qDebug() << "TreeStructure::__on_tree_item_selected";
     
     if ( __do_not_handle_events ) return;
     

@@ -204,8 +204,7 @@ void tengu::MainWindow::__createWorkspace() {
     // Connection goes after add an xplane as a child.
     // Соединение происходит после добавления xplane в качестве ребенка.
     
-    QObject::connect( __workSpace, SIGNAL( signalSomethingChanged() ), this, SLOT( __on__something_changed() ) );
-    
+    QObject::connect( __workSpace, SIGNAL( signalSomethingChanged() ), this, SLOT( __on__something_changed() ) );    
     
     // XPlaneProcess * xpProcsss = new XPlaneProcess();
     // __workSpace->addChild( xpProcsss );
@@ -619,6 +618,7 @@ void tengu::MainWindow::__on_schema_item_was_dropped ( tengu::AbstractEntity * e
 // ********************************************************************************************************************
 
 void tengu::MainWindow::__on__something_changed() {
+    qDebug() << "   mainWindow::on something changed";
     __action__save_schema->setEnabled( true );
 }
 
@@ -726,6 +726,8 @@ void tengu::MainWindow::__on__tree_structure__agent_was_created ( tengu::Abstrac
 
 void tengu::MainWindow::__on__tree_structure__agent_was_selected ( tengu::AbstractAgent * agent ) {
     
+    qDebug() << "MainWindow::__on_tree_structure_agent_was_selected()";
+    
     if ( __do_not_handle_events ) return;
     
     AbstractEntityItem * item = AgentItemFactory::createItem( agent );
@@ -822,37 +824,17 @@ void tengu::MainWindow::__on__clear_agent( AbstractAgent * agent ) {
     // Очистка в древовидной структуре.
     
     __left->treeStructure->clearAgent( agent );
-    
-    /*
-    QList<QTreeWidgetItem * > structure = __left->treeStructure->getAllItems();
-    for ( int i=0; i<structure.count(); i++ ) {
-        AbstractAgent * itemAgent = qvariant_cast< AbstractAgent * > ( structure.at(i)->data( 0, Qt::UserRole) );
-        if ( ( itemAgent ) && ( itemAgent->parent() ) && ( itemAgent->parent()->getUUID() == agent->getUUID() ) ) {
-            delete( structure.at(i) );
-            structure.replace( i, nullptr );
-        };
-    };
-    */
-    
+        
     // Delete children's elements physically
     // Физическое удаление детей.
     
     agent->deleteChildren();
-    
-    /*
-    QList< AbstractAgent * > children_list = agent->children();
-    for ( int i=0; i<children_list.count(); i++ ) {
-        AbstractAgent * oneChild = children_list.at(i);
-        agent->removeChild( oneChild );
-        delete( oneChild );
-    };
-    */
-    
+        
     // If we have process as root, we need add ProcessStart element at least
     // Если у нас в качестве корневого - процесс, то нужно как минимум добавить ему элемент начала процесса
     
     __check_start_element_in_process( agent );
-    
+    __action__save_schema->setEnabled( false );
     __do_not_handle_events = false;
 }
 
@@ -983,6 +965,7 @@ void tengu::MainWindow::__on__agent__opened ( tengu::AbstractAgent * agent ) {
     parent->addChild( agent );
     
     __left->treeStructure->addAgent( agent, true );
+    __action__save_schema->setEnabled( false );
     
 }
 

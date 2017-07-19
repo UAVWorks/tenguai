@@ -133,7 +133,20 @@ namespace tengu {
                 };
         
                 return( result );
-            };                        
+            };        
+            
+            // Count of children haved specified type
+            // Число детей указанного типа.
+            
+            template <class T> int childrenCountOf() {
+                int result = 0;
+                QList<AbstractAgent * > allChildren = children();
+                for ( int i=0; i<allChildren.count(); i++ ) {
+                    T c = dynamic_cast<T>( allChildren.at(i) );
+                    if ( c ) result ++;
+                }
+                return result;
+            };
             
         protected:
                         

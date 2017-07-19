@@ -251,7 +251,8 @@ void tengu::AbstractAgent::__on_redis_error ( QString message ) {
 void tengu::AbstractAgent::_somethingChanged() {
     
     AbstractEntity::_somethingChanged();
-    emit signalSomethingChanged();
+    qDebug() << "AbstractAgent::_somethingChanged()";
+    if ( ! _silent ) emit signalSomethingChanged();
     
 }
 
@@ -337,9 +338,15 @@ void tengu::AbstractAgent::disconnect() {
 // ********************************************************************************************************************
 
 void tengu::AbstractAgent::addChild ( tengu::AbstractAgent * child ) {
-    _children[ child->getUUID() ] = child;
-    child->_parent = this;
-    _somethingChanged();
+    
+    if ( ! _children.contains( child->getUUID() ) ) {
+        
+        _children[ child->getUUID() ] = child;
+        child->_parent = this;
+        _somethingChanged();
+        
+    }
+    
 }
 
 // ********************************************************************************************************************
@@ -351,9 +358,15 @@ void tengu::AbstractAgent::addChild ( tengu::AbstractAgent * child ) {
 // ********************************************************************************************************************
 
 void tengu::AbstractAgent::removeChild ( tengu::AbstractAgent * child ) {
+    
     if ( child ) {
-        if ( _children.contains( child->getUUID() ) ) _children.remove( child->getUUID() );
+        
+        if ( _children.contains( child->getUUID() ) ) {
+            _children.remove( child->getUUID() );
+            _somethingChanged();
+        }
         child->_parent = nullptr;
+            
     };
 }
 

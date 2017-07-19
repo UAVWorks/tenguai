@@ -157,6 +157,9 @@ namespace tengu {
             
             int getY();
             void setY( int y );
+            
+            void silent( bool s );
+            bool silent();
 
             
         protected:
@@ -167,6 +170,8 @@ namespace tengu {
             entity_types_t _entity_type;
             
             void _somethingChanged();
+            
+            bool _silent;
                                     
         private:
             
@@ -199,6 +204,7 @@ namespace tengu {
             
             int __x;
             int __y;
+                        
             
     };
 };
