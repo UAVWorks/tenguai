@@ -345,7 +345,6 @@ void tengu::SchemaScene::removeSemiCreatedLinks() {
 void tengu::SchemaScene::__on__something_changed() {
     
     __changed = true;
-    qDebug() << "SchemaScene:: on something chagned";
     emit signalSomethingChanged();
     
 }

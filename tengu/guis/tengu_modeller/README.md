@@ -6,7 +6,7 @@ This is graphical tool for work with artifical intelligence models. At the momen
 
 # The latest operations.
 
-- **20 jul 2017** Remove agent from database.
+- **20 jul 2017** Remove agent from database. Create task from schema's menu.
 - **16 jul 2017** Bug with item coordinates. Upsert (insert or update if exists). Bug with cleaning tree item.
 - **15 jul 2017** With remarks, but model was opened.
 - **14 jul 2017** Cleaning of selected tree element. Creating element process was remade.

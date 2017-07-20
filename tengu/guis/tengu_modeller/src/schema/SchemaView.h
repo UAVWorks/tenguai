@@ -47,13 +47,16 @@ namespace tengu {
             void signalItemMoved( AbstractEntityItem * item, QPoint pos );
             void signalWasDropped( AbstractEntity * entity, QPoint pos );
             void signalWantDelete( AbstractEntity * entity_to_delete );
+            void signalWantCreateAgent( AbstractAgent * parent, AbstractEntity::entity_types_t type );
         
         public:
             
             SchemaView( QGraphicsScene * scene );
-            virtual ~SchemaView();
+            virtual ~SchemaView();            
             
             LinkItem * semiCreatedLink;
+            
+            QPoint mouseAtSchema();
                                     
         private:
             

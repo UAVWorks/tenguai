@@ -503,18 +503,22 @@ QTreeWidgetItem * tengu::TreeStructure::itemFor ( tengu::AbstractEntity * entity
 void tengu::TreeStructure::on__something_changed() {
     
     QObject * osender = sender();
+    
     if ( osender ) {
+        
         AbstractAgent * asender = dynamic_cast<AbstractAgent * >( osender );
+        
         if ( asender ) {
-            QList<QTreeWidgetItem * > all_items = getAllItems();
-            for ( int i=0; i<all_items.count(); i++ ) {
-                QTreeWidgetItem * item = all_items.at(i);
-                AbstractAgent * aitem = qvariant_cast< AbstractAgent * >( item->data( 0 , Qt::UserRole ) );
-                if ( aitem == asender ) {
-                    item->setText(0, asender->getHumanName() );
-                    break;
-                };
-            };
+            
+            QList<AbstractAgent *> achi;
+            asender->childrenRecursive( achi );
+            for ( int i=0; i<achi.count(); i++ ) {
+                AbstractAgent * aa = achi.at(i);
+                QTreeWidgetItem * item = itemFor( aa );
+                if ( item ) {
+                    item->setText( 0, aa->getHumanName() );
+                }
+            };                        
         };
     };
     

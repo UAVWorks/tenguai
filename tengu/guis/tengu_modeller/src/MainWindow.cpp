@@ -392,6 +392,9 @@ void tengu::MainWindow::__createSchemaView() {
     QObject::connect( __schemaView, SIGNAL( signalItemMoved( AbstractEntityItem * , QPoint )), this, SLOT( __on_schama_item_moved( AbstractEntityItem * , QPoint ) ) );
     QObject::connect( __schemaView, SIGNAL( signalWasDropped( AbstractEntity *, QPoint)), this, SLOT( __on_schema_item_was_dropped( AbstractEntity *, QPoint ) ) );
     QObject::connect( __schemaView, SIGNAL( signalWantDelete( AbstractEntity * ) ), this, SLOT( __on__want__delete( AbstractEntity * ) ) );
+    QObject::connect( __schemaView, SIGNAL(signalWantCreateAgent(AbstractAgent*,AbstractEntity::entity_types_t)),
+                        this, SLOT( __on__want__create_agent( AbstractAgent *, AbstractEntity::entity_types_t ) ) );
+        
 }
 
 // ********************************************************************************************************************
@@ -733,11 +736,40 @@ void tengu::MainWindow::__on__tree_structure__agent_was_selected ( tengu::Abstra
     if ( __do_not_handle_events ) return;
     
     AbstractEntityItem * item = AgentItemFactory::createItem( agent );
+    
     if ( item ) {
         
         __agentPropertyModel->setEntityItem( item );
         __schemaView->hide();
-        __schemaScene->setRootItem( item );   
+        switch ( agent->entityType() ) {
+            
+            case AbstractEntity::ET_Task:
+            case AbstractEntity::ET_ProcessStart:
+            case AbstractEntity::ET_ProcessStop:
+            {
+                // If we have process'es element clicked on the tree-like structure, we need set as root - parent process, not an element itself.
+                // Если в дереве щелкнули на элемент процесса, корневым на схеме будет - процесс, а не сам элемент.
+                
+                delete( item );
+                
+                AbstractAgent * parent = agent->parent();
+                
+                if ( parent ) {
+                    AbstractEntityItem * parentItem = AgentItemFactory::createItem( parent );
+                    if ( parentItem ) {
+                        __schemaScene->setRootItem( parentItem );
+                        AbstractEntityItem * agentItem = __schemaScene->itemFor( agent );
+                        if ( agentItem ) {
+                            agentItem->setSelected( true );
+                        }
+                    };
+                };
+                
+            }; break;
+                
+            default: __schemaScene->setRootItem( item );   
+        }
+        
         __schemaView->show();    
         
     };
@@ -970,7 +1002,6 @@ void tengu::MainWindow::__on__agent__opened ( tengu::AbstractAgent * agent ) {
     parent->addChild( agent );
     
     __left->treeStructure->addAgent( agent, true );
-    qDebug() << "MainWindow::on_agent_opened, disable save schema button";
     __action__save_schema->setEnabled( false );
     
 }
@@ -1048,10 +1079,22 @@ void tengu::MainWindow::__on__want__create_agent( AbstractAgent * parent, Abstra
     };
     
     AbstractAgent * agent = AgentItemFactory::createEntity( json );
+    
     if ( agent ) {
         
         QObject::connect( agent, SIGNAL(signalSomethingChanged()), this, SLOT( __on__something_changed() ) );
         QObject::connect( agent, SIGNAL( signalSomethingChanged()), __left->treeStructure, SLOT( on__something_changed() ) );
+        
+        // Coordinates of new created agent
+        // Координаты созданного агента.
+        
+        QObject * s = sender();
+        SchemaView * sw = dynamic_cast<SchemaView * >( s );
+        if ( sw ) {
+            QPoint schMouse =  __schemaView->mouseAtSchema();
+            agent->setX( schMouse.x() );
+            agent->setY( schMouse.y() );
+        };
         
         if ( parent ) parent->addChild( agent );
         else __workSpace->addChild( agent );
@@ -1059,7 +1102,11 @@ void tengu::MainWindow::__on__want__create_agent( AbstractAgent * parent, Abstra
         // Add new agent to tree-like structure
         // Добавить нового агента в древовидную структуру.
         
-        __left->treeStructure->addAgent( agent, true );
+        __left->treeStructure->addAgent( agent, true );                
+        
+        // We need not add element to the schema, because it will be repaint automatically due tree structure focus.
+        // На схему добавлять - не нужно. Перерисуется само из-за фокуса в дереве.
+        
         __check_start_element_in_process( agent );
         
     } else __on__error( 
