@@ -40,6 +40,10 @@ namespace tengu {
             // void signalAgentDeleted( QString uuid );
             
             void signalClearAgent( AbstractAgent * agent );
+            
+        public slots:
+            
+            void on__something_changed();            
         
         public:
             
@@ -51,6 +55,7 @@ namespace tengu {
             AbstractAgent * selectedAgent();
             void clearAgent( AbstractAgent * agent );
             void deleteAgent( AbstractAgent * agent );
+            QTreeWidgetItem * itemFor( AbstractEntity * entity );
             
         protected:
             
@@ -79,7 +84,7 @@ namespace tengu {
             void __on__create__vehicle();
             void __on__create__process();
             void __on__clear();
-            
+                        
             void __on__tree_item_selected( const QItemSelection & current, const QItemSelection & previous );
             
     };

@@ -44,6 +44,7 @@ namespace tengu {
             
             void store( AbstractEntity * e );
             void store( QJsonObject o );
+            void remove( QJsonObject o );
             bool storageable( QJsonObject o );
             bool storageable( AbstractEntity * e );
             
@@ -66,6 +67,7 @@ namespace tengu {
             // void __insert_single_object( QJsonObject jsonObject );
             
             bool __upsert_single_object( QJsonObject json );
+            void __remove_single_object( QJsonObject json );
             
             mongoc_collection_t * __getCollection( QJsonObject o );
             QMap<QString, tengu::MongoIndex > __getExistingIndexes( QJsonObject o );

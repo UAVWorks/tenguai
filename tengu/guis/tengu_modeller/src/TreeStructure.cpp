@@ -230,7 +230,7 @@ void tengu::TreeStructure::deleteAgent ( tengu::AbstractAgent * agent ) {
     // His children firstly.
     // Сначала - всех его детей.
     
-    if ( agent->hasChildren() ) {
+    if ( ( agent ) && ( agent->hasChildren() ) ) {
         QList<AbstractAgent * > his_children = agent->children();
         for ( int i=0; i<his_children.count(); i++ ) {
             AbstractAgent * child = his_children.at( i );
@@ -469,6 +469,56 @@ QList<QTreeWidgetItem * > tengu::TreeStructure::getAllItems() {
     __iterable_append_item( & result, __rootItem );
     return result;
 };
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                          Get an tree item for this entity                                        *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                    Получить элемент дерева для данной "сущности"                                 *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+QTreeWidgetItem * tengu::TreeStructure::itemFor ( tengu::AbstractEntity * entity ) {
+    
+    if ( ( ! entity ) || ( entity->getUUID().isEmpty()  ) ) return nullptr;
+    
+    QList<QTreeWidgetItem * > all_items = getAllItems();
+    for ( int i=0; i<all_items.count(); i++ ) {
+        QTreeWidgetItem * item = all_items.at(i);
+        AbstractAgent * aa = qvariant_cast< AbstractAgent * >( item->data( 0, Qt::UserRole ) );
+        if ( ( aa ) && ( aa->getUUID() == entity->getUUID() ) ) return item ;
+    };
+    
+    return nullptr;
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                      Something has been changed in the agent                                     *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                            Что-то было изменено в агенте.                                        *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::TreeStructure::on__something_changed() {
+    
+    QObject * osender = sender();
+    if ( osender ) {
+        AbstractAgent * asender = dynamic_cast<AbstractAgent * >( osender );
+        if ( asender ) {
+            QList<QTreeWidgetItem * > all_items = getAllItems();
+            for ( int i=0; i<all_items.count(); i++ ) {
+                QTreeWidgetItem * item = all_items.at(i);
+                AbstractAgent * aitem = qvariant_cast< AbstractAgent * >( item->data( 0 , Qt::UserRole ) );
+                if ( aitem == asender ) {
+                    item->setText(0, asender->getHumanName() );
+                    break;
+                };
+            };
+        };
+    };
+    
+}
 
 // ********************************************************************************************************************
 // *                                                                                                                  *

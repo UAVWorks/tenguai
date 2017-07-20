@@ -305,6 +305,8 @@ bool tengu::AgentPropertyModel::setData( const QModelIndex & index, const QVaria
                 
         __item->recalculate();
         __item->update();
+        qDebug() << "AgentPropertyModel::Something has been changed";
+        __item->_somethingChanged();
         __item->show();
         __properties = __item->properties();        
         

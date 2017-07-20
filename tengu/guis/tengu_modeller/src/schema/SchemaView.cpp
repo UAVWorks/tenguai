@@ -90,8 +90,14 @@ void tengu::SchemaView::__createMenus() {
 void tengu::SchemaView::__on__action__delete_item() {
     
     if ( __contextMenuItem ) {
-        hide();
         
+        AbstractEntity * entity = __contextMenuItem->entity();
+        if ( entity ) {
+            emit signalWantDelete( entity );
+        };
+        
+        /*
+        hide();
         ItemWithLinks * itemWithLinks = dynamic_cast< ItemWithLinks * > ( __contextMenuItem );
         if ( itemWithLinks ) {
             
@@ -108,8 +114,10 @@ void tengu::SchemaView::__on__action__delete_item() {
         
         scene()->removeItem( __contextMenuItem );
         delete( __contextMenuItem );
-        __contextMenuItem = nullptr;
+        __contextMenuItem = nullptr;        
         show();
+        */
+        
     };
 }
 

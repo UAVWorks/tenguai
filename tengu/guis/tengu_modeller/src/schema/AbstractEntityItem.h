@@ -59,6 +59,8 @@ namespace tengu {
 
     class AbstractEntityItem : public QGraphicsObject, public AbstractEntity {
         
+        friend class AgentPropertyModel;
+        
         Q_OBJECT
         
         Q_PROPERTY( QString system_name READ getSystemName WRITE setSystemName );

@@ -345,8 +345,33 @@ void tengu::SchemaScene::removeSemiCreatedLinks() {
 void tengu::SchemaScene::__on__something_changed() {
     
     __changed = true;
+    qDebug() << "SchemaScene:: on something chagned";
     emit signalSomethingChanged();
     
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                         Find an graphics item for this entity                                    *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                     Поиск графического элемента для данной сущности.                             *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+tengu::AbstractEntityItem * tengu::SchemaScene::itemFor ( tengu::AbstractEntity* entity ) {
+    
+    if ( ( ! entity ) || ( entity->getUUID().isEmpty() ) ) return nullptr;
+    
+    QList<QGraphicsItem *> ilist = items();
+    for ( int i=0; i<ilist.count(); i++ ) {
+        AbstractEntityItem * item = dynamic_cast<AbstractEntityItem * > (ilist.at(i));
+        if ( item ) {
+            AbstractEntity * ie = item->entity();
+            if ( ( ie ) && ( ie->getUUID() == entity->getUUID() ) ) return item;
+        }
+    };
+    
+    return nullptr;
 }
 
 // ********************************************************************************************************************

@@ -88,6 +88,8 @@ tengu::MainWindow::MainWindow(QWidget *parent)
     __createToolBar();
     __createStatusBar();    
     __createDialogs();                
+    
+    __not_saved_operations = QList<NotSavedOperation>();
 
     __do_not_handle_events = false;
 }
@@ -389,6 +391,7 @@ void tengu::MainWindow::__createSchemaView() {
     QObject::connect( __schemaView, SIGNAL( signalItemDoubleClicked( AbstractEntityItem *, bool )), this, SLOT( __on_schema_item_double_clicked( AbstractEntityItem *, bool ) ) );
     QObject::connect( __schemaView, SIGNAL( signalItemMoved( AbstractEntityItem * , QPoint )), this, SLOT( __on_schama_item_moved( AbstractEntityItem * , QPoint ) ) );
     QObject::connect( __schemaView, SIGNAL( signalWasDropped( AbstractEntity *, QPoint)), this, SLOT( __on_schema_item_was_dropped( AbstractEntity *, QPoint ) ) );
+    QObject::connect( __schemaView, SIGNAL( signalWantDelete( AbstractEntity * ) ), this, SLOT( __on__want__delete( AbstractEntity * ) ) );
 }
 
 // ********************************************************************************************************************
@@ -406,7 +409,7 @@ void tengu::MainWindow::__createSchemaScene() {
     
     __schemaScene = new SchemaScene();
     
-    QObject::connect( __schemaScene, SIGNAL( signalSomethingChanged() ), this, SLOT( __on__something_changed() ) );            
+    QObject::connect( __schemaScene, SIGNAL( signalSomethingChanged() ), this, SLOT( __on__something_changed() ) );                
 
 }
 
@@ -618,7 +621,9 @@ void tengu::MainWindow::__on_schema_item_was_dropped ( tengu::AbstractEntity * e
 // ********************************************************************************************************************
 
 void tengu::MainWindow::__on__something_changed() {
+    
     __action__save_schema->setEnabled( true );
+
 }
 
 // ********************************************************************************************************************
@@ -952,6 +957,9 @@ void tengu::MainWindow::__on__want__open() {
 
 void tengu::MainWindow::__on__agent__opened ( tengu::AbstractAgent * agent ) {
     
+    QObject::connect( agent, SIGNAL( signalSomethingChanged()), this, SLOT( __on__something_changed() ) );
+    QObject::connect( agent, SIGNAL( signalSomethingChanged()), __left->treeStructure, SLOT( on__something_changed() ) );
+        
     // Insert it into workspace
     // Добавляем его в рабочее пространство.
     
@@ -962,6 +970,7 @@ void tengu::MainWindow::__on__agent__opened ( tengu::AbstractAgent * agent ) {
     parent->addChild( agent );
     
     __left->treeStructure->addAgent( agent, true );
+    qDebug() << "MainWindow::on_agent_opened, disable save schema button";
     __action__save_schema->setEnabled( false );
     
 }
@@ -975,6 +984,24 @@ void tengu::MainWindow::__on__agent__opened ( tengu::AbstractAgent * agent ) {
 // ********************************************************************************************************************
 
 void tengu::MainWindow::__on__save() {
+    
+    // Perform not stored operations
+    // Выполнение не-записанных операций.
+    
+    for ( int i=0; i<__not_saved_operations.count(); i++ ) {
+        NotSavedOperation op = __not_saved_operations.at(i);
+        switch ( op.operation ) {
+            case NotSavedOperation::OT_DELETE: {
+                
+                if ( __mongo->storageable( op.object ) ) {
+                    __mongo->remove( op.object );
+                }
+                
+            }; break;
+            default: __on__error( EL_WARNING, "MainWindow::on_save", tr("Unknown not-stored operation: ") + QString::number(op.operation) );
+        };
+    };    
+    __not_saved_operations.clear();
     
     QList< AbstractAgent * > elements = __workSpace->children();
     
@@ -997,6 +1024,7 @@ void tengu::MainWindow::__on__save() {
     // The store action become to disabled status after store process.
     // После записи действие записи становится недоступным.
     
+    qDebug() << "MainWindow::on_save, disable save schema button";
     __action__save_schema->setEnabled( false );
 }
 
@@ -1022,6 +1050,9 @@ void tengu::MainWindow::__on__want__create_agent( AbstractAgent * parent, Abstra
     AbstractAgent * agent = AgentItemFactory::createEntity( json );
     if ( agent ) {
         
+        QObject::connect( agent, SIGNAL(signalSomethingChanged()), this, SLOT( __on__something_changed() ) );
+        QObject::connect( agent, SIGNAL( signalSomethingChanged()), __left->treeStructure, SLOT( on__something_changed() ) );
+        
         if ( parent ) parent->addChild( agent );
         else __workSpace->addChild( agent );
         
@@ -1037,6 +1068,103 @@ void tengu::MainWindow::__on__want__create_agent( AbstractAgent * parent, Abstra
         "Agent was not ben created, type=" + QString::number( type ) + ", class_name=" + json[ JSON_CLASS_NAME_ELEMENT ].toString() 
     );
     
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                         Someone want to delete something (entity, not an agent only)                             *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                  Кто-то хочет что-то удалить ( не обязательно агента, любую "сущность" )                         *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindow::__on__want__delete ( tengu::AbstractEntity * entity ) {
+    
+    qDebug() << "MainWindow::__on_want_delete";
+    
+    AbstractAgent * agent = dynamic_cast<AbstractAgent * >( entity );
+    if ( agent ) {
+        
+        // find parent in tree-like structure to later selection 
+        // Поиск родителя в древовидной структуре для последующего выделения.
+        
+        QTreeWidgetItem * treeParent = nullptr;
+        QTreeWidgetItem * hisTreeItem = __left->treeStructure->itemFor( agent );        
+        if ( hisTreeItem ) treeParent = hisTreeItem->parent();
+        
+        __left->treeStructure->deleteAgent( agent );
+        
+        // Select parent of deleted agent in tree structure.
+        // Выделение родителя удаленного агента в дереве.
+        
+        if ( treeParent ) {
+            __left->treeStructure->setCurrentItem( treeParent );
+        };
+        
+        // Delete an agent from the schema.
+        // Удаление агента из схемы.
+        
+        AbstractEntityItem * schemaItem = __schemaScene->itemFor( entity );
+        if ( schemaItem ) {
+            __schemaView->hide();
+            __schemaScene->removeItem( schemaItem );
+            __schemaView->show();
+        };
+        
+        // Delete agent and his children in the workspace
+        // Удаление агента и его детей из рабочего пространства.
+    
+        QList<AbstractAgent * > rch;
+        agent->childrenRecursive( rch );
+        
+        // To delete in one pass
+        // Для удаления в один проход.
+        
+        rch.append( agent );
+        
+        for ( int i=0; i<rch.count(); i++ ) {
+            AbstractAgent * one = rch.at(i);
+            QObject::disconnect( one, SIGNAL( signalSomethingChanged() ), this, SLOT( __on__something_changed() ) );
+            QObject::disconnect( one, SIGNAL( signalSomethingChanged() ), __left->treeStructure, SLOT( on__something_changed() ) );
+            NotSavedOperation oper ( NotSavedOperation::OT_DELETE, one->toJSON() );
+            __not_saved_operations.append( oper );
+            
+            delete( one );
+        };
+        
+        
+    };
+            
+    
+    /*
+    QTreeWidgetItem * treeItem = __left->treeStructure->itemFor( entity );
+    if ( treeItem ) {
+        qDebug() << "В дереве - нашли, его - удаляем. ";        
+        tree->dedelete ( treeItem );
+    };
+    */
+    
+    /*
+    hide();
+        ItemWithLinks * itemWithLinks = dynamic_cast< ItemWithLinks * > ( __contextMenuItem );
+        if ( itemWithLinks ) {
+            
+            // Links of this item. Will be removed simultaneously with him.
+            // Связи данного элемента - будут удалены совместно с ним.
+             
+            QList< LinkItem *> links = itemWithLinks->hisLinks();
+            for ( int i=0; i<links.size(); i++ ) {                
+                scene()->removeItem( links.at(i) );
+                delete( links.at(i) );                
+            };
+        
+        }
+        
+        scene()->removeItem( __contextMenuItem );
+        delete( __contextMenuItem );
+        __contextMenuItem = nullptr;        
+        show();
+    */    
 }
 
 // ********************************************************************************************************************

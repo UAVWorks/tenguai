@@ -46,6 +46,7 @@ namespace tengu {
             void signalItemDoubleClicked( AbstractEntityItem * item, bool controlPressed );
             void signalItemMoved( AbstractEntityItem * item, QPoint pos );
             void signalWasDropped( AbstractEntity * entity, QPoint pos );
+            void signalWantDelete( AbstractEntity * entity_to_delete );
         
         public:
             

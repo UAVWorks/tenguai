@@ -26,6 +26,7 @@ namespace tengu {
     class AbstractAgent : public QObject, public AbstractEntity {
     
         friend class Sprout;
+        friend class AbstractEntityItem;
                                 
         Q_OBJECT
         
@@ -79,6 +80,7 @@ namespace tengu {
             bool hasChildren();
             virtual void removeChild( AbstractAgent * child );
             QList <AbstractAgent * > children();
+            void childrenRecursive( QList <AbstractAgent * > & chlist );
             AbstractAgent * parent();
             void deleteChildren();
             

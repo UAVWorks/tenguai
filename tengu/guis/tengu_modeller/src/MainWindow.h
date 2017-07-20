@@ -47,6 +47,7 @@
 #include "DialogPropertiesTask.h"
 #include "DialogOpenSaveModel.h"
 #include "XPlaneProcess.h"
+#include "NotSavedOperation.h"
 
 namespace tengu {
     
@@ -141,6 +142,8 @@ namespace tengu {
             
             void __check_start_element_in_process( AbstractAgent * agent );
             
+            QList<NotSavedOperation> __not_saved_operations;
+            
         private slots:
             
             void __on_quit_request();  
@@ -160,6 +163,7 @@ namespace tengu {
             void __on__clear_agent( AbstractAgent * agent );
             
             void __on__want__create_agent( AbstractAgent * parent, AbstractEntity::entity_types_t type );
+            void __on__want__delete( AbstractEntity * entity );
             
             // void __on__create__process();
             void __on__save();

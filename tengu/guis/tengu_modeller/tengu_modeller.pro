@@ -48,6 +48,7 @@ HEADERS  += src/overboard/XPlaneAircraft.h      \
         src/schema/ProcessItem.h                \
         src/schema/VehicleItem.h                \
         src/schema/WorkSpaceItem.h              \
+        src/schema/NotSavedOperation.h          \
         src/LibraryTab_Button.h                 \
         src/LibraryTab_Processes.h              \
         src/LibraryTab.h                        \
@@ -90,6 +91,7 @@ SOURCES += src/main.cpp                         \
         src/schema/VehicleItem.cpp              \
         src/schema/WorkSpaceItem.cpp            \
         src/schema/AgentItemFactory.cpp         \
+        src/schema/NotSavedOperation.cpp        \
         src/LibraryTab_Button.cpp               \
         src/LibraryTab_Processes.cpp            \
         src/LibraryTab.cpp                      \

@@ -962,6 +962,84 @@ bool tengu::MongoStorage::storageable(tengu::AbstractEntity* e) {
     
 }
 
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                          Remove signle object from storage.                                      *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                          Удалить один объект из хранилища.                                       *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+
+void tengu::MongoStorage::__remove_single_object ( QJsonObject json ) {
+    
+    if ( ! storageable( json ) ) return;
+    
+    mongoc_collection_t * collection = __getCollection( json );
+    if ( collection ) {
+        QString id;
+        if ( json.contains( JSON_UUID_ELEMENT ) ) id = json[ JSON_UUID_ELEMENT ].toString();
+        else if ( json.contains( JSON_MONGOID_ELEMENT ) ) id = json[ JSON_MONGOID_ELEMENT ].toString();
+        if ( ! id.isEmpty() ) {
+            
+            bson_t * doc = bson_new();
+            bson_error_t error;
+            
+            char cid[128];
+            strcpy( cid, id.toUtf8().data() );
+            BSON_APPEND_UTF8( doc, "_id", cid );
+            
+            if ( ! mongoc_collection_remove ( collection, MONGOC_REMOVE_SINGLE_REMOVE, doc, NULL, &error)) {
+                emit signalError( EL_WARNING, "MongoStorage::__remove_single_object()", QString( error.message ) );
+            };
+            
+            bson_destroy( doc );        
+        } else {
+            qDebug() << "MongoStorage::__remove_single_object, id is empty: " << json;
+        };
+        mongoc_collection_destroy ( collection );
+    };
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                      Remove storageable object recursivelly                                      *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                       Удалить хранимый объект - рекурсивно.                                      *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MongoStorage::remove ( QJsonObject o ) {
+    
+    if ( ! storageable( o ) ) return;
+    
+    QList<QString> his_keys = o.keys();
+    for ( int i=0; i<his_keys.count(); i++ ) {
+        QString key = his_keys.at(i);
+        QJsonValue val = o[ key ];
+        
+        if ( val.isObject() )  {
+            QJsonObject oval = val.toObject();
+            if ( storageable( oval ) ) {
+                remove( oval );
+            }
+        }
+        
+        if ( val.isArray() ) {
+            QJsonArray aval = val.toArray();
+            for ( int aIndex=0; aIndex<aval.count(); aIndex ++ ) {
+                QJsonValue array_value = aval.at( aIndex );
+                
+                if ( array_value.isObject() ) {
+                    QJsonObject oval = array_value.toObject();
+                    remove( oval );
+                };
+            };
+        }
+    }
+    
+    __remove_single_object( o );
+}
 
 // ********************************************************************************************************************
 // *                                                                                                                  *

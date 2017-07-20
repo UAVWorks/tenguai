@@ -59,7 +59,7 @@ namespace tengu {
             void removeItem ( QGraphicsItem * gItem );
             AbstractEntity * rootEntity();
             ProcessItem * rootAsProcess();
-            
+            AbstractEntityItem * itemFor( AbstractEntity * entity );
             
             bool changed();
             

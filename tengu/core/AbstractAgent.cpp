@@ -251,7 +251,12 @@ void tengu::AbstractAgent::__on_redis_error ( QString message ) {
 void tengu::AbstractAgent::_somethingChanged() {
     
     AbstractEntity::_somethingChanged();
-    if ( ! _silent ) emit signalSomethingChanged();
+    
+    if ( ! _silent ) {
+        emit signalSomethingChanged();        
+    };
+    
+    if ( _parent ) _parent->_somethingChanged();
     
 }
 
@@ -410,6 +415,26 @@ QList< tengu::AbstractAgent* > tengu::AbstractAgent::children() {
         result.append( child );
     };
     return result;
+    
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                          Get all his children recursivelly                                       *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                            Получить его детей рекурсивно.                                        *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::AbstractAgent::childrenRecursive( QList< tengu::AbstractAgent * > & chlist ) {
+    
+    QList<AbstractAgent *> his_children = children();
+    
+    for ( int i=0; i<his_children.count(); i++ ) {
+        AbstractAgent * och = his_children.at(i);
+        och->childrenRecursive( chlist );
+        chlist.append( och );
+    };
     
 }
 

@@ -337,11 +337,26 @@ QPixmap tengu::AbstractEntityItem::_executionModePixmap( bool forSize32 ) {
 // ********************************************************************************************************************
 
 void tengu::AbstractEntityItem::_somethingChanged() {
-    AbstractEntity::_somethingChanged();    
+    
+    qDebug() << "AbstractEntityItem::Something changed()";
+    
+    AbstractAgent * agent = dynamic_cast<AbstractAgent * >( entity() );
+    qDebug() << "Agent is" << agent;
+    if ( agent ) {
+        qDebug() << "Call something changed for agent";
+        
+        agent->_somethingChanged();
+    } else AbstractEntity::_somethingChanged();    
+    
     bool silent = false;
     
     if ( ( entity() == nullptr ) || ( entity()->silent() ) ) silent = true;
+    
+    qDebug() << "Silent is: " << silent;
+    
     if ( ! silent ) {
+        
+        qDebug() << "Signal something changed for abstract entity";
         emit signalSomethingChanged();
     };
     
