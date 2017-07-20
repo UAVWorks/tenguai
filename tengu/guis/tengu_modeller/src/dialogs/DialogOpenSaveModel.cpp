@@ -274,16 +274,13 @@ void tengu::DialogOpenSaveModel::_on__ok() {
     result_agent = nullptr;
     
     QList<QJsonObject> readed = __mongo->read( __selector, true );
-    qDebug() << "Selector is:" << __selector;    
     
     if ( readed.isEmpty() ) emit signalError( EL_WARNING, "DialogOpenSaveModel::_on__ok()", tr("Empty set of object was readed") );
     else {
         
-        qDebug() << "readed is not empty: " << readed.at(0);
         result_agent = dynamic_cast< AbstractAgent * > ( AgentItemFactory::createEntity( readed.at(0) ) );
         
         if ( ! result_agent ) {
-            qDebug() << "In result agent uuid=" << result_agent->getUUID();        
             emit signalError( EL_WARNING, "DialogOpenSaveModel::_on__ok()", tr("Result agent is empty") );
         }
     }

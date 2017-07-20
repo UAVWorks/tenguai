@@ -251,7 +251,6 @@ void tengu::AbstractAgent::__on_redis_error ( QString message ) {
 void tengu::AbstractAgent::_somethingChanged() {
     
     AbstractEntity::_somethingChanged();
-    qDebug() << "AbstractAgent::_somethingChanged()";
     if ( ! _silent ) emit signalSomethingChanged();
     
 }

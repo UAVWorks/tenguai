@@ -339,8 +339,12 @@ QPixmap tengu::AbstractEntityItem::_executionModePixmap( bool forSize32 ) {
 void tengu::AbstractEntityItem::_somethingChanged() {
     AbstractEntity::_somethingChanged();    
     bool silent = false;
+    
     if ( ( entity() == nullptr ) || ( entity()->silent() ) ) silent = true;
-    if ( ! silent ) emit signalSomethingChanged();
+    if ( ! silent ) {
+        emit signalSomethingChanged();
+    };
+    
     update();
 }
 
@@ -641,9 +645,12 @@ void tengu::AbstractEntityItem::setExecutionMode ( tengu::AbstractEntity::execut
 // ********************************************************************************************************************
 
 void tengu::AbstractEntityItem::setX ( int x ) {
-    
+
     QGraphicsObject::setX( x );
-    if ( _entity ) _entity->setX( x );
+    if ( _entity ) {
+        _entity->setX( x );
+        _somethingChanged();
+    };
     
 }
 
@@ -658,7 +665,10 @@ void tengu::AbstractEntityItem::setX ( int x ) {
 void tengu::AbstractEntityItem::setY ( int y ) {
     
     QGraphicsObject::setY ( y );
-    if ( _entity ) _entity->setY( y );
+    if ( _entity ) {
+        _somethingChanged();
+        _entity->setY( y );
+    };
     
 }
 

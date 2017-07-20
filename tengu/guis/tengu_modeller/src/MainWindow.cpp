@@ -618,7 +618,6 @@ void tengu::MainWindow::__on_schema_item_was_dropped ( tengu::AbstractEntity * e
 // ********************************************************************************************************************
 
 void tengu::MainWindow::__on__something_changed() {
-    qDebug() << "   mainWindow::on something changed";
     __action__save_schema->setEnabled( true );
 }
 
@@ -725,9 +724,7 @@ void tengu::MainWindow::__on__tree_structure__agent_was_created ( tengu::Abstrac
 // ********************************************************************************************************************
 
 void tengu::MainWindow::__on__tree_structure__agent_was_selected ( tengu::AbstractAgent * agent ) {
-    
-    qDebug() << "MainWindow::__on_tree_structure_agent_was_selected()";
-    
+        
     if ( __do_not_handle_events ) return;
     
     AbstractEntityItem * item = AgentItemFactory::createItem( agent );

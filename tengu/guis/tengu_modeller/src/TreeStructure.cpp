@@ -420,9 +420,7 @@ void tengu::TreeStructure::__on__tree_item_selected ( const QItemSelection & cur
     
     Q_UNUSED( current );
     Q_UNUSED( previous );
-    
-    qDebug() << "TreeStructure::__on_tree_item_selected";
-    
+        
     if ( __do_not_handle_events ) return;
     
     __selectedItem = nullptr;

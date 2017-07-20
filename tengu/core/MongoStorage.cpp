@@ -685,9 +685,7 @@ bool tengu::MongoStorage::__upsert_single_object ( QJsonObject json ) {
     char cid[128];
     memset( cid, 0, sizeof( cid ) );
     strcpy( cid, oid.toLatin1().data() );
-    
-    qDebug() << "At upsert, oid=" << oid;
-    
+        
     if ( oid.isEmpty() ) {
         qDebug() << "MongoStorage::__upsert_single_object, empty uuid for " << json;
         return false;
@@ -872,15 +870,12 @@ QList<QJsonObject> tengu::MongoStorage::read( QJsonObject selector, bool recursi
                 char * str = bson_as_json (doc, NULL);
                 QJsonDocument adoc = QJsonDocument::fromJson( str );
                 QJsonObject answer = adoc.object();
-                
-                qDebug() << "Mongo::read original: " << answer << "\n";
-                
+                                
                 // Replace the _id to uuid 
                 // Заменяем _id на uuid.
                 
                 if ( answer.contains( JSON_MONGOID_ELEMENT ) ) {
                     QJsonValue his_mongo_id = answer.value( JSON_MONGOID_ELEMENT );
-                    qDebug() << "hid mongo id=" << his_mongo_id << "\n";
                     
                     QString uuid;
                     
@@ -889,15 +884,11 @@ QList<QJsonObject> tengu::MongoStorage::read( QJsonObject selector, bool recursi
                         QJsonObject his_mongo_oid = his_mongo_id.toObject();
                         if ( his_mongo_oid.contains("$oid") ) uuid=his_mongo_oid[ "$oid" ].toString();
                     };
-                    
-                    qDebug() << "Founded uuid=" << uuid;
-                    
+                                        
                     answer[ JSON_UUID_ELEMENT ] = uuid;
                     answer.remove( JSON_MONGOID_ELEMENT );
                 }
-                
-                qDebug() << "Mongo::readed " << answer << "\n";                
-                
+                                
                 // Add collection name
                 // Добавляем имя коллекции
                 
