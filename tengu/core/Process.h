@@ -14,6 +14,8 @@
 #include "AbstractAgent.h"
 #include "Task.h"
 #include "ProcessStop.h"
+#include "ANDor.h"
+#include "ORer.h"
 
 namespace tengu {
     

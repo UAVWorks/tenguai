@@ -88,6 +88,8 @@ namespace tengu {
                 ET_ProcessTreeItem,
                 ET_ProcessStartTreeItem,
                 ET_ProcessStopTreeItem,
+                ET_ANDorTreeItem,
+                ET_ORerTreeItem,
                 ET_VehicleTreeItem,
                 ET_WorkspaceTreeItem
             };                        

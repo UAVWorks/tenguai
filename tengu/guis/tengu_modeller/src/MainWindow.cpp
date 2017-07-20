@@ -556,23 +556,18 @@ void tengu::MainWindow::__on_schama_item_moved ( tengu::AbstractEntityItem * ent
 // ********************************************************************************************************************
 
 void tengu::MainWindow::__on_schema_item_was_dropped ( tengu::AbstractEntity * entity, QPoint pos ) {
-    
+        
     if ( entity ) {
-        
-        entity->setExecutionMode( __execution_mode );
-        
+                
         // Common item.
         // общий элемент.
         
         AbstractEntityItem * item = dynamic_cast<AbstractEntityItem * >( entity );   
         
         if ( item ) {
-            
             item->checkEntity();
-            item->setExecutionMode( __execution_mode );            
-            
-        };
-        
+        }
+                
         // Specified items, which has been created.
         // Специфические элементы, которые были созданы.
         
@@ -587,9 +582,8 @@ void tengu::MainWindow::__on_schema_item_was_dropped ( tengu::AbstractEntity * e
             
             // It was graphical representation somewhat from agents.
             // Это было графическое представление кого-то из агентов.
-               
             item->setX( pos.x() );
-            item->setY( pos.y() );                        
+            item->setY( pos.y() );
                         
         };
         
@@ -610,7 +604,11 @@ void tengu::MainWindow::__on_schema_item_was_dropped ( tengu::AbstractEntity * e
         __schemaView->hide();
         __schemaScene->addItem( item );
         __schemaView->show();
-                
+        
+        AbstractAgent * agent = dynamic_cast< AbstractAgent * > ( item->entity() );
+        if ( agent ) {
+            __left->treeStructure->addAgent( agent , false );        
+        };                
     };    
     
 }

@@ -21,6 +21,7 @@ namespace tengu {
     class LinkItem : public AbstractEntityItem {
     
         friend class ItemWithLinks;
+        friend class ResizeableItemWithLinks;
         
         Q_OBJECT
         
@@ -43,16 +44,20 @@ namespace tengu {
             virtual void setComment( QString comment );
             virtual AbstractEntity::execution_mode_t getExecutionMode();
             virtual void setExecutionMode( AbstractEntity::execution_mode_t mode );
-            
-            
+                        
             void setTo( QPoint to );
+            
+            AbstractEntityItem * getFrom();
+            AbstractEntityItem * getTo();
             
             bool semiCreated();
             bool isEmpty();
             void recalculate();
             float distanceTo( QPointF point );
             
-            
+            bool withSproutFrom();
+            bool withSproutTo();
+                        
         protected:
             
             void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = Q_NULLPTR);
@@ -67,8 +72,8 @@ namespace tengu {
             QString __comment;
             AbstractEntity::execution_mode_t __execution_mode;
             
-            void __setFrom( AbstractEntityItem * entity, bool withSproutFrom );
-            void __setTo( AbstractEntityItem * entity, bool withSproutTo );     
+            void __setFrom( AbstractEntityItem * entity );
+            void __setTo( AbstractEntityItem * entity );     
             
             void __correctPointsForSprouts( int x, QRect fromRect, QRect toRect );
             
@@ -77,8 +82,8 @@ namespace tengu {
             
             QPoint __tempTo;
             
-            bool __withSproutFrom;
-            bool __withSproutTo;
+            // bool __withSproutFrom;
+            // bool __withSproutTo;
             
             void __checkSproutInsideTask();
             

@@ -113,7 +113,7 @@ void tengu::TreeStructure::contextMenuEvent ( QContextMenuEvent * event ) {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::TreeStructure::addAgent( AbstractAgent * agent, bool focusToHim ) {
+void tengu::TreeStructure::addAgent( AbstractAgent * agent , bool focusToHim ) {
     
     if ( ! agent ) return;
     
@@ -186,7 +186,17 @@ void tengu::TreeStructure::addAgent( AbstractAgent * agent, bool focusToHim ) {
             case AbstractEntity::ET_Task: {
                 item = new QTreeWidgetItem( AbstractEntity::ET_TaskTreeItem );
                 item->setIcon( 0, QIcon( QPixmap( ":box_16.png" ) ) );
-            }; break;                
+            }; break;     
+            
+            case AbstractEntity::ET_ANDor : {
+                item = new QTreeWidgetItem( AbstractEntity::ET_ANDorTreeItem );
+                item->setIcon( 0, QIcon( QPixmap( ":arrow_switch_and_16.png" ) ) );
+            }; break;
+            
+            case AbstractEntity::ET_ORer : {
+                item = new QTreeWidgetItem( AbstractEntity::ET_ORerTreeItem );
+                item->setIcon( 0, QIcon( QPixmap(":arrow_switch_or_16.png") ) );
+            }; break;
             
             default: qDebug() << "TreeStructure::addAgent, unhandled type " << (int) agent->entityType();
         };

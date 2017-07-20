@@ -20,10 +20,9 @@
 tengu::ItemWithLinks::ItemWithLinks ( tengu::AbstractEntity * entity, QGraphicsItem* parent ) 
     : AbstractEntityItem ( entity, parent )
 {
-    __linksOutgoingFromThis = QMap< QString, LinkItem * >();
-    __linksIncommingToThis = QMap< QString, LinkItem * >();    
+    _linksOutgoingFromThis = QMap< QString, LinkItem * >();
+    _linksIncommingToThis = QMap< QString, LinkItem * >();    
     
-    _iAmSprout = false;
 }
 
 // ********************************************************************************************************************
@@ -35,9 +34,9 @@ tengu::ItemWithLinks::ItemWithLinks ( tengu::AbstractEntity * entity, QGraphicsI
 // ********************************************************************************************************************
 
 void tengu::ItemWithLinks::addOutgoingLink ( tengu::LinkItem * link ) {
-    __linksOutgoingFromThis[ link->getUUID() ] = link;
+    _linksOutgoingFromThis[ link->getUUID() ] = link;
     QObject::connect( link, SIGNAL(signalLinkRemoved(QString)), this, SLOT(removeLink(QString)) );
-    link->__setFrom( this, _iAmSprout );
+    link->__setFrom( this );
 }
 
 // ********************************************************************************************************************
@@ -49,9 +48,9 @@ void tengu::ItemWithLinks::addOutgoingLink ( tengu::LinkItem * link ) {
 // ********************************************************************************************************************
 
 void tengu::ItemWithLinks::addIncommingLink ( tengu::LinkItem * link ) {
-    __linksIncommingToThis[ link->getUUID() ] = link;
+    _linksIncommingToThis[ link->getUUID() ] = link;
     QObject::connect( link, SIGNAL(signalLinkRemoved(QString)), this, SLOT(removeLink(QString)) );
-    link->__setTo( this, _iAmSprout );
+    link->__setTo( this );
 }
 
 // ********************************************************************************************************************
@@ -76,14 +75,14 @@ void tengu::ItemWithLinks::removeLink ( tengu::LinkItem * link ) {
 
 void tengu::ItemWithLinks::removeLink ( QString uuid ) {
     
-    if ( __linksIncommingToThis.contains( uuid ) ) {
-        QObject::disconnect( __linksIncommingToThis[uuid], SIGNAL(signalLinkRemoved(QString)), this, SLOT( removeLink( QString) ) );
-        __linksIncommingToThis.remove( uuid );
+    if ( _linksIncommingToThis.contains( uuid ) ) {
+        QObject::disconnect( _linksIncommingToThis[uuid], SIGNAL(signalLinkRemoved(QString)), this, SLOT( removeLink( QString) ) );
+        _linksIncommingToThis.remove( uuid );
     };
     
-    if ( __linksOutgoingFromThis.contains( uuid ) ) {
-        QObject::disconnect( __linksOutgoingFromThis[uuid], SIGNAL(signalLinkRemoved(QString)), this, SLOT(removeLink(QString)) );
-        __linksOutgoingFromThis.remove( uuid );
+    if ( _linksOutgoingFromThis.contains( uuid ) ) {
+        QObject::disconnect( _linksOutgoingFromThis[uuid], SIGNAL(signalLinkRemoved(QString)), this, SLOT(removeLink(QString)) );
+        _linksOutgoingFromThis.remove( uuid );
     };
 }
 
@@ -99,11 +98,11 @@ QList< tengu::LinkItem* > tengu::ItemWithLinks::hisLinks() {
     
     QList< LinkItem * > result;
     
-    foreach( LinkItem * item, __linksIncommingToThis ) {
+    foreach( LinkItem * item, _linksIncommingToThis ) {
         result.append( item );
     };
     
-    foreach( LinkItem * item, __linksOutgoingFromThis ) {
+    foreach( LinkItem * item, _linksOutgoingFromThis ) {
         result.append( item );
     };
     

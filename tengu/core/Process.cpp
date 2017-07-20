@@ -75,6 +75,8 @@ void tengu::Process::addChild ( tengu::AbstractAgent * child ) {
     
     Task * task = dynamic_cast<Task*> ( child );
     ProcessStop * stop = dynamic_cast< ProcessStop * > ( child );
+    ANDor * andor = dynamic_cast< ANDor * > ( child );
+    ORer * orer = dynamic_cast < ORer * > ( child );
     
     bool systemNameEmpty = child->getSystemName().isEmpty();
     bool humanNameEmpty = child->getHumanName().isEmpty();
@@ -91,6 +93,18 @@ void tengu::Process::addChild ( tengu::AbstractAgent * child ) {
             int stopCount = childrenCountOf<ProcessStop * >() + 1;
             if ( systemNameEmpty ) child->setSystemName( tr("ProcessStop_") + QString::number( stopCount ) );
             if ( humanNameEmpty ) child->setHumanName( tr("Process Stop ") + QString::number( stopCount ) );
+        };
+        
+        if ( andor ) {
+            int andorCount = childrenCountOf<ANDor *>() + 1;
+            if ( systemNameEmpty ) child->setSystemName( tr("Block_AND_") + QString::number( andorCount ) );
+            if ( humanNameEmpty ) child->setHumanName( tr("Block AND ") + QString::number( andorCount ) );
+        };
+        
+        if ( orer ) {
+            int orerCount = childrenCountOf< ORer *>() + 1;
+            if ( systemNameEmpty ) child->setSystemName( tr("Block_OR_") + QString::number( orerCount ) );
+            if ( humanNameEmpty ) child->setHumanName( tr("Block OR ") + QString::number( orerCount ) );
         };
     }
     

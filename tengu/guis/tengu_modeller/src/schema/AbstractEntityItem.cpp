@@ -653,7 +653,7 @@ void tengu::AbstractEntityItem::setExecutionMode ( tengu::AbstractEntity::execut
 void tengu::AbstractEntityItem::setX ( int x ) {
 
     QGraphicsObject::setX( x );
-    if ( _entity ) {
+    if ( ( _entity ) && ( ! _silent ) ) {
         _entity->setX( x );
         _somethingChanged();
     };
@@ -671,7 +671,7 @@ void tengu::AbstractEntityItem::setX ( int x ) {
 void tengu::AbstractEntityItem::setY ( int y ) {
     
     QGraphicsObject::setY ( y );
-    if ( _entity ) {
+    if ( ( _entity ) && ( ! _silent ) ) {
         _somethingChanged();
         _entity->setY( y );
     };

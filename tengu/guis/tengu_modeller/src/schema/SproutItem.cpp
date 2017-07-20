@@ -25,7 +25,7 @@ tengu::SproutItem::SproutItem ( tengu::Sprout * sprout, QGraphicsItem* parent )
     __height = 33;
     __orientation = SPO_0;    
     
-    _iAmSprout = true;
+    // _iAmSprout = true;
     
     _boundingRect = QRect( 0, 0, __width, __height );
     _class_name = "SproutItem";   

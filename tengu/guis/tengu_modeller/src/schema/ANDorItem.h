@@ -10,15 +10,17 @@
 #pragma once
 
 #include "ANDor.h"
-#include "ItemWithLinks.h"
+#include "ResizeableItemWithLinks.h"
 
 namespace tengu {
     
-    class ANDorItem : public ItemWithLinks {
+    class ANDorItem : public ResizeableItemWithLinks {
+        
         Q_OBJECT
+        
         public:
             
-            ANDorItem ( ANDor * entity = nullptr, QGraphicsItem* parent = nullptr );
+            ANDorItem ( ANDor * entity = nullptr, QGraphicsItem * parent = nullptr );
             virtual ~ANDorItem();
             
             void checkEntity();

@@ -18,11 +18,15 @@
 // ********************************************************************************************************************
 
 tengu::ANDorItem::ANDorItem ( tengu::ANDor * entity, QGraphicsItem* parent ) 
-    : ItemWithLinks ( entity , parent )
+    : tengu::ResizeableItemWithLinks ( entity , parent )
 {
+    // For initial sizes only. Will be recalculated by ResizeableItemWithLinks.
+    // Только для начальных размеров, будет пересчитано в ResizeableItemWithLinks.
+    
     _boundingRect = QRect( 0, 0, 40, 144 );
+    
     _class_name = "ANDorItem";
-    _entity_type = AbstractEntity::ET_ANDorItem;
+    _entity_type = AbstractEntity::ET_ANDorItem;        
 }
 
 // ********************************************************************************************************************

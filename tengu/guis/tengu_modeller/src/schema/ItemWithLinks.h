@@ -49,12 +49,10 @@ namespace tengu {
             
         protected:
             
-            bool _iAmSprout;
+            // bool _iAmSprout;            
             
-        private:
-            
-            QMap< QString, LinkItem * > __linksOutgoingFromThis;
-            QMap< QString, LinkItem * > __linksIncommingToThis;
+            QMap< QString, LinkItem * > _linksOutgoingFromThis;
+            QMap< QString, LinkItem * > _linksIncommingToThis;
                         
     };
     

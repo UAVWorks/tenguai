@@ -29,8 +29,9 @@ tengu::LinkItem::LinkItem()
     __posFrom = QPoint( MINIMUM_CONSTRAINT, MINIMUM_CONSTRAINT );
     __posTo = QPoint( MINIMUM_CONSTRAINT, MINIMUM_CONSTRAINT );
     __tempTo = QPoint( MINIMUM_CONSTRAINT, MINIMUM_CONSTRAINT );
-    __withSproutFrom = false;
-    __withSproutTo = false;
+    
+    // __withSproutFrom = false;
+    // __withSproutTo = false;
     
     __system_name = QString("Link");
     __human_name = QString("Link");
@@ -162,10 +163,10 @@ void tengu::LinkItem::setExecutionMode ( tengu::AbstractEntity::execution_mode_t
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::LinkItem::__setFrom ( tengu::AbstractEntityItem * entity, bool withSproutFrom ) {
+void tengu::LinkItem::__setFrom ( tengu::AbstractEntityItem * entity ) {
     
     __from = entity;
-    __withSproutFrom = withSproutFrom;
+    // __withSproutFrom = withSproutFrom;
     __checkSproutInsideTask();
     
     // if ( entity ) entity->addOutgoingLink( this );
@@ -182,10 +183,10 @@ void tengu::LinkItem::__setFrom ( tengu::AbstractEntityItem * entity, bool withS
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::LinkItem::__setTo ( tengu::AbstractEntityItem * entity, bool withSproutTo ) {
+void tengu::LinkItem::__setTo ( tengu::AbstractEntityItem * entity ) {
     
     __to = entity;
-    __withSproutTo = withSproutTo;
+    // __withSproutTo = withSproutTo;
     __checkSproutInsideTask();
     
     // if ( entity ) entity->addIncommingLink( this );
@@ -239,9 +240,9 @@ void tengu::LinkItem::__setTo ( tengu::AbstractEntityItem * entity, bool withSpr
 // ********************************************************************************************************************
 
 void tengu::LinkItem::__checkSproutInsideTask() {
-    
-    if ( ( __from != nullptr ) && ( __to != nullptr ) &&  
-        ( ( __withSproutFrom ) || ( __withSproutTo ) ) 
+            
+    if ( ( __from != nullptr ) && ( __to != nullptr ) &&          
+        ( ( withSproutFrom() ) || ( withSproutTo() ) ) 
     ) {
         __from->checkEntity();
         __to->checkEntity();
@@ -249,12 +250,12 @@ void tengu::LinkItem::__checkSproutInsideTask() {
         SproutableAgent * agent = nullptr;
         Sprout * sprout = nullptr;
         
-        if ( __withSproutFrom ) {
+        if ( withSproutFrom() ) {
             agent = dynamic_cast< SproutableAgent * > ( __to->entity() );
             sprout = dynamic_cast < Sprout * > ( __from->entity() );
         };
         
-        if ( __withSproutTo ) {
+        if ( withSproutTo() ) {
             agent = dynamic_cast < SproutableAgent * > ( __from->entity() );
             sprout = dynamic_cast< Sprout * > ( __to->entity() );
         };
@@ -278,7 +279,6 @@ void tengu::LinkItem::setTo ( QPoint to ) {
     recalculate();
     update();    
 }
-
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
@@ -313,14 +313,14 @@ bool tengu::LinkItem::semiCreated() {
 // ********************************************************************************************************************
 
 void tengu::LinkItem::__correctPointsForSprouts( int x, QRect fromRect, QRect toRect ) {
-    
-    if ( __withSproutTo ) {
+        
+    if ( withSproutTo() ) {
         __posFrom.setX( __posTo.x() );
         if ( __posFrom.x() < __from->x() + fromRect.topLeft().x() - x ) __posFrom.setX( __from->x() + fromRect.topLeft().x() - x );
         if ( __posFrom.x() > __from->x() + fromRect.topRight().x() - x ) __posFrom.setX( __from->x() + fromRect.topRight().x() - x  );
     };
     
-    if ( __withSproutFrom ) {
+    if ( withSproutFrom() ) {
         __posTo.setX( __posFrom.x() );
         if ( __posTo.x() < __to->x() + toRect.topLeft().x() - x ) __posTo.setX( __to->x() + toRect.topLeft().x() - x );
         if ( __posTo.x() > __to->x() + toRect.topRight().x() - x ) __posTo.setX( __to->x() + toRect.topRight().x() - x );
@@ -563,7 +563,7 @@ void tengu::LinkItem::recalculate() {
 // ********************************************************************************************************************
 
 void tengu::LinkItem::paint ( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget ) {
-        
+            
     if ( ( __posFrom.x() <= MINIMUM_CONSTRAINT ) || ( __posFrom.y() <= MINIMUM_CONSTRAINT ) || ( __posTo.x() <= MINIMUM_CONSTRAINT ) || ( __posTo.y() <= MINIMUM_CONSTRAINT ) ) return;
     
     _storePainterSettings( painter );
@@ -596,7 +596,7 @@ void tengu::LinkItem::paint ( QPainter * painter, const QStyleOptionGraphicsItem
         if ( isSelected() ) {
             pen.setColor( QColor( 92, 32, 32 ) );       
             pen.setWidth( 6 );
-        } else if (( __withSproutFrom ) || ( __withSproutTo ) ) {
+        } else if (( withSproutFrom() ) || ( withSproutTo() ) ) {
             pen.setColor( QColor( 164, 164, 164 ) );
             pen.setWidth( 1 );
         } else  {
@@ -616,7 +616,7 @@ void tengu::LinkItem::paint ( QPainter * painter, const QStyleOptionGraphicsItem
     // The nose of the arrow
     // Носик стрелки.
     
-    if ( ( ! __withSproutFrom ) && ( ! __withSproutTo ) ) {
+    if ( ( ! withSproutFrom() ) && ( ! withSproutTo() ) ) {
     
         QLineF line( __posFrom, __posTo );
         QTransform transform;
@@ -663,6 +663,55 @@ float tengu::LinkItem::distanceTo ( QPointF point ) {
     intersect = intersect - point;
     
     return intersect.manhattanLength();
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                        Goes this link from the sprout?                                           *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                        Идет ли эта связь из спраута?                                             *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+
+bool tengu::LinkItem::withSproutFrom() {
+    return ( ( __from ) && ( __from->entityType() == AbstractEntityItem::ET_SproutItem ) );
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                          Comes this link into the sprout?                                        *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                           Входит ли данная связь в спраут?                                       *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+bool tengu::LinkItem::withSproutTo() {
+    return ( ( __to ) && ( __to->entityType() == AbstractEntityItem::ET_SproutItem ) );
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                    Return the element which this links comes from.                               *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                   Вернуть элемент, откуда выходит данная связь.                                  *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+tengu::AbstractEntityItem * tengu::LinkItem::getFrom() {
+    return __from;
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                     Return the element which this links goes to.                                 *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                     Вернуть элемент, куда входит данная связь.                                   *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+tengu::AbstractEntityItem * tengu::LinkItem::getTo() {
+    return __to;
 }
 
 // ********************************************************************************************************************
