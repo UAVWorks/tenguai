@@ -33,6 +33,8 @@ namespace tengu {
             
             virtual void addOutgoingLink( LinkItem * link );
             virtual void addIncommingLink( LinkItem * link );
+            virtual bool acceptIncommingLink();
+            virtual bool acceptOutgoingLink();
             
             /**
              * @short Remove link.
@@ -48,7 +50,7 @@ namespace tengu {
             // virtual void update( const QRectF & rect = QRectF() );
             
             QList< LinkItem * > hisLinks();
-            
+                                    
             // virtual void recalculate();
             
         protected:

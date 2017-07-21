@@ -112,6 +112,99 @@ void tengu::Process::addChild ( tengu::AbstractAgent * child ) {
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
+// *                                           Start of process execution.                                            *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                            Старт выполнения процесса.                                            *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::Process::start() {
+        
+    // Finding ProcessStart element in children.
+    // Поиск элемента ProcessStart в детях.
+    
+    ProcessStart * pstart = nullptr;
+    
+    QList< AbstractAgent * > chi = children();
+    
+    for ( int i=0; i<chi.count(); i++ ) {
+        ProcessStart * cur = dynamic_cast< ProcessStart * > ( chi.at(i) );
+        if ( cur ) {
+            pstart = cur;
+            break;
+        };
+    };
+    
+    if ( pstart ) {
+        
+        // Start execution of process.
+        // Начало выполнения процесса.
+        
+        for ( int i=0; i<chi.count(); i++ ) {
+            AbstractAgent * c = chi.at(i);
+            QObject::connect( c, SIGNAL( signalActivated() ), this, SLOT( __on__agent_activated() ) );
+            QObject::connect( c, SIGNAL( signalFinished() ), this, SLOT( __on__agent__finished() ) );
+            QObject::connect( c, SIGNAL( signalFailed( QString ) ), this, SLOT( __on_agent_failed( QString ) ) );
+        };
+        
+        // Instead of assigning a focus to the start element, we immediately assign focus to his children.
+        // Вместо назначения фокуса на узел старта, сразу назначаем на его детей.
+        // --- pstart->setFocus( true );
+        
+        QList<AbstractAgent * > to_focus = pstart->nextByFocus();
+        if ( to_focus.count() > 0 ) {
+            for ( int i=0; i< to_focus.count(); i++ ) {
+                to_focus.at(i)->setFocus( true );
+            };
+        } else {
+            __stopExecution();
+            emit signalFailed( tr("ProcessStart element does not have the following by focus") );
+        };
+        
+    } else {
+        
+        // We did'nt start block.
+        // Не нашли стартового блока.
+        
+        __stopExecution();
+        emit signalFailed( tr("There is not ProcessStart element.") );
+    }
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                         Stop execution of this process.                                          *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                      Остановка выполнения данного процесса.                                      *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::Process::__stopExecution() {
+    
+    QList<AbstractAgent * > chi = children();
+    for ( int i=0; i<chi.count(); i++ ) {
+        AbstractAgent * c = chi.at(i);
+        QObject::disconnect( c, SIGNAL( signalActivated() ), this, SLOT( __on__agent_activated() ) );
+        QObject::disconnect( c, SIGNAL( signalFinished() ), this, SLOT( __on__agent__finished() ) );
+        QObject::disconnect( c, SIGNAL( signalFailed( QString ) ), this, SLOT( __on_agent_failed( QString ) ) );
+    };
+    
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                              Agent has been activated.                                           *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                                Агент был активирован.                                            *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::Process::__on__agent_activated() {
+
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
 // *                                                   The destructor.                                                *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                                                      Деструктор.                                                 *

@@ -246,7 +246,7 @@ void tengu::SchemaView::mousePressEvent ( QMouseEvent * event ) {
     
         if ( itemsList.count() > 0 ) {
                                     
-            if ( ( semiCreatedLink ) && ( itemWithLinks ) ) {
+            if ( ( semiCreatedLink ) && ( itemWithLinks ) && ( itemWithLinks->acceptIncommingLink() ) ) {
                 
                 // If we have an semi-created link and mouse was pressed on the agent - we will finish the link creating 
                 // process. But we need not a link.
@@ -390,7 +390,7 @@ void tengu::SchemaView::mouseMoveEvent ( QMouseEvent * event ) {
                 QPoint delta = event->pos() - __mousePressedPos;
                 
                 // Wi will not dragg a link.
-                // Связь не будем таскать.
+                // Связь не будем таскать.curItem
                 
                 if (( ! link ) && ( delta.manhattanLength() > QApplication::startDragDistance() )) {
                     __entityDragInProcess = true;
@@ -501,6 +501,7 @@ void tengu::SchemaView::dragMoveEvent ( QDragMoveEvent * event ) {
     // То, над чем тащится
     
     AbstractEntityItem * curItem = dynamic_cast< AbstractEntityItem * >( itemAt( event->pos() ) );
+    ItemWithLinks * iwl = dynamic_cast< ItemWithLinks * > ( itemAt( event->pos() ) );
     
     if ( entity ) {
         
@@ -515,7 +516,8 @@ void tengu::SchemaView::dragMoveEvent ( QDragMoveEvent * event ) {
         // Событие будет обработано только в том случае, если объект не бросается на уже существующий объект.
         // Но если это связь, то ее наоборот можно бросать только на существующий объект.
                 
-        if ( ( link ) && ( curItem ) ) event->acceptProposedAction();
+        if ( ( link ) && ( iwl ) && ( iwl->acceptOutgoingLink() ) ) event->acceptProposedAction();
+        
         if ( ( ! link ) && ( ! curItem ) ) event->acceptProposedAction();
         
     };

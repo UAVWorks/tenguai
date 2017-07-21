@@ -30,6 +30,11 @@ namespace tengu {
             // void update( const QRectF & rect = QRectF() );
             // void recalculate();
             
+            virtual bool acceptIncommingLink();
+            virtual bool acceptOutgoingLink();
+            
+
+            
         private:
             
             void __arrange_vertically( AbstractEntityItem * item, int & minY, int & maxY );

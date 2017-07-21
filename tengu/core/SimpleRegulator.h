@@ -64,7 +64,7 @@ namespace tengu {
             // One step of regulation
             // Один шаг регулирования.
             
-            void _do_step();
+            virtual void _step();
             
         private:
                         

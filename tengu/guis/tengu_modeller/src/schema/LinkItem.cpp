@@ -589,6 +589,7 @@ void tengu::LinkItem::__correctPointsForLines() {
     
     if (
         ( __from ) 
+        && ( __to )
         && ( ( __from->entityType() == AbstractEntity::ET_ANDor ) || ( __from->entityType() == AbstractEntity::ET_ORer ) )
     ) {
         __posFrom.setY( __posTo.y() );

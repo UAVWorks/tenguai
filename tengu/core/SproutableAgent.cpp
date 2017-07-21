@@ -23,10 +23,7 @@ tengu::SproutableAgent::SproutableAgent ()
     _oActivityChannel = QString("");
     _iFocusChannel = QString("");
     // _oFocusChannel = QString("");
-    
-    __focus = false;
-    __activity = false;
-    
+        
     // Additional reaction for subscriber
     if ( _sub_redis ) {
         
@@ -119,10 +116,10 @@ void tengu::SproutableAgent::__on_got_message ( QString channel, QString message
 // *                        Функция выполняется для принятия решения об активации данного канала.                     *
 // *                                                                                                                  *
 // ********************************************************************************************************************
-
+/*
 void tengu::SproutableAgent::__tryActivate() {
 }
-
+*/
 // ********************************************************************************************************************
 // *                                                                                                                  *
 // *                                           Got message from activity channel.                                     *
@@ -175,11 +172,11 @@ void tengu::SproutableAgent::disconnect() {
 // *                                        Является ли данный агент активным?                                        *
 // *                                                                                                                  *
 // ********************************************************************************************************************
-
+/*
 bool tengu::SproutableAgent::isActive() {
     return __activity;
 }
-
+*/
 // ********************************************************************************************************************
 // *                                                                                                                  *
 // *                                               Is this agent focused?                                             *
@@ -187,11 +184,11 @@ bool tengu::SproutableAgent::isActive() {
 // *                                             В фокусе ли данный агент?                                            *
 // *                                                                                                                  *
 // ********************************************************************************************************************
-
+/*
 bool tengu::SproutableAgent::isFocused() {
     return __focus;
 }
-
+*/
 // ********************************************************************************************************************
 // *                                                                                                                  *
 // *                                           Subscribe all existing sprouts.                                        *

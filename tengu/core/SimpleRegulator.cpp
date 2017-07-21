@@ -175,7 +175,7 @@ bool tengu::SimpleRegulator::usable() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::SimpleRegulator::_do_step() {
+void tengu::SimpleRegulator::_step() {
 
     if ( ( usable() ) && ( isActive() ) ) {
         
@@ -199,7 +199,7 @@ void tengu::SimpleRegulator::_do_step() {
 void tengu::SimpleRegulator::__on_input_received( QVariant value ) {
     
     _input_value = value.toFloat();
-    _do_step();
+    _step();
     
 }
 
@@ -214,7 +214,7 @@ void tengu::SimpleRegulator::__on_input_received( QVariant value ) {
 void tengu::SimpleRegulator::__on_desired_received( QVariant value ) {
     
     _desired_value = value.toFloat();
-    _do_step();
+    _step();
     
 }
 

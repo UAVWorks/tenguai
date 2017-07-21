@@ -39,6 +39,9 @@ namespace tengu {
         signals:
             
             void signalSomethingChanged();
+            void signalActivated();
+            void signalFinished();
+            void signalFailed( QString message );
         
         public:
                         
@@ -94,7 +97,13 @@ namespace tengu {
             void addPreviousByFocus( AbstractAgent * previous );            
             void addNextByFocus( AbstractAgent * next );                       
             void removeNeighborByFocus( AbstractAgent * agent );
+            QList<AbstractAgent * > nextByFocus();
+            QList<AbstractAgent * > previousByFocus();
+            void setFocus( bool focus );
+            bool isFocused();
             // void removeNeighborByFocus( QString uuid );
+            
+            bool isActive();
                                     
             // The agent can be provided either as object in memory
             // or separate process in the operation system for 
@@ -148,7 +157,7 @@ namespace tengu {
                     if ( c ) result ++;
                 }
                 return result;
-            };
+            };                        
             
         protected:
                         
@@ -196,6 +205,14 @@ namespace tengu {
             
             void _somethingChanged();
             
+            bool _activity;
+            virtual bool _tryActivate();
+            
+            // One step of agent's execution.
+            // Один шаг выполнения агента.
+            
+            virtual void _step();
+            
         private:
             
             bool __pub_redis_connected;
@@ -203,6 +220,13 @@ namespace tengu {
                         
             QTimer * __connect_timer;
             QTimer * __ping_timer;
+            
+            /**
+             * @short Must be this agent connected to redis.io?
+             * 
+             * Таймер соединения начинает тикать прямо из конструктора. Но реально соединение нужно только тогда,
+             * когда был вызван метод connect().
+             */
             
             bool __must_be_connected;
             
@@ -227,9 +251,12 @@ namespace tengu {
                 return nullptr;
             };
             
+            bool __focused;            
+            
         private slots:
             
             void __on_connect_timer();
+            
             void __on_ping_timer();
             
             void __on_pub_redis_connected();

@@ -541,7 +541,9 @@ void tengu::MainWindow::__on_schama_item_moved ( tengu::AbstractEntityItem * ent
             };
         
         }
-                        
+        
+        __schemaScene->update();
+        __schemaView->update();
         __schemaView->show();
                 
     };
@@ -594,7 +596,7 @@ void tengu::MainWindow::__on_schema_item_was_dropped ( tengu::AbstractEntity * e
             // Это - связь, а не агент.
             
             ItemWithLinks * existing = dynamic_cast<ItemWithLinks * > ( __schemaScene->itemAt( pos, QTransform() ) );
-            if ( existing ) {
+            if ( ( existing ) && ( existing->acceptOutgoingLink() ) ) {
                 existing->setSelected( true );
                 if ( link->isEmpty() ) existing->addOutgoingLink( link );
                 __schemaView->semiCreatedLink = link;

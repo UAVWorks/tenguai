@@ -13,6 +13,7 @@
 
 #include "AbstractAgent.h"
 #include "Task.h"
+#include "ProcessStart.h"
 #include "ProcessStop.h"
 #include "ANDor.h"
 #include "ORer.h"
@@ -22,7 +23,7 @@ namespace tengu {
     class Process : public AbstractAgent {
         
         Q_OBJECT
-        
+                
         public:
             
             Process ();
@@ -31,6 +32,16 @@ namespace tengu {
             virtual QJsonObject toJSON();
             
             void addChild( AbstractAgent * child );
+            
+            void start();
+            
+        private:
+            
+            void __stopExecution();
+            
+        private slots:
+            
+            void __on__agent_activated();
             
     };
     
