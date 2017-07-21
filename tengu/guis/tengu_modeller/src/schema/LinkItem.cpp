@@ -30,6 +30,9 @@ tengu::LinkItem::LinkItem()
     __posTo = QPoint( MINIMUM_CONSTRAINT, MINIMUM_CONSTRAINT );
     __tempTo = QPoint( MINIMUM_CONSTRAINT, MINIMUM_CONSTRAINT );
     
+    // __calcPosFrom = true;
+    // __calcPosTo = true;
+    
     // __withSproutFrom = false;
     // __withSproutTo = false;
     
@@ -173,6 +176,8 @@ void tengu::LinkItem::__setFrom ( tengu::AbstractEntityItem * entity ) {
     
     recalculate();
     update();
+    
+    // emit signalLinked();
 }
 
 // ********************************************************************************************************************
@@ -229,6 +234,8 @@ void tengu::LinkItem::__setTo ( tengu::AbstractEntityItem * entity ) {
     
     recalculate();
     update();
+    
+    // emit signalLinked();
 }
 
 // ********************************************************************************************************************
@@ -275,9 +282,14 @@ void tengu::LinkItem::__checkSproutInsideTask() {
 // ********************************************************************************************************************
 
 void tengu::LinkItem::setTo ( QPoint to ) {
+    
     __tempTo = to;
+    
     recalculate();
     update();    
+    
+    // emit signalLinked();
+    
 }
 
 // ********************************************************************************************************************
@@ -314,7 +326,7 @@ bool tengu::LinkItem::semiCreated() {
 
 void tengu::LinkItem::__correctPointsForSprouts( int x, QRect fromRect, QRect toRect ) {
         
-    if ( withSproutTo() ) {
+    if ( withSproutTo() ) {        
         __posFrom.setX( __posTo.x() );
         if ( __posFrom.x() < __from->x() + fromRect.topLeft().x() - x ) __posFrom.setX( __from->x() + fromRect.topLeft().x() - x );
         if ( __posFrom.x() > __from->x() + fromRect.topRight().x() - x ) __posFrom.setX( __from->x() + fromRect.topRight().x() - x  );
@@ -374,6 +386,7 @@ void tengu::LinkItem::recalculate() {
                 
                 __posFrom.setX( 1 );
                 __posFrom.setY( ( fromRect.topRight().y() + __from->y() - y ) + fromRect.height() / 2 );
+                
                 __posTo.setX( w - 1 );
                 __posTo.setY( ( __to->y() + toRect.height() / 2 ) - y );
                 
@@ -386,8 +399,8 @@ void tengu::LinkItem::recalculate() {
                 y = 0;
                 w = 0;
                 h = 0;
-                __posFrom.setX( MINIMUM_CONSTRAINT ); __posFrom.setY( MINIMUM_CONSTRAINT );
-                __posTo.setX( MINIMUM_CONSTRAINT ); __posTo.setY( MINIMUM_CONSTRAINT );
+                __posFrom.setX( MINIMUM_CONSTRAINT ); __posFrom.setY( MINIMUM_CONSTRAINT );                
+                __posTo.setX( MINIMUM_CONSTRAINT ); __posTo.setY( MINIMUM_CONSTRAINT );                
                 
             } else if ( toRect.bottomRight().y() + __to->y() < fromRect.topLeft().y() + __from->y() ) {                
                 
@@ -404,6 +417,7 @@ void tengu::LinkItem::recalculate() {
                                 
                 __posFrom.setX( __from->x() + fromRect.topLeft().x() - x + fromRect.width() / 2 );
                 __posFrom.setY( h - 1 );
+                
                 __posTo.setX( __to->x() + toRect.topLeft().x() - x + toRect.width() / 2 );
                 __posTo.setY( 1 );
                 
@@ -438,6 +452,7 @@ void tengu::LinkItem::recalculate() {
                 
                 __posFrom.setX( __from->x() + fromRect.topLeft().x() - x + fromRect.width() / 2  );
                 __posFrom.setY( 1 );
+                
                 __posTo.setX( __to->x() + toRect.topLeft().x() - x + toRect.width() / 2 );
                 __posTo.setY( h-1 );
                 
@@ -484,8 +499,9 @@ void tengu::LinkItem::recalculate() {
                 
                 __posFrom.setX( 1 );
                 __posFrom.setY( ( fromRect.topRight().y() + __from->y() - y ) + fromRect.height() / 2 );
+                
                 __posTo.setX( __tempTo.x() - x );
-                __posTo.setY( __tempTo.y() - y );                
+                __posTo.setY( __tempTo.y() - y );
                                 
             } else if ( __tempTo.x() < fromRect.topLeft().x() + __from->x() ) {
                 
@@ -508,8 +524,10 @@ void tengu::LinkItem::recalculate() {
                 y = fromRect.topLeft().y() + __from->y(); if ( y > __tempTo.y() ) y = __tempTo.y();                
                 w = fromRect.width(); 
                 h = fromRect.topLeft().y() + __from->y() - y;
+                
                 __posFrom.setX( w / 2 );
                 __posFrom.setY( h - 1 );
+                
                 __posTo.setX( __tempTo.x() - __from->x() );
                 __posTo.setY( 1 );
                 
@@ -522,8 +540,10 @@ void tengu::LinkItem::recalculate() {
                 y = __from->y() + fromRect.bottomLeft().y();
                 w = fromRect.width();
                 h = __tempTo.y() - __from->y() - fromRect.bottomLeft().y();
+                
                 __posFrom.setX( fromRect.width() / 2 );
                 __posFrom.setY( 1 );
+                
                 __posTo.setX( __tempTo.x() - __from->x() );
                 __posTo.setY( h-1 );
                 
@@ -536,10 +556,13 @@ void tengu::LinkItem::recalculate() {
                 y = fromRect.topLeft().y() + __from->y();
                 w = fromRect.width();
                 h = fromRect.height();
+                
                 __posFrom.setX( fromRect.width() / 2 );
                 __posFrom.setY( fromRect.height() / 2 );
+                
                 __posTo.setX( __tempTo.x() - x );
                 __posTo.setY( __tempTo.y() - y );
+                
             };
         
         }; // else, i.e. we have not a __to element. 
@@ -550,8 +573,33 @@ void tengu::LinkItem::recalculate() {
     QGraphicsObject::setX( x );
     QGraphicsObject::setY( y );
     _boundingRect.setWidth( w );
-    _boundingRect.setHeight( h );
+    _boundingRect.setHeight( h );    
             
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                             Correction for from/to points if line must be horizontally                           *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                          Коррекция точек from / to, если линия должна быть горизонтальной.                       *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::LinkItem::__correctPointsForLines() {
+    
+    if (
+        ( __from ) 
+        && ( ( __from->entityType() == AbstractEntity::ET_ANDor ) || ( __from->entityType() == AbstractEntity::ET_ORer ) )
+    ) {
+        __posFrom.setY( __posTo.y() );
+    }
+    
+    if (
+        ( __to )
+        && ( (__to->entityType() == AbstractEntity::ET_ANDor ) || ( __to->entityType() == AbstractEntity::ET_ORer ) )
+    ) {
+        __posTo.setY( __posFrom.y() );
+    }
 }
 
 // ********************************************************************************************************************
@@ -565,6 +613,8 @@ void tengu::LinkItem::recalculate() {
 void tengu::LinkItem::paint ( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget ) {
             
     if ( ( __posFrom.x() <= MINIMUM_CONSTRAINT ) || ( __posFrom.y() <= MINIMUM_CONSTRAINT ) || ( __posTo.x() <= MINIMUM_CONSTRAINT ) || ( __posTo.y() <= MINIMUM_CONSTRAINT ) ) return;
+    
+    __correctPointsForLines();
     
     _storePainterSettings( painter );
     

@@ -54,41 +54,144 @@ void tengu::ResizeableItemWithLinks::__arrange_vertically( AbstractEntityItem * 
 // ********************************************************************************************************************
 
 QRectF tengu::ResizeableItemWithLinks::boundingRect() const {
-    
-    if ( _entity ) {
-    
-        switch ( _entity->entityType() ) {
-            case AbstractEntity::ET_ANDor:
-            case AbstractEntity::ET_ORer:
-            {                
-                int minY = 0;
-                int maxY = 0;
+        
+    if ( __vertical_correction() ) {
+        
+        int minY = 0;
+        int maxY = 0;
+        bool need = false;
                 
-                foreach ( LinkItem * oneLink, _linksIncommingToThis ) {
-                    AbstractEntityItem * from = oneLink->getFrom();
-                    if ( from ) __arrange_vertically( from, minY, maxY );
-                }
+        foreach ( LinkItem * oneLink, _linksIncommingToThis ) {
+            AbstractEntityItem * from = oneLink->getFrom();
+            if ( from ) __arrange_vertically( from, minY, maxY );
+            need = true;
+        }
     
-                foreach( LinkItem * oneLink, _linksOutgoingFromThis ) {
-                    AbstractEntityItem * to = oneLink->getTo();
-                    if ( to ) __arrange_vertically( to, minY, maxY );
-                }
+        foreach( LinkItem * oneLink, _linksOutgoingFromThis ) {
+            AbstractEntityItem * to = oneLink->getTo();
+            if ( to ) __arrange_vertically( to, minY, maxY );
+            need = true;
+        }
                 
-                QGraphicsItem::setY( minY );
-                if ( maxY - minY > 144 ) {                    
-                    _boundingRect.setHeight( maxY - minY );
-                };
                 
+        if ( need ) {
 
-            }; break;
-            
+            QGraphicsItem::setY( minY );
+                
+            if ( maxY - minY > 144 ) {                    
+                _boundingRect.setHeight( maxY - minY );
+            };
         };
+
     };
     
     return _boundingRect;    
     
 }
 
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                                Add an incomming link.                                            *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                               Добавить входящую связь.                                           *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+/*
+void tengu::ResizeableItemWithLinks::addIncommingLink ( tengu::LinkItem* link ) {
+    tengu::ItemWithLinks::addIncommingLink ( link );
+    // link->__calcPosTo = false;
+}
+*/
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                                Add an outgoing link.                                             *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                              Добавить исходящую связь.                                           *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+/*
+void tengu::ResizeableItemWithLinks::addOutgoingLink ( tengu::LinkItem* link ) {
+    tengu::ItemWithLinks::addOutgoingLink ( link );
+    // link->__calcPosFrom = false;
+}
+*/
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                     Need this item vertically size correction?                                   *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                      Нужна ли коррекция размеров по вертикали?                                   *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+bool tengu::ResizeableItemWithLinks::__vertical_correction() {
+    
+    if ( _entity ) {
+        
+        AbstractEntity::entity_types_t type = _entity->entityType();
+        
+        if ( 
+            ( type == AbstractEntity::ET_ANDor )
+            || ( type == AbstractEntity::ET_ORer ) 
+        ) return true;
+    };
+    
+    return false;
+        
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                               Recalculate coordinates.                                           *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                               Пересчитать координаты                                             *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+/*
+void tengu::ResizeableItemWithLinks::recalculate() {
+    
+    qDebug() << "ResizeableItemWithLinks::recalculate";
+    
+    foreach ( LinkItem * link, _linksIncommingToThis ) {
+        link->recalculate();
+        link->__posTo.setY( link->__posFrom.y() );        
+    };
+    
+    foreach ( LinkItem * link, _linksOutgoingFromThis ) {
+        link->recalculate();
+        link->__posFrom.setY( link->__posTo.y() );        
+    };
+    
+}
+*/
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                        Update this element, overrided function.                                  *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                       Обновление элемента, перекрытая функция.                                   *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+/*
+void tengu::ResizeableItemWithLinks::update( const QRectF & rect ) {
+        
+    qDebug() << "ResizeableItemWithLinks::update()";
+    
+    foreach ( LinkItem * link, _linksIncommingToThis ) {
+        link->recalculate();
+        link->__posTo.setY( link->__posFrom.y() );
+        link->update();
+    };
+    
+    foreach ( LinkItem * link, _linksOutgoingFromThis ) {
+        link->recalculate();
+        link->__posFrom.setY( link->__posTo.y() );
+        link->update();
+    };
+    
+    AbstractEntityItem::update( rect );    
+}
+*/
 // ********************************************************************************************************************
 // *                                                                                                                  *
 // *                                                  The destructor.                                                 *

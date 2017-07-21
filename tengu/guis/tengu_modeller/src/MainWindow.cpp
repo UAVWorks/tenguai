@@ -524,14 +524,15 @@ void tengu::MainWindow::__on_schama_item_moved ( tengu::AbstractEntityItem * ent
         entity->setX( pos.x() );
         entity->setY( pos.y() );  
         
-        entity->recalculate();
-        entity->update(); 
+        entity->recalculate();        
+        entity->update();        
         
         ItemWithLinks * itemWithLinks = dynamic_cast< ItemWithLinks * >( entity );
+        ResizeableItemWithLinks * rwl = dynamic_cast < ResizeableItemWithLinks * > ( entity );
         if ( itemWithLinks ) {
         
-        // After the entity itself, we need to recalculate and repaint his links.
-        // После самой "сущности" нужно пересчитать и перерисовать ее связи.
+        // we need to repaint his links.
+        // нужно перерисовать ее связи.
                 
             QList<LinkItem * > links = itemWithLinks->hisLinks();
             for ( int i=0; i<links.size(); i ++ ) {
@@ -540,7 +541,7 @@ void tengu::MainWindow::__on_schama_item_moved ( tengu::AbstractEntityItem * ent
             };
         
         }
-        
+                        
         __schemaView->show();
                 
     };

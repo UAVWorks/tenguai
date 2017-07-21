@@ -118,6 +118,7 @@ namespace tengu {
             virtual QDateTime lastModified();
             virtual QJsonObject toJSON();
             virtual bool fromJSON( QJsonObject json );
+            virtual AbstractEntity::entity_types_t entityType();
             
             QPoint mousePressedPos();
             
@@ -130,6 +131,8 @@ namespace tengu {
             void setX( int x );
             // int getY();
             void setY( int y );
+            
+            // void update( const QRectF & rect = QRectF() );
                         
         protected:
             

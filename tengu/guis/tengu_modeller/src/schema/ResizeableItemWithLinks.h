@@ -22,11 +22,18 @@ namespace tengu {
             
             ResizeableItemWithLinks( AbstractEntity * entity = nullptr, QGraphicsItem * parent = nullptr ); 
             virtual ~ResizeableItemWithLinks();
-            QRectF boundingRect() const;
+            virtual QRectF boundingRect() const;
+            
+            // void addOutgoingLink( LinkItem * link );
+            // void addIncommingLink( LinkItem * link );
+            
+            // void update( const QRectF & rect = QRectF() );
+            // void recalculate();
             
         private:
             
             void __arrange_vertically( AbstractEntityItem * item, int & minY, int & maxY );
+            bool __vertical_correction();
     };
 
 };

@@ -31,8 +31,8 @@ namespace tengu {
             ItemWithLinks ( AbstractEntity * entity = nullptr, QGraphicsItem* parent = nullptr );
             virtual ~ItemWithLinks();
             
-            void addOutgoingLink( LinkItem * link );
-            void addIncommingLink( LinkItem * link );
+            virtual void addOutgoingLink( LinkItem * link );
+            virtual void addIncommingLink( LinkItem * link );
             
             /**
              * @short Remove link.
@@ -45,7 +45,11 @@ namespace tengu {
             
             void removeLink( LinkItem * link );
             
+            // virtual void update( const QRectF & rect = QRectF() );
+            
             QList< LinkItem * > hisLinks();
+            
+            // virtual void recalculate();
             
         protected:
             
@@ -53,6 +57,10 @@ namespace tengu {
             
             QMap< QString, LinkItem * > _linksOutgoingFromThis;
             QMap< QString, LinkItem * > _linksIncommingToThis;
+        
+        private slots:
+            
+            // void __on__linked();
                         
     };
     

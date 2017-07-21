@@ -36,7 +36,9 @@ tengu::ItemWithLinks::ItemWithLinks ( tengu::AbstractEntity * entity, QGraphicsI
 void tengu::ItemWithLinks::addOutgoingLink ( tengu::LinkItem * link ) {
     _linksOutgoingFromThis[ link->getUUID() ] = link;
     QObject::connect( link, SIGNAL(signalLinkRemoved(QString)), this, SLOT(removeLink(QString)) );
+    // QObject::connect( link, SIGNAL(signalLinked()), this, SLOT( __on__linked() ) );
     link->__setFrom( this );
+    update();
 }
 
 // ********************************************************************************************************************
@@ -50,7 +52,9 @@ void tengu::ItemWithLinks::addOutgoingLink ( tengu::LinkItem * link ) {
 void tengu::ItemWithLinks::addIncommingLink ( tengu::LinkItem * link ) {
     _linksIncommingToThis[ link->getUUID() ] = link;
     QObject::connect( link, SIGNAL(signalLinkRemoved(QString)), this, SLOT(removeLink(QString)) );
+    // QObject::connect( link, SIGNAL(signalLinked()), this, SLOT( __on__linked() ) );
     link->__setTo( this );
+    update();
 }
 
 // ********************************************************************************************************************
@@ -77,11 +81,13 @@ void tengu::ItemWithLinks::removeLink ( QString uuid ) {
     
     if ( _linksIncommingToThis.contains( uuid ) ) {
         QObject::disconnect( _linksIncommingToThis[uuid], SIGNAL(signalLinkRemoved(QString)), this, SLOT( removeLink( QString) ) );
+        // QObject::disconnect( _linksIncommingToThis[uuid], SIGNAL(signalLinked()), this, SLOT( __on__linked() ) );
         _linksIncommingToThis.remove( uuid );
     };
     
     if ( _linksOutgoingFromThis.contains( uuid ) ) {
         QObject::disconnect( _linksOutgoingFromThis[uuid], SIGNAL(signalLinkRemoved(QString)), this, SLOT(removeLink(QString)) );
+        // QObject::disconnect( _linksOutgoingFromThis[uuid], SIGNAL(signalLinked()), this, SLOT( __on__linked() ) );
         _linksOutgoingFromThis.remove( uuid );
     };
 }
@@ -108,6 +114,67 @@ QList< tengu::LinkItem* > tengu::ItemWithLinks::hisLinks() {
     
     return result;
 }
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                               Recalculate coordinates.                                           *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                                Пересчитать координаты.                                           *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+/*
+void tengu::ItemWithLinks::recalculate() {
+    
+    foreach ( LinkItem * link, _linksIncommingToThis ) {
+        link->recalculate();
+    };
+    
+    foreach ( LinkItem * link, _linksOutgoingFromThis ) {
+        link->recalculate();
+    };
+    
+}
+*/
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                        Update this element, overrided function.                                  *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                       Обновление элемента, перекрытая функция.                                   *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+/*
+void tengu::ItemWithLinks::update( const QRectF & rect ) {
+        
+    foreach ( LinkItem * link, _linksIncommingToThis ) {
+        link->recalculate();
+        link->update();
+    };
+    
+    foreach ( LinkItem * link, _linksOutgoingFromThis ) {
+        link->recalculate();
+        link->update();
+    };
+    
+    AbstractEntityItem::update( rect );    
+}
+*/
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                 One of existing links was connected to some agent.                               *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                              Одна из существующих связей была к кому-то присоединена.                            *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+/*
+void tengu::ItemWithLinks::__on__linked() {
+    update();
+}
+*/
 
 // ********************************************************************************************************************
 // *                                                                                                                  *

@@ -28,6 +28,7 @@ namespace tengu {
         signals:
             
             void signalLinkRemoved( QString uuid );
+            // void signalLinked();
             
         public:
             
@@ -76,9 +77,13 @@ namespace tengu {
             void __setTo( AbstractEntityItem * entity );     
             
             void __correctPointsForSprouts( int x, QRect fromRect, QRect toRect );
+            void __correctPointsForLines();
             
             QPoint __posFrom;
             QPoint __posTo;
+            
+            // bool __calcPosFrom;
+            // bool __calcPosTo;
             
             QPoint __tempTo;
             
