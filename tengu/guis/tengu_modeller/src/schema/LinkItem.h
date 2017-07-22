@@ -58,7 +58,7 @@ namespace tengu {
             
             bool withSproutFrom();
             bool withSproutTo();
-                        
+                                    
         protected:
             
             void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = Q_NULLPTR);
@@ -75,6 +75,7 @@ namespace tengu {
             
             void __setFrom( AbstractEntityItem * entity );
             void __setTo( AbstractEntityItem * entity );     
+            void __checkConnectivity();
             
             void __correctPointsForSprouts( int x, QRect fromRect, QRect toRect );
             void __correctPointsForLines();

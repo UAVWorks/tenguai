@@ -70,6 +70,9 @@ namespace tengu {
             
             void setExecutionMode( AbstractEntity::execution_mode_t execution_mode );
             
+            void addLink( AbstractAgent * fromAgent, AbstractAgent * toAgent );
+            bool haveLink( AbstractAgent * fromAgent, AbstractAgent * toAgent );
+            
         private:
             
             AbstractEntityItem * __rootItem;

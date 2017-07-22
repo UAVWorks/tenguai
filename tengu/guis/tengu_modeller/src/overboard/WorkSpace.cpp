@@ -40,6 +40,7 @@ void tengu::WorkSpace::addChild ( tengu::AbstractAgent * child ) {
     QList<AbstractAgent * > hisChildren = children();
     
     Vehicle * vehicle = dynamic_cast<Vehicle * > ( child );
+    
     if ( vehicle ) {
         
         // Automatic naming for vehicles.

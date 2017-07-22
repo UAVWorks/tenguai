@@ -528,7 +528,7 @@ void tengu::MainWindow::__on_schama_item_moved ( tengu::AbstractEntityItem * ent
         entity->update();        
         
         ItemWithLinks * itemWithLinks = dynamic_cast< ItemWithLinks * >( entity );
-        ResizeableItemWithLinks * rwl = dynamic_cast < ResizeableItemWithLinks * > ( entity );
+        
         if ( itemWithLinks ) {
         
         // we need to repaint his links.
@@ -1056,7 +1056,6 @@ void tengu::MainWindow::__on__save() {
     // The store action become to disabled status after store process.
     // После записи действие записи становится недоступным.
     
-    qDebug() << "MainWindow::on_save, disable save schema button";
     __action__save_schema->setEnabled( false );
 }
 
@@ -1079,7 +1078,7 @@ void tengu::MainWindow::__on__want__create_agent( AbstractAgent * parent, Abstra
         default: __on__error( EL_WARNING, "MainWindow::on__want__create_agent()", "Unknown agent type" + QString::number( type ) );
     };
     
-    AbstractAgent * agent = AgentItemFactory::createEntity( json );
+    AbstractAgent * agent = dynamic_cast<AbstractAgent * > ( AgentItemFactory::createEntity( json ) );
     
     if ( agent ) {
         

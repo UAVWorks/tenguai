@@ -261,6 +261,7 @@ void tengu::SchemaView::mousePressEvent ( QMouseEvent * event ) {
                 SchemaScene * sc = dynamic_cast<SchemaScene * >( scene() );
                 if ( sc ) sc->unselectAll();
                 
+                
             } else {
                                 
                 if ( itemWithLinks ) {

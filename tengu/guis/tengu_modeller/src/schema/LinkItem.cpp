@@ -21,6 +21,7 @@ tengu::LinkItem::LinkItem()
     : AbstractEntityItem()
 {
     _boundingRect = QRect(0, 0, 64, 22);
+    
     _class_name = "LinkItem";    
     _canChangeExecuteMode = true;
     
@@ -169,7 +170,7 @@ void tengu::LinkItem::setExecutionMode ( tengu::AbstractEntity::execution_mode_t
 void tengu::LinkItem::__setFrom ( tengu::AbstractEntityItem * entity ) {
     
     __from = entity;
-    // __withSproutFrom = withSproutFrom;
+    __checkConnectivity();
     __checkSproutInsideTask();
     
     // if ( entity ) entity->addOutgoingLink( this );
@@ -191,7 +192,7 @@ void tengu::LinkItem::__setFrom ( tengu::AbstractEntityItem * entity ) {
 void tengu::LinkItem::__setTo ( tengu::AbstractEntityItem * entity ) {
     
     __to = entity;
-    // __withSproutTo = withSproutTo;
+    __checkConnectivity();
     __checkSproutInsideTask();
     
     // if ( entity ) entity->addIncommingLink( this );
@@ -236,6 +237,30 @@ void tengu::LinkItem::__setTo ( tengu::AbstractEntityItem * entity ) {
     update();
     
     // emit signalLinked();
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                       Check connection between linked agents.                                    *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                  Проверка соединения между залинкованными агентами.                              *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::LinkItem::__checkConnectivity() {
+    
+    if ( ( __from ) && ( __to ) ) {
+        
+        AbstractAgent * fromAgent = dynamic_cast< AbstractAgent * > ( __from->entity() );
+        AbstractAgent * toAgent = dynamic_cast< AbstractAgent * > ( __to->entity() );
+        
+        if ( ( fromAgent ) && ( toAgent ) ) {
+            fromAgent->addNextByFocus( toAgent );
+            toAgent->addPreviousByFocus( fromAgent );
+        };
+        
+    };
+    
 }
 
 // ********************************************************************************************************************

@@ -55,6 +55,7 @@ tengu::AbstractEntity * tengu::AgentFactory::createEntity ( QJsonObject json ) {
 
     if ( e ) {
         _readFromJSON( e, json );
+        _initFocusNeighbors( e );            
     };
     
 //    else {
@@ -130,6 +131,53 @@ void tengu::AgentFactory::_append_object ( tengu::AbstractEntity * entity, QStri
             
         } else qDebug() << "AgentFactory::_append_object(): We have an object, but do not know how to add it. Key=" << key << ", json=" << json;
         
+    };
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                           Initialization agent's links.                                          *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                           Инициализация связей агента.                                           *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::AgentFactory::_initFocusNeighbors ( tengu::AbstractEntity * entity ) {
+    
+    AbstractAgent * agent = dynamic_cast< AbstractAgent * > ( entity );
+    if ( agent ) {
+        
+        QList<AbstractAgent * > chi;
+        agent->childrenRecursive( chi );
+        
+        for ( int i=0; i<chi.count(); i++ ) {
+            
+            AbstractAgent * one_child = chi.at(i);
+            
+            if ( one_child->_uninitedPrevious.count() > 0 ) {
+                QList<QString> l = one_child->_uninitedPrevious;
+                for ( int k=0; k<l.count(); k++ ) {
+                    
+                    AbstractAgent * neighbor = agent->findChildByUUID( l.at(k) );                    
+                    if ( neighbor ) {
+                        one_child->addPreviousByFocus( neighbor );
+                        one_child->_uninitedPrevious.removeOne( l.at(k) );
+                    };
+                };
+            }
+            
+            if ( one_child->_uninitedNext.count() > 0 ) {
+                
+                QList<QString> l = one_child->_uninitedNext;
+                for ( int k=0; i<l.count(); k++ ) {
+                    AbstractAgent * neighbor = agent->findChildByUUID( l.at(k) );
+                    if ( neighbor ) {
+                        one_child->addNextByFocus( neighbor );
+                        one_child->_uninitedNext.removeOne( l.at(k) );
+                    }
+                };
+            }
+        };
     };
 }
 

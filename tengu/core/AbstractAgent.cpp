@@ -634,7 +634,85 @@ QJsonObject tengu::AbstractAgent::toJSON() {
         
     };
     
+    if ( ! _previousByFocus.isEmpty() ) {
+        
+        QJsonArray previous_array;
+        
+        foreach ( AbstractAgent * prev, _previousByFocus ) {            
+            previous_array.append( prev->getUUID() );
+        };
+        
+        obj[ "previousByFocus" ] = previous_array;
+    };
+    
+    if ( ! _nextByFocus.isEmpty() ) {
+        
+        QJsonArray next_array;
+        
+        foreach ( AbstractAgent * next, _nextByFocus ) {
+            next_array.append( next->getUUID() );
+        };
+        
+        obj[ "nextByFocus" ] = next_array;
+     
+    };
+    
     return obj;
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                 Convert from JSON form to data field of this object.                             *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                 Преобразование из JSONа в поля данных этого объекта.                             *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+bool tengu::AbstractAgent::fromJSON( QJsonObject json ) {
+    bool result = AbstractEntity::fromJSON( json );
+    
+    _uninitedPrevious = QList<QString>();
+    _uninitedNext = QList<QString>();
+    
+    if ( json.contains("previousByFocus") ) {
+        QJsonArray arr = json.value("previousByFocus").toArray();
+        for ( int i=0; i<arr.count(); i++ ) {
+            _uninitedPrevious.append( arr.at(i).toString() );
+        };
+    };
+    
+    if ( json.contains("nextByFocus") ) {
+        QJsonArray arr = json.value("nextByFocus").toArray();
+        for ( int i=0; i<arr.count(); i++ ) {
+            _uninitedNext.append( arr.at(i).toString() );
+        };
+    };
+    
+    qDebug() << "AbstractAgent::fromJSON, class=" << _class_name << ", name=" << getHumanName() << "неин. пред. " << _uninitedPrevious.count() << ", неин. след. " << _uninitedNext.count();
+    
+    return result;
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                               Finding item by his uuid.                                          *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                              Поиск элемента по его UUIDу.                                        *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+tengu::AbstractAgent * tengu::AbstractAgent::findChildByUUID ( QString uuid ) {
+    
+    QList<AbstractAgent * > all;
+    childrenRecursive( all );
+    for ( int i=0; i<all.count(); i++ ) {
+        AbstractAgent * oci = all.at(i);
+        if ( oci->getUUID() == uuid ) {
+            return oci;
+        };
+    };
+    
+    return nullptr;
 }
 
 // ********************************************************************************************************************

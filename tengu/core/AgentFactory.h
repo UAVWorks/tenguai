@@ -31,8 +31,14 @@ namespace tengu {
             static QString getClassName( QString collectionName );
         
         protected:
+            
             static void _readFromJSON( AbstractEntity * entity, QJsonObject json );
             static void _append_object( AbstractEntity * entity, QString key, QJsonObject json );
+            
+            // Initialization for pervious by focus and next by focus elements. The links in other words.
+            // Инициализация элементов предыдущие по фокусу и следующие по фокусу. Связей, другими словами.
+            
+            static void _initFocusNeighbors( AbstractEntity * entity );
         
     };
     

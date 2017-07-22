@@ -27,6 +27,7 @@ namespace tengu {
     
         friend class Sprout;
         friend class AbstractEntityItem;
+        friend class AgentFactory;
                                 
         Q_OBJECT
         
@@ -88,6 +89,7 @@ namespace tengu {
             void deleteChildren();
             
             virtual QJsonObject toJSON();
+            virtual bool fromJSON( QJsonObject json );
             virtual void unmodify();
             
             /**
@@ -104,6 +106,8 @@ namespace tengu {
             // void removeNeighborByFocus( QString uuid );
             
             bool isActive();
+            
+            AbstractAgent * findChildByUUID( QString uuid );
                                     
             // The agent can be provided either as object in memory
             // or separate process in the operation system for 
@@ -194,6 +198,9 @@ namespace tengu {
             
             QMap< QString, AbstractAgent * > _previousByFocus;
             QMap< QString, AbstractAgent * > _nextByFocus;
+            
+            QList<QString> _uninitedPrevious;
+            QList<QString> _uninitedNext;
                         
             // Tree-like structure of agents. For loading entire "tree branch" completely.
             // Древовидная структура агентов. Для загрузки всей "ветки" дерева целиком.

@@ -53,6 +53,9 @@ namespace tengu {
                                     
             // virtual void recalculate();
             
+            virtual QJsonObject toJSON();
+            virtual bool fromJSON( QJsonObject json );
+            
         protected:
             
             // bool _iAmSprout;            

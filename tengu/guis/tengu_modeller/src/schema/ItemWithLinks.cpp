@@ -38,7 +38,9 @@ void tengu::ItemWithLinks::addOutgoingLink ( tengu::LinkItem * link ) {
     QObject::connect( link, SIGNAL(signalLinkRemoved(QString)), this, SLOT(removeLink(QString)) );
     // QObject::connect( link, SIGNAL(signalLinked()), this, SLOT( __on__linked() ) );
     link->__setFrom( this );
+            
     update();
+    _somethingChanged();
 }
 
 // ********************************************************************************************************************
@@ -54,7 +56,9 @@ void tengu::ItemWithLinks::addIncommingLink ( tengu::LinkItem * link ) {
     QObject::connect( link, SIGNAL(signalLinkRemoved(QString)), this, SLOT(removeLink(QString)) );
     // QObject::connect( link, SIGNAL(signalLinked()), this, SLOT( __on__linked() ) );
     link->__setTo( this );
+    
     update();
+    _somethingChanged();
 }
 
 // ********************************************************************************************************************
@@ -67,6 +71,7 @@ void tengu::ItemWithLinks::addIncommingLink ( tengu::LinkItem * link ) {
 
 void tengu::ItemWithLinks::removeLink ( tengu::LinkItem * link ) {
     removeLink( link->getUUID() );    
+    
 }
 
 // ********************************************************************************************************************
@@ -90,6 +95,8 @@ void tengu::ItemWithLinks::removeLink ( QString uuid ) {
         // QObject::disconnect( _linksOutgoingFromThis[uuid], SIGNAL(signalLinked()), this, SLOT( __on__linked() ) );
         _linksOutgoingFromThis.remove( uuid );
     };
+    
+    _somethingChanged();
 }
 
 // ********************************************************************************************************************
@@ -114,6 +121,46 @@ QList< tengu::LinkItem* > tengu::ItemWithLinks::hisLinks() {
     
     return result;
 }
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                           Convert an element to JSON form.                                       *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                         Преобразование элемента в JSON-форму.                                    *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+QJsonObject tengu::ItemWithLinks::toJSON() {
+    
+    QJsonObject obj = tengu::AbstractEntityItem::toJSON();
+    
+    AbstractAgent * agent = dynamic_cast<AbstractAgent * > ( _entity );
+    
+    if ( agent ) {
+        
+        
+        
+    };
+    
+    return obj;
+    
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                    Convert JSON form to data field of this element.                              *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                   Преобразование JSONа в поля данных этого элемента.                             *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+bool tengu::ItemWithLinks::fromJSON ( QJsonObject json ) {
+    
+    bool result = tengu::AbstractEntityItem::fromJSON ( json );
+    return result;
+    
+}
+
 
 // ********************************************************************************************************************
 // *                                                                                                                  *

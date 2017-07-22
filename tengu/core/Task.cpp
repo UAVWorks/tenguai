@@ -34,7 +34,7 @@ tengu::Task::Task ()
 
 QJsonObject tengu::Task::toJSON() {
     
-    QJsonObject o = AbstractAgent::toJSON();
+    QJsonObject o = SproutableAgent::toJSON();
     
     o[ JSON_COLLECTION_ELEMENT ] = "tasks";
     

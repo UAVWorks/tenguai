@@ -6,6 +6,7 @@ This is graphical tool for work with artifical intelligence models. At the momen
 
 # The latest operations.
 
+- **22 jul 2017** Stored links appear on the screen.
 - **21 jul 2017** Resize for ANDor. Focus and activity of abstract agent.
 - **20 jul 2017** Remove agent from database. Create task from schema's menu.
 - **16 jul 2017** Bug with item coordinates. Upsert (insert or update if exists). Bug with cleaning tree item.

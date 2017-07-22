@@ -78,6 +78,8 @@ QString tengu::AgentItemFactory::getClassName( QString collectionName ) {
 
 tengu::AbstractEntityItem * tengu::AgentItemFactory::createItem ( tengu::AbstractAgent * agent ) {
     
+    ANDor * andor = dynamic_cast<ANDor * >( agent );                        if ( andor ) return new ANDorItem( andor );
+    ORer * orer = dynamic_cast<ORer * > ( agent );                          if ( orer ) return new ORerItem( orer );
     Task * task = dynamic_cast<Task * > ( agent );                          if ( task ) return new TaskItem( task );
     XPlaneSimulator * xplane = dynamic_cast<XPlaneSimulator *> (agent );    if ( xplane ) return new XPlaneSimulatorItem( xplane );
     Process * process = dynamic_cast< Process * > ( agent );                if ( process ) return new ProcessItem( process );

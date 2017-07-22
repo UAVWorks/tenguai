@@ -137,6 +137,8 @@ void tengu::SchemaScene::setRootItem ( tengu::AbstractEntityItem * rootItem ) {
     __rootItem = rootItem;      
     __rootEntity = rootItem->entity();
     
+    if ( rootAsProcess() ) emit signalInsideProcess();
+    
     // Add children of this root item to schema.
     // Добавление на схему детей этого корневого элемента.
     
@@ -144,17 +146,49 @@ void tengu::SchemaScene::setRootItem ( tengu::AbstractEntityItem * rootItem ) {
     
     if ( ( entity ) && ( entity->hasChildren() ) ) {
         
-        for ( int i=0; i<entity->children().count(); i++ ) {
+        QList<AbstractAgent * > hisChildren = entity->children();
+        
+        // In 2 pass. First one is agents itself.
+        // В 2 прохода. Сначала - агенты как таковые.
+        
+        for ( int i=0; i<hisChildren.count(); i++ ) {
             
-            AbstractEntityItem * item = AgentItemFactory::createItem( entity->children().at(i) );
+            AbstractEntityItem * item = AgentItemFactory::createItem( hisChildren.at( i ) );
             
             if ( item ) {
                 addItem( item );          
             };
         };
-    };    
-    
-    if ( rootAsProcess() ) emit signalInsideProcess();
+        
+        // Second one is links of that agents.
+        // Вторая часть - это связи агентов.
+        
+        for ( int i=0; i<hisChildren.count(); i++ ) {
+            
+            AbstractAgent * oneAgent = hisChildren.at(i);
+            
+            qDebug() << "Смотрим на агента  " << oneAgent << ", human name=" << oneAgent->getHumanName();
+                                    
+            QList<AbstractAgent * > prev = oneAgent->previousByFocus();
+            
+            qDebug() << "Previous count=" << prev.count();
+            
+            for ( int i=0; i<prev.count(); i++ ) {
+                AbstractAgent * ol = prev.at(i);
+                addLink( ol, oneAgent );
+            };
+            
+            QList<AbstractAgent * > next = oneAgent->nextByFocus();
+            
+            qDebug() << "Next count=" << next.count();
+            
+            for ( int i=0; i<next.count(); i++ ) {
+                AbstractAgent * nl = next.at(i);
+                addLink( oneAgent, nl );
+            };        
+        };
+        
+    };            
     
 }
 
@@ -184,6 +218,72 @@ bool tengu::SchemaScene::changed() {
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
+// *                                               Add one link to the scene.                                         *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                              Добавить на сцену одну связь.                                       *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::SchemaScene::addLink ( tengu::AbstractAgent * fromAgent, tengu::AbstractAgent * toAgent ) {
+    
+    ItemWithLinks * fromItem = dynamic_cast< ItemWithLinks * >( itemFor( fromAgent ) );
+    ItemWithLinks * toItem = dynamic_cast< ItemWithLinks * > ( itemFor ( toAgent ) );
+    
+    if ( ( fromItem ) && ( toItem ) ) {
+        
+        if ( ! haveLink( fromAgent, toAgent ) ) {
+            LinkItem * link = new LinkItem();
+            fromItem->addOutgoingLink( link );
+            toItem->addIncommingLink( link );
+            link->recalculate();
+            QGraphicsScene::addItem( link );
+        };
+        
+    } else qDebug() << "SchemaScene::addLink, кто-то из участников пустой:" << fromItem << ", " << toItem ;
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                       Does the schema have this link already?                                    *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                          Есть ли уже такая связь на схеме?                                       *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+bool tengu::SchemaScene::haveLink ( tengu::AbstractAgent * fromAgent, tengu::AbstractAgent * toAgent ) {
+    
+    if ( ( ! fromAgent ) || ( ! toAgent ) ) return false;
+    
+    QList< QGraphicsItem * > haved = items();
+    
+    for ( int i=0; i< haved.count(); i++ ) {
+        
+        LinkItem * link = dynamic_cast< LinkItem * > ( haved.at(i) );
+        
+        if ( link ) {
+            
+            AbstractEntityItem * eiFrom = link->getFrom();
+            AbstractEntityItem * eiTo = link->getTo();
+            
+            if ( ( eiFrom ) && ( eiTo ) ) {
+                
+                AbstractAgent * l_a_from = dynamic_cast< AbstractAgent * >( eiFrom->entity() );
+                AbstractAgent * l_a_to = dynamic_cast< AbstractAgent * >( eiTo->entity() );
+                
+                if ( ( l_a_from ) && ( l_a_to ) ) {
+                    if ( ( l_a_from->getUUID() == fromAgent->getUUID() ) && ( l_a_to->getUUID() == toAgent->getUUID() ) ) {
+                        return true;
+                    }
+                };
+            };
+        };
+    };
+    
+    return false;
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
 // *                                              Overrided add item method.                                          *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                                         Перекрытый метод добавления элемента.                                    *
@@ -204,6 +304,7 @@ void tengu::SchemaScene::addItem ( QGraphicsItem * gItem ) {
         item->checkEntity();
         
         tengu::AbstractEntity * cent = item->entity();
+        
         if ( cent ) {
             cent->silent( true );
             gItem->setX( cent->getX() );
@@ -217,62 +318,28 @@ void tengu::SchemaScene::addItem ( QGraphicsItem * gItem ) {
         
         QObject::connect( item, SIGNAL( signalSomethingChanged() ), this, SLOT( __on__something_changed() ) );
         
-        // Add an X-Plane agent does not come to changes.
-        // Добавление X-Plane агента - не приводит к изменениям.
-        
-        // XPlaneAgentItem * xp = dynamic_cast<XPlaneAgentItem * >(item);
-        // if ( ! xp ) __on__something_changed();
-        
-        // ProcessItem * processItem = dynamic_cast< ProcessItem * > ( item );
-        
         ProcessStartItem * processStartItem = dynamic_cast<ProcessStartItem *>( item );
         ItemWithLinks * itemWithLinks = dynamic_cast<ItemWithLinks *>(item);
         TaskItem * taskItem = dynamic_cast<TaskItem *>(item);
-        // SproutItem * sproutItem = dynamic_cast<SproutItem * > ( item );
-        
+                
         if ( rootAsProcess() ) {
             
             // We have opened "a process" as root of the scheme.
             // У нас открыт "процесс" в качестве корня схемы.
             
-            if ( ( itemWithLinks ) && ( ! processStartItem ) ) emit signalProcessItemWithLinksCreated();
-        };
-        
-        
-        // Caching added component. Automatic naming if there are none.
-        // Кэширование добавленного компонента. Автоматическое присвоение имен, если их нет.
-        
+            if ( ( itemWithLinks ) && ( ! processStartItem ) ) {
+                emit signalProcessItemWithLinksCreated();
+            };
+        };        
+                
         if ( taskItem ) {
             
             // There was a task.
             // Это была задача.
-            
-            emit signalProcessExplicitTaskCreated();
-            // __taskItems[ taskItem->getUUID() ] = taskItem ;
-            // if ( taskItem->getSystemName().isEmpty() ) taskItem->setSystemName( tr("Task_") + QString::number( __taskItems.count() ) );
-            // if ( taskItem->getHumanName().isEmpty() ) taskItem->setHumanName( tr("Task ") + QString::number( __taskItems.count() ) );
+        
+            emit signalProcessExplicitTaskCreated();            
         }
-        
-        /*
-        if ( sproutItem ) {
-            
-            // There was a sprout.
-            // Это был sprout.
-            
-            __sproutItems[ sproutItem->getUUID() ] = sproutItem;
-            if ( sproutItem->getSystemName().isEmpty() ) sproutItem->setSystemName( tr("Sprout_") + QString::number( __sproutItems.count() ) );
-            if ( sproutItem->getHumanName().isEmpty() ) sproutItem->setHumanName( tr("Sprout ") + QString::number( __sproutItems.count() ) );
-            
-        };
-        */        
-        
-        // If this is a link, it can be in "semi-added" state.
-        // Если это связь, то она может находиться в "полу-добавленном" состоянии.
-        
-        // LinkItem * link = dynamic_cast<LinkItem *>( item );
-        // if ( link ) {
-        //     
-        // };    
+                
     }
     
 }
