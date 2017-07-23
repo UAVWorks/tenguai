@@ -138,16 +138,12 @@ void tengu::Process::start() {
     
     if ( pstart ) {
         
+        qDebug() << "Process::start(), we have a ProcessStart block, name is " << pstart->getHumanName();
+        
         // Start execution of process.
         // Начало выполнения процесса.
         
-        for ( int i=0; i<chi.count(); i++ ) {
-            AbstractAgent * c = chi.at(i);
-            QObject::connect( c, SIGNAL( signalFocused( bool ) ), this, SLOT( __on__agent__focused( bool ) ) );
-            QObject::connect( c, SIGNAL( signalActivated( bool ) ), this, SLOT( __on__agent__activated( bool ) ) );
-            QObject::connect( c, SIGNAL( signalFinished() ), this, SLOT( __on__agent__finished() ) );
-            QObject::connect( c, SIGNAL( signalFailed( QString ) ), this, SLOT( __on__agent__failed( QString ) ) );
-        };
+        _prepare_for_execution();
         
         // Instead of assigning a focus to the start element, we immediately assign focus to his children.
         // Вместо назначения фокуса на узел старта, сразу назначаем на его детей.
@@ -156,10 +152,10 @@ void tengu::Process::start() {
         QList<AbstractAgent * > to_focus = pstart->nextByFocus();
         if ( to_focus.count() > 0 ) {
             for ( int i=0; i< to_focus.count(); i++ ) {
-                to_focus.at(i)->setFocus( true );
+                to_focus.at(i)->setFocus( true, this );
             };
         } else {
-            __stopExecution();
+            _free_after_execution();
             emit signalFailed( tr("ProcessStart element does not have the following by focus") );
         };
         
@@ -168,9 +164,33 @@ void tengu::Process::start() {
         // We did'nt start block.
         // Не нашли стартового блока.
         
-        __stopExecution();
+        _free_after_execution();
         emit signalFailed( tr("There is not ProcessStart element.") );
     }
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                               Prepare for execution.                                             *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                              Подготовка к выполнению.                                            *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::Process::_prepare_for_execution() {
+        
+    AbstractAgent::_prepare_for_execution();
+    
+    QList<AbstractAgent * > chi = children();
+    
+    for ( int i=0; i<chi.count(); i++ ) {
+        AbstractAgent * c = chi.at(i);
+        QObject::connect( c, SIGNAL( signalFocused( bool ) ), this, SLOT( __on__agent__focused( bool ) ) );
+        QObject::connect( c, SIGNAL( signalActivated( bool ) ), this, SLOT( __on__agent__activated( bool ) ) );
+        QObject::connect( c, SIGNAL( signalFinished() ), this, SLOT( __on__agent__finished() ) );
+        QObject::connect( c, SIGNAL( signalFailed( QString ) ), this, SLOT( __on__agent__failed( QString ) ) );
+    };        
+        
 }
 
 // ********************************************************************************************************************
@@ -181,7 +201,9 @@ void tengu::Process::start() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::Process::__stopExecution() {
+void tengu::Process::_free_after_execution() {
+    
+    AbstractAgent::_free_after_execution();
     
     QList<AbstractAgent * > chi = children();
     for ( int i=0; i<chi.count(); i++ ) {
@@ -192,6 +214,18 @@ void tengu::Process::__stopExecution() {
         QObject::disconnect( c, SIGNAL( signalFailed( QString ) ), this, SLOT( __on__agent__failed( QString ) ) );
     };
     
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *          Input focus for this process is empty. I.e. he does not have any previous by focus agents.              *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *       Входной фокус данного процесса - пустой. То есть у него нет ни одного агента, предыдущего по фокусу.       *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+bool tengu::Process::emptyInputFocus() {
+    return ( _previousByFocus.isEmpty() );
 }
 
 // ********************************************************************************************************************

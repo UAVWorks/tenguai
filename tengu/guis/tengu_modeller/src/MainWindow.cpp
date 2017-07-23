@@ -754,9 +754,8 @@ void tengu::MainWindow::__on__tree_structure__agent_was_selected ( tengu::Abstra
     __action__simulation_start->setEnabled( false );
     
     AbstractEntity::entity_types_t et = agent->entityType();
-    if ( // ( et == AbstractEntity::ET_Vehicle ) || 
-        ( et == AbstractAgent::ET_Process ) ) 
-    {
+    if ( ( et == AbstractEntity::ET_Vehicle ) // || ( et == AbstractAgent::ET_Process )         
+    ) {
         __action__simulation_start->setEnabled( true );
     }
             
@@ -794,46 +793,6 @@ void tengu::MainWindow::__on_set_execution_mode_xplane() {
     __schemaScene->setExecutionMode( AbstractEntity::EM_XPLANE );
     __schemaView->show();
     
-}
-
-// ********************************************************************************************************************
-// *                                                                                                                  *
-// *                                         User want pause simulation process.                                      *
-// * ---------------------------------------------------------------------------------------------------------------- *
-// *                                Пользователь хочет поставить процесс симуляции на паузу.                          *
-// *                                                                                                                  *
-// ********************************************************************************************************************
-
-void tengu::MainWindow::__on__simulation_pause() {
-
-}
-
-// ********************************************************************************************************************
-// *                                                                                                                  *
-// *                                         User want start a simulation process.                                    *
-// * ---------------------------------------------------------------------------------------------------------------- *
-// *                                      Пользователь хочет начать процесс симуляции.                                *
-// *                                                                                                                  *
-// ********************************************************************************************************************
-
-void tengu::MainWindow::__on__simulation_start() {
-    
-    if ( __schemaScene->rootAsProcess() ) {
-        Process * schema_root_process = dynamic_cast< Process * > ( __schemaScene->rootEntity() );
-        if ( schema_root_process ) {
-        
-            // We have an process as root element of the schema.
-            // В качестве корневого элемента на схеме - процесс.
-        
-            __running_agent = schema_root_process;
-            __action__simulation_start->setEnabled( false );
-        
-            __execution_bind_recursive( schema_root_process );
-        
-            schema_root_process->start();
-        
-        };    
-    };
 }
 
 // ********************************************************************************************************************
@@ -1123,6 +1082,7 @@ void tengu::MainWindow::__on__agent__failed ( QString errorMessage ) {
 void tengu::MainWindow::__check__simulation_finished( AbstractAgent * rAgent ) {
     
     if ( rAgent == __running_agent ) {
+        qDebug() << "MainWindow::check_simulation_finished, the simulation was ended.";
         __action__simulation_start->setEnabled( true );
         __running_agent = nullptr;
     };
@@ -1249,6 +1209,58 @@ void tengu::MainWindow::__on__save() {
 
 void tengu::MainWindow::__on__simulation_begin() {
 
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                         User want pause simulation process.                                      *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                Пользователь хочет поставить процесс симуляции на паузу.                          *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindow::__on__simulation_pause() {
+
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                         User want start a simulation process.                                    *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                      Пользователь хочет начать процесс симуляции.                                *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindow::__on__simulation_start() {
+    
+    AbstractAgent * treeAgent = __left->treeStructure->selectedAgent();
+    if ( treeAgent ) {
+        Vehicle * vehicle = dynamic_cast< Vehicle * > ( treeAgent );
+        if ( vehicle ) {
+            __execution_bind_recursive( vehicle );
+            vehicle->start();
+        };
+    };
+    
+    /*
+    if ( __schemaScene->rootAsProcess() ) {
+        
+        Process * schema_root_process = dynamic_cast< Process * > ( __schemaScene->rootEntity() );
+        if ( schema_root_process ) {
+        
+            // We have an process as root element of the schema.
+            // В качестве корневого элемента на схеме - процесс.
+        
+            __running_agent = schema_root_process;
+            __action__simulation_start->setEnabled( false );
+        
+            __execution_bind_recursive( schema_root_process );
+        
+            schema_root_process->start();
+        
+        };    
+    };
+    */
 }
 
 // ********************************************************************************************************************

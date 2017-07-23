@@ -237,6 +237,8 @@ void tengu::DialogOpenSaveModel::__fill_table_of_elements() {
         if ( elements.count() > 0 ) {
             for ( int i=0; i<elements.count(); i++ ) {
                 QJsonObject element = elements.at( i );
+                qDebug() << "DialogOpenSaveModel::fill_table_of_elements, open element " << element << "\n";
+                
                 AbstractEntity * entity = AgentItemFactory::createEntity( element );
                 if ( entity ) {
                     
@@ -277,6 +279,8 @@ void tengu::DialogOpenSaveModel::_on__ok() {
     
     if ( readed.isEmpty() ) emit signalError( EL_WARNING, "DialogOpenSaveModel::_on__ok()", tr("Empty set of object was readed") );
     else {
+        
+        qDebug() << "DialogOpenSaveModel, create for : " << readed.at(0) << "\n";
         
         result_agent = dynamic_cast< AbstractAgent * > ( AgentItemFactory::createEntity( readed.at(0) ) );
         

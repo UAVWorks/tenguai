@@ -22,6 +22,96 @@ tengu::ANDor::ANDor ()
 {
     _class_name = "ANDor";
     _entity_type = AbstractEntity::ET_ANDor;
+    __previous_agents_unfinished = QList<QString>();
+    __next_agents_unstarted = QList<QString>();
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                          Prepare the ANDor for the running.                                      *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                          Подготовка ANDor'а для выполнения.                                      *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::ANDor::_prepare_for_execution() {
+    
+    // Filling of the upcoming agents, the completion of which we will wait.
+    // Заполнение предстоящих агентов, завершения выполнения которых будем ждать.
+    
+    __previous_agents_unfinished.clear();
+    __next_agents_unstarted.clear();
+    
+    foreach ( AbstractAgent * previous, _previousByFocus ) {
+        __previous_agents_unfinished.append( previous->getUUID() );
+    };
+    
+    foreach( AbstractAgent * next, _nextByFocus ) {
+        __next_agents_unstarted.append( next->getUUID() );
+        QObject::connect( next, SIGNAL( signalActivated( bool ) ), this, SLOT( __on__agent__activated( bool ) ) );
+    };
+    
+};
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                             Free resources after execution.                                      *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                      Освободить ресурсы агента после его выполнения.                             *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::ANDor::_free_after_execution() {
+    
+    foreach( AbstractAgent * next, _nextByFocus ) {
+        QObject::disconnect( next, SIGNAL( signalActivated( bool ) ), this, SLOT( __on__agent__activated( bool ) ) );
+    };    
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                            One step of ANDor's execution.                                        *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                             Один шаг выполнения ANDor'а.                                         *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::ANDor::_step() {
+    
+    qDebug() << "ANDor::step()";
+    
+    // All ANDor's childgren get the focus simultaneously.
+    // Все дети ANDor'а одновременно получают фокус.
+    
+    foreach ( AbstractAgent * next, _nextByFocus ) {
+        next->setFocus( true, this );
+    };    
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                             One next by focus agent has been activated or deactivated.                           *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                       Один из следующих по фокусу агентов был активирован или деактивирован.                     *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::ANDor::__on__agent__activated ( bool activity ) {
+    
+    qDebug() << "ANDor: один агент был активирован.";
+    
+    AbstractAgent * agent = dynamic_cast< AbstractAgent * > ( sender() );
+    
+    if ( ( activity ) && ( agent ) && ( __next_agents_unstarted.contains( agent->getUUID() ) ) ) {
+        __next_agents_unstarted.removeOne( agent->getUUID() );
+        if ( __next_agents_unstarted.count() == 0 ) {
+            
+            // All next by focus agents has been started.
+            // Все следующие по фокусу агенты - стартовали.
+            
+            qDebug() << "ANDor::on_agent_activated, все агенты стартовали. Focus=" << isFocused() << ", activity=" << isActive();
+        };
+    }
 }
 
 // ********************************************************************************************************************

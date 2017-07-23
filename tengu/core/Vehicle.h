@@ -45,11 +45,15 @@ namespace tengu {
             virtual QJsonObject toJSON();
             virtual bool fromJSON( QJsonObject o );
             
-            void addChild( AbstractAgent * child );
+            virtual void addChild( AbstractAgent * child );
+            virtual void start();
             
         protected:
             
             vehicle_types_t _vehicleType;
+            
+            virtual void _prepare_for_execution();
+            virtual void _free_after_execution();
             
     };
     

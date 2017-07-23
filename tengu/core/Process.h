@@ -31,13 +31,19 @@ namespace tengu {
             virtual ~Process();
             virtual QJsonObject toJSON();
             
-            void addChild( AbstractAgent * child );
+            virtual void addChild( AbstractAgent * child );
             
-            void start();
+            virtual void start();
+            
+            bool emptyInputFocus();
+                    
+        protected:
+            
+            virtual void _prepare_for_execution();
+            virtual void _free_after_execution();
             
         private:
-            
-            void __stopExecution();
+                        
             
         private slots:
             

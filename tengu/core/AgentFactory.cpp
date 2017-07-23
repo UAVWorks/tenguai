@@ -40,22 +40,50 @@ tengu::AbstractEntity * tengu::AgentFactory::createEntity ( QJsonObject json ) {
     QString className;
     if ( json.contains("class_name") ) className = json[ "class_name" ].toString();
     else if ( json.contains( JSON_COLLECTION_ELEMENT ) ) className = AgentFactory::getClassName( json[ JSON_COLLECTION_ELEMENT ].toString() );
-    
+        
     if ( ! className.isEmpty() )  {
         
         if ( className == "Process" )       e = new Process();
+        if ( className == "Processor" )     e = new Processor();
         if ( className == "ProcessStart" )  e = new ProcessStart();
         if ( className == "ProcessStop" )   e = new ProcessStop();
         if ( className == "Task" )          e = new Task(); 
         if ( className == "Sprout" )        e = new Sprout();
         if ( className == "ORer" )          e = new ORer();
         if ( className == "ANDor" )         e = new ANDor();
+        if ( className == "Vehicle" )       e = new Vehicle();
         
     };
 
     if ( e ) {
+        
         _readFromJSON( e, json );
-        _initFocusNeighbors( e );            
+        _initFocusNeighbors( e );
+           
+        /*
+        int prevCount = 0;
+        int nextCount = 0;
+        
+        AbstractAgent * a = dynamic_cast< AbstractAgent * >( e ) ;
+        if ( a ) {
+            
+            prevCount = a->_uninitedPrevious.count();
+            nextCount = a->_uninitedNext.count();
+        
+            QList< AbstractAgent * > chi;
+            a->childrenRecursive( chi );
+            for ( int i=0; i<chi.count(); i++ ) {
+                AbstractAgent * c = chi.at(i);
+                prevCount += c->_uninitedPrevious.count();
+                nextCount += c->_uninitedNext.count();
+                // qDebug() << "   Один дитя " << c->_class_name << ", " << c->getHumanName() << ", uuid=" << c->getUUID();
+                // qDebug() << "      неин. пред=" << c->_uninitedPrevious.count() << ", неин. исх." << c->_uninitedNext.count();
+                // qDebug() << "      фокус пред=" << c->previousByFocus().count() << ", фокус исх" << c->nextByFocus().count();
+            };
+        };
+        
+        // qDebug() << "<--createEntity end, "<< e->_class_name << ", " << e->getHumanName() << "неин. вход." << prevCount << ", неин.исх=" << nextCount;
+        */
     };
     
 //    else {
@@ -143,8 +171,9 @@ void tengu::AgentFactory::_append_object ( tengu::AbstractEntity * entity, QStri
 // ********************************************************************************************************************
 
 void tengu::AgentFactory::_initFocusNeighbors ( tengu::AbstractEntity * entity ) {
-    
+        
     AbstractAgent * agent = dynamic_cast< AbstractAgent * > ( entity );
+    
     if ( agent ) {
         
         QList<AbstractAgent * > chi;
@@ -155,10 +184,12 @@ void tengu::AgentFactory::_initFocusNeighbors ( tengu::AbstractEntity * entity )
             AbstractAgent * one_child = chi.at(i);
             
             if ( one_child->_uninitedPrevious.count() > 0 ) {
+                
                 QList<QString> l = one_child->_uninitedPrevious;
                 for ( int k=0; k<l.count(); k++ ) {
                     
                     AbstractAgent * neighbor = agent->findChildByUUID( l.at(k) );                    
+                    
                     if ( neighbor ) {
                         one_child->addPreviousByFocus( neighbor );
                         one_child->_uninitedPrevious.removeOne( l.at(k) );
@@ -169,8 +200,11 @@ void tengu::AgentFactory::_initFocusNeighbors ( tengu::AbstractEntity * entity )
             if ( one_child->_uninitedNext.count() > 0 ) {
                 
                 QList<QString> l = one_child->_uninitedNext;
-                for ( int k=0; i<l.count(); k++ ) {
+                
+                for ( int k=0; k<l.count(); k++ ) {
+                                        
                     AbstractAgent * neighbor = agent->findChildByUUID( l.at(k) );
+                    
                     if ( neighbor ) {
                         one_child->addNextByFocus( neighbor );
                         one_child->_uninitedNext.removeOne( l.at(k) );

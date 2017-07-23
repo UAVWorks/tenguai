@@ -28,7 +28,7 @@ namespace tengu {
         friend class Sprout;
         friend class AbstractEntityItem;
         friend class AgentFactory;
-                                
+        
         Q_OBJECT
         
         Q_PROPERTY( QString system_name READ getSystemName WRITE setSystemName );
@@ -103,7 +103,8 @@ namespace tengu {
             void removeNeighborByFocus( AbstractAgent * agent );
             QList<AbstractAgent * > nextByFocus();
             QList<AbstractAgent * > previousByFocus();
-            void setFocus( bool focus );
+            
+            virtual void setFocus( bool focus, AbstractAgent * sender );            
             bool isFocused();
             // void removeNeighborByFocus( QString uuid );
             
@@ -215,7 +216,10 @@ namespace tengu {
             void _somethingChanged();
             
             bool _activity;
+            
             virtual bool _tryActivate();
+            virtual void _prepare_for_execution();
+            virtual void _free_after_execution();
             
             // One step of agent's execution.
             // Один шаг выполнения агента.

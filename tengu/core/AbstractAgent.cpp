@@ -111,10 +111,44 @@ bool tengu::AbstractAgent::isFocused() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::AbstractAgent::setFocus ( bool focus ) {
+void tengu::AbstractAgent::setFocus ( bool focus, AbstractAgent * sender ) {
     __focused = focus;
     emit signalFocused( focus );
     if ( focus ) _tryActivate();    
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                         Prepare this agent for the execution.                                    *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                Предварительная подготовка для выполнения данного агента.                         *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::AbstractAgent::_prepare_for_execution() {
+    
+    // Only for direct descendants. If there are attachments, the child itself should take care of this.
+    // Только для прямых потомков. Если есть вложения, то дитё должен сам об этом позаботиться.
+    
+    foreach ( AbstractAgent * c, _children ) {
+        c->_prepare_for_execution();
+    };
+    
+};
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                  Free resources of this agent after his execution                                *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                 Освободить ресурсы этого агента после его выполнения.                            *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::AbstractAgent::_free_after_execution() {
+    
+    foreach( AbstractAgent * c, _children ) {
+        c->_free_after_execution();
+    };    
 }
 
 // ********************************************************************************************************************
@@ -144,6 +178,7 @@ bool tengu::AbstractAgent::_tryActivate() {
         
         return true;
     };
+    
     return false;
 }
 
@@ -173,9 +208,17 @@ void tengu::AbstractAgent::_step() {
     // По умолчанию агент не выполняется.
     
     if ( _activity ) {
+        
         _activity = false;
         emit signalActivated( false );
         emit signalFinished();
+        
+        // Default behavior is transver focus for all next by focus agents.
+        // Поведение по умолчанию - это передача фокуса всем следующим по фокусу агентам.
+        
+        foreach ( AbstractAgent * next, _nextByFocus ) {
+            if ( ( ! next->isFocused() ) && ( ! next->isActive() ) ) next->setFocus( true, this );
+        };
     };
     
 }
@@ -722,11 +765,14 @@ tengu::AbstractAgent * tengu::AbstractAgent::findChildByUUID ( QString uuid ) {
     
     QList<AbstractAgent * > all;
     childrenRecursive( all );
+    
     for ( int i=0; i<all.count(); i++ ) {
+        
         AbstractAgent * oci = all.at(i);
         if ( oci->getUUID() == uuid ) {
             return oci;
         };
+        
     };
     
     return nullptr;

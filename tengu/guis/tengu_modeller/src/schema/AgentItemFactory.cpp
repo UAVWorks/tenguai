@@ -43,7 +43,10 @@ tengu::AbstractEntity* tengu::AgentItemFactory::createEntity ( QJsonObject json 
         
     };
 
-    if ( e ) _readFromJSON( e, json );
+    if ( e ) {
+        _readFromJSON( e, json );
+        AgentFactory::_initFocusNeighbors( e );
+    };
     
     // else {
     //    qDebug() << "AgentItemFactory::createEntity(), unhandled agent name " << json;
@@ -63,7 +66,7 @@ tengu::AbstractEntity* tengu::AgentItemFactory::createEntity ( QJsonObject json 
 QString tengu::AgentItemFactory::getClassName( QString collectionName ) {
     QString cname = AgentFactory::getClassName( collectionName );
     if ( cname.isEmpty() ) {
-        
+        qDebug() << "AgentItemFactory::getClassName( " << collectionName << "), cname is empty!";
     };
     return cname;
 }
