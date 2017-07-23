@@ -119,7 +119,8 @@ void tengu::Process::addChild ( tengu::AbstractAgent * child ) {
 // ********************************************************************************************************************
 
 void tengu::Process::start() {
-        
+
+    qDebug() << "Process::start()";
     // Finding ProcessStart element in children.
     // Поиск элемента ProcessStart в детях.
     
@@ -142,9 +143,10 @@ void tengu::Process::start() {
         
         for ( int i=0; i<chi.count(); i++ ) {
             AbstractAgent * c = chi.at(i);
-            QObject::connect( c, SIGNAL( signalActivated() ), this, SLOT( __on__agent_activated() ) );
+            QObject::connect( c, SIGNAL( signalFocused( bool ) ), this, SLOT( __on__agent__focused( bool ) ) );
+            QObject::connect( c, SIGNAL( signalActivated( bool ) ), this, SLOT( __on__agent__activated( bool ) ) );
             QObject::connect( c, SIGNAL( signalFinished() ), this, SLOT( __on__agent__finished() ) );
-            QObject::connect( c, SIGNAL( signalFailed( QString ) ), this, SLOT( __on_agent_failed( QString ) ) );
+            QObject::connect( c, SIGNAL( signalFailed( QString ) ), this, SLOT( __on__agent__failed( QString ) ) );
         };
         
         // Instead of assigning a focus to the start element, we immediately assign focus to his children.
@@ -184,11 +186,27 @@ void tengu::Process::__stopExecution() {
     QList<AbstractAgent * > chi = children();
     for ( int i=0; i<chi.count(); i++ ) {
         AbstractAgent * c = chi.at(i);
-        QObject::disconnect( c, SIGNAL( signalActivated() ), this, SLOT( __on__agent_activated() ) );
+        QObject::disconnect( c, SIGNAL( signalFocused( bool ) ), this, SLOT( __on__agent__focused( bool ) ) );
+        QObject::disconnect( c, SIGNAL( signalActivated( bool ) ), this, SLOT( __on__agent__activated( bool ) ) );
         QObject::disconnect( c, SIGNAL( signalFinished() ), this, SLOT( __on__agent__finished() ) );
-        QObject::disconnect( c, SIGNAL( signalFailed( QString ) ), this, SLOT( __on_agent_failed( QString ) ) );
+        QObject::disconnect( c, SIGNAL( signalFailed( QString ) ), this, SLOT( __on__agent__failed( QString ) ) );
     };
     
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                              An agent has been focused.                                          *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                          У агента случилось событие фокуса.                                      *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::Process::__on__agent__focused ( bool focus ) {
+    AbstractAgent * agent = dynamic_cast< AbstractAgent * > ( sender() );
+    if ( agent ) {
+        qDebug() << "Process::on_agent_focused, name=" << agent->getHumanName() << ", focus=" << focus;
+    };
 }
 
 // ********************************************************************************************************************
@@ -199,8 +217,41 @@ void tengu::Process::__stopExecution() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::Process::__on__agent_activated() {
+void tengu::Process::__on__agent__activated( bool activity ) {
+    AbstractAgent * agent = dynamic_cast< AbstractAgent * >( sender() );
+    if ( agent ) {
+        qDebug() << "Process::__on_agent_activated( " << activity << "), " << agent->getHumanName();
+    };
+}
 
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                    The execution of the agent has been finished.                                 *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                              Выполнение агента закончилось.                                      *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::Process::__on__agent__finished() {
+    AbstractAgent * agent = dynamic_cast< AbstractAgent * > ( sender() );
+    if ( agent ) {
+        qDebug() << "Process::on agent finished, name=" << agent->getHumanName();
+    };
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                       The execution of the agent has been failed.                                *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                           Выполнение агента было провалено.                                      *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::Process::__on__agent__failed ( QString errorMessage ) {
+    AbstractAgent * agent = dynamic_cast< AbstractAgent * > ( sender() );
+    if ( agent ) {
+        qDebug() << "Process::on_agent_failed: " << agent->getHumanName() << ", msg=" << errorMessage;
+    };
 }
 
 // ********************************************************************************************************************

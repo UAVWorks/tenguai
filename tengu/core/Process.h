@@ -41,7 +41,10 @@ namespace tengu {
             
         private slots:
             
-            void __on__agent_activated();
+            void __on__agent__focused( bool focus );
+            void __on__agent__activated( bool activity );
+            void __on__agent__finished();
+            void __on__agent__failed( QString errorMessage );
             
     };
     

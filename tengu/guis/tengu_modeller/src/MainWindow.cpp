@@ -90,8 +90,55 @@ tengu::MainWindow::MainWindow(QWidget *parent)
     __createDialogs();                
     
     __not_saved_operations = QList<NotSavedOperation>();
+    __running_agent = nullptr;
 
     __do_not_handle_events = false;
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                           Check start element in process. Create one if does not exists.                         *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                    Проверка элемента "начало" в процессе. Создание, если его еще не существует.                  *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindow::__check_start_element_in_process ( tengu::AbstractAgent * agent ) {
+    
+    Process * process = dynamic_cast< Process * > ( agent );
+    if ( process ) {
+    
+        // Have this process start element?
+        // Есть в этом процессе элемент "начало"?
+        
+        bool have = false;
+        QList<AbstractAgent *> hisChildren = agent->children();
+        for ( int i=0; i<hisChildren.count(); i++ ) {
+            if ( hisChildren.at(i)->entityType() == AbstractEntity::ET_ProcessStart ) {
+                have = true;
+                break;
+            };
+        };
+        
+        // Create process start if we have not one
+        // Создание начала процесса, если у нас его еще нет.
+        
+        if ( ! have ) {
+            
+            ProcessStart * start = new ProcessStart();
+            start->setSystemName( process->getSystemName() );
+            start->setHumanName( process->getHumanName() );
+            start->setComment( process->getComment() );
+            agent->addChild( start );
+            
+            if ( ( __schemaScene->rootEntity() ) && ( __schemaScene->rootEntity()->getUUID() == agent->getUUID() ) ) {
+                ProcessStartItem * si = new ProcessStartItem( start );
+                __schemaScene->addItem( si );
+            };
+        }
+    }
+    
+    
 }
 
 // ********************************************************************************************************************
@@ -190,40 +237,25 @@ void tengu::MainWindow::__createDialogs() {
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
-// *                                               Create workspace object.                                           *
+// *                               Create component's library tabulator for bottom toolbar.                           *
 // * ---------------------------------------------------------------------------------------------------------------- *
-// *                                         Создание объекта рабочего пространства.                                  *
+// *                            Создание табулятора библиотеки элементов для нижнего тулбара.                         *
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::MainWindow::__createWorkspace() {
+void tengu::MainWindow::__createLibraryTab() {
+    __library_tab = new LibraryTab();
+    __library_tab->tab__processes->setEnabled( false );
     
-    __workSpace = new WorkSpace();
+    // Signals from schema to tabulator
+    // Сигналы от схемы к табулятору.
     
-    XPlaneSimulator * xplane = new XPlaneSimulator();
-    __workSpace->addChild( xplane );
+    QObject::connect( __schemaScene, SIGNAL( signalInsideProcess() ), __library_tab, SLOT( on__inside_process() ) );
+    QObject::connect( __schemaScene, SIGNAL( signalInsideProcess() ), __library_tab->tab__processes, SLOT( on__inside_process() ) );
     
-    // Connection goes after add an xplane as a child.
-    // Соединение происходит после добавления xplane в качестве ребенка.
-    
-    QObject::connect( __workSpace, SIGNAL( signalSomethingChanged() ), this, SLOT( __on__something_changed() ) );    
-    
-    // XPlaneProcess * xpProcsss = new XPlaneProcess();
-    // __workSpace->addChild( xpProcsss );
-    
-    // In the workspace we always have an x-plane process.
-    // Внутри рабочего пространства у нас всегда есть процесс X-Plane.
-    
-    // We always have invisible X-Plane schema item for modelling.
-    // У нас всегда есть невидимый компонент схемы - X-Plane. Он для моделирования.
-    
-    /*
-    XPlaneAgent * xplane = new XPlaneAgent();
-    XPlaneAgentItem * xpItem = new XPlaneAgentItem( xplane );
-    xpItem->setX( 0 );
-    xpItem->setY( 0 );
-    __schemaScene->addItem( xpItem );
-    */
+    // QObject::connect( __schemaScene, SIGNAL( signalProcessStartCreated() ), __library_tab->tab__processes, SLOT( on__process_start_created() ) );
+    QObject::connect( __schemaScene, SIGNAL( signalProcessItemWithLinksCreated() ), __library_tab->tab__processes, SLOT( on__process_item_with_links_created() ) );
+    QObject::connect( __schemaScene, SIGNAL( signalProcessExplicitTaskCreated() ), __library_tab->tab__processes, SLOT( on__process_explicit_task_created() ) );            
 }
 
 // ********************************************************************************************************************
@@ -247,12 +279,13 @@ void tengu::MainWindow::__createMainMenu() {
     
 }
 
+
 // ********************************************************************************************************************
 // *                                                                                                                  *
 // *                                            Create local mongo storage.                                           *
 // * ---------------------------------------------------------------------------------------------------------------- *
-// * Создание локального хранилища монго. *
-// * *
+// *                                        Создание локального хранилища монго.                                      *
+// *                                                                                                                  *
 // ********************************************************************************************************************
 
 void tengu::MainWindow::__createMongoStorage() {
@@ -272,6 +305,45 @@ void tengu::MainWindow::__createMongoStorage() {
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
+// *                        The constructor of model's schema scene with predefined components.                       *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                         Конструктор "схемы" модели с предопределенными компонентами на ней.                      *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindow::__createSchemaScene() {
+    
+    // The scene itself.
+    // Сама сцена.
+    
+    __schemaScene = new SchemaScene();
+    
+    QObject::connect( __schemaScene, SIGNAL( signalSomethingChanged() ), this, SLOT( __on__something_changed() ) );                
+
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                           The constructor of model's schama (graphical view of the model).                       *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                               Конструктор схемы (графического представления модели).                             *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindow::__createSchemaView() {
+    __schemaView = new SchemaView( __schemaScene );
+    QObject::connect( __schemaView, SIGNAL( signalItemPressed( AbstractEntityItem *, bool )), this, SLOT( __on_schema_item_pressed ( AbstractEntityItem *, bool ) ) );
+    QObject::connect( __schemaView, SIGNAL( signalItemDoubleClicked( AbstractEntityItem *, bool )), this, SLOT( __on_schema_item_double_clicked( AbstractEntityItem *, bool ) ) );
+    QObject::connect( __schemaView, SIGNAL( signalItemMoved( AbstractEntityItem * , QPoint )), this, SLOT( __on_schama_item_moved( AbstractEntityItem * , QPoint ) ) );
+    QObject::connect( __schemaView, SIGNAL( signalWasDropped( AbstractEntity *, QPoint)), this, SLOT( __on_schema_item_was_dropped( AbstractEntity *, QPoint ) ) );
+    QObject::connect( __schemaView, SIGNAL( signalWantDelete( AbstractEntity * ) ), this, SLOT( __on__want__delete( AbstractEntity * ) ) );
+    QObject::connect( __schemaView, SIGNAL(signalWantCreateAgent(AbstractAgent*,AbstractEntity::entity_types_t)),
+                        this, SLOT( __on__want__create_agent( AbstractAgent *, AbstractEntity::entity_types_t ) ) );
+        
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
 // *                                              The status bar constructor.                                         *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                                              Конструктор строки статуса.                                         *
@@ -281,30 +353,6 @@ void tengu::MainWindow::__createMongoStorage() {
 void tengu::MainWindow::__createStatusBar() {
     QStatusBar * sb = statusBar();
 }
-
-// ********************************************************************************************************************
-// *                                                                                                                  *
-// *                               Create component's library tabulator for bottom toolbar.                           *
-// * ---------------------------------------------------------------------------------------------------------------- *
-// *                            Создание табулятора библиотеки элементов для нижнего тулбара.                         *
-// *                                                                                                                  *
-// ********************************************************************************************************************
-
-void tengu::MainWindow::__createLibraryTab() {
-    __library_tab = new LibraryTab();
-    __library_tab->tab__processes->setEnabled( false );
-    
-    // Signals from schema to tabulator
-    // Сигналы от схемы к табулятору.
-    
-    QObject::connect( __schemaScene, SIGNAL( signalInsideProcess() ), __library_tab, SLOT( on__inside_process() ) );
-    QObject::connect( __schemaScene, SIGNAL( signalInsideProcess() ), __library_tab->tab__processes, SLOT( on__inside_process() ) );
-    
-    // QObject::connect( __schemaScene, SIGNAL( signalProcessStartCreated() ), __library_tab->tab__processes, SLOT( on__process_start_created() ) );
-    QObject::connect( __schemaScene, SIGNAL( signalProcessItemWithLinksCreated() ), __library_tab->tab__processes, SLOT( on__process_item_with_links_created() ) );
-    QObject::connect( __schemaScene, SIGNAL( signalProcessExplicitTaskCreated() ), __library_tab->tab__processes, SLOT( on__process_explicit_task_created() ) );            
-}
-
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
@@ -379,41 +427,58 @@ void tengu::MainWindow::__createToolBar() {
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
-// *                           The constructor of model's schama (graphical view of the model).                       *
+// *                                               Create workspace object.                                           *
 // * ---------------------------------------------------------------------------------------------------------------- *
-// *                               Конструктор схемы (графического представления модели).                             *
+// *                                         Создание объекта рабочего пространства.                                  *
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::MainWindow::__createSchemaView() {
-    __schemaView = new SchemaView( __schemaScene );
-    QObject::connect( __schemaView, SIGNAL( signalItemPressed( AbstractEntityItem *, bool )), this, SLOT( __on_schema_item_pressed ( AbstractEntityItem *, bool ) ) );
-    QObject::connect( __schemaView, SIGNAL( signalItemDoubleClicked( AbstractEntityItem *, bool )), this, SLOT( __on_schema_item_double_clicked( AbstractEntityItem *, bool ) ) );
-    QObject::connect( __schemaView, SIGNAL( signalItemMoved( AbstractEntityItem * , QPoint )), this, SLOT( __on_schama_item_moved( AbstractEntityItem * , QPoint ) ) );
-    QObject::connect( __schemaView, SIGNAL( signalWasDropped( AbstractEntity *, QPoint)), this, SLOT( __on_schema_item_was_dropped( AbstractEntity *, QPoint ) ) );
-    QObject::connect( __schemaView, SIGNAL( signalWantDelete( AbstractEntity * ) ), this, SLOT( __on__want__delete( AbstractEntity * ) ) );
-    QObject::connect( __schemaView, SIGNAL(signalWantCreateAgent(AbstractAgent*,AbstractEntity::entity_types_t)),
-                        this, SLOT( __on__want__create_agent( AbstractAgent *, AbstractEntity::entity_types_t ) ) );
-        
+void tengu::MainWindow::__createWorkspace() {
+    
+    __workSpace = new WorkSpace();
+    
+    XPlaneSimulator * xplane = new XPlaneSimulator();
+    __workSpace->addChild( xplane );
+    
+    // Connection goes after add an xplane as a child.
+    // Соединение происходит после добавления xplane в качестве ребенка.
+    
+    QObject::connect( __workSpace, SIGNAL( signalSomethingChanged() ), this, SLOT( __on__something_changed() ) );    
+    
+    // XPlaneProcess * xpProcsss = new XPlaneProcess();
+    // __workSpace->addChild( xpProcsss );
+    
+    // In the workspace we always have an x-plane process.
+    // Внутри рабочего пространства у нас всегда есть процесс X-Plane.
+    
+    // We always have invisible X-Plane schema item for modelling.
+    // У нас всегда есть невидимый компонент схемы - X-Plane. Он для моделирования.
+    
+    /*
+    XPlaneAgent * xplane = new XPlaneAgent();
+    XPlaneAgentItem * xpItem = new XPlaneAgentItem( xplane );
+    xpItem->setX( 0 );
+    xpItem->setY( 0 );
+    __schemaScene->addItem( xpItem );
+    */
 }
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
-// *                        The constructor of model's schema scene with predefined components.                       *
+// *                                                  Open the model.                                                 *
 // * ---------------------------------------------------------------------------------------------------------------- *
-// *                         Конструктор "схемы" модели с предопределенными компонентами на ней.                      *
+// *                                                  Открытие модели.                                                *
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::MainWindow::__createSchemaScene() {
-    
-    // The scene itself.
-    // Сама сцена.
-    
-    __schemaScene = new SchemaScene();
-    
-    QObject::connect( __schemaScene, SIGNAL( signalSomethingChanged() ), this, SLOT( __on__something_changed() ) );                
-
+void tengu::MainWindow::__on__want__open() {
+    __dialogOpenSaveModel->setCurrentMode( DialogOpenSaveModel::DM_OPEN );
+    if ( __dialogOpenSaveModel->exec() == QDialog::Accepted ) {
+        AbstractAgent * result = __dialogOpenSaveModel->result_agent;
+        if ( result ) {
+            __on__agent__opened( result );
+        };
+    }
 }
 
 // ********************************************************************************************************************
@@ -632,100 +697,6 @@ void tengu::MainWindow::__on__something_changed() {
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
-// *                                              Set execution mode to real.                                         *
-// * ---------------------------------------------------------------------------------------------------------------- *
-// *                                         Установить режим выполнения в "реальный".                                *
-// *                                                                                                                  *
-// ********************************************************************************************************************
-
-void tengu::MainWindow::__on_set_execution_mode_real() {
-    
-    __execution_mode = AbstractEntity::EM_REAL;
-    __schemaView->hide();
-    __schemaScene->setExecutionMode( AbstractEntity::EM_REAL );
-    __schemaView->show();
-    
-}
-
-// ********************************************************************************************************************
-// *                                                                                                                  *
-// *                                            Set execution mode to X-Plane.                                        *
-// * ---------------------------------------------------------------------------------------------------------------- *
-// *                                       Установить режим выполнения в "X-Plane"                                    *
-// *                                                                                                                  *
-// ********************************************************************************************************************
-
-void tengu::MainWindow::__on_set_execution_mode_xplane() {
-    
-    __execution_mode = AbstractEntity::EM_XPLANE;
-    __schemaView->hide();
-    __schemaScene->setExecutionMode( AbstractEntity::EM_XPLANE );
-    __schemaView->show();
-    
-}
-
-// ********************************************************************************************************************
-// *                                                                                                                  *
-// *                                       User want jump to begin of simulation.                                     *
-// * ---------------------------------------------------------------------------------------------------------------- *
-// *                                   Пользователь хочет перейти на начало симуляции.                                *
-// *                                                                                                                  *
-// ********************************************************************************************************************
-
-void tengu::MainWindow::__on__simulation_begin() {
-
-}
-
-// ********************************************************************************************************************
-// *                                                                                                                  *
-// *                                         User want start a simulation process.                                    *
-// * ---------------------------------------------------------------------------------------------------------------- *
-// *                                      Пользователь хочет начать процесс симуляции.                                *
-// *                                                                                                                  *
-// ********************************************************************************************************************
-
-void tengu::MainWindow::__on__simulation_start() {
-
-}
-
-// ********************************************************************************************************************
-// *                                                                                                                  *
-// *                                         User want pause simulation process.                                      *
-// * ---------------------------------------------------------------------------------------------------------------- *
-// *                                Пользователь хочет поставить процесс симуляции на паузу.                          *
-// *                                                                                                                  *
-// ********************************************************************************************************************
-
-void tengu::MainWindow::__on__simulation_pause() {
-
-}
-
-// ********************************************************************************************************************
-// *                                                                                                                  *
-// *                                        User want stop a simulation process.                                      *
-// * ---------------------------------------------------------------------------------------------------------------- *
-// *                                  Пользователь хочет остановить процесс симуляции.                                *
-// *                                                                                                                  *
-// ********************************************************************************************************************
-
-void tengu::MainWindow::__on__simulation_stop() {
-
-}
-
-// ********************************************************************************************************************
-// *                                                                                                                  *
-// *                                  An agent was created in tree-like structure view.                               *
-// * ---------------------------------------------------------------------------------------------------------------- *
-// *                                       В древовидной структуре был создан агент.                                  *
-// *                                                                                                                  *
-// ********************************************************************************************************************
-/*
-void tengu::MainWindow::__on__tree_structure__agent_was_created ( tengu::AbstractAgent * agent ) {
-
-}
-*/
-// ********************************************************************************************************************
-// *                                                                                                                  *
 // *                                An agent was selected in tree-like structure view.                                *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                        В древовидной структуре был изменен выбранный (текущий ) агент                            *
@@ -735,6 +706,9 @@ void tengu::MainWindow::__on__tree_structure__agent_was_created ( tengu::Abstrac
 void tengu::MainWindow::__on__tree_structure__agent_was_selected ( tengu::AbstractAgent * agent ) {
         
     if ( __do_not_handle_events ) return;
+    
+    // An agent which was selected on the tree appears on the schema.
+    // Появление выбранного в дереве агента - на схеме.
     
     AbstractEntityItem * item = AgentItemFactory::createItem( agent );
     
@@ -771,11 +745,121 @@ void tengu::MainWindow::__on__tree_structure__agent_was_selected ( tengu::Abstra
             default: __schemaScene->setRootItem( item );   
         }
         
-        __schemaView->show();    
+        __schemaView->show();            
+    };
+    
+    // Actions enabling depended on kind of selected agent.
+    // Разрешение действий в зависимости от типа выбранного агента.
+    
+    __action__simulation_start->setEnabled( false );
+    
+    AbstractEntity::entity_types_t et = agent->entityType();
+    if ( // ( et == AbstractEntity::ET_Vehicle ) || 
+        ( et == AbstractAgent::ET_Process ) ) 
+    {
+        __action__simulation_start->setEnabled( true );
+    }
+            
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                              Set execution mode to real.                                         *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                         Установить режим выполнения в "реальный".                                *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindow::__on_set_execution_mode_real() {
+    
+    __execution_mode = AbstractEntity::EM_REAL;
+    __schemaView->hide();
+    __schemaScene->setExecutionMode( AbstractEntity::EM_REAL );
+    __schemaView->show();
+    
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                            Set execution mode to X-Plane.                                        *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                       Установить режим выполнения в "X-Plane"                                    *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindow::__on_set_execution_mode_xplane() {
+    
+    __execution_mode = AbstractEntity::EM_XPLANE;
+    __schemaView->hide();
+    __schemaScene->setExecutionMode( AbstractEntity::EM_XPLANE );
+    __schemaView->show();
+    
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                         User want pause simulation process.                                      *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                Пользователь хочет поставить процесс симуляции на паузу.                          *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindow::__on__simulation_pause() {
+
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                         User want start a simulation process.                                    *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                      Пользователь хочет начать процесс симуляции.                                *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindow::__on__simulation_start() {
+    
+    if ( __schemaScene->rootAsProcess() ) {
+        Process * schema_root_process = dynamic_cast< Process * > ( __schemaScene->rootEntity() );
+        if ( schema_root_process ) {
         
+            // We have an process as root element of the schema.
+            // В качестве корневого элемента на схеме - процесс.
+        
+            __running_agent = schema_root_process;
+            __action__simulation_start->setEnabled( false );
+        
+            __execution_bind_recursive( schema_root_process );
+        
+            schema_root_process->start();
+        
+        };    
     };
 }
 
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                        User want stop a simulation process.                                      *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                  Пользователь хочет остановить процесс симуляции.                                *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindow::__on__simulation_stop() {
+
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                  An agent was created in tree-like structure view.                               *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                       В древовидной структуре был создан агент.                                  *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+/*
+void tengu::MainWindow::__on__tree_structure__agent_was_created ( tengu::AbstractAgent * agent ) {
+
+}
+*/
 // ********************************************************************************************************************
 // *                                                                                                                  *
 // *                                  Agent was deleted in tree-like structure view.                                  *
@@ -787,91 +871,6 @@ void tengu::MainWindow::__on__tree_structure__agent_was_selected ( tengu::Abstra
 void tengu::MainWindow::__on__tree_structure__agent_was_deleted( QString uuid ) {
 }
 */
-
-// ********************************************************************************************************************
-// *                                                                                                                  *
-// *                           Check start element in process. Create one if does not exists.                         *
-// * ---------------------------------------------------------------------------------------------------------------- *
-// *                    Проверка элемента "начало" в процессе. Создание, если его еще не существует.                  *
-// *                                                                                                                  *
-// ********************************************************************************************************************
-
-void tengu::MainWindow::__check_start_element_in_process ( tengu::AbstractAgent * agent ) {
-    
-    Process * process = dynamic_cast< Process * > ( agent );
-    if ( process ) {
-    
-        // Have this process start element?
-        // Есть в этом процессе элемент "начало"?
-        
-        bool have = false;
-        QList<AbstractAgent *> hisChildren = agent->children();
-        for ( int i=0; i<hisChildren.count(); i++ ) {
-            if ( hisChildren.at(i)->entityType() == AbstractEntity::ET_ProcessStart ) {
-                have = true;
-                break;
-            };
-        };
-        
-        // Create process start if we have not one
-        // Создание начала процесса, если у нас его еще нет.
-        
-        if ( ! have ) {
-            
-            ProcessStart * start = new ProcessStart();
-            start->setSystemName( process->getSystemName() );
-            start->setHumanName( process->getHumanName() );
-            start->setComment( process->getComment() );
-            agent->addChild( start );
-            
-            if ( ( __schemaScene->rootEntity() ) && ( __schemaScene->rootEntity()->getUUID() == agent->getUUID() ) ) {
-                ProcessStartItem * si = new ProcessStartItem( start );
-                __schemaScene->addItem( si );
-            };
-        }
-    }
-    
-    
-}
-
-// ********************************************************************************************************************
-// *                                                                                                                  *
-// *                                     Clear agent. Independed of signal sender.                                    *
-// * ---------------------------------------------------------------------------------------------------------------- *
-// *                                  Очистка агента. Независимо от источника сигнала.                                *
-// *                                                                                                                  *
-// ********************************************************************************************************************
-
-void tengu::MainWindow::__on__clear_agent( AbstractAgent * agent ) {
-    
-    __do_not_handle_events = true;
-    
-    // Cleanup at the schema.
-    // Очистка на схеме.
-    
-    if ( ( __schemaScene->rootEntity() ) && ( __schemaScene->rootEntity()->getUUID() == agent->getUUID() ) ) {
-        __schemaView->hide();
-        __schemaScene->clear();        
-        __schemaView->show();
-    };
-            
-    // Cleanup in the tree-like structure.
-    // Очистка в древовидной структуре.
-    
-    __left->treeStructure->clearAgent( agent );
-        
-    // Delete children's elements physically
-    // Физическое удаление детей.
-    
-    agent->deleteChildren();
-        
-    // If we have process as root, we need add ProcessStart element at least
-    // Если у нас в качестве корневого - процесс, то нужно как минимум добавить ему элемент начала процесса
-    
-    __check_start_element_in_process( agent );
-    __action__save_schema->setEnabled( false );
-    __do_not_handle_events = false;
-}
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
@@ -945,39 +944,72 @@ void tengu::MainWindow::__restoreSettings() {
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
-// *                                              Some errors occured.                                                *
+// *                                 Binding the signals of the process before launch.                                *
 // * ---------------------------------------------------------------------------------------------------------------- *
-// *                                            Возникли какие-то ошибки.                                             *
+// *                                 Привязать сигналы процесса перед его запуском.                                   *
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::MainWindow::__on__error ( tengu::error_level_t errorLevel, QString procedureName, QString errorMessage ) {
-    QMessageBox msg;
-    msg.setText( procedureName + "\n" + errorMessage );
-    switch ( errorLevel ) {
-        case EL_INFO: msg.setIcon( QMessageBox::Information ); break;
-        case EL_WARNING: msg.setIcon( QMessageBox::Warning ); break;
-        case EL_CRITICAL: msg.setIcon( QMessageBox::Critical ); break;
-    };
-    msg.exec();
+void tengu::MainWindow::__execution_bind ( tengu::AbstractAgent * agent ) {
+    QObject::connect( agent, SIGNAL( signalActivated( bool ) ), this, SLOT( __on__agent__activated( bool ) ) );
+    QObject::connect( agent, SIGNAL( signalFocused( bool ) ), this, SLOT( __on__agent__focused( bool ) ) );
+    QObject::connect( agent, SIGNAL( signalFinished() ), this, SLOT( __on__agent__finished() ) );
+    QObject::connect( agent, SIGNAL( signalFailed( QString ) ), this, SLOT( __on__agent__failed( QString ) ) );
 }
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
-// *                                                  Open the model.                                                 *
+// *                        Recursive binding the signals for this agent and for all his children.                    *
 // * ---------------------------------------------------------------------------------------------------------------- *
-// *                                                  Открытие модели.                                                *
+// *                           Рекурсивная привязка сингалов данного агента и всех его детей.                         *
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::MainWindow::__on__want__open() {
-    __dialogOpenSaveModel->setCurrentMode( DialogOpenSaveModel::DM_OPEN );
-    if ( __dialogOpenSaveModel->exec() == QDialog::Accepted ) {
-        AbstractAgent * result = __dialogOpenSaveModel->result_agent;
-        if ( result ) {
-            __on__agent__opened( result );
-        };
-    }
+void tengu::MainWindow::__execution_bind_recursive ( tengu::AbstractAgent * agent ) {
+    
+    QList<AbstractAgent * > elements;
+    agent->childrenRecursive( elements );
+    elements.append( agent );
+        
+    for ( int i=0; i<elements.count(); i++ ) {
+        __execution_bind( elements.at( i ) );
+    };
+        
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                               Unbind the signals of the process after stop his running.                          *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                               Отвязать сигналы процесса после окончания его выполнения.                          *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindow::__execution_unbind ( tengu::AbstractAgent * agent ) {
+    QObject::disconnect( agent, SIGNAL( signalActivated( bool ) ), this, SLOT( __on__agent__activated( bool ) ) );
+    QObject::disconnect( agent, SIGNAL( signalFocused( bool ) ), this, SLOT( __on__agent__focused( bool ) ) );
+    QObject::disconnect( agent, SIGNAL( signalFinished() ), this, SLOT( __on__agent__finished() ) );
+    QObject::disconnect( agent, SIGNAL( signalFailed( QString ) ), this, SLOT( __on__agent__failed( QString ) ) );
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                      Recursivelly unbinding the sighals of this agent and all his children                       *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                             Рекурсивно отвязать сигналы этого агента и всех его детей.                           *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindow::__execution_unbind_recursive ( tengu::AbstractAgent * agent ) {
+    
+    QList<AbstractAgent * > elements;
+    agent->childrenRecursive( elements );
+    elements.append( agent );
+    
+    for ( int i=0; i<elements.count(); i++ ) {
+        __execution_bind( elements.at( i ) );
+    };
+    
 }
 
 // ********************************************************************************************************************
@@ -1005,6 +1037,154 @@ void tengu::MainWindow::__on__agent__opened ( tengu::AbstractAgent * agent ) {
     __left->treeStructure->addAgent( agent, true );
     __action__save_schema->setEnabled( false );
     
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                      The focus of the agent has been changed.                                    *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                                Фокус агента изменился.                                           *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindow::__on__agent__focused ( bool focus ) {
+    AbstractAgent * agent = dynamic_cast< AbstractAgent * > ( sender() );
+    if ( agent ) {
+        qDebug() << "MainWindow::__on_agent_focused, " << agent->getHumanName() << ", " << focus;
+    };
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                       The activity of agent has been changed.                                    *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                              Изменилась активность агента.                                       *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindow::__on__agent__activated ( bool activity ) {
+    
+    AbstractAgent * agent = dynamic_cast< AbstractAgent * > ( sender() );
+    if ( agent ) {
+        qDebug() << "MainWindow::on_agent_activated, " << agent->getHumanName() << ", " << activity ;
+    };
+    
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                        The running of the agent has been ended.                                  *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                                Агент завершил свою работу.                                       *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindow::__on__agent__finished() {
+    
+    AbstractAgent * agent = dynamic_cast< AbstractAgent * > ( sender() );
+    if ( agent ) {
+        
+        __execution_unbind_recursive( agent );        
+        qDebug() << "MainWindow::__on_agent_finished(), " << agent->getHumanName();        
+        __check__simulation_finished( agent );        
+        
+    };
+    
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                      The running of the agent has been failed.                                   *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                       Выполнение агента закончилось неудачей.                                    *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindow::__on__agent__failed ( QString errorMessage ) {
+    
+    __on__error( EL_WARNING, "MainWindow::on_agent_failed()", errorMessage );
+    AbstractAgent * agent = dynamic_cast< AbstractAgent * > ( sender() );
+    if ( agent ) {
+        
+        __execution_unbind_recursive( agent );
+        __check__simulation_finished( agent );
+        
+    };    
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                     Check the simulation has been finished                                       *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                           Проверка того факта, что симуляция как процесс - закончилась                           *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindow::__check__simulation_finished( AbstractAgent * rAgent ) {
+    
+    if ( rAgent == __running_agent ) {
+        __action__simulation_start->setEnabled( true );
+        __running_agent = nullptr;
+    };
+    
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                     Clear agent. Independed of signal sender.                                    *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                  Очистка агента. Независимо от источника сигнала.                                *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindow::__on__clear_agent( AbstractAgent * agent ) {
+    
+    __do_not_handle_events = true;
+    
+    // Cleanup at the schema.
+    // Очистка на схеме.
+    
+    if ( ( __schemaScene->rootEntity() ) && ( __schemaScene->rootEntity()->getUUID() == agent->getUUID() ) ) {
+        __schemaView->hide();
+        __schemaScene->clear();        
+        __schemaView->show();
+    };
+            
+    // Cleanup in the tree-like structure.
+    // Очистка в древовидной структуре.
+    
+    __left->treeStructure->clearAgent( agent );
+        
+    // Delete children's elements physically
+    // Физическое удаление детей.
+    
+    agent->deleteChildren();
+        
+    // If we have process as root, we need add ProcessStart element at least
+    // Если у нас в качестве корневого - процесс, то нужно как минимум добавить ему элемент начала процесса
+    
+    __check_start_element_in_process( agent );
+    __action__save_schema->setEnabled( false );
+    __do_not_handle_events = false;
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                              Some errors occured.                                                *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                            Возникли какие-то ошибки.                                             *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindow::__on__error ( tengu::error_level_t errorLevel, QString procedureName, QString errorMessage ) {
+    QMessageBox msg;
+    msg.setText( procedureName + "\n" + errorMessage );
+    switch ( errorLevel ) {
+        case EL_INFO: msg.setIcon( QMessageBox::Information ); break;
+        case EL_WARNING: msg.setIcon( QMessageBox::Warning ); break;
+        case EL_CRITICAL: msg.setIcon( QMessageBox::Critical ); break;
+    };
+    msg.exec();
 }
 
 // ********************************************************************************************************************
@@ -1057,6 +1237,18 @@ void tengu::MainWindow::__on__save() {
     // После записи действие записи становится недоступным.
     
     __action__save_schema->setEnabled( false );
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                       User want jump to begin of simulation.                                     *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                   Пользователь хочет перейти на начало симуляции.                                *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindow::__on__simulation_begin() {
+
 }
 
 // ********************************************************************************************************************

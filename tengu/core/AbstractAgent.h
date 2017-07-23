@@ -40,7 +40,9 @@ namespace tengu {
         signals:
             
             void signalSomethingChanged();
-            void signalActivated();
+            
+            void signalFocused( bool focus );
+            void signalActivated( bool activity );
             void signalFinished();
             void signalFailed( QString message );
         

@@ -125,6 +125,23 @@ namespace tengu {
                         
             WorkSpace * __workSpace;
             
+            // Bind the signals of the running process to the main window - to perform this process.
+            // Привязать сигналы выполняющегося процесса к главному окну - для выполнения этого процесса. 
+            void __execution_bind( AbstractAgent * agent );
+            void __execution_bind_recursive( AbstractAgent * agent );
+            
+            // Release the signals of the running process (after ending of execution).
+            // Отвязать сигналы выполняющегося процесса (после окончания выполнения).
+            void __execution_unbind( AbstractAgent * agent );
+            void __execution_unbind_recursive( AbstractAgent * agent );
+            
+            AbstractAgent * __running_agent;
+            
+            // check the simulation has been finished
+            // Проверка того, не закончилась ли симуляция.
+            
+            void __check__simulation_finished( AbstractAgent * rAgent );
+            
             // MVC-model for editing property of current (selected) agent or state.
             // MVC-модель редактирования свойств текущего (выбранного) агента или состояния.
             
@@ -178,6 +195,11 @@ namespace tengu {
             void __on__simulation_stop();
             void __on__simulation_start();
             void __on__simulation_pause();
+            
+            void __on__agent__focused( bool focus );
+            void __on__agent__activated( bool activity );
+            void __on__agent__finished();
+            void __on__agent__failed( QString errorMessage );
                         
             
     };

@@ -113,6 +113,7 @@ bool tengu::AbstractAgent::isFocused() {
 
 void tengu::AbstractAgent::setFocus ( bool focus ) {
     __focused = focus;
+    emit signalFocused( focus );
     if ( focus ) _tryActivate();    
 }
 
@@ -125,9 +126,25 @@ void tengu::AbstractAgent::setFocus ( bool focus ) {
 // ********************************************************************************************************************
 
 bool tengu::AbstractAgent::_tryActivate() {
-    _activity = true;
-    emit signalActivated();
-    return true;
+    
+    if ( __focused ) {
+        
+        // Activation of this agent.
+        // Активация данного агента.
+        
+        __focused = false;
+        emit signalFocused( false );
+        _activity = true;
+        emit signalActivated( _activity );
+        
+        // After activation we need to do at least one execution step.
+        // После активации нам надо сделать как минимум один шаг выполнения.
+        
+        _step();
+        
+        return true;
+    };
+    return false;
 }
 
 // ********************************************************************************************************************
@@ -155,9 +172,11 @@ void tengu::AbstractAgent::_step() {
     // By default agent does not execute.
     // По умолчанию агент не выполняется.
     
-    _activity = false;
-    __focused = false;
-    emit signalFinished();
+    if ( _activity ) {
+        _activity = false;
+        emit signalActivated( false );
+        emit signalFinished();
+    };
     
 }
 
@@ -687,9 +706,7 @@ bool tengu::AbstractAgent::fromJSON( QJsonObject json ) {
             _uninitedNext.append( arr.at(i).toString() );
         };
     };
-    
-    qDebug() << "AbstractAgent::fromJSON, class=" << _class_name << ", name=" << getHumanName() << "неин. пред. " << _uninitedPrevious.count() << ", неин. след. " << _uninitedNext.count();
-    
+        
     return result;
 }
 

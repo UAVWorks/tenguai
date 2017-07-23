@@ -160,27 +160,21 @@ void tengu::SchemaScene::setRootItem ( tengu::AbstractEntityItem * rootItem ) {
             };
         };
         
-        // Second one is links of that agents.
-        // Вторая часть - это связи агентов.
+        // Second one is links of that agents. This doing when all agents was created.
+        // Вторая часть - это связи агентов. После того, как все агенты были созданы.
         
         for ( int i=0; i<hisChildren.count(); i++ ) {
             
             AbstractAgent * oneAgent = hisChildren.at(i);
-            
-            qDebug() << "Смотрим на агента  " << oneAgent << ", human name=" << oneAgent->getHumanName();
-                                    
+                                                
             QList<AbstractAgent * > prev = oneAgent->previousByFocus();
-            
-            qDebug() << "Previous count=" << prev.count();
-            
+                        
             for ( int i=0; i<prev.count(); i++ ) {
                 AbstractAgent * ol = prev.at(i);
                 addLink( ol, oneAgent );
             };
             
             QList<AbstractAgent * > next = oneAgent->nextByFocus();
-            
-            qDebug() << "Next count=" << next.count();
             
             for ( int i=0; i<next.count(); i++ ) {
                 AbstractAgent * nl = next.at(i);
