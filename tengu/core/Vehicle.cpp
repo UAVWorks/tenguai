@@ -170,7 +170,11 @@ void tengu::Vehicle::start() {
 // ********************************************************************************************************************
 
 void tengu::Vehicle::_prepare_for_execution() {
-    Processor::_prepare_for_execution();
+    
+    // Not need. The Process will be initialize his own agents in the start() method..
+    // Не нужно. Процесс проинициализирует своих собственных агентов в методе start().
+    // Processor::_prepare_for_execution();
+    
 }
 
 // ********************************************************************************************************************
@@ -182,7 +186,7 @@ void tengu::Vehicle::_prepare_for_execution() {
 // ********************************************************************************************************************
 
 void tengu::Vehicle::_free_after_execution() {
-    Processor::_free_after_execution();
+    // Processor::_free_after_execution();
 }
 
 // ********************************************************************************************************************

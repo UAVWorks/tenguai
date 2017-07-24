@@ -41,6 +41,8 @@ namespace tengu {
             
         protected:
             
+            virtual QString _ping_path();
+            
         private:
             
             QString __group;

@@ -926,6 +926,7 @@ void tengu::MainWindow::__execution_bind ( tengu::AbstractAgent * agent ) {
 
 void tengu::MainWindow::__execution_bind_recursive ( tengu::AbstractAgent * agent ) {
     
+    qDebug() << "MainWindow::bind()";
     QList<AbstractAgent * > elements;
     agent->childrenRecursive( elements );
     elements.append( agent );
@@ -961,12 +962,14 @@ void tengu::MainWindow::__execution_unbind ( tengu::AbstractAgent * agent ) {
 
 void tengu::MainWindow::__execution_unbind_recursive ( tengu::AbstractAgent * agent ) {
     
+    qDebug() << "MainWindow::unbind()";
+    
     QList<AbstractAgent * > elements;
     agent->childrenRecursive( elements );
     elements.append( agent );
     
     for ( int i=0; i<elements.count(); i++ ) {
-        __execution_bind( elements.at( i ) );
+        __execution_unbind( elements.at( i ) );
     };
     
 }
@@ -1042,9 +1045,9 @@ void tengu::MainWindow::__on__agent__finished() {
     
     AbstractAgent * agent = dynamic_cast< AbstractAgent * > ( sender() );
     if ( agent ) {
-        
-        __execution_unbind_recursive( agent );        
+                
         qDebug() << "MainWindow::__on_agent_finished(), " << agent->getHumanName();        
+        __execution_unbind( agent );        
         __check__simulation_finished( agent );        
         
     };
@@ -1064,8 +1067,8 @@ void tengu::MainWindow::__on__agent__failed ( QString errorMessage ) {
     __on__error( EL_WARNING, "MainWindow::on_agent_failed()", errorMessage );
     AbstractAgent * agent = dynamic_cast< AbstractAgent * > ( sender() );
     if ( agent ) {
-        
-        __execution_unbind_recursive( agent );
+        qDebug() << "MainWindow::on_agent_failed from " << agent->getHumanName() << ", msg=" << errorMessage;
+        __execution_unbind( agent );
         __check__simulation_finished( agent );
         
     };    
@@ -1080,13 +1083,13 @@ void tengu::MainWindow::__on__agent__failed ( QString errorMessage ) {
 // ********************************************************************************************************************
 
 void tengu::MainWindow::__check__simulation_finished( AbstractAgent * rAgent ) {
-    
+    /*
     if ( rAgent == __running_agent ) {
         qDebug() << "MainWindow::check_simulation_finished, the simulation was ended.";
         __action__simulation_start->setEnabled( true );
         __running_agent = nullptr;
     };
-    
+    */
 }
 
 // ********************************************************************************************************************

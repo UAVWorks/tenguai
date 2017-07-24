@@ -35,7 +35,7 @@ QMAKE_CXXFLAGS += -std=gnu++11
 # The Qt section contains nothing here except core. LoRedis itself does not directly do network 
 # functions and does not have any GUIs.
 
-QT += core
+QT += core qml
 QT -= network
 
 LIBS += -lLoRedis -L../loredis/build 

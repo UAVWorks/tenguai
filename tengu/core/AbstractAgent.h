@@ -226,6 +226,16 @@ namespace tengu {
             
             virtual void _step();
             
+            // Path for indicate this agent activity. For example it can be "agents.$his_uuid.last_activity". 
+            // Can be override in descendants. The activity will not appears (not set in redis) if the path will be empty.
+            // By default this path is empty, i.e. agent does not demonstrate he is live.
+            
+            // Путь для индикации активности данного агента. Например, это может быть "agents.$его_uuid.last_activity". 
+            // Может быть перекрыт в потомках. Активность не будет проявляться (не будет устанавливаться в редисе), если путь пустой.
+            // По умолчанию он пустой и есть, т.е. агент не демонстрирует, что он живой.
+            
+            virtual QString _ping_path();
+            
         private:
             
             bool __pub_redis_connected;

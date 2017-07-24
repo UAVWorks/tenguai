@@ -211,13 +211,23 @@ void tengu::AbstractAgent::_step() {
         
         _activity = false;
         emit signalActivated( false );
-        emit signalFinished();
         
         // Default behavior is transver focus for all next by focus agents.
         // Поведение по умолчанию - это передача фокуса всем следующим по фокусу агентам.
         
+        bool haveOne = false;
         foreach ( AbstractAgent * next, _nextByFocus ) {
-            if ( ( ! next->isFocused() ) && ( ! next->isActive() ) ) next->setFocus( true, this );
+            if ( ( ! next->isFocused() ) && ( ! next->isActive() ) ) {
+                next->setFocus( true, this );
+                haveOne = true;
+            };
+        };
+        
+        if ( ! haveOne ) {
+            qDebug() << "-->AbstractAgent::step(), " << getHumanName() << ", emit without focus";
+            emit signalFailed( getHumanName() + tr(" does not have next by focus element.") );
+        } else {
+            emit signalFinished();        
         };
     };
     
@@ -298,6 +308,26 @@ void tengu::AbstractAgent::__on_connect_timer() {
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
+// *                                      Ping path, show last activity of this agent.                                *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                               Путь для пинга, демонстрации последней активности агента.                          *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+QString tengu::AbstractAgent::_ping_path() {
+    
+    // If we have an UUID - we will identify using it. 
+    // Если есть UUID - идентификация идет по нему. 
+                       
+    // QString channel = QString("agents.") + getUUID() + ".last_activity";
+    // return channel;    
+    
+    return "";
+        
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
 // *                                          On the ping timer fire event.                                           *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                                               Тычок таймера пинга.                                               *
@@ -322,16 +352,16 @@ void tengu::AbstractAgent::__on_ping_timer() {
         
         QString repr = QString::number( dt.toTime_t() ) + "." + QString::number( time.msec() );
         
-        // If we have an UUID - we will identify using it. 
-        // Если есть UUID - идентификация идет по нему. 
-                       
-        QString channel = QString("agents.") + getUUID() + ".ping";
+        QString channel = _ping_path();
         
-        // Was commented. I use yet only setting value into redis, but not pub/sub.
-        // Было закомментировано. Использую только значение в редисе, но не pub/sub.
-        // _pub_redis->publish( channel, repr );
+        if ( ! channel.isEmpty() ) {
+            
+            // It was commented. I use yet only setting value into redis, but not pub/sub.
+            // Было закомментировано. Использую только значение в редисе, но не pub/sub.
+            // _pub_redis->publish( channel, repr );
         
-        _pub_redis->set( channel, repr );
+            _pub_redis->set( channel, repr );
+        };
         
     };
         
