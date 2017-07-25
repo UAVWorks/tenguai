@@ -22,7 +22,7 @@ namespace tengu {
         
         public:
             
-            DialogProperties ( WorkSpace* workSpace );
+            DialogProperties ( WorkSpace * workSpace );
             virtual ~DialogProperties();
             
             virtual void fillFrom( tengu::AbstractEntityItem * item );

@@ -9,7 +9,14 @@
 
 #pragma once
 
+#include <QTabWidget>
+
+#include "Task.h"
+#include "TaskItem.h"
 #include "DialogProperties.h"
+#include "DialogPropertiesTask_TabAlgorythm.h"
+#include "DialogPropertiesTask_TabStartCondition.h"
+#include "DialogPropertiesTask_TabStopCondition.h"
 
 namespace tengu {
     
@@ -22,8 +29,22 @@ namespace tengu {
             DialogPropertiesTask ( WorkSpace* workSpace );
             virtual ~DialogPropertiesTask();
             
+            virtual void fillFrom( tengu::AbstractEntityItem * item ) override;
+            
         protected:
+            
+            virtual void _on__cancel() override;
+            virtual void _on__ok() override;
+            
         private:
+            
+            QTabWidget * __tab;
+            DialogPropertiesTask_TabAlgorythm * __tab__algorythm;
+            DialogPropertiesTask_TabStartCondition * __tab__start_condition;
+            DialogPropertiesTask_TabStopCondition * __tab__stop_condition;
+            
+            Task * __task;
+            
     };
     
 };

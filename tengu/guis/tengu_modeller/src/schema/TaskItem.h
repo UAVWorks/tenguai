@@ -31,6 +31,16 @@ namespace tengu {
             
             Task * task();
             
+            QString startCondition();
+            void setStartCondition( QString start );
+            
+            QString stopCondition();
+            void setStopCondition( QString stop );
+            
+            QString algorythm();
+            void setAlgorythm( QString alg );
+            
+            
         private:
             
             

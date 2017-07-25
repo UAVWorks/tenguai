@@ -45,8 +45,13 @@ QRectF tengu::VehicleItem::boundingRect() const {
 // ********************************************************************************************************************
 
 void tengu::VehicleItem::paint ( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget ) {
+    
+    Q_UNUSED( option );
+    Q_UNUSED( widget );
+    
     QPixmap aircraft(":Airplane_icon_128.png");
     painter->drawPixmap( 1, 1, aircraft );
+    
 }
 
 // ********************************************************************************************************************
