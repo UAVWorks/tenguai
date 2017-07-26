@@ -7,6 +7,8 @@
 /usr/include/x86_64-linux-gnu/qt5/QtWidgets/
 /usr/include/x86_64-linux-gnu/qt5/QtPositioning/
 /usr/include/x86_64-linux-gnu/qt5/QtNetwork/
+/usr/include/x86_64-linux-gnu/qt5/QtQml/
+/usr/include/x86_64-linux-gnu/qt5/QtQuick/
 /usr/include/libbson-1.0/
 /usr/include/libmongoc-1.0/
 tengu/core/

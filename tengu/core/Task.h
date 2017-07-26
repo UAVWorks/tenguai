@@ -9,6 +9,13 @@
 
 #pragma once
 
+#include <QJSEngine>
+#include <QQmlEngine>
+#include <QQuickView>
+#include <QQuickItem>
+#include <QQmlComponent>
+#include <QQmlError>
+
 #include "SproutableAgent.h"
 
 namespace tengu {
@@ -25,6 +32,10 @@ namespace tengu {
             virtual QJsonObject toJSON() override;
             virtual bool fromJSON(QJsonObject json) override;
             
+            // QString qml;
+            // void setQml( QString qml );
+            
+            
             QString startCondition();
             void setStartCondition( QString start );
             
@@ -34,12 +45,22 @@ namespace tengu {
             QString algorythm();
             void setAlgorythm( QString alg );
             
+            
         protected:
+            
+            virtual void _prepare_for_execution() override;
+            virtual void _free_after_execution() override;
+            virtual bool _tryActivate() override;
+            virtual void _step() override;
+            
         private:
             
             QString __start_condition;
             QString __algorythm;
             QString __stop_condition;
+            
+            QQmlEngine * __qmlEngine;
+            QObject * __qmlObject;
     };
     
 };

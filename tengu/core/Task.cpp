@@ -22,6 +22,117 @@ tengu::Task::Task ()
 {
     _class_name = "Task";
     _entity_type = ET_Task;
+    
+    // __start_condition = tr("// At least this one function must be exists") + "\n\nfunction start() {\n    return ( true );\n};\n";
+    // __algorythm = tr("// At least this one functiom must be exists") + "\n\nfunction step() {\n};\n";
+    // __stop_condition = tr("// At least this one function must be exists") + "\n\nfunction stop() {\n    return (true);\n};\n";
+
+    __qmlEngine = nullptr;
+    __qmlObject = nullptr;
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                              Prepare the task for launch.                                        *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                              Подготовка задачи к запуску.                                        *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::Task::_prepare_for_execution() {
+    
+    qDebug() << "Prepare task for execution";
+    SproutableAgent::_prepare_for_execution();
+    
+    qDebug() << "Get an qml engine...";
+    
+    AbstractAgent * parent = this->parent();
+    qDebug() << "parent is: " << parent;
+    
+    __qmlEngine = new QQmlEngine( this );
+    
+    qDebug() << "Got it. pointer=" << __qmlEngine << ", constructs component...";
+    QQmlComponent component( __qmlEngine );
+    qDebug() << "Set source, algorythm is\n" << __algorythm << "\n";
+    component.setData( __algorythm.toUtf8(), QUrl());
+    
+    qDebug() << "component.create()...";
+    __qmlObject = component.create();
+    qDebug() << "Prepare start for execution done, object=" << __qmlObject;
+    
+    QList<QQmlError> errors = component.errors();
+    qDebug() << "After init: " << component.isError() << ", errors=";
+    for ( int i=0; i<errors.count(); i++ ) {
+        QQmlError e = errors.at(i);
+        qDebug() << "   line=" << e.line() << ", col=" << e.column() << ", msg=" << e.toString();
+    };
+    
+    /*
+    QQuickItem *item = qobject_cast<QQuickItem *>(component.create());
+
+    QQuickView view;
+    view.setSource( __algorythm );
+    view.show();
+    QQuickItem * root = view.rootObject()
+
+    QQmlComponent component(view.engine(), QUrl("qrc:/Button.qml"));
+    QQuickItem *object = qobject_cast<QQuickItem*>(component.create());
+    */
+    
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                              Try to activate this task.                                          *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                            Попытка активации данной задачи.                                      *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+bool tengu::Task::_tryActivate() {
+    
+    qDebug() << "Task::_tryActivate, " << getHumanName();
+    
+    QVariant retValue;
+    
+    QMetaObject::invokeMethod( __qmlObject, "start",
+        Q_RETURN_ARG(QVariant, retValue)
+    );
+    
+    qDebug() << "After execution, retVal=" << retValue << ", isNull?" << retValue.isNull() << ", isValid? " << retValue.isValid();
+    
+    bool result = false;
+    
+    if ( ! retValue.isNull() ) {
+        result = retValue.toBool();
+    };
+    
+    return result;
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                           One step of task running process.                                      *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                               Один шаг выполнения задачи.                                        *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::Task::_step() {
+    qDebug() << "Task::_step()";
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                         Free this task resources after execution.                                *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                  Освободить ресурсы данной задачи после ее выполнения.                           *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::Task::_free_after_execution() {
+    qDebug() << "Free task after execution";
+    SproutableAgent::_free_after_execution();
 }
 
 // ********************************************************************************************************************
@@ -159,7 +270,12 @@ void tengu::Task::setStopCondition( QString stop ) {
 // ********************************************************************************************************************
 
 tengu::Task::~Task() {
-
+    
+    if ( __qmlObject ) {
+        delete( __qmlObject );
+        __qmlObject = nullptr;
+    };
+    
 }
 
 
