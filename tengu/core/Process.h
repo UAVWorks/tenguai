@@ -11,6 +11,8 @@
 
 #pragma once
 
+#include <QQmlEngine>
+
 #include "AbstractAgent.h"
 #include "Task.h"
 #include "ProcessStart.h"
@@ -33,9 +35,11 @@ namespace tengu {
             
             virtual void addChild( AbstractAgent * child );
             
-            virtual void start();
+            virtual void start() override;
             
             bool emptyInputFocus();
+            
+            virtual QQmlEngine * qmlEngine() override;
                     
         protected:
             
@@ -44,6 +48,7 @@ namespace tengu {
             
         private:
                         
+            QQmlEngine * __qmlEngine;
             
         private slots:
             

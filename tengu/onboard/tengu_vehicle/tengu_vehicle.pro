@@ -18,7 +18,7 @@ OBJECTS_DIR=build/obj
 CONFIG += qt rtti release thread
 QMAKE_CXXFLAGS += -std=gnu++11
 
-QT += core
+QT += core qml quick
 QT -= network core
 
 INCLUDEPATH += ../../core ../../loredis/src

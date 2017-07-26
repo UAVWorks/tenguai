@@ -39,6 +39,8 @@ void tengu::TaskItem::paint ( QPainter * painter, const QStyleOptionGraphicsItem
     Q_UNUSED( option );
     Q_UNUSED( widget );
     
+    qDebug() << "TaskItem::paint, activity=" << task()->isActive() << ", focused=" << task()->isFocused();
+    
     _storePainterSettings( painter );
     
     QPixmap pixmap( _boundingRect.width() + 1, _boundingRect.height() + 1 );

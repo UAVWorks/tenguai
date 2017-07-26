@@ -103,13 +103,18 @@ void tengu::ANDor::__on__agent__activated ( bool activity ) {
     AbstractAgent * agent = dynamic_cast< AbstractAgent * > ( sender() );
     
     if ( ( activity ) && ( agent ) && ( __next_agents_unstarted.contains( agent->getUUID() ) ) ) {
+        
         __next_agents_unstarted.removeOne( agent->getUUID() );
+        
         if ( __next_agents_unstarted.count() == 0 ) {
             
             // All next by focus agents has been started.
             // Все следующие по фокусу агенты - стартовали.
             
             qDebug() << "ANDor::on_agent_activated, все агенты стартовали. Focus=" << isFocused() << ", activity=" << isActive();
+            _activity = false;
+            emit signalActivated( false );
+            
         };
     }
 }

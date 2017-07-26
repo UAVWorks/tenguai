@@ -61,6 +61,8 @@ namespace tengu {
             
             QQmlEngine * __qmlEngine;
             QObject * __qmlObject;
+            
+            void __failed_with_errors( QQmlComponent & component );
     };
     
 };

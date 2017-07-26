@@ -24,6 +24,8 @@ tengu::Process::Process ()
 {
     _class_name = "Process";
     _entity_type = AbstractEntity::ET_Process;
+    
+    __qmlEngine = nullptr;
 }
 
 // ********************************************************************************************************************
@@ -40,6 +42,23 @@ tengu::Process::Process ( const tengu::Process & o )
 
 }
 */
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                  Either return or create and return QML Engine.                                  *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                  Вернуть, либо создать и вернуть, QML Engine.                                    *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+QQmlEngine* tengu::Process::qmlEngine() {
+    
+    if ( __qmlEngine ) return __qmlEngine;
+    
+    __qmlEngine = new QQmlEngine( this );
+    return __qmlEngine;
+    
+}
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
@@ -284,7 +303,7 @@ void tengu::Process::__on__agent__finished() {
 void tengu::Process::__on__agent__failed ( QString errorMessage ) {
     AbstractAgent * agent = dynamic_cast< AbstractAgent * > ( sender() );
     if ( agent ) {
-        qDebug() << "Process::on_agent_failed: " << agent->getHumanName() << ", msg=" << errorMessage;
+        qDebug() << "Process::on_agent_failed: " << agent->getHumanName() << ", msg=" << errorMessage;        
     };
 }
 

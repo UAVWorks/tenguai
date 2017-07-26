@@ -72,7 +72,54 @@ tengu::AbstractAgent::AbstractAgent()
     
     __must_be_connected = false;    
     __focused = false;
+            
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                Abstract agent does not have himself QML Engine                                   *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                          Абстрактный агент не имеет своей собственной QML Engine.                                *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+QQmlEngine * tengu::AbstractAgent::qmlEngine() {
+    
+    // Finding parent for construct QML Engine. The parent must be a Process object.
+    // Поиск родителя для конструирования QML Engine. Родитель должен быть объектом класса Process.
+    
+    AbstractAgent * parent = this->parent();
+    
+    while ( ( parent ) && ( parent->entityType() != AbstractEntity::ET_Process ) ) {
+        parent = parent->parent();
+    };
+    
+    if ( ( ! parent ) && ( parent->entityType() != AbstractEntity::ET_Process ) ) {
         
+        // The parent was not found.
+        // Родитель не был найден.
+        
+        emit signalFailed( tr("The process parent for QML Engine was not found. Agent name is \"") + getHumanName() + "\"" );
+        return nullptr;
+    };
+    
+    return parent->qmlEngine();
+    
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                                  Launch this agent.                                              *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                             Запустить агента на выполнение.                                      *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::AbstractAgent::start() {
+    
+    // Abstract agent is not executable. The method is empty.
+    // Абстрактный агент не является выполняемым. Метод - пустой.
+    
 }
 
 // ********************************************************************************************************************
@@ -112,9 +159,11 @@ bool tengu::AbstractAgent::isFocused() {
 // ********************************************************************************************************************
 
 void tengu::AbstractAgent::setFocus ( bool focus, AbstractAgent * sender ) {
+    
     __focused = focus;
     emit signalFocused( focus );
-    if ( focus ) _tryActivate();    
+    if ( focus ) _tryActivate();
+    
 }
 
 // ********************************************************************************************************************

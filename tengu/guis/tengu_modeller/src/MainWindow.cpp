@@ -754,8 +754,7 @@ void tengu::MainWindow::__on__tree_structure__agent_was_selected ( tengu::Abstra
     __action__simulation_start->setEnabled( false );
     
     AbstractEntity::entity_types_t et = agent->entityType();
-    if ( ( et == AbstractEntity::ET_Vehicle ) // || ( et == AbstractAgent::ET_Process )         
-    ) {
+    if ( ( et == AbstractEntity::ET_Vehicle ) || ( et == AbstractAgent::ET_Process ) ) {
         __action__simulation_start->setEnabled( true );
     }
             
@@ -1012,7 +1011,11 @@ void tengu::MainWindow::__on__agent__opened ( tengu::AbstractAgent * agent ) {
 void tengu::MainWindow::__on__agent__focused ( bool focus ) {
     AbstractAgent * agent = dynamic_cast< AbstractAgent * > ( sender() );
     if ( agent ) {
-        qDebug() << "MainWindow::__on_agent_focused, " << agent->getHumanName() << ", " << focus;
+        
+        AbstractEntityItem * item = __schemaScene->itemFor( agent );
+        if ( item ) item->update();
+        
+        // qDebug() << "MainWindow::__on_agent_focused, " << agent->getHumanName() << ", " << focus;
     };
 }
 
@@ -1028,7 +1031,11 @@ void tengu::MainWindow::__on__agent__activated ( bool activity ) {
     
     AbstractAgent * agent = dynamic_cast< AbstractAgent * > ( sender() );
     if ( agent ) {
-        qDebug() << "MainWindow::on_agent_activated, " << agent->getHumanName() << ", " << activity ;
+        
+        AbstractEntityItem * item = __schemaScene->itemFor( agent );
+        if ( item ) item->update();
+        
+        // qDebug() << "MainWindow::on_agent_activated, " << agent->getHumanName() << ", " << activity ;
     };
     
 }
@@ -1045,8 +1052,11 @@ void tengu::MainWindow::__on__agent__finished() {
     
     AbstractAgent * agent = dynamic_cast< AbstractAgent * > ( sender() );
     if ( agent ) {
-                
-        qDebug() << "MainWindow::__on_agent_finished(), " << agent->getHumanName();        
+        
+        AbstractEntityItem * item = __schemaScene->itemFor( agent );
+        if ( item ) item->update();        
+        
+        // qDebug() << "MainWindow::__on_agent_finished(), " << agent->getHumanName();        
         __execution_unbind( agent );        
         __check__simulation_finished( agent );        
         
@@ -1064,10 +1074,15 @@ void tengu::MainWindow::__on__agent__finished() {
 
 void tengu::MainWindow::__on__agent__failed ( QString errorMessage ) {
     
-    __on__error( EL_WARNING, "MainWindow::on_agent_failed()", errorMessage );
+    __on__error( EL_CRITICAL, "MainWindow::on_agent_failed()", errorMessage );    
+    __schemaView->update();
+    
+    // __on__error( EL_WARNING, "MainWindow::on_agent_failed()", errorMessage );
     AbstractAgent * agent = dynamic_cast< AbstractAgent * > ( sender() );
     if ( agent ) {
-        qDebug() << "MainWindow::on_agent_failed from " << agent->getHumanName() << ", msg=" << errorMessage;
+        
+        
+                
         __execution_unbind( agent );
         __check__simulation_finished( agent );
         
@@ -1238,10 +1253,15 @@ void tengu::MainWindow::__on__simulation_start() {
     
     AbstractAgent * treeAgent = __left->treeStructure->selectedAgent();
     if ( treeAgent ) {
+        
+        Process * process = dynamic_cast< Process * > ( treeAgent );
         Vehicle * vehicle = dynamic_cast< Vehicle * > ( treeAgent );
-        if ( vehicle ) {
-            __execution_bind_recursive( vehicle );
-            vehicle->start();
+        
+        if ( ( process ) || ( vehicle ) ) {
+            
+            __execution_bind_recursive( treeAgent );
+            treeAgent->start();
+            
         };
     };
     

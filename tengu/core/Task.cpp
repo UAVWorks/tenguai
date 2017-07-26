@@ -33,6 +33,28 @@ tengu::Task::Task ()
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
+// *                                         The execution process was failed.                                        *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                      Процесс выполнения завершился неудачно.                                     *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::Task::__failed_with_errors ( QQmlComponent & component ) {
+    
+    QString msg = tr("Execution failed. ");
+    
+    QList<QQmlError> errors = component.errors();
+    if ( errors.count() > 0 ) {
+        QQmlError fe = errors.at(0);
+        msg += tr("Line: ") + fe.line() + tr(", column: ") + fe.column() + ", msg=" + fe.toString();
+    };
+    
+    emit signalFailed( msg );
+    
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
 // *                                              Prepare the task for launch.                                        *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                                              Подготовка задачи к запуску.                                        *
@@ -41,31 +63,28 @@ tengu::Task::Task ()
 
 void tengu::Task::_prepare_for_execution() {
     
-    qDebug() << "Prepare task for execution";
     SproutableAgent::_prepare_for_execution();
     
-    qDebug() << "Get an qml engine...";
+    QQmlEngine * qmlEngine = this->qmlEngine(); // new QQmlEngine( parent );
     
-    AbstractAgent * parent = this->parent();
-    qDebug() << "parent is: " << parent;
+    if ( ! qmlEngine ) {
+        emit signalFailed( tr("The QML Engine pointer is null.") );
+        return;
+    }
     
-    __qmlEngine = new QQmlEngine( this );
-    
-    qDebug() << "Got it. pointer=" << __qmlEngine << ", constructs component...";
-    QQmlComponent component( __qmlEngine );
-    qDebug() << "Set source, algorythm is\n" << __algorythm << "\n";
+    QQmlComponent component( qmlEngine );
     component.setData( __algorythm.toUtf8(), QUrl());
-    
-    qDebug() << "component.create()...";
-    __qmlObject = component.create();
-    qDebug() << "Prepare start for execution done, object=" << __qmlObject;
-    
-    QList<QQmlError> errors = component.errors();
-    qDebug() << "After init: " << component.isError() << ", errors=";
-    for ( int i=0; i<errors.count(); i++ ) {
-        QQmlError e = errors.at(i);
-        qDebug() << "   line=" << e.line() << ", col=" << e.column() << ", msg=" << e.toString();
+    if ( component.isError() ) {
+        __failed_with_errors( component );
+        return;
     };
+    
+    __qmlObject = component.create();
+    
+    if ( ! __qmlObject ) {
+        emit signalFailed( tr("__qmlObject is null") );
+    };
+    
     
     /*
     QQuickItem *item = qobject_cast<QQuickItem *>(component.create());
@@ -99,14 +118,31 @@ bool tengu::Task::_tryActivate() {
         Q_RETURN_ARG(QVariant, retValue)
     );
     
-    qDebug() << "After execution, retVal=" << retValue << ", isNull?" << retValue.isNull() << ", isValid? " << retValue.isValid();
-    
-    bool result = false;
-    
-    if ( ! retValue.isNull() ) {
-        result = retValue.toBool();
+    if ( ( retValue.isNull() ) || ( ! retValue.isValid() ) ) {
+        emit signalFailed( tr("Task::_tryActivate(), failed to call the start method for the task \"") + getHumanName() + "\"");
+        return false;
     };
+        
+    bool result = retValue.toBool();
     
+    if ( result ) {
+        
+        // Activate this task.
+        // Активация этой задачи.
+        
+        setFocus( false, this );
+        
+        _activity = true;
+        emit signalActivated( _activity );
+        
+        // After activation we need to do at least one execution step.
+        // После активации нам надо сделать как минимум один шаг выполнения.
+        
+        _step();
+        
+        
+    };
+        
     return result;
 }
 
@@ -133,6 +169,11 @@ void tengu::Task::_step() {
 void tengu::Task::_free_after_execution() {
     qDebug() << "Free task after execution";
     SproutableAgent::_free_after_execution();
+    
+    if ( __qmlObject ) {
+        delete( __qmlObject );
+        __qmlObject = nullptr;
+    };
 }
 
 // ********************************************************************************************************************

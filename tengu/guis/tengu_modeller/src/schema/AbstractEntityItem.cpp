@@ -173,17 +173,20 @@ QColor tengu::AbstractEntityItem::_processDiagram_borderColor() {
     QColor bgColor = ORDINAR_BORDER_COLOR;
     if ( _selected ) bgColor = ORDINAR_SELECTED_BORDER_COLOR;
     
-    /*
-    if ( entity()->isFocused() ) {
-        if ( _selected ) bgColor = FOCUSED_SELECTED_BORDER_COLOR;
-        else bgColor = FOCUSED_BORDER_COLOR;
-    };
+    AbstractAgent * agent = dynamic_cast< AbstractAgent * > ( _entity );
+    if ( agent ) {
+        
+        if ( agent->isFocused() ) {
+            if ( _selected ) bgColor = FOCUSED_SELECTED_BORDER_COLOR;
+            else bgColor = FOCUSED_BORDER_COLOR;
+        };
+        
+        if ( agent->isActive() ) {
+            if ( _selected ) bgColor = ACTIVE_SELECTED_BORDER_COLOR;
+            else bgColor = ACTIVE_BORDER_COLOR;
+        };
     
-    if ( entity()->isActive() ) {
-        if ( _selected ) bgColor = ACTIVE_SELECTED_BORDER_COLOR;
-        else bgColor = ACTIVE_BORDER_COLOR;
     };
-    */
     
     return bgColor;
     
@@ -196,13 +199,13 @@ QColor tengu::AbstractEntityItem::_processDiagram_borderColor() {
 // *                                   Получить цвет теней для диаграмм процессов.                                    *
 // *                                                                                                                  *
 // ********************************************************************************************************************
-
+/*
 QColor tengu::AbstractEntityItem::_processDiagram_shadowColor() {
     QColor c = QColor( 240, 240, 240 );
     if ( _selected ) c = QColor( 220, 220, 220 );
     return c;
 }
-
+*/
 // ********************************************************************************************************************
 // *                                                                                                                  *
 // *                                     Get "dark" fill color for process diagrams.                                  *
@@ -216,17 +219,21 @@ QColor tengu::AbstractEntityItem::_processDiagram_darkFillColor() {
     QColor c = ORDINAR_FILL_COLOR;
     if ( _selected ) c = ORDINAR_SELECTED_FILL_COLOR;
  
-    /*
-    if ( agent()->isFocused() ) {
-        if ( _selected ) c = FOCUSED_SELECTED_FILL_COLOR;
-        else c = FOCUSED_FILL_COLOR;
-    };
+    AbstractAgent * agent = dynamic_cast< AbstractAgent * > ( _entity );
+    if ( agent ) {
     
-    if ( agent()->isActive() ) {
-        if ( _selected ) c = ACTIVE_SELECTED_FILL_COLOR;
-        else c = ACTIVE_FILL_COLOR;
-    };
-    */
+        qDebug() << "AbstractEntityItem::__processDiagram_darkFillColor, agent " << agent->getHumanName() << ", focused=" << agent->isFocused() << ", active=" << agent->isActive();
+        
+        if ( agent->isFocused() ) {
+            if ( _selected ) c = FOCUSED_SELECTED_FILL_COLOR;
+            else c = FOCUSED_FILL_COLOR;
+        };
+    
+        if ( agent->isActive() ) {
+            if ( _selected ) c = ACTIVE_SELECTED_FILL_COLOR;
+            else c = ACTIVE_FILL_COLOR;
+        };
+    }
     
     return c;
     

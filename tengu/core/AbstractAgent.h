@@ -17,6 +17,7 @@
 #include <QDateTime>
 #include <QUuid>
 #include <QMap>
+#include <QQmlEngine>
 
 #include "LoRedis.h"
 #include "AbstractEntity.h"
@@ -166,6 +167,10 @@ namespace tengu {
                 return result;
             };                        
             
+            virtual QQmlEngine * qmlEngine();
+            
+            virtual void start();
+            
         protected:
                         
             // QString _subProcessPath;
@@ -234,7 +239,7 @@ namespace tengu {
             // Может быть перекрыт в потомках. Активность не будет проявляться (не будет устанавливаться в редисе), если путь пустой.
             // По умолчанию он пустой и есть, т.е. агент не демонстрирует, что он живой.
             
-            virtual QString _ping_path();
+            virtual QString _ping_path();                                    
             
         private:
             
@@ -274,7 +279,7 @@ namespace tengu {
                 return nullptr;
             };
             
-            bool __focused;            
+            bool __focused;              
             
         private slots:
             

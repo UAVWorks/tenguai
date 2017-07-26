@@ -46,7 +46,7 @@ namespace tengu {
             virtual bool fromJSON( QJsonObject o );
             
             virtual void addChild( AbstractAgent * child );
-            virtual void start();
+            virtual void start() override;
             
         protected:
             
