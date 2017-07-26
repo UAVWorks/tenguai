@@ -6,6 +6,7 @@ This is graphical tool for work with artifical intelligence models. At the momen
 
 # The latest operations.
 
+- **26 jul 2017** QML in the task execution process. Agent activity highlight on the schema.
 - **25 jul 2017** Task properties dialog.
 - **23 jul 2017** Process simulation start. Vehicle simulation start.
 - **22 jul 2017** Stored links appear on the screen.
