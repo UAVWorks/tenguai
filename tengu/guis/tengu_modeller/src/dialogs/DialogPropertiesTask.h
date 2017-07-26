@@ -17,6 +17,7 @@
 #include "DialogPropertiesTask_TabAlgorythm.h"
 #include "DialogPropertiesTask_TabStartCondition.h"
 #include "DialogPropertiesTask_TabStopCondition.h"
+#include "DialogPropertiesTask_TabQML.h"
 
 namespace tengu {
     
@@ -42,6 +43,7 @@ namespace tengu {
             DialogPropertiesTask_TabAlgorythm * __tab__algorythm;
             DialogPropertiesTask_TabStartCondition * __tab__start_condition;
             DialogPropertiesTask_TabStopCondition * __tab__stop_condition;
+            DialogPropertiesTask_TabQML * __tab_qml;
             
             Task * __task;
             

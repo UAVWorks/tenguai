@@ -25,7 +25,11 @@ tengu::Process::Process ()
     _class_name = "Process";
     _entity_type = AbstractEntity::ET_Process;
     
+    // So far it has not been determined whether the process will be executed or not. Therefore, we do not do initialization in the constructor.
+    // Пока что не определено, будет процесс выполняться или нет. Поэтому инициализацию в конструкторе не делаем.
+    
     __qmlEngine = nullptr;
+    
 }
 
 // ********************************************************************************************************************
@@ -316,5 +320,11 @@ void tengu::Process::__on__agent__failed ( QString errorMessage ) {
 // ********************************************************************************************************************
 
 tengu::Process::~Process() {
+    
+    if ( __qmlEngine ) {
+        __qmlEngine->collectGarbage();
+        delete( __qmlEngine );
+        __qmlEngine = nullptr;
+    };
     
 }

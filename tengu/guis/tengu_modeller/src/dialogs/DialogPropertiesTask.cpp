@@ -44,6 +44,9 @@ tengu::DialogPropertiesTask::DialogPropertiesTask ( tengu::WorkSpace* workSpace 
     __tab__stop_condition = new DialogPropertiesTask_TabStopCondition();
     __tab->addTab( __tab__stop_condition, tr("Stop condition") );
     
+    __tab_qml = new DialogPropertiesTask_TabQML();
+    __tab->addTab( __tab_qml, "QML" );
+    
     __task = nullptr;
     
 }

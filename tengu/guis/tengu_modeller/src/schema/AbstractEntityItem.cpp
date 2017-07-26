@@ -222,8 +222,6 @@ QColor tengu::AbstractEntityItem::_processDiagram_darkFillColor() {
     AbstractAgent * agent = dynamic_cast< AbstractAgent * > ( _entity );
     if ( agent ) {
     
-        qDebug() << "AbstractEntityItem::__processDiagram_darkFillColor, agent " << agent->getHumanName() << ", focused=" << agent->isFocused() << ", active=" << agent->isActive();
-        
         if ( agent->isFocused() ) {
             if ( _selected ) c = FOCUSED_SELECTED_FILL_COLOR;
             else c = FOCUSED_FILL_COLOR;
