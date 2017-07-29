@@ -124,6 +124,28 @@ void tengu::AbstractAgent::start() {
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
+// *                                          Stop execution of this agent.                                           *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                      Остановка выполнения данного агента.                                        *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::AbstractAgent::stop() {
+    
+    if ( _activity ) {
+        _activity = false;
+        emit signalActivated( false );
+    };
+    
+    if ( __focused ) {
+        __focused = false;
+        emit signalFocused( false );
+    };
+    
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
 // *                     Creating of redises objects. Override this procedure to change LoRedis class.                *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                   Создание объектов редиса. Перекройте эту функцию для изменения класса LoRedis.                 *
@@ -160,9 +182,13 @@ bool tengu::AbstractAgent::isFocused() {
 
 void tengu::AbstractAgent::setFocus ( bool focus, AbstractAgent * sender ) {
     
-    __focused = focus;
-    emit signalFocused( focus );
-    if ( focus ) _tryActivate();
+    Q_UNUSED( sender );
+    
+    if ( __focused != focus ) {
+        __focused = focus;
+        emit signalFocused( focus );
+        if ( focus ) _tryActivate();
+    };
     
 }
 

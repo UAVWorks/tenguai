@@ -16,6 +16,8 @@
 #include <QQmlEngine>
 
 #include "QMLHighlighter.h"
+#include "AbstractEntityItem.h"
+#include "Task.h"
 
 namespace tengu {
 
@@ -27,6 +29,9 @@ namespace tengu {
             
             DialogPropertiesTask_TabQML ( QWidget* parent = 0, Qt::WindowFlags f = 0 );
             virtual ~DialogPropertiesTask_TabQML();
+            
+            void fillFrom( tengu::Task * task );
+            void fillTo( tengu::Task * task );
         
         private:
             

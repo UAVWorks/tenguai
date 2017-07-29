@@ -102,6 +102,8 @@ namespace tengu {
             QAction * __action__simulation_pause;
             QAction * __action__simulation_stop;
             
+            void __set__simulation_actions_availability( AbstractAgent * selectedAgent );
+            
             QToolBar * __toolbar_elements_library;
             
             LibraryTab * __library_tab;

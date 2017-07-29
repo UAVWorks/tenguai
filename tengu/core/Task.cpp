@@ -29,6 +29,39 @@ tengu::Task::Task ()
 
     __qmlEngine = nullptr;
     __qmlObject = nullptr;
+
+    __create_qml();
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                      Set default QML value for this task.                                        *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                            Установка начального значения QML для данной задачи.                                  *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::Task::__create_qml() {
+    
+    __qml = "import QtQuick 2.4\n\n";
+    __qml += "Item {\n";
+    __qml += "    id : " + getSystemName() + "\n";
+    
+    __qml += "    // " + tr("Start condition for this task.") + "\n";
+    __qml += "    function start() {\n";
+    __qml += "        return true\n";
+    __qml += "    }\n\n";
+    
+    __qml += "    // " + tr("One step of execution process for this task.") + "\n";
+    __qml += "    function step() {\n";
+    __qml += "    }\n\n";
+    
+    __qml += "    // " + tr ("Stop condition for this task.") + "\n";
+    __qml += "    function stop() {\n";
+    __qml += "        return true;\n";
+    __qml += "    }\n\n";
+    
+    __qml += "} // Item\n";
 }
 
 // ********************************************************************************************************************
@@ -73,7 +106,8 @@ void tengu::Task::_prepare_for_execution() {
     }
     
     QQmlComponent component( qmlEngine );
-    component.setData( __algorythm.toUtf8(), QUrl());
+    
+    component.setData( __qml.toUtf8(), QUrl());
     if ( component.isError() ) {
         __failed_with_errors( component );
         return;
@@ -84,20 +118,27 @@ void tengu::Task::_prepare_for_execution() {
     if ( ! __qmlObject ) {
         emit signalFailed( tr("__qmlObject is null") );
     };
-    
-    
-    /*
-    QQuickItem *item = qobject_cast<QQuickItem *>(component.create());
+        
+}
 
-    QQuickView view;
-    view.setSource( __algorythm );
-    view.show();
-    QQuickItem * root = view.rootObject()
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                            Has QML Object such method?                                           *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                         Есть ли в QML объекте такой метод?                                       *
+// *                                                                                                                  *
+// ********************************************************************************************************************
 
-    QQmlComponent component(view.engine(), QUrl("qrc:/Button.qml"));
-    QQuickItem *object = qobject_cast<QQuickItem*>(component.create());
-    */
+bool tengu::Task::__qmlObject__has_method ( QString methodName ) {
     
+    if ( ! __qmlObject ) return false;
+    
+    const QMetaObject* metaObject = __qmlObject->metaObject();
+    QStringList methods;
+    for(int i = metaObject->methodOffset(); i < metaObject->methodCount(); ++i)
+        methods << QString::fromLatin1(metaObject->method(i).name());
+    
+    return ( methods.contains( methodName ) );        
 }
 
 // ********************************************************************************************************************
@@ -110,16 +151,34 @@ void tengu::Task::_prepare_for_execution() {
 
 bool tengu::Task::_tryActivate() {
     
-    qDebug() << "Task::_tryActivate, " << getHumanName();
+    qDebug() << "Task::_tryActivate, " << getHumanName() << ", isFocused? " << isFocused() << ", isActive? " << isActive();
+        
+    if ( _activity ) {
+        emit signalFailed( tr("Call tryActivate method for already active task ") + getHumanName() );
+        return false;
+    };
+    
+    if ( ! __qmlObject ) {
+        emit signalFailed( tr("Call tryActivate, but qml object is emtpy. Task is ") + getHumanName() );
+        return false;
+    };
     
     QVariant retValue;
     
+    // Is there a "start" method?
+    // Есть ли метод "старт"?
+    
+    if ( ! __qmlObject__has_method( "start" ) ) {
+        emit signalFailed( tr("Task ") + getHumanName() + tr(", method \"start\" not found.") );
+        return false;
+    };
+        
     QMetaObject::invokeMethod( __qmlObject, "start",
         Q_RETURN_ARG(QVariant, retValue)
     );
     
     if ( ( retValue.isNull() ) || ( ! retValue.isValid() ) ) {
-        emit signalFailed( tr("Task::_tryActivate(), failed to call the start method for the task \"") + getHumanName() + "\"");
+        emit signalFailed( tr("Task::_tryActivate(), method start has returned nothing for the task \"") + getHumanName() + "\"");
         return false;
     };
         
@@ -190,9 +249,11 @@ QJsonObject tengu::Task::toJSON() {
     
     o[ JSON_COLLECTION_ELEMENT ] = "tasks";
     
-    o["start_condition"] = __start_condition;
-    o["algorythm"] = __algorythm;
-    o["stop_condition"] = __stop_condition;
+    // o["start_condition"] = __start_condition;
+    // o["algorythm"] = __algorythm;
+    // o["stop_condition"] = __stop_condition;
+    
+    o["qml"] = __qml;
     
     return o;
     
@@ -209,9 +270,12 @@ QJsonObject tengu::Task::toJSON() {
 bool tengu::Task::fromJSON(QJsonObject json) {
     
     bool result = SproutableAgent::fromJSON( json );
-    if ( json.contains("start_condition") ) __start_condition = json.value("start_condition").toString();
-    if ( json.contains("algorythm") ) __algorythm = json.value("algorythm").toString();
-    if ( json.contains("stop_condition") ) __stop_condition = json.value("stop_condition").toString();
+    
+    // if ( json.contains("start_condition") ) __start_condition = json.value("start_condition").toString();
+    // if ( json.contains("algorythm") ) __algorythm = json.value("algorythm").toString();
+    // if ( json.contains("stop_condition") ) __stop_condition = json.value("stop_condition").toString();
+    
+    if ( json.contains("qml") ) __qml = json.value("qml").toString();
     
     return result;
     
@@ -224,12 +288,12 @@ bool tengu::Task::fromJSON(QJsonObject json) {
 // *                                               Вернуть условие старта задачи                                      *
 // *                                                                                                                  *
 // ********************************************************************************************************************
-
+/*
 QString tengu::Task::startCondition() {
 
     return __start_condition;
 }
-
+*/
 // ********************************************************************************************************************
 // *                                                                                                                  *
 // *                                                   Set start condition.                                           *
@@ -237,14 +301,14 @@ QString tengu::Task::startCondition() {
 // *                                             Установить условие старта задачи.                                    *
 // *                                                                                                                  *
 // ********************************************************************************************************************
-
+/*
 void tengu::Task::setStartCondition( QString start ) {
 
     __start_condition = start;
     _somethingChanged();
     
 };
-
+*/
 // ********************************************************************************************************************
 // *                                                                                                                  *
 // *                                                Return the task algorythm                                         *
@@ -252,13 +316,13 @@ void tengu::Task::setStartCondition( QString start ) {
 // *                                                  Вернуть алгоритм задачи.                                        *
 // *                                                                                                                  *
 // ********************************************************************************************************************
-
+/*
 QString tengu::Task::algorythm() {
 
     return __algorythm;
 
 };
-
+*/
 // ********************************************************************************************************************
 // *                                                                                                                  *
 // *                                                  Set the task algorythm.                                         *
@@ -266,14 +330,14 @@ QString tengu::Task::algorythm() {
 // *                                            Установить алгоритм выполнения задачи.                                *
 // *                                                                                                                  *
 // ********************************************************************************************************************
-
+/*
 void tengu::Task::setAlgorythm( QString alg ) {
 
     __algorythm = alg;
     _somethingChanged();
     
 };
-
+*/
 // ********************************************************************************************************************
 // *                                                                                                                  *
 // *                                               Return the stop task condition.                                    *
@@ -281,13 +345,13 @@ void tengu::Task::setAlgorythm( QString alg ) {
 // *                                              Вернуть условие остановки задачи.                                   *
 // *                                                                                                                  *
 // ********************************************************************************************************************
-
+/*
 QString tengu::Task::stopCondition() {
 
     return __stop_condition;
     
 };
-
+*/
 // ********************************************************************************************************************
 // *                                                                                                                  *
 // *                                                Set the stop task condition.                                      *
@@ -295,11 +359,40 @@ QString tengu::Task::stopCondition() {
 // *                                            Установить условие останова задачи.                                   *
 // *                                                                                                                  *
 // ********************************************************************************************************************
-
+/*
 void tengu::Task::setStopCondition( QString stop ) {
 
     __stop_condition = stop;
     _somethingChanged();
+}
+*/
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                    Return the QML( script contents ) for the task.                               *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                  Вернуть QML ( скриптовое содержимое ) этой задачи.                              *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+QString tengu::Task::qml() {
+
+    return __qml;
+    
+};
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                       Set QML (script contents ) for this task.                                  *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// * Установить QML ( скриптовое содержимое ) данной задачи. *
+// * *
+// ********************************************************************************************************************
+
+void tengu::Task::setQml ( QString qml ) {
+    
+    __qml = qml;
+    _somethingChanged();
+    
 }
 
 // ********************************************************************************************************************

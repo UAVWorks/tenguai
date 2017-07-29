@@ -60,6 +60,9 @@ QQmlEngine* tengu::Process::qmlEngine() {
     if ( __qmlEngine ) return __qmlEngine;
     
     __qmlEngine = new QQmlEngine( this );
+    
+    // fEngine->globalObject().setProperty("print", print);
+    
     return __qmlEngine;
     
 }
@@ -142,8 +145,10 @@ void tengu::Process::addChild ( tengu::AbstractAgent * child ) {
 // ********************************************************************************************************************
 
 void tengu::Process::start() {
-
-    qDebug() << "Process::start()";
+    
+    qDebug() << "Process::start(): focused? " << isFocused() << ", active? " << isActive();
+    if ( isActive() ) return;
+    
     // Finding ProcessStart element in children.
     // Поиск элемента ProcessStart в детях.
     
@@ -190,6 +195,37 @@ void tengu::Process::start() {
         _free_after_execution();
         emit signalFailed( tr("There is not ProcessStart element.") );
     }
+    
+    qDebug() << "After process::start(), focus=" << isFocused() << ", activity=" << isActive();
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                               Stop of the whole process.                                         *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                             Остановка процесса полностью.                                        *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::Process::stop() {
+    
+    qDebug() << "Process::stop()";
+    QList<AbstractAgent *> chi;
+    childrenRecursive( chi );
+    
+    for ( int i=0; i<chi.count(); i++ ) {
+        chi.at(i)->stop();
+    };
+    
+    // For this element.
+    // Для данного элемента.
+    
+    AbstractAgent::stop();
+    
+    _free_after_execution();
+    
+    qDebug() << "Process::stop() end";
+    
 }
 
 // ********************************************************************************************************************
@@ -307,7 +343,15 @@ void tengu::Process::__on__agent__finished() {
 void tengu::Process::__on__agent__failed ( QString errorMessage ) {
     AbstractAgent * agent = dynamic_cast< AbstractAgent * > ( sender() );
     if ( agent ) {
-        qDebug() << "Process::on_agent_failed: " << agent->getHumanName() << ", msg=" << errorMessage;        
+        
+        qDebug() << "Process::on_agent_failed: " << agent->getHumanName() << ", msg=" << errorMessage;
+        
+        // The unsuccessful shutdown of at least one agent results in stopping the process as a whole
+        // Неудачное завершение хотя бы одного агента приводит к остановке процесса в целом.
+        
+        stop();        
+        emit signalFailed( errorMessage );
+        
     };
 }
 

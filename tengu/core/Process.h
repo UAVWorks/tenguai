@@ -36,10 +36,11 @@ namespace tengu {
             virtual void addChild( AbstractAgent * child );
             
             virtual void start() override;
+            virtual void stop() override;
             
             bool emptyInputFocus();
             
-            virtual QQmlEngine * qmlEngine() override;
+            virtual QQmlEngine * qmlEngine() override;            
                     
         protected:
             

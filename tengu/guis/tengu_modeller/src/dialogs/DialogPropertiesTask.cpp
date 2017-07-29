@@ -35,14 +35,14 @@ tengu::DialogPropertiesTask::DialogPropertiesTask ( tengu::WorkSpace* workSpace 
     
     lay->addWidget( __tab );
     
-    __tab__start_condition = new DialogPropertiesTask_TabStartCondition();
-    __tab->addTab( __tab__start_condition, tr("Start condition") );
+    // __tab__start_condition = new DialogPropertiesTask_TabStartCondition();
+    // __tab->addTab( __tab__start_condition, tr("Start condition") );
     
-    __tab__algorythm = new DialogPropertiesTask_TabAlgorythm();
-    __tab->addTab( __tab__algorythm, tr("Algorythm") );
+    // __tab__algorythm = new DialogPropertiesTask_TabAlgorythm();
+    // __tab->addTab( __tab__algorythm, tr("Algorythm") );
     
-    __tab__stop_condition = new DialogPropertiesTask_TabStopCondition();
-    __tab->addTab( __tab__stop_condition, tr("Stop condition") );
+    // __tab__stop_condition = new DialogPropertiesTask_TabStopCondition();
+    // __tab->addTab( __tab__stop_condition, tr("Stop condition") );
     
     __tab_qml = new DialogPropertiesTask_TabQML();
     __tab->addTab( __tab_qml, "QML" );
@@ -64,9 +64,7 @@ void tengu::DialogPropertiesTask::fillFrom(tengu::AbstractEntityItem * item) {
     if ( taskItem ) {
         __task = taskItem->task();
         if ( __task ) {
-            __tab__start_condition->start_condition->setPlainText( __task->startCondition() );
-            __tab__algorythm->algorythm->setPlainText( __task->algorythm() );
-            __tab__stop_condition->stop_condition->setPlainText( __task->stopCondition() );
+            __tab_qml->fillFrom( __task );
         };
     };
 }
@@ -93,9 +91,11 @@ void tengu::DialogPropertiesTask::_on__cancel() {
 void tengu::DialogPropertiesTask::_on__ok() {
 
     if ( __task ) {
-        __task->setStartCondition( __tab__start_condition->start_condition->toPlainText() );
-        __task->setAlgorythm( __tab__algorythm->algorythm->toPlainText() );
-        __task->setStopCondition( __tab__stop_condition->stop_condition->toPlainText() );
+        __tab_qml->fillTo( __task );
+        
+        // __task->setStartCondition( __tab__start_condition->start_condition->toPlainText() );
+        // __task->setAlgorythm( __tab__algorythm->algorythm->toPlainText() );
+        // __task->setStopCondition( __tab__stop_condition->stop_condition->toPlainText() );
     };
     
 };

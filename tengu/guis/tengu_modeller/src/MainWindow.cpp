@@ -751,13 +751,54 @@ void tengu::MainWindow::__on__tree_structure__agent_was_selected ( tengu::Abstra
     // Actions enabling depended on kind of selected agent.
     // Разрешение действий в зависимости от типа выбранного агента.
     
+    __set__simulation_actions_availability( agent );
+                
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *      Set the availability for simulation actions depended on type of selected agent and his current state.       *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *       Установить доступность действий симуляции в зависимости от типа выбранного агента и его состояния.         *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::MainWindow::__set__simulation_actions_availability ( tengu::AbstractAgent * agent ) {
+    
     __action__simulation_start->setEnabled( false );
+    __action__simulation_stop->setEnabled( false );
+    __action__simulation_pause->setEnabled( false );
     
     AbstractEntity::entity_types_t et = agent->entityType();
     if ( ( et == AbstractEntity::ET_Vehicle ) || ( et == AbstractAgent::ET_Process ) ) {
-        __action__simulation_start->setEnabled( true );
-    }
+        
+        // It was selected either vehicle or process internal of vehicle.
+        // Выбрана либо самоходка, либо процесс.
+        bool is_running = false;
+        QList<AbstractAgent * > chi; 
+        agent->childrenRecursive( chi );
+        chi.append( agent );
+        for ( int i=0; i<chi.count(); i++ ) {
+            if ( chi.at(i)->isActive() ) {
+                is_running = true;
+                break;
+            };
+        };
+        
+        if ( is_running ) {
             
+            // Somewhat from selected agent or his children already running.
+            // Кто-то из выбранного агента или его детей уже выполняется.
+            __action__simulation_stop->setEnabled( true );
+            __action__simulation_pause->setEnabled( true );
+            
+        } else {
+            
+            __action__simulation_start->setEnabled( true );
+            
+        };
+    }
+
 }
 
 // ********************************************************************************************************************
@@ -909,10 +950,17 @@ void tengu::MainWindow::__restoreSettings() {
 // ********************************************************************************************************************
 
 void tengu::MainWindow::__execution_bind ( tengu::AbstractAgent * agent ) {
+    
     QObject::connect( agent, SIGNAL( signalActivated( bool ) ), this, SLOT( __on__agent__activated( bool ) ) );
     QObject::connect( agent, SIGNAL( signalFocused( bool ) ), this, SLOT( __on__agent__focused( bool ) ) );
     QObject::connect( agent, SIGNAL( signalFinished() ), this, SLOT( __on__agent__finished() ) );
-    QObject::connect( agent, SIGNAL( signalFailed( QString ) ), this, SLOT( __on__agent__failed( QString ) ) );
+    
+    // Failed shows a message. Therefore we binding failed only for processes and vehicles.
+    // Файлед показывает сообщение. Поэтому связываем failed только для процессов и самоходок.
+    
+    if ( ( agent->entityType() == AbstractEntity::ET_Process ) || ( agent->entityType() == AbstractEntity::ET_Vehicle ) ) {
+        QObject::connect( agent, SIGNAL( signalFailed( QString ) ), this, SLOT( __on__agent__failed( QString ) ) );
+    };
 }
 
 // ********************************************************************************************************************
@@ -948,7 +996,10 @@ void tengu::MainWindow::__execution_unbind ( tengu::AbstractAgent * agent ) {
     QObject::disconnect( agent, SIGNAL( signalActivated( bool ) ), this, SLOT( __on__agent__activated( bool ) ) );
     QObject::disconnect( agent, SIGNAL( signalFocused( bool ) ), this, SLOT( __on__agent__focused( bool ) ) );
     QObject::disconnect( agent, SIGNAL( signalFinished() ), this, SLOT( __on__agent__finished() ) );
-    QObject::disconnect( agent, SIGNAL( signalFailed( QString ) ), this, SLOT( __on__agent__failed( QString ) ) );
+    
+    if ( ( agent->entityType() == AbstractEntity::ET_Process ) || ( agent->entityType() == AbstractEntity::ET_Vehicle ) ) {
+        QObject::disconnect( agent, SIGNAL( signalFailed( QString ) ), this, SLOT( __on__agent__failed( QString ) ) );
+    }
 }
 
 // ********************************************************************************************************************
@@ -1263,27 +1314,10 @@ void tengu::MainWindow::__on__simulation_start() {
             treeAgent->start();
             
         };
+        
+        __set__simulation_actions_availability( treeAgent );
     };
     
-    /*
-    if ( __schemaScene->rootAsProcess() ) {
-        
-        Process * schema_root_process = dynamic_cast< Process * > ( __schemaScene->rootEntity() );
-        if ( schema_root_process ) {
-        
-            // We have an process as root element of the schema.
-            // В качестве корневого элемента на схеме - процесс.
-        
-            __running_agent = schema_root_process;
-            __action__simulation_start->setEnabled( false );
-        
-            __execution_bind_recursive( schema_root_process );
-        
-            schema_root_process->start();
-        
-        };    
-    };
-    */
 }
 
 // ********************************************************************************************************************

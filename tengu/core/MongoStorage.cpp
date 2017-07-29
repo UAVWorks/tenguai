@@ -26,7 +26,7 @@ tengu::MongoStorage::MongoStorage( QString host, int port )
     __indexesErrorOccured = false;
     
     QString connectionString = QString("mongodb://") + host + ":" + QString::number( port );
-    __client = mongoc_client_new ( connectionString.toLocal8Bit().data() );
+    __client = mongoc_client_new ( connectionString.toLatin1().data() );
     
     if ( ! __client ) {
         qDebug() << "MongoStorage::MongoStorage(): failed to parse URL for client.";

@@ -170,6 +170,7 @@ namespace tengu {
             virtual QQmlEngine * qmlEngine();
             
             virtual void start();
+            virtual void stop();
             
         protected:
                         

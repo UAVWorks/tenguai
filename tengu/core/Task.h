@@ -32,18 +32,18 @@ namespace tengu {
             virtual QJsonObject toJSON() override;
             virtual bool fromJSON(QJsonObject json) override;
             
-            // QString qml;
-            // void setQml( QString qml );
+            QString qml();
+            void setQml( QString qml );
             
             
-            QString startCondition();
-            void setStartCondition( QString start );
+            // QString startCondition();
+            // void setStartCondition( QString start );
             
-            QString stopCondition();
-            void setStopCondition( QString stop );
+            // QString stopCondition();
+            // void setStopCondition( QString stop );
             
-            QString algorythm();
-            void setAlgorythm( QString alg );
+            // QString algorythm();
+            // void setAlgorythm( QString alg );
             
             
         protected:
@@ -55,12 +55,17 @@ namespace tengu {
             
         private:
             
-            QString __start_condition;
-            QString __algorythm;
-            QString __stop_condition;
+            // QString __start_condition;
+            // QString __algorythm;
+            // QString __stop_condition;
             
+            QString __qml;
+            void __create_qml();
+                        
             QQmlEngine * __qmlEngine;
             QObject * __qmlObject;
+            
+            bool __qmlObject__has_method( QString methodName );
             
             void __failed_with_errors( QQmlComponent & component );
     };

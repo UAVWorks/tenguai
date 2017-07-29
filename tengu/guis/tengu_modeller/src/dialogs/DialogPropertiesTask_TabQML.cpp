@@ -32,14 +32,45 @@ tengu::DialogPropertiesTask_TabQML::DialogPropertiesTask_TabQML ( QWidget* paren
     __highlighter = new QMLHighlighter( __textEditor->document() );
     
     QFont font;    
-    //font.setFamily("DejaVu Sans Mono");    
-    font.setFamily("Courier");
+    font.setFamily("DejaVu Sans Mono");    
+    // font.setFamily("Courier");
     font.setFixedPitch(true);
-    font.setPointSize(10);
+    font.setPointSize( 10 );
     __textEditor->setFont( font );
     
     __qmlEngine = new QQmlEngine( this );
 }
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                   Fill the QML-editor from agent (from task).                                    *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                  Заполнить редактор QMLя из агента (из задачи)                                   *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::DialogPropertiesTask_TabQML::fillFrom ( tengu::Task * task ) {
+    if ( task ) {
+        __textEditor->setPlainText( task->qml() );
+    };
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                       Set the task fields from the dialog.                                       *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                        Установить поля задачи из диалога.                                        *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::DialogPropertiesTask_TabQML::fillTo ( tengu::Task * task ) {
+    
+    if ( task ) {
+        task->setQml( __textEditor->toPlainText() );
+    };
+    
+}
+
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
