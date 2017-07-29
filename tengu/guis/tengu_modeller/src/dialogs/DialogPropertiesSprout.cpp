@@ -175,10 +175,10 @@ tengu::DialogPropertiesSprout::DialogPropertiesSprout( WorkSpace * workSpace )
             
     __combo_box__type = new QComboBox();
     QObject::connect( __combo_box__type, SIGNAL( activated(int) ), this, SLOT( __on__combo_box_type_activated( int ) ) );
-    __combo_box__type->addItem( tr("In-process Input"), Sprout::IN_PROCESS_INPUT );
-    __combo_box__type->addItem( tr("External Input"), Sprout::EXTERNAL_INPUT );
-    __combo_box__type->addItem( tr("In-process Output"), Sprout::IN_PROCESS_OUTPUT );
-    __combo_box__type->addItem( tr("External Output"), Sprout::EXTERNAL_OUTPUT );
+    __combo_box__type->addItem( tr("In-process Input"), Sprout::SPT__IN_PROCESS_INPUT );
+    __combo_box__type->addItem( tr("External Input"), Sprout::SPT__EXTERNAL_INPUT );
+    __combo_box__type->addItem( tr("In-process Output"), Sprout::SPT__IN_PROCESS_OUTPUT );
+    __combo_box__type->addItem( tr("External Output"), Sprout::SPT__EXTERNAL_OUTPUT );
     layoutType->addWidget( __combo_box__type );
     
     // Manual setting signal name
@@ -1004,19 +1004,19 @@ void tengu::DialogPropertiesSprout::__on__combo_box_type_activated ( int index )
         
     switch ( index ) {
         
-        case Sprout::IN_PROCESS_INPUT: {
+        case Sprout::SPT__IN_PROCESS_INPUT: {
             __setAsTypeInput( true );
         }; break;
         
-        case Sprout::EXTERNAL_INPUT: {
+        case Sprout::SPT__EXTERNAL_INPUT: {
             __setAsTypeInput( true );
         }; break;
         
-        case Sprout::IN_PROCESS_OUTPUT: {
+        case Sprout::SPT__IN_PROCESS_OUTPUT: {
             __setAsTypeInput( false );
         }; break;
         
-        case Sprout::EXTERNAL_OUTPUT: {
+        case Sprout::SPT__EXTERNAL_OUTPUT: {
             __setAsTypeInput( false );
         }; break;
     };    

@@ -85,6 +85,66 @@ void tengu::TaskItem::paint ( QPainter * painter, const QStyleOptionGraphicsItem
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
+// *                                  Does this task accept once more incoming link?                                  *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                    Примет ли задача еще одну входящую связь?                                     *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+bool tengu::TaskItem::acceptIncommingLink( LinkItem * link ) {
+    
+    // The task can accept incoming link only if it does not have any incoming connection with non-sproutes ends.
+    // Задача может принять входящую связь только если у нее еще нет ни одной входящей связи с не-спраутами на концах.
+        
+    qDebug() << "With sprout from=" << link->withSproutFrom() << ", with sprout to=" << link->withSproutTo();
+    
+    if ( ( link->withSproutFrom() ) || ( link->withSproutTo() ) ) return true;
+    
+    bool result = true;    
+    
+    foreach ( LinkItem * link, _linksIncommingToThis ) {
+        
+        if ( ( ! link->withSproutFrom() ) && ( ! link->withSproutTo() ) ) {
+            
+            // This incoming link have not sprouts on the his ends.
+            // Эта входящая связь не имеет sprout'ов на своих концах.
+            
+            result = false;
+            break;
+        };
+    }
+    
+    qDebug() << "Can this task accept incomming link? " << result;
+    
+    return result;
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                 Does this task accept once more outgouing link?                                  *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                   Примет ли задача еще одну исходящую связь?                                     *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+bool tengu::TaskItem::acceptOutgoingLink( LinkItem * link ) {
+        
+    if ( ( link->withSproutFrom() ) || ( link->withSproutTo() ) ) return true;
+    
+    bool result = true;    
+    
+    foreach( LinkItem * link, _linksOutgoingFromThis ) {
+        if ( ( ! link->withSproutFrom() ) && ( ! link->withSproutTo() ) ) {
+            result = false;
+            break;
+        };
+    };
+    
+    return result;
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
 // *                                            Check the entity is valid.                                            *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                                      Проверяем, валидна ли ссылка на entity                                      *

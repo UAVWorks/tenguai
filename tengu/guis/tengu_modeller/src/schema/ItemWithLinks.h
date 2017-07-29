@@ -33,8 +33,8 @@ namespace tengu {
             
             virtual void addOutgoingLink( LinkItem * link );
             virtual void addIncommingLink( LinkItem * link );
-            virtual bool acceptIncommingLink();
-            virtual bool acceptOutgoingLink();
+            virtual bool acceptIncommingLink( LinkItem * link );
+            virtual bool acceptOutgoingLink( LinkItem * link );
             
             /**
              * @short Remove link.

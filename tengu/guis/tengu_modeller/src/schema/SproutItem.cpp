@@ -139,7 +139,7 @@ void tengu::SproutItem::paint ( QPainter* painter, const QStyleOptionGraphicsIte
     
     int noseWidth = ( _boundingRect.height() - 2 ) / 2;
     
-    bool isOut = ( ( getSproutType() == Sprout::IN_PROCESS_OUTPUT ) || ( getSproutType() == Sprout::EXTERNAL_OUTPUT ) );
+    bool isOut = ( ( getSproutType() == Sprout::SPT__IN_PROCESS_OUTPUT ) || ( getSproutType() == Sprout::SPT__EXTERNAL_OUTPUT ) );
     
     if ( isOut ) {
         
@@ -311,7 +311,7 @@ void tengu::SproutItem::checkEntity() {
 tengu::Sprout::sprout_type_t tengu::SproutItem::getSproutType() {
     Sprout * s = sprout();
     if ( s ) return s->getSproutType();
-    return Sprout::EXTERNAL_INPUT;
+    return Sprout::SPT__EXTERNAL_INPUT;
 }
 
 // ********************************************************************************************************************

@@ -104,7 +104,7 @@ void tengu::XPlaneAircraft::__init_sprout ( QString settingsGroup, tengu::Sprout
     // Crossing. Because output for sprout is an input for X-Plane.
     // Переворот, потому что выход для "ростка" - это вход для X-Plane.
         
-    if ( type == Sprout::EXTERNAL_INPUT )  {
+    if ( type == Sprout::SPT__EXTERNAL_INPUT )  {
         sp->setSignalName( outputPath ); 
         sp->setSystemName( output );
         if ( min >= MINIMUM_CONSTRAINT ) sp->setMinimalValue( min );

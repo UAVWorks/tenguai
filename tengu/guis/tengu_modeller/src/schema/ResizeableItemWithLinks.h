@@ -30,8 +30,8 @@ namespace tengu {
             // void update( const QRectF & rect = QRectF() );
             // void recalculate();
             
-            virtual bool acceptIncommingLink();
-            virtual bool acceptOutgoingLink();
+            virtual bool acceptIncommingLink( LinkItem * link );
+            virtual bool acceptOutgoingLink( LinkItem * link );
             
 
             

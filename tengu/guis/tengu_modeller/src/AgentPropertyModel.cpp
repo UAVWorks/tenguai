@@ -202,10 +202,10 @@ QVariant tengu::AgentPropertyModel::data( const QModelIndex & index, int role ) 
             
             case AgentPropertyElement::SproutTypeSelector : {
                 switch ( ( Sprout::sprout_type_t ) oneElement.value.toInt() ) {
-                    case Sprout::IN_PROCESS_INPUT: return QVariant( tr("In-process input") );
-                    case Sprout::EXTERNAL_INPUT: return QVariant( tr("External input") );
-                    case Sprout::IN_PROCESS_OUTPUT: return QVariant( tr("In-process output" ) );
-                    case Sprout::EXTERNAL_OUTPUT: return QVariant( tr("External output") );
+                    case Sprout::SPT__IN_PROCESS_INPUT: return QVariant( tr("In-process input") );
+                    case Sprout::SPT__EXTERNAL_INPUT: return QVariant( tr("External input") );
+                    case Sprout::SPT__IN_PROCESS_OUTPUT: return QVariant( tr("In-process output" ) );
+                    case Sprout::SPT__EXTERNAL_OUTPUT: return QVariant( tr("External output") );
                 };
             }; break;
             

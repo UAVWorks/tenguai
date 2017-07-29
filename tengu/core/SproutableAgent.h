@@ -42,11 +42,13 @@ namespace tengu {
             // Добавить "веточку" реакции на сообщения редиса.
             
             void addSprout( tengu::Sprout * sprout );
+            void removeSprout( tengu::Sprout * sprout );
             
             // Total sprout's count for this agent.
             // Общее число "ростков" агента.
             
             int sproutsCount();
+            QList<Sprout * > sprouts();
             
             // Activity channel, especially channel for change agent activity.
             // Установка канала активности, специально выделенного для управления активностью агента.
@@ -59,6 +61,9 @@ namespace tengu {
             QList< tengu::Sprout * > sutiableSproutsFor( tengu::Sprout * sp );
             
             void disconnect();
+            
+            virtual QJsonObject toJSON() override;
+            virtual bool fromJSON( QJsonObject json ) override;
             
         protected:
             
@@ -87,6 +92,8 @@ namespace tengu {
             
             QMap < QString, tengu::Sprout * > __sprouts;
             
+            void __deleteSprouts();            
+                        
             // The subscribtion function. Call at the moment subsciber redis connection.            
             // Функция подписки. Вызывается на момент соединения подписчика редиса.
             
@@ -104,6 +111,7 @@ namespace tengu {
             void __on_got_message( QString channel, QString messaage );
             void __on_subscribed( QString channel );
             void __on_unsubscribed( QString channel );
+            void __on__sprout_removed( Sprout * sprout );
             
             // void __on_sprout_got_message();
             

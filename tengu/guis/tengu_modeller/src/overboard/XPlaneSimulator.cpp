@@ -59,11 +59,11 @@ tengu::XPlaneSimulator::XPlaneSimulator()
     
     for ( int idx = 0; idx < XPlaneSimulator::CONTROL_AIRCRAFTS_UUIDS.size(); idx++ ) {        
         
-        XPlaneAircraft * acf_control = new XPlaneAircraft( idx, controlGroup, Sprout::EXTERNAL_INPUT );
+        XPlaneAircraft * acf_control = new XPlaneAircraft( idx, controlGroup, Sprout::SPT__EXTERNAL_INPUT );
         acf_control->setUUID( XPlaneSimulator::CONTROL_AIRCRAFTS_UUIDS.at( idx ) );
         control->addChild( acf_control );
         
-        XPlaneAircraft * acf_condition = new XPlaneAircraft( idx, conditionGroup, Sprout::EXTERNAL_OUTPUT );
+        XPlaneAircraft * acf_condition = new XPlaneAircraft( idx, conditionGroup, Sprout::SPT__EXTERNAL_OUTPUT );
         condition->addChild( acf_condition );
                 
     };

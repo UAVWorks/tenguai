@@ -184,6 +184,25 @@ void tengu::SchemaScene::setRootItem ( tengu::AbstractEntityItem * rootItem ) {
         
     };            
     
+    // Sprouts and his links.
+    // Sprout'ы и их связи.
+    
+    if ( entity ) {
+        
+        QList<AbstractAgent * > chi = entity->children();
+        for ( int i=0; i<chi.count(); i++ ) {
+            SproutableAgent * spa = dynamic_cast<SproutableAgent * >( chi.at(i) );
+            if ( spa ) {
+                QList<Sprout * > his_sprouts = spa->sprouts();
+                for ( int spIndex=0; spIndex<his_sprouts.count(); spIndex++ ) {
+                    Sprout * os = his_sprouts.at( spIndex );
+                    SproutItem * spi = new SproutItem( os );
+                    addItem( spi );
+                    addLink( spa, os );
+                };
+            };
+        };
+    };    
 }
 
 // ********************************************************************************************************************
@@ -218,7 +237,7 @@ bool tengu::SchemaScene::changed() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::SchemaScene::addLink ( tengu::AbstractAgent * fromAgent, tengu::AbstractAgent * toAgent ) {
+void tengu::SchemaScene::addLink ( tengu::AbstractEntity * fromAgent, tengu::AbstractEntity * toAgent ) {
     
     ItemWithLinks * fromItem = dynamic_cast< ItemWithLinks * >( itemFor( fromAgent ) );
     ItemWithLinks * toItem = dynamic_cast< ItemWithLinks * > ( itemFor ( toAgent ) );
@@ -244,7 +263,7 @@ void tengu::SchemaScene::addLink ( tengu::AbstractAgent * fromAgent, tengu::Abst
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-bool tengu::SchemaScene::haveLink ( tengu::AbstractAgent * fromAgent, tengu::AbstractAgent * toAgent ) {
+bool tengu::SchemaScene::haveLink ( tengu::AbstractEntity * fromAgent, tengu::AbstractEntity * toAgent ) {
     
     if ( ( ! fromAgent ) || ( ! toAgent ) ) return false;
     
@@ -261,8 +280,8 @@ bool tengu::SchemaScene::haveLink ( tengu::AbstractAgent * fromAgent, tengu::Abs
             
             if ( ( eiFrom ) && ( eiTo ) ) {
                 
-                AbstractAgent * l_a_from = dynamic_cast< AbstractAgent * >( eiFrom->entity() );
-                AbstractAgent * l_a_to = dynamic_cast< AbstractAgent * >( eiTo->entity() );
+                AbstractEntity * l_a_from = eiFrom->entity();
+                AbstractEntity * l_a_to = eiTo->entity();
                 
                 if ( ( l_a_from ) && ( l_a_to ) ) {
                     if ( ( l_a_from->getUUID() == fromAgent->getUUID() ) && ( l_a_to->getUUID() == toAgent->getUUID() ) ) {

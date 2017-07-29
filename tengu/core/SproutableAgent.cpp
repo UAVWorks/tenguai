@@ -85,6 +85,20 @@ void tengu::SproutableAgent::__on_unsubscribed ( QString channel ) {
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
+// *                                      One sprout has been physically deleted.                                     *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                            Sprout был физически удален.                                          *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::SproutableAgent::__on__sprout_removed ( tengu::Sprout * sprout ) {
+    
+    removeSprout( sprout );
+    
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
 // *                                     We got some message from subscriber redis.                                   *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                                    Мы получили сообщение от редиса по подписке.                                  *
@@ -152,6 +166,52 @@ void tengu::SproutableAgent::disconnect() {
     __unsubscribe();
     tengu::AbstractAgent::disconnect();
 }
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                  Conversion from JSON form to values of this class.                              *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                  Преобразование из JSONа в значения данного класса.                              *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+bool tengu::SproutableAgent::fromJSON ( QJsonObject json ) {
+    
+    bool result = tengu::AbstractAgent::fromJSON ( json );
+        
+    if ( json.contains("sprouts") ) {
+        
+        __deleteSprouts();
+        
+        QJsonArray spa = json.value("sprouts").toArray();
+                
+        for( int i=0; i<spa.count(); i++ ) {
+            QJsonObject os = spa.at(i).toObject();
+            Sprout * sprout = new Sprout();
+            sprout->fromJSON( os );
+            addSprout( sprout );
+        };
+    };
+        
+    return result;
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                              Return a list of sprouts.                                           *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                              Вернуть список sprout'ов.                                           *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+QList< tengu::Sprout* > tengu::SproutableAgent::sprouts() {
+    QList<Sprout * > result;
+    foreach( Sprout * sprout, __sprouts ) {
+        result.append( sprout );
+    };
+    return result;
+}
+
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
@@ -232,15 +292,68 @@ void tengu::SproutableAgent::addSprout ( tengu::Sprout * sprout ) {
     
     sprout->__owner = this;
     __sprouts[ sprout->getUUID() ] = sprout ;    
-    if ( ( sprout->isExternal() ) && ( ( ! isSubscriberConnected() ) || ( ! isPublisherConnected() ) ) ) {
-        connect();
+    QObject::connect( sprout, SIGNAL(signalRemoveMe(Sprout*)), this, SLOT( __on__sprout_removed( Sprout * ) ) );
+    
+    // Sprout's auto naming 
+    // Авто-именование sprout'а.
+    
+    if ( sprout->getSystemName().isEmpty() ) {
+        QString sysName = tr("Sprout_") + QString::number( __sprouts.count() );
+        sprout->setSystemName( sysName );
     };
+    
+    if ( sprout->getHumanName().isEmpty() ) {
+        QString humName = tr("Sprout ") + QString::number( __sprouts.count() );
+        sprout->setHumanName( humName );
+    };    
+    
+    // if ( ( sprout->isExternal() ) && ( ( ! isSubscriberConnected() ) || ( ! isPublisherConnected() ) ) ) {
+    //    connect();
+    //};
     
     // Подписку нужно делать отдельно и принудительно.
     // __subscribe();
     
-    _changed = true;
+    _somethingChanged();
     
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                             Remove one sprout                                                    *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                          Удаление одного sprout'а                                                *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::SproutableAgent::removeSprout ( tengu::Sprout * sprout ) {
+    
+    if ( __sprouts.contains( sprout->getUUID() ) ) {
+        __sprouts.remove( sprout->getUUID() );
+        QObject::disconnect( sprout, SIGNAL(signalRemoveMe(Sprout*)), this, SLOT( __on__sprout_removed( Sprout * ) ) );
+    };
+    _somethingChanged();
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                        Delete all sprouts of this agent.                                         *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                     Удаление всех sprout'ов данного агента.                                      *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::SproutableAgent::__deleteSprouts() {
+    
+    if ( ! __sprouts.isEmpty() ) {
+        
+        foreach( Sprout * sprout, __sprouts ) {
+            QObject::disconnect( sprout, SIGNAL(signalRemoveMe(Sprout*)), this, SLOT( __on__sprout_removed( Sprout * ) ) );
+            delete( sprout );
+        }
+    
+        __sprouts.clear();
+    };
 }
 
 // ********************************************************************************************************************
@@ -275,17 +388,17 @@ QList< tengu::Sprout* > tengu::SproutableAgent::sutiableSproutsFor ( tengu::Spro
             bool usable = false;
             Sprout::sprout_type_t eType = sprout->getSproutType();
             switch ( sp->getSproutType() ) {
-                case Sprout::EXTERNAL_INPUT: {
-                    if ( eType == Sprout::EXTERNAL_OUTPUT ) usable = true;
+                case Sprout::SPT__EXTERNAL_INPUT: {
+                    if ( eType == Sprout::SPT__EXTERNAL_OUTPUT ) usable = true;
                 }; break;
-                case Sprout::EXTERNAL_OUTPUT: {
-                    if ( eType == Sprout::EXTERNAL_INPUT ) usable = true;
+                case Sprout::SPT__EXTERNAL_OUTPUT: {
+                    if ( eType == Sprout::SPT__EXTERNAL_INPUT ) usable = true;
                 }; break;
-                case Sprout::IN_PROCESS_INPUT: {
-                    if ( eType == Sprout::IN_PROCESS_OUTPUT ) usable = true;
+                case Sprout::SPT__IN_PROCESS_INPUT: {
+                    if ( eType == Sprout::SPT__IN_PROCESS_OUTPUT ) usable = true;
                 }; break;
-                case Sprout::IN_PROCESS_OUTPUT: {
-                    if ( eType == Sprout::IN_PROCESS_INPUT ) usable = true;
+                case Sprout::SPT__IN_PROCESS_OUTPUT: {
+                    if ( eType == Sprout::SPT__IN_PROCESS_INPUT ) usable = true;
                 }; break;
             };
             
@@ -294,6 +407,27 @@ QList< tengu::Sprout* > tengu::SproutableAgent::sutiableSproutsFor ( tengu::Spro
     };
     return result;
     
+}
+
+// ********************************************************************************************************************
+// * *
+// * Conversion of this object to JSON form. *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// * Преобразование данного объекта в JSON. *
+// * *
+// ********************************************************************************************************************
+
+QJsonObject tengu::SproutableAgent::toJSON() {
+    QJsonObject o = tengu::AbstractAgent::toJSON();
+    if ( ! __sprouts.isEmpty() ) {
+        QJsonArray spa;
+        foreach ( Sprout * sprout, __sprouts ) {
+            QJsonObject spo = sprout->toJSON();
+            spa.append( spo );
+        };
+        o["sprouts"] = spa;
+    };
+    return o;
 }
 
 // ********************************************************************************************************************

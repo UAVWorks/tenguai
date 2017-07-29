@@ -221,6 +221,7 @@ void tengu::SchemaView::mousePressEvent ( QMouseEvent * event ) {
     __entityDragged = nullptr;
     __entityDragInProcess = false;
     
+    
     if ( event->buttons() & Qt::LeftButton ) {
         
         __leftMouseButtonPressed = true;
@@ -243,15 +244,17 @@ void tengu::SchemaView::mousePressEvent ( QMouseEvent * event ) {
         // QGraphicsItem * item = itemAt( event->pos());
         
         bool controlPressed = event->modifiers() & Qt::ControlModifier;
-    
+        
         if ( itemsList.count() > 0 ) {
                                     
-            if ( ( semiCreatedLink ) && ( itemWithLinks ) && ( itemWithLinks->acceptIncommingLink() ) ) {
+            if ( ( semiCreatedLink ) && ( itemWithLinks ) && ( itemWithLinks->acceptIncommingLink( semiCreatedLink ) ) ) {
                 
                 // If we have an semi-created link and mouse was pressed on the agent - we will finish the link creating 
                 // process. But we need not a link.
                 
                 // Если у нас полу-созданная связь и нажата мышь на агенте - завершаем создание связи. Но нам нужна не-связь.
+                
+                qDebug() << "У нас есть полу-созданная связь";
                                                                             
                 semiCreatedLink->hide();                
                 itemWithLinks->addIncommingLink( semiCreatedLink );                    
@@ -517,7 +520,7 @@ void tengu::SchemaView::dragMoveEvent ( QDragMoveEvent * event ) {
         // Событие будет обработано только в том случае, если объект не бросается на уже существующий объект.
         // Но если это связь, то ее наоборот можно бросать только на существующий объект.
                 
-        if ( ( link ) && ( iwl ) && ( iwl->acceptOutgoingLink() ) ) event->acceptProposedAction();
+        if ( ( link ) && ( iwl ) && ( iwl->acceptOutgoingLink( link ) ) ) event->acceptProposedAction();
         
         if ( ( ! link ) && ( ! curItem ) ) event->acceptProposedAction();
         

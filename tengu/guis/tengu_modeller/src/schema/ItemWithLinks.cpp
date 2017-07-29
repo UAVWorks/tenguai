@@ -231,8 +231,12 @@ void tengu::ItemWithLinks::__on__linked() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-bool tengu::ItemWithLinks::acceptIncommingLink() {
+bool tengu::ItemWithLinks::acceptIncommingLink( LinkItem * link ) {
+    
+    Q_UNUSED( link );
+    
     return ( _linksIncommingToThis.count() == 0 );
+    
 }
 
 // ********************************************************************************************************************
@@ -243,8 +247,12 @@ bool tengu::ItemWithLinks::acceptIncommingLink() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-bool tengu::ItemWithLinks::acceptOutgoingLink() {
+bool tengu::ItemWithLinks::acceptOutgoingLink( LinkItem * link ) {
+    
+    Q_UNUSED( link );
+    
     return ( _linksOutgoingFromThis.count() == 0 );
+    
 }
 
 // ********************************************************************************************************************

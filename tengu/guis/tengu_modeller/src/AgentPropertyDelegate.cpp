@@ -59,10 +59,10 @@ QWidget * tengu::AgentPropertyDelegate::createEditor ( QWidget* parent, const QS
         case AgentPropertyElement::SproutTypeSelector : {
             QComboBox * editor = new QComboBox( parent );
             editor->setFont( oneElement.font );
-            editor->addItem( tr("In-process input"), QVariant( Sprout::IN_PROCESS_INPUT ) );
-            editor->addItem( tr("External input"), QVariant( Sprout::EXTERNAL_INPUT ) );
-            editor->addItem( tr("In-process output"), QVariant( Sprout::IN_PROCESS_OUTPUT ) );
-            editor->addItem( tr("External output"), QVariant( Sprout::EXTERNAL_OUTPUT ) );
+            editor->addItem( tr("In-process input"), QVariant( Sprout::SPT__IN_PROCESS_INPUT ) );
+            editor->addItem( tr("External input"), QVariant( Sprout::SPT__EXTERNAL_INPUT ) );
+            editor->addItem( tr("In-process output"), QVariant( Sprout::SPT__IN_PROCESS_OUTPUT ) );
+            editor->addItem( tr("External output"), QVariant( Sprout::SPT__EXTERNAL_OUTPUT ) );
             return editor;
         }; break;
         

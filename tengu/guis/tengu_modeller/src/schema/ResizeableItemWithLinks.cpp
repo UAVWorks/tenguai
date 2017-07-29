@@ -97,9 +97,9 @@ QRectF tengu::ResizeableItemWithLinks::boundingRect() const {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-bool tengu::ResizeableItemWithLinks::acceptIncommingLink() {
+bool tengu::ResizeableItemWithLinks::acceptIncommingLink( LinkItem * link ) {
     if ( __vertical_correction() ) return true;
-    return tengu::ItemWithLinks::acceptIncommingLink();
+    return tengu::ItemWithLinks::acceptIncommingLink( link );
 }
 
 // ********************************************************************************************************************
@@ -110,9 +110,9 @@ bool tengu::ResizeableItemWithLinks::acceptIncommingLink() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-bool tengu::ResizeableItemWithLinks::acceptOutgoingLink() {
+bool tengu::ResizeableItemWithLinks::acceptOutgoingLink( LinkItem * link ) {
     if ( __vertical_correction() ) return true;
-    return tengu::ItemWithLinks::acceptOutgoingLink();
+    return tengu::ItemWithLinks::acceptOutgoingLink( link );
 }
 
 

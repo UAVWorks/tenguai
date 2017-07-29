@@ -43,18 +43,19 @@ namespace tengu {
         signals:
             
             void signalGotValue( QVariant value );
+            void signalRemoveMe( Sprout * sprout );
                     
         public:
             
             enum sprout_type_t {
                 // Signal only, without redis.
                 // Только через сигналы, без редиса.
-                IN_PROCESS_INPUT,
+                SPT__IN_PROCESS_INPUT,
                 // External mean throught redis
                 // Внешний - означает через редис.
-                EXTERNAL_INPUT,
-                IN_PROCESS_OUTPUT,
-                EXTERNAL_OUTPUT
+                SPT__EXTERNAL_INPUT,
+                SPT__IN_PROCESS_OUTPUT,
+                SPT__EXTERNAL_OUTPUT
             };
             
             // The name should be unique in the parent (owner) namespace.
@@ -96,10 +97,12 @@ namespace tengu {
             
             AbstractAgent * owner();
             
+            virtual bool fromJSON( QJsonObject o ) override;
+            
             // Convert the object to JSON form.
             // Преобразование объекта в JSON-форму.
             
-            QJsonObject toJSON();
+            virtual QJsonObject toJSON() override;
             
             
         protected:

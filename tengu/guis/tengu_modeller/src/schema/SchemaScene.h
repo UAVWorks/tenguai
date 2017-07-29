@@ -70,8 +70,8 @@ namespace tengu {
             
             void setExecutionMode( AbstractEntity::execution_mode_t execution_mode );
             
-            void addLink( AbstractAgent * fromAgent, AbstractAgent * toAgent );
-            bool haveLink( AbstractAgent * fromAgent, AbstractAgent * toAgent );
+            void addLink( AbstractEntity * fromAgent, AbstractEntity * toAgent );
+            bool haveLink( AbstractEntity * fromAgent, AbstractEntity * toAgent );
             
         private:
             

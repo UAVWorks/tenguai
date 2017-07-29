@@ -28,7 +28,7 @@ tengu::Sprout::Sprout( AbstractAgent * owner )
     // __inputChannel = QString("");
     // __outputChannel = QString("");
     __signalName = QString("");
-    __sprout_type = IN_PROCESS_INPUT;
+    __sprout_type = SPT__IN_PROCESS_INPUT;
     
     // Default constraints is 0 ... 100
     // Ограничение значения по умолчанию - 0 ... 100
@@ -202,7 +202,7 @@ void tengu::Sprout::setValue( QVariant val ) {
     
     if ( ( ok )
         && ( ! __signalName.isEmpty() ) 
-        && ( __sprout_type == Sprout::EXTERNAL_OUTPUT ) 
+        && ( __sprout_type == Sprout::SPT__EXTERNAL_OUTPUT ) 
         && ( __owner ) 
         && ( __owner->isPublisherConnected() ) ) 
     {
@@ -227,7 +227,7 @@ void tengu::Sprout::subscribe() {
         ( ! __subscribed ) 
         // && ( ! __subscribtion_requested )
         && ( ! __signalName.isEmpty() )
-        && ( __sprout_type == EXTERNAL_INPUT )
+        && ( __sprout_type == SPT__EXTERNAL_INPUT )
         && ( __owner != nullptr )
         && ( __owner->_sub_redis ) 
         && ( __owner->__sub_redis_connected )
@@ -260,7 +260,7 @@ tengu::AbstractAgent * tengu::Sprout::owner() {
 void tengu::Sprout::subscribed( QString channel ) {
     if (
         ( ! __subscribed )
-        && ( __sprout_type == EXTERNAL_INPUT )
+        && ( __sprout_type == SPT__EXTERNAL_INPUT )
         && ( ! __signalName.isEmpty() )
         && ( __signalName == channel ) 
     ) {
@@ -367,7 +367,7 @@ bool tengu::Sprout::handleMessage( QString channel, QString value ) {
 // ********************************************************************************************************************
 
 bool tengu::Sprout::isInput() {
-    return ( ( __sprout_type == Sprout::EXTERNAL_INPUT ) || ( __sprout_type == Sprout::IN_PROCESS_INPUT ) );
+    return ( ( __sprout_type == Sprout::SPT__EXTERNAL_INPUT ) || ( __sprout_type == Sprout::SPT__IN_PROCESS_INPUT ) );
 }
 
 // ********************************************************************************************************************
@@ -379,7 +379,7 @@ bool tengu::Sprout::isInput() {
 // ********************************************************************************************************************
 
 bool tengu::Sprout::isOutput() {
-    return ( ( __sprout_type == Sprout::EXTERNAL_OUTPUT ) || ( __sprout_type == Sprout::IN_PROCESS_OUTPUT ) );
+    return ( ( __sprout_type == Sprout::SPT__EXTERNAL_OUTPUT ) || ( __sprout_type == Sprout::SPT__IN_PROCESS_OUTPUT ) );
 }
 
 // ********************************************************************************************************************
@@ -391,7 +391,7 @@ bool tengu::Sprout::isOutput() {
 // ********************************************************************************************************************
 
 bool tengu::Sprout::isExternal() {
-    return ( ( __sprout_type == Sprout::EXTERNAL_INPUT ) || ( __sprout_type == Sprout::EXTERNAL_OUTPUT ) );
+    return ( ( __sprout_type == Sprout::SPT__EXTERNAL_INPUT ) || ( __sprout_type == Sprout::SPT__EXTERNAL_OUTPUT ) );
 }
 
 // ********************************************************************************************************************
@@ -403,7 +403,27 @@ bool tengu::Sprout::isExternal() {
 // ********************************************************************************************************************
 
 bool tengu::Sprout::isInternal() {
-    return( ( __sprout_type == Sprout::IN_PROCESS_INPUT ) || ( __sprout_type == Sprout::IN_PROCESS_OUTPUT ) );
+    return( ( __sprout_type == Sprout::SPT__IN_PROCESS_INPUT ) || ( __sprout_type == Sprout::SPT__IN_PROCESS_OUTPUT ) );
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                         Convert from JSON to this object.                                        *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                         Преобразование из JSONа в объект.                                        *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+bool tengu::Sprout::fromJSON ( QJsonObject o ) {
+    bool result = tengu::AbstractEntity::fromJSON ( o );
+    __sprout_type = Sprout::SPT__IN_PROCESS_INPUT;
+    if ( o.contains( "sprout_type" ) ) __sprout_type = (sprout_type_t) o.value("sprout_type").toInt();
+    if ( o.contains("signal_name") ) __signalName = o.value("signal_name").toString();
+    __minimal_value = MINIMUM_CONSTRAINT;
+    __maximal_value = MAXIMUM_CONSTRAINT;
+    if ( o.contains( "minimal_value" ) ) __minimal_value = (float) o.value( "minimal_value" ).toDouble();
+    if ( o.contains( "maximal_value" ) ) __maximal_value = (float) o.value( "maximal_value" ).toDouble();
+    return result;
 }
 
 // ********************************************************************************************************************
@@ -422,7 +442,10 @@ QJsonObject tengu::Sprout::toJSON() {
     // Забито. Отросток нонче - не записывабельный.
     // o[ JSON_COLLECTION_ELEMENT ] = "sprouts";
     
-    if ( __owner ) o["owner_uuid"] = __owner->getUUID();
+    o["sprout_type"] = __sprout_type;
+    o["signal_name"] = __signalName;
+    if ( __minimal_value > MINIMUM_CONSTRAINT ) o["minimal_value"] = __minimal_value;
+    if ( __maximal_value < MAXIMUM_CONSTRAINT ) o["maximal_value"] = __maximal_value;
     
     return o;
 }
@@ -450,5 +473,6 @@ QString tengu::Sprout::systemName() {
 // ********************************************************************************************************************
 
 tengu::Sprout::~Sprout() {
+    emit signalRemoveMe( this );
 }
 

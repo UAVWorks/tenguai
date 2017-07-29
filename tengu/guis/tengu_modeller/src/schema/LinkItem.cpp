@@ -751,7 +751,12 @@ float tengu::LinkItem::distanceTo ( QPointF point ) {
 
 
 bool tengu::LinkItem::withSproutFrom() {
-    return ( ( __from ) && ( __from->entityType() == AbstractEntityItem::ET_SproutItem ) );
+    
+    return ( ( __from ) && (
+        ( __from->entityType() == AbstractEntityItem::ET_Sprout ) 
+        || ( __from->entityType() == AbstractEntityItem::ET_SproutItem )
+    ) );
+    
 }
 
 // ********************************************************************************************************************
@@ -763,7 +768,12 @@ bool tengu::LinkItem::withSproutFrom() {
 // ********************************************************************************************************************
 
 bool tengu::LinkItem::withSproutTo() {
-    return ( ( __to ) && ( __to->entityType() == AbstractEntityItem::ET_SproutItem ) );
+    
+    return ( ( __to ) && ( 
+        ( __to->entityType() == AbstractEntityItem::ET_Sprout ) 
+        || ( __to->entityType() == AbstractEntityItem::ET_SproutItem ) 
+    ) );
+    
 }
 
 // ********************************************************************************************************************
