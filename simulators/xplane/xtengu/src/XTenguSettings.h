@@ -11,4 +11,10 @@
 // Last external programs activity time (the path in in the redis) to take a control for user aircraft.
 // Последнее время активности внешних программ (путь в редисе) для перехвата управления пользовательским самолетом.
 
-#define USER_AIRCRAFT_CONTROL_PING_PATH "xtengu.control_presence.0"
+#define AIRCRAFT_CONTROL_PATH                   "xtengu.control_presence."
+#define USER_AIRCRAFT_CONTROL_PING_PATH         AIRCRAFT_CONTROL_PATH"0"
+
+// To avoid difference in config file name
+// Чтобы избежать различия в имени конфигурационного файла.
+
+#define CREATE_XTENGU_SETTINGS QSettings settings( "/etc/tenguai/xtengu.conf", QSettings::IniFormat )

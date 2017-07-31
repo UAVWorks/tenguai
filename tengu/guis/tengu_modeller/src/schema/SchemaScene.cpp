@@ -369,7 +369,20 @@ void tengu::SchemaScene::removeItem ( QGraphicsItem * gItem ) {
     
     AbstractEntityItem * item = dynamic_cast < AbstractEntityItem * > ( gItem );
     if ( item ) {
-        QObject::disconnect( item, SIGNAL( signalSomethingChanged() ), this, SLOT( __on__something_changed() ) );
+        
+        ItemWithLinks * li = dynamic_cast < ItemWithLinks * >( item );
+        if ( li ) {
+            
+            // We have an item with links. Remove his links together.
+            // У нас есть элемент со связями. Вместе с ним удаляем и его связи тоже.
+            
+            QList< LinkItem * > his_links = li->hisLinks();
+            for ( int i=0; i<his_links.count(); i++ ) {
+                removeItem( his_links.at(i) );
+            };
+        };
+        
+        QObject::disconnect( item, SIGNAL( signalSomethingChanged() ), this, SLOT( __on__something_changed() ) );        
         
         // TaskItem * taskItem = dynamic_cast < TaskItem * > ( item );
         // SproutItem * sproutItem = dynamic_cast <SproutItem * > ( item );
@@ -377,7 +390,8 @@ void tengu::SchemaScene::removeItem ( QGraphicsItem * gItem ) {
         // if ( sproutItem ) __sproutItems.remove( sproutItem->getUUID() );
     };
     
-    QGraphicsScene::removeItem( gItem );
+    QGraphicsScene * scene = gItem->scene();
+    if ( scene == this )  QGraphicsScene::removeItem( gItem );
     
 }
 

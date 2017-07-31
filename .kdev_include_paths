@@ -14,6 +14,7 @@
 tengu/core/
 tengu/onboard/
 tengu/loredis/src/
+simulators/xplane/xtengu/src/
 simulators/xplane/3d_party/XPSDK-213/CHeaders/XPLM/
 tengu/guis/tengu_modeller/src/
 tengu/guis/tengu_modeller/src/schema/

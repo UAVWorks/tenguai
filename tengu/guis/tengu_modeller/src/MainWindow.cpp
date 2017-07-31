@@ -1389,28 +1389,11 @@ void tengu::MainWindow::__on__want__create_agent( AbstractAgent * parent, Abstra
 void tengu::MainWindow::__on__want__delete ( tengu::AbstractEntity * entity ) {
     
     qDebug() << "MainWindow::__on_want_delete";
+        
+    if ( entity ) {
     
-    AbstractAgent * agent = dynamic_cast<AbstractAgent * >( entity );
-    if ( agent ) {
-        
-        // find parent in tree-like structure to later selection 
-        // Поиск родителя в древовидной структуре для последующего выделения.
-        
-        QTreeWidgetItem * treeParent = nullptr;
-        QTreeWidgetItem * hisTreeItem = __left->treeStructure->itemFor( agent );        
-        if ( hisTreeItem ) treeParent = hisTreeItem->parent();
-        
-        __left->treeStructure->deleteAgent( agent );
-        
-        // Select parent of deleted agent in tree structure.
-        // Выделение родителя удаленного агента в дереве.
-        
-        if ( treeParent ) {
-            __left->treeStructure->setCurrentItem( treeParent );
-        };
-        
-        // Delete an agent from the schema.
-        // Удаление агента из схемы.
+        // Delete an entity (an agent or a sprout) from the schema.
+        // Удаление сущности (агента или спраута) из схемы.
         
         AbstractEntityItem * schemaItem = __schemaScene->itemFor( entity );
         if ( schemaItem ) {
@@ -1419,27 +1402,53 @@ void tengu::MainWindow::__on__want__delete ( tengu::AbstractEntity * entity ) {
             __schemaView->show();
         };
         
-        // Delete agent and his children in the workspace
-        // Удаление агента и его детей из рабочего пространства.
+        AbstractAgent * agent = dynamic_cast<AbstractAgent * >( entity );
+        if ( agent ) {
     
-        QList<AbstractAgent * > rch;
-        agent->childrenRecursive( rch );
+            // find parent in tree-like structure to later selection 
+            // Поиск родителя в древовидной структуре для последующего выделения.
         
-        // To delete in one pass
-        // Для удаления в один проход.
+            QTreeWidgetItem * treeParent = nullptr;
+            QTreeWidgetItem * hisTreeItem = __left->treeStructure->itemFor( agent );        
+            if ( hisTreeItem ) treeParent = hisTreeItem->parent();
         
-        rch.append( agent );
+            __left->treeStructure->deleteAgent( agent );
         
-        for ( int i=0; i<rch.count(); i++ ) {
-            AbstractAgent * one = rch.at(i);
-            QObject::disconnect( one, SIGNAL( signalSomethingChanged() ), this, SLOT( __on__something_changed() ) );
-            QObject::disconnect( one, SIGNAL( signalSomethingChanged() ), __left->treeStructure, SLOT( on__something_changed() ) );
-            NotSavedOperation oper ( NotSavedOperation::OT_DELETE, one->toJSON() );
-            __not_saved_operations.append( oper );
+            // Select parent of deleted agent in tree structure.
+            // Выделение родителя удаленного агента в дереве.
+        
+            if ( treeParent ) {
+                __left->treeStructure->setCurrentItem( treeParent );
+            };
             
-            delete( one );
-        };
+            // Delete agent and his children in the workspace
+            // Удаление агента и его детей из рабочего пространства.
+    
+            QList<AbstractAgent * > rch;
+            agent->childrenRecursive( rch );
         
+            // To delete in one pass
+            // Для удаления в один проход.
+        
+            rch.append( agent );
+        
+            for ( int i=0; i<rch.count(); i++ ) {
+                AbstractAgent * one = rch.at(i);
+                QObject::disconnect( one, SIGNAL( signalSomethingChanged() ), this, SLOT( __on__something_changed() ) );
+                QObject::disconnect( one, SIGNAL( signalSomethingChanged() ), __left->treeStructure, SLOT( on__something_changed() ) );
+                NotSavedOperation oper ( NotSavedOperation::OT_DELETE, one->toJSON() );
+                __not_saved_operations.append( oper );
+            
+                delete( one );
+            };
+            
+        } else {
+            
+            // There was not an agent.
+            // Это был не агент.
+            
+            delete ( entity );
+        }
         
     };
             

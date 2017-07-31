@@ -13,6 +13,7 @@
 
 #include "AbstractAgent.h"
 #include "AgentFactory.h"
+#include "XPlaneSimulator.h"
 
 namespace tengu {
 
@@ -25,6 +26,7 @@ namespace tengu {
             virtual ~WorkSpace();
             
             void addChild( AbstractAgent * child );
+            virtual void deleteChildren() override;
                         
         private:
                         

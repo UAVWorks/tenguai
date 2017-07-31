@@ -23,7 +23,7 @@ UI_DIR=build/uic
 RCC_DIR=build/obj
 OBJECTS_DIR=build/obj
 
-INCLUDEPATH += src src/dialogs src/schema src/overboard ../../core ../../loredis/src /usr/include/libbson-1.0 /usr/include/libmongoc-1.0/
+INCLUDEPATH += src src/dialogs src/schema src/overboard ../../core ../../loredis/src /usr/include/libbson-1.0 /usr/include/libmongoc-1.0/ ../../../simulators/xplane/xtengu/src/
 
 LIBS += -lLoRedis -L../../loredis/build -ltengu_core -L../../core/build -lhiredis -levent -lmongoc-1.0 -L/usr/lib/x86_64-linux-gnu
 

@@ -55,9 +55,7 @@ tengu::XPlaneAircraft::XPlaneAircraft( int acf_index, QString group, Sprout::spr
     __init_sprout( "RightRudder", Sprout::EXTERNAL_OUTPUT, tr("Right rudder" ) );
     __init_sprout( "RightBrake", Sprout::EXTERNAL_OUTPUT, tr("Right brake" ) );
     */
-    
-    // this->connect();
-    Task::connect();
+        
 }
 
 // ********************************************************************************************************************
@@ -69,7 +67,7 @@ tengu::XPlaneAircraft::XPlaneAircraft( int acf_index, QString group, Sprout::spr
 // ********************************************************************************************************************
 
 QString tengu::XPlaneAircraft::_ping_path() {
-    return QString("xtengu.control_presence.") + QString::number( __aircraft_index );
+    return QString( AIRCRAFT_CONTROL_PATH ) + QString::number( __aircraft_index );
 }
 
 // ********************************************************************************************************************

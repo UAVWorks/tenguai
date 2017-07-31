@@ -60,6 +60,40 @@ void tengu::WorkSpace::addChild ( tengu::AbstractAgent * child ) {
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
+// *                                              Delete workspace children.                                          *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                        Удаление детей из рабочего пространства.                                  *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::WorkSpace::deleteChildren() {
+    
+    // AbstractAgent::deleteChildren();    
+    
+    XPlaneSimulator * xp_simulator = nullptr;
+    
+    foreach( AbstractAgent * child, _children ) {
+        
+        // Delete all but not an xplane simulator
+        // Удаляем всех но не X-Plane симулятор.
+        
+        XPlaneSimulator * cur = dynamic_cast< XPlaneSimulator * >( child );
+        if ( ! cur ) {
+            removeChild( child );
+            delete( child );
+        } else xp_simulator = cur;
+    };
+    
+    _children.clear();    
+    
+    if ( xp_simulator ) _children[ xp_simulator->getUUID() ] = xp_simulator;
+    
+    
+}
+
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
 // *                                                    The destructor.                                               *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                                                       Деструктор.                                                *

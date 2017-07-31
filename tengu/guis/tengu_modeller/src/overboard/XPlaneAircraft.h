@@ -16,11 +16,12 @@
 #include "Constants.h"
 #include "Task.h"
 #include "SproutProxy.h"
+#include "XTenguSettings.h"
 
 // @todo remake that is the same with X-Tengu.
 // Переделать так, чтобы было одинаково с X-Tengu.
 
-#define CREATE_XTENGU_SETTINGS      QSettings settings( "/etc/tenguai/xtengu.conf", QSettings::IniFormat )
+// #define CREATE_XTENGU_SETTINGS      QSettings settings( "/etc/tenguai/xtengu.conf", QSettings::IniFormat )
 // #define TOTAL_AIRCRAFTS_COUNT 20
 
 namespace tengu {

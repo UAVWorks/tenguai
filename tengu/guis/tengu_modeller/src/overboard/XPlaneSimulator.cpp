@@ -52,6 +52,7 @@ tengu::XPlaneSimulator::XPlaneSimulator()
     addChild( control );
     
     CREATE_XTENGU_SETTINGS;
+    
     settings.beginGroup("CommonControl");
     QString controlGroup = settings.value("ControlNameGroup", "xtengu.control").toString();
     QString conditionGroup = settings.value("ConditionNameGroup", "xtengu.condition").toString();
@@ -64,6 +65,7 @@ tengu::XPlaneSimulator::XPlaneSimulator()
         control->addChild( acf_control );
         
         XPlaneAircraft * acf_condition = new XPlaneAircraft( idx, conditionGroup, Sprout::SPT__EXTERNAL_OUTPUT );
+        acf_condition->setUUID( XPlaneSimulator::CONDITION_AIRCRAFTS_UUIDS.at( idx ) );
         condition->addChild( acf_condition );
                 
     };
