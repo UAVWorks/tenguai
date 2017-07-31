@@ -22,7 +22,8 @@ tengu::XPlaneOverrided::XPlaneOverrided() {
     __flight_control = XPlaneChannel("OverridedFlightControl", "sim/operation/override/override_flightcontrol");
     __autopilot = XPlaneChannel("OverridedAutopilot" , "sim/operation/override/override_autopilot" );
     __throttle = XPlaneChannel( "OverridedThrotthe", "sim/operation/override/override_throttles" );
-    __control_surfaces = XPlaneChannel("OverridedControlSurfaces", "sim/operation/override/override_control_surfaces" );    
+    __control_surfaces = XPlaneChannel("OverridedControlSurfaces", "sim/operation/override/override_control_surfaces" );   
+    __overrided = false;
 
 }
 
@@ -42,6 +43,7 @@ void tengu::XPlaneOverrided::override() {
     __autopilot.set( 1 );
     __throttle.set( 1 );
     __control_surfaces.set( 1 );
+    __overrided = true;
     
 }
 
@@ -61,9 +63,21 @@ void tengu::XPlaneOverrided::release() {
     __autopilot.set( 0 );
     __throttle.set( 0 );
     __control_surfaces.set( 0 );
+    __overrided = false;
     
 }
 
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                        Did we override the control already?                                      *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                             Мы уже перекрыли управление?                                         *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+bool tengu::XPlaneOverrided::isOverrided() {
+    return __overrided;
+}
 
 // ********************************************************************************************************************
 // *                                                                                                                  *

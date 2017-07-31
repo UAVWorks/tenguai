@@ -55,10 +55,9 @@ tengu::XTengu::XTengu()
     // We will wait for permission from X-Plane in an explicit form.
     // Будем ждать разрешения от X-Plane в явном виде.
     
-    XPlaneOverrided xpo;
-    xpo.release();
+    __xp_user_aircraft_control = new XPlaneOverrided();
+    __xp_user_aircraft_control->release();
     
-       
     // --------------------------------------------------------------------------------------------
     // Not here! At the time of the plug-in's enabling!
     // Не здесь! На момент разрешения работы плагина!
@@ -204,10 +203,72 @@ void tengu::XTengu::cbGotMessage ( LoRedis * redis, QString channel, QString mes
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::XTengu::cbGotValue ( LoRedis* redis, QString name, QVariant value ) {
-    Q_UNUSED( redis )
-    Q_UNUSED( name )
-    Q_UNUSED( value )
+void tengu::XTengu::cbGotValue ( LoRedis * redis, QString name, QVariant value ) {
+    
+    Q_UNUSED( redis );
+    
+    bool valid = ( ( value.isValid() ) && ( ! value.isNull() ) );
+    
+    if ( name ==  USER_AIRCRAFT_CONTROL_PING_PATH ) {
+        
+        // We have received recently activity time from an external program which can take control of a user aircraft.
+        // Мы получили последнее время активности от внешней программы, которая может взять на себя управление пользовательским самолетом.
+        
+        if ( valid ) {
+            
+            // It seems we have valid value. Make the current time representation with ms.
+            // Получили вроде правильное значение. Формируем представление текущего времени с милисекундами.
+            
+            QDateTime dt = QDateTime::currentDateTime();
+            int curSecs = dt.toTime_t();
+            
+            // QTime time = QTime::currentTime();
+            // QString strCurrentTime = QString::number( dt.toTime_t() ) + "." + QString::number( time.msec() );
+            // double fCurrentTime = dt.toTime_t() + ( time.msec() / 1000.0 );
+            
+            bool ok = false;
+            double fGotTime = value.toDouble( &ok );
+            
+            if ( ok ) {
+            
+                int gotSecs = ( int ) fGotTime;
+                // double delta = fCurrentTime - fGotTime;
+                int ds = curSecs - gotSecs;
+                if ( ds >= 2 ) {
+                    
+                    // The control must be released.
+                    // Управление должно быть отпущено.
+                    
+                    if ( __xp_user_aircraft_control->isOverrided() ) {
+                        __xp_user_aircraft_control->release();
+                    };
+                        
+                } else {
+                    
+                    // The control must be overrided.
+                    // Управление должно быть перекрыто.
+                    
+                    if ( ! __xp_user_aircraft_control->isOverrided() ) {
+                        __xp_user_aircraft_control->override();
+                    };
+                };                
+                
+            } else {
+                
+                // Gotted value has an format error, release the user's aircraft control.
+                // Полученное значение имеет ошибки формата, отпустить управление пользовательским самолетом.
+                
+                if ( __xp_user_aircraft_control->isOverrided() ) __xp_user_aircraft_control->release();
+            };
+                
+        } else {
+            
+            // Invalid or empty value, the control must be released.
+            // Неправильное или пустое значение. Управление нужно отпустить.
+            
+            if ( __xp_user_aircraft_control->isOverrided() ) __xp_user_aircraft_control->release();
+        };
+    }            
 }
 
 // ********************************************************************************************************************
@@ -246,6 +307,11 @@ float tengu::XTengu::cbObservingMovement() {
     // Только для одного из редис-адаптеров, этого будет достаточно.
         
     LoRedis::processEvents();
+    
+    // Check if control is necessary for user aircraft
+    // Проверка необходимости управления пользовательским самолетом.
+    
+    __redis->get( QString( USER_AIRCRAFT_CONTROL_PING_PATH ));
                 
     // The next time to call this procedure, in the seconds.
     // Следующее время вызова этой процедуры в секундах.
@@ -561,8 +627,8 @@ void tengu::XTengu::enable() {
     
     AbstractAircraft::getXPAircraftsNumber( & __totalAircrafts, & __activeAircrafts );
 
-    XPlaneOverrided xpo;
-    xpo.override();
+    // XPlaneOverrided xpo;
+    // xpo.override();
     
     __enabled = true;
             
@@ -578,8 +644,8 @@ void tengu::XTengu::disable() {
     
     __enabled = false;
     
-    XPlaneOverrided xpo;
-    xpo.release();
+    // XPlaneOverrided xpo;
+    // xpo.release();
     
     __totalAircrafts = 0; __activeAircrafts = 0;                
 }

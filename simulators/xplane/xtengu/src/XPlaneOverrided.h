@@ -29,6 +29,7 @@ namespace tengu {
             ~XPlaneOverrided();
             void override();
             void release();
+            bool isOverrided();
         
         private:
             
@@ -66,6 +67,8 @@ namespace tengu {
             // Возможность произвольного (как угодно) перемещения управляющих поверхностей.
             
             XPlaneChannel __control_surfaces;
+            
+            bool __overrided;
             
     };
     

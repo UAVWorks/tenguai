@@ -53,10 +53,12 @@ namespace tengu {
             QCheckBox * __check_box__manual;
             QLineEdit * __manual_signal_name;
             
+            QLineEdit * __filter_processors;
             QLineEdit * __filter_processes;
             QLineEdit * __filter_tasks;
             QLineEdit * __filter_sprouts;
             
+            QTableWidget * __table_processors;
             QTableWidget * __table_processes;
             QTableWidget * __table_tasks;
             QTableWidget * __table_sprouts;
@@ -85,6 +87,7 @@ namespace tengu {
             void __setManualSelection( bool manual );
             void __setAsTypeInput( bool isInput );
             
+            void __fill_processors_list();
             void __fill_processes_list();
             void __fill_tasks_list();
             void __fill_sprouts_list();
@@ -107,9 +110,28 @@ namespace tengu {
                 };    
             };
             
-            Process * __selectedProcess();
-            Task * __selectedTask();
-            Sprout * __selectedSprout();
+            // Get selected in the table agent of specified type
+            // Получить выбранного в таблице агента указанного типа.
+            
+            template < class T > T __selectedAgent( QTableWidget * table ) {
+                
+                T agent = 0;
+                
+                if ( table->selectedItems().count() > 0 ) {
+                    QTableWidgetItem * selectedItem = table->selectedItems().at(0);
+                    if ( selectedItem ) {
+                        agent = qvariant_cast< T >( selectedItem->data( Qt::UserRole ) );
+                    };
+                };
+                
+                return agent;
+                
+            };
+            
+            // Processor * __selectedProcessor();
+            // Process * __selectedProcess();
+            // Task * __selectedTask();
+            // Sprout * __selectedSprout();
             
             void __stopListen();
             
@@ -123,11 +145,13 @@ namespace tengu {
         private slots:
             
             void __on__manual_signal_selection_state_changed( int state );
+            void __on__filter_processors_text_changed( const QString & text );
             void __on__filter_processes_text_changed( const QString & text );
             void __on__filter_tasks_text_changed( const QString & text );
             void __on__filter_sprouts_text_changed( const QString & text );
             void __on__minimum_editor_text_changed( const QString & text );
             void __on__maximum_editor_text_changed( const QString & text );
+            void __on__table_processors_item_selected( const QItemSelection & selected, const QItemSelection & deselected );
             void __on__table_processes_item_selected( const QItemSelection & selected, const QItemSelection & deselected );
             void __on__table_tasks_item_selected( const QItemSelection & selected, const QItemSelection & deselected );
             void __on__table_sprouts_item_selected( const QItemSelection & selected, const QItemSelection & deselected );

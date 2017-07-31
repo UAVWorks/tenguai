@@ -51,7 +51,7 @@ tengu::AbstractEntity * tengu::AgentFactory::createEntity ( QJsonObject json ) {
         if ( className == "Sprout" )        e = new Sprout();
         if ( className == "ORer" )          e = new ORer();
         if ( className == "ANDor" )         e = new ANDor();
-        if ( className == "Vehicle" )       e = new Vehicle();
+        if ( className == "Vehicle" )       e = new Vehicle();        
         
     };
 
@@ -157,7 +157,20 @@ void tengu::AgentFactory::_append_object ( tengu::AbstractEntity * entity, QStri
                 agent->addChild( childAgent );
             };
             
-        } else qDebug() << "AgentFactory::_append_object(): We have an object, but do not know how to add it. Key=" << key << ", json=" << json;
+        } else if ( key == "sprouts" ) {
+            
+            SproutableAgent * spa = dynamic_cast< SproutableAgent * > ( entity );
+            Sprout * sp = dynamic_cast< Sprout * > ( child );
+            if ( ! spa ) qDebug() << "AgentFactory::_append_object, sprout's collection, but parent is not SproutableAgent. Key=" << key << ", json=" << json;
+            if ( ! sp ) qDebug() << "AgentFactory::_append_object, we have an object but it is not sprout. Key=" << key << ", json=" << json;
+            if ( ( sp ) && ( spa ) ) {
+                spa->addSprout( sp );
+            };
+            
+        } else {
+            qDebug() << "AgentFactory::_append_object(): We have an object, but do not know how to add it. Key=" << key << ", json=" << json;
+            delete ( child );
+        }
         
     };
 }

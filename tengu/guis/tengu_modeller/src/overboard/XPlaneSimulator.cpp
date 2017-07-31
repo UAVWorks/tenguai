@@ -43,12 +43,12 @@ tengu::XPlaneSimulator::XPlaneSimulator()
     
     condition = new XPlaneProcess();
     condition->setSystemName("condition");
-    condition->setHumanName("Condition");
+    condition->setHumanName("condition");
     addChild( condition );
     
     control = new XPlaneProcess();
     control->setSystemName("control");
-    control->setHumanName("Control");
+    control->setHumanName("control");
     addChild( control );
     
     CREATE_XTENGU_SETTINGS;

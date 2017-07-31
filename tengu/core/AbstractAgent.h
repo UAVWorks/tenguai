@@ -284,8 +284,7 @@ namespace tengu {
             
         private slots:
             
-            void __on_connect_timer();
-            
+            void __on_connect_timer();            
             void __on_ping_timer();
             
             void __on_pub_redis_connected();

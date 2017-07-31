@@ -25,6 +25,8 @@
 #include <QString>
 #include <QStringList>
 #include <QMutex>
+#include <QDateTime>
+#include <QTime>
 
 // X-Plane plugin SDK includes
 // Инклудники X-Plane plugin SDK
@@ -47,6 +49,7 @@ extern void xplugin__log( QString msg );
 #include "UserAircraft.h"
 #include "EnvironmentAircraft.h"
 #include "XPlaneOverrided.h"
+#include "XTenguSettings.h"
 
 // To avoid difference in config file name
 // Чтобы избежать различия в имени конфигурационного файла.
@@ -143,7 +146,7 @@ namespace tengu {
             // void __xplane_control_off();
             // void __xplane_control_on();
             
-            // XPlaneOverrided * __xp_control;
+            XPlaneOverrided * __xp_user_aircraft_control;
                         
             QString __controlNameGroup;
             QString __conditionNameGroup;

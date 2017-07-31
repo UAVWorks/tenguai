@@ -57,6 +57,7 @@ tengu::XPlaneAircraft::XPlaneAircraft( int acf_index, QString group, Sprout::spr
     */
     
     // this->connect();
+    Task::connect();
 }
 
 // ********************************************************************************************************************
@@ -177,4 +178,5 @@ void tengu::XPlaneAircraft::disconnect() {
 // ********************************************************************************************************************
 
 tengu::XPlaneAircraft::~XPlaneAircraft() {
+    Task::disconnect();
 }

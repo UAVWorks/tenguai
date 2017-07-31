@@ -199,8 +199,7 @@ tengu::DialogPropertiesSprout::DialogPropertiesSprout( WorkSpace * workSpace )
     __manual_signal_name = new QLineEdit();
     __manual_signal_name->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Fixed );
     layoutSignal->addWidget( __manual_signal_name );
-    
-    
+        
     // Widget for selection sprout's signal name
     // Виджит для выбора сигнала sprout'а.
     
@@ -215,57 +214,63 @@ tengu::DialogPropertiesSprout::DialogPropertiesSprout( WorkSpace * workSpace )
     // Labels for processes / tasks / sprout selection
     // Метки для выбора процессов / задач / отростков.
     
+    QLabel * labelForVehicles = new QLabel( tr("Processors:") );
+    selectorLayout->addWidget( labelForVehicles, 0, 0 );    
     QLabel * labelForProcess = new QLabel( tr("Process:") );
-    selectorLayout->addWidget( labelForProcess, 0, 0 );
+    selectorLayout->addWidget( labelForProcess, 0, 1 );
     QLabel * labelForTask = new QLabel( tr("Task:") );
-    selectorLayout->addWidget( labelForTask, 0, 1 );
+    selectorLayout->addWidget( labelForTask, 0, 2 );
     QLabel * labelForSprout = new QLabel( tr("Sprout:") );
-    selectorLayout->addWidget( labelForSprout, 0, 2 );
+    selectorLayout->addWidget( labelForSprout, 0, 3 );
     
     // Filters for processes / tasks / sprouts
     // Фильтры для процессов / задач / отростков.
     
+    __filter_processors = new QLineEdit();
+    QObject::connect( __filter_processors, SIGNAL( textChanged( const QString & ) ), this, SLOT( __on__filter_processors_text_changed( const QString & ) ) );
+    selectorLayout->addWidget( __filter_processors, 1, 0 );
+    
     __filter_processes = new QLineEdit();
     QObject::connect( __filter_processes, SIGNAL(textChanged( const QString & )), this, SLOT( __on__filter_processes_text_changed( const QString & ) ) );    
-    selectorLayout->addWidget( __filter_processes, 1 , 0 );
+    selectorLayout->addWidget( __filter_processes, 1 , 1 );
     
     __filter_tasks = new QLineEdit();
     QObject::connect( __filter_tasks, SIGNAL( textChanged( const QString & ) ), this, SLOT( __on__filter_tasks_text_changed( const QString & ) ) );
-    selectorLayout->addWidget( __filter_tasks, 1, 1 );
+    selectorLayout->addWidget( __filter_tasks, 1, 2 );
     
     __filter_sprouts = new QLineEdit();
     QObject::connect( __filter_sprouts, SIGNAL( textChanged( const QString & )), this, SLOT( __on__filter_sprouts_text_changed( const QString & ) ) );
-    selectorLayout->addWidget( __filter_sprouts, 1, 2 );
+    selectorLayout->addWidget( __filter_sprouts, 1, 3 );
     
     // Tables for processes / tasks / sprouts
     // Таблицы для процессов / задач / отростков.
     
-    __table_processes = new QTableWidget();
-    QObject::connect( __table_processes->selectionModel(), 
-        SIGNAL( selectionChanged( const QItemSelection & , const QItemSelection & ) ), 
-        this, 
-        SLOT( __on__table_processes_item_selected( const QItemSelection &, const QItemSelection & ) ) 
-    );
+    __table_processors = new QTableWidget();
+    QObject::connect( __table_processors->selectionModel(), SIGNAL( selectionChanged ( const QItemSelection &, const QItemSelection & ) ),
+        this, SLOT( __on__table_processors_item_selected( const QItemSelection &, const QItemSelection & ) ) );
+    __init_table( __table_processors );
+    selectorLayout->addWidget( __table_processors, 2, 0 );
     
+    __table_processes = new QTableWidget();
+    QObject::connect( __table_processes->selectionModel(), SIGNAL( selectionChanged( const QItemSelection & , const QItemSelection & ) ), 
+        this, SLOT( __on__table_processes_item_selected( const QItemSelection &, const QItemSelection & ) ) 
+    );    
     __init_table( __table_processes );
-    selectorLayout->addWidget( __table_processes, 2, 0 );
+    selectorLayout->addWidget( __table_processes, 2, 1 );
     
     __table_tasks = new QTableWidget();
-    QObject::connect( __table_tasks->selectionModel(),
-        SIGNAL( selectionChanged( const QItemSelection &, const QItemSelection & ) ),
+    QObject::connect( __table_tasks->selectionModel(), SIGNAL( selectionChanged( const QItemSelection &, const QItemSelection & ) ),
         this, SLOT( __on__table_tasks_item_selected( const QItemSelection &, const QItemSelection & ) )
     );
     __init_table( __table_tasks );
-    selectorLayout->addWidget( __table_tasks, 2, 1 );
+    selectorLayout->addWidget( __table_tasks, 2, 2 );
     
     __table_sprouts = new QTableWidget();
-    QObject::connect( __table_sprouts->selectionModel(),
-        SIGNAL( selectionChanged( const QItemSelection &, const QItemSelection & ) ),
-        this,
-        SLOT( __on__table_sprouts_item_selected( const QItemSelection &, const QItemSelection & ) ) 
+    QObject::connect( __table_sprouts->selectionModel(), SIGNAL( selectionChanged( const QItemSelection &, const QItemSelection & ) ),
+        this, SLOT( __on__table_sprouts_item_selected( const QItemSelection &, const QItemSelection & ) ) 
     );
     __init_table( __table_sprouts );
-    selectorLayout->addWidget( __table_sprouts, 2, 2 );
+    selectorLayout->addWidget( __table_sprouts, 2, 3 );
         
     __do_not_handle_events = true;
     __setManualSelection( false );
@@ -285,6 +290,7 @@ tengu::DialogPropertiesSprout::DialogPropertiesSprout( WorkSpace * workSpace )
 void tengu::DialogPropertiesSprout::__init_table ( QTableWidget* table ) {
     
     table->setMinimumWidth( 80 );
+    table->setMinimumHeight( 60 );
     table->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding );
     table->setColumnCount(1);
     
@@ -545,8 +551,9 @@ void tengu::DialogPropertiesSprout::fillFrom( tengu::AbstractEntityItem * item )
         
     };
     
-    __fill_processes_list();
+    __fill_processors_list();
     
+    // __fill_processes_list();    
     // __fill_tasks_list();
     // __fill_sprouts_list();
 };
@@ -567,98 +574,97 @@ void tengu::DialogPropertiesSprout::__fill_processes_list() {
     
     __stopListen();
     
-    __fill_one_table< Process * >( _workSpace, __table_processes, __filter_processes );
+    Processor * processor = __selectedAgent< Processor * > ( __table_processors );
+    if ( processor ) {
+        __fill_one_table< Process * >( processor , __table_processes, __filter_processes );
     
-    // If we have rows in the table - select either first row or early selected.
-    // Если есть строки в таблице - выберем либо первую, либо ранее выбранную.
+        // If we have rows in the table - select either first row or early selected.
+        // Если есть строки в таблице - выберем либо первую, либо ранее выбранную.
     
-    if ( __table_processes->rowCount() > 0 ) {
-        QTableWidgetItem * first = __table_processes->itemAt( 0, 0 );
-        
-        if ( first ) {
+        if ( __table_processes->rowCount() > 0 ) {
             
+            QTableWidgetItem * first = __table_processes->itemAt( 0, 0 );
+        
+            if ( first ) {            
+                __do_not_handle_events = true;
+                first->setSelected( true );
+                __fill_tasks_list();
+                __do_not_handle_events = false;
+            };
+            
+        };
+        
+    };
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                    Fill processors table according it's filter                                   *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                   Заполнить таблицу процессоров согласно фильтру.                                *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::DialogPropertiesSprout::__fill_processors_list() {
+    
+    _clearTable( __table_processors );
+    _clearTable( __table_processes );
+    _clearTable( __table_tasks );
+    _clearTable( __table_sprouts );
+    
+    __stopListen();
+    
+    __fill_one_table< Processor * > ( _workSpace, __table_processors, __filter_processors );
+    
+    // If we have rows in processor's table - select either first or early selected.
+    // Если есть строки в таблице процессоров - выбираем либо первую, либо ранее выбранную.
+    
+    if ( __table_processors->rowCount() > 0 ) {
+        QTableWidgetItem * first = __table_processors->itemAt( 0, 0 );
+        if ( first ) {
             __do_not_handle_events = true;
             first->setSelected( true );
-            __fill_tasks_list();
+            __fill_processes_list();
             __do_not_handle_events = false;
+        };
+    };
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                         Fill sprout's list according selected task and sprout's filter.                          *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                     Заполнить список sprout'ов согласно выбранной задаче и фильтру sprout'ов.                    *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::DialogPropertiesSprout::__fill_sprouts_list() {
+        
+    _clearTable( __table_sprouts );
+    __stopListen();
+    
+    // Define selected task
+    // Определение выбранной задачи.
+    
+    Task * selectedTask = __selectedAgent< Task * > ( __table_tasks );
+    
+    if ( selectedTask ) {
+                
+        QList < Sprout * > suitableSprouts = selectedTask->sutiableSproutsFor( __sproutItem->sprout() );
+        
+        if ( suitableSprouts.count() > 0 ) {
             
-            //
-            // Process * p = qvariant_cast< Process * >( first->data( Qt::UserRole ) );
-            // if ( p ) {
-            //    qDebug() << "Есть процесс, заполняем задачи для него.";
-            //    __fill_tasks_list( p );
-            //}
-            
+            for ( int i=0; i<suitableSprouts.count(); i++ ) {
+                Sprout * sprout = suitableSprouts.at(i);
+                __table_sprouts->setRowCount( i+1 );
+                QTableWidgetItem * item = new QTableWidgetItem();
+                item->setFlags(item->flags() ^ Qt::ItemIsEditable);
+                item->setData( Qt::UserRole, QVariant::fromValue< Sprout * >( sprout ) );
+                item->setText( sprout->getHumanName() );
+                __table_sprouts->setItem( i, 0, item );
+            };
         };
     };
-}
-
-// ********************************************************************************************************************
-// *                                                                                                                  *
-// *                                   Get process which was selected in process'es table.                            *
-// * ---------------------------------------------------------------------------------------------------------------- *
-// *                               Получить процесс, который был выбран в таблице процессов.                          *
-// *                                                                                                                  *
-// ********************************************************************************************************************
-
-tengu::Process * tengu::DialogPropertiesSprout::__selectedProcess() {
-    
-    Process * selectedProcess = nullptr;
-    
-    if ( __table_processes->selectedItems().count() > 0 ) {
-        QTableWidgetItem * selectedItem = __table_processes->selectedItems().at(0);
-        if ( selectedItem ) {
-            selectedProcess = qvariant_cast< Process * >( selectedItem->data( Qt::UserRole ) );
-        };
-    };
-    
-    return selectedProcess;
-    
-}
-
-// ********************************************************************************************************************
-// *                                                                                                                  *
-// *                                    Get the task which was selected in task's table.                              *
-// * ---------------------------------------------------------------------------------------------------------------- *
-// *                                  Получить задачу, которая была выбрана в таблице задач.                          *
-// *                                                                                                                  *
-// ********************************************************************************************************************
-
-tengu::Task* tengu::DialogPropertiesSprout::__selectedTask() {
-    
-    Task * selectedTask = nullptr;
-    
-    if ( __table_tasks->selectedItems().count() > 0 ) {
-        QTableWidgetItem * selectedItem = __table_tasks->selectedItems().at(0);
-        if ( selectedItem ) {
-            selectedTask = qvariant_cast< Task * >( selectedItem->data( Qt::UserRole ) );
-        };
-    };
-    
-    return selectedTask;
-    
-}
-
-// ********************************************************************************************************************
-// *                                                                                                                  *
-// *                              Get the sprout which was selected in the sprout's table.                            *
-// * ---------------------------------------------------------------------------------------------------------------- *
-// *                             Получить "росточек", который был выбран в таблице "ростков".                         *
-// *                                                                                                                  *
-// ********************************************************************************************************************
-
-tengu::Sprout* tengu::DialogPropertiesSprout::__selectedSprout() {
-    
-    Sprout * selectedSprout = nullptr;
-    
-    if ( __table_sprouts->selectedItems().count() > 0 ) {
-        QTableWidgetItem * selectedItem = __table_sprouts->selectedItems().at(0);
-        if ( selectedItem ) {
-            selectedSprout = qvariant_cast< Sprout * > ( selectedItem->data( Qt::UserRole ) );
-        };
-    };
-    
-    return selectedSprout;
 }
 
 // ********************************************************************************************************************
@@ -674,7 +680,7 @@ void tengu::DialogPropertiesSprout::__fill_tasks_list() {
     // Define process selected in the process table
     // Определяем процесс, выбранный в таблице процессов.
         
-    Process * selectedProcess = __selectedProcess();
+    Process * selectedProcess = __selectedAgent < Process * > ( __table_processes );
     
     _clearTable( __table_tasks );
     _clearTable( __table_sprouts );
@@ -699,46 +705,92 @@ void tengu::DialogPropertiesSprout::__fill_tasks_list() {
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
-// *                         Fill sprout's list according selected task and sprout's filter.                          *
+// *                                   Get process which was selected in process'es table.                            *
 // * ---------------------------------------------------------------------------------------------------------------- *
-// *                     Заполнить список sprout'ов согласно выбранной задаче и фильтру sprout'ов.                    *
+// *                               Получить процесс, который был выбран в таблице процессов.                          *
 // *                                                                                                                  *
 // ********************************************************************************************************************
-
-void tengu::DialogPropertiesSprout::__fill_sprouts_list() {
-        
-    _clearTable( __table_sprouts );
-    __stopListen();
+/*
+tengu::Process * tengu::DialogPropertiesSprout::__selectedProcess() {
     
-    // Define selected task
-    // Определение выбранной задачи.
+    Process * selectedProcess = nullptr;
     
-    Task * selectedTask = __selectedTask();
-    
-    if ( selectedTask ) {
-        
-        // The "test" sprout, to avoid changes existing properties.
-        // "Тестовый" sprout, чтобы не задевать существующие настройки.
-        
-        // Sprout testSprout;
-        // testSprout.setExecutionMode( ( AbstractAgent::execution_mode_t ) __combo_box__execution_mode->itemData( __combo_box__execution_mode->currentIndex() ).toInt()  );
-        // testSprout.setSproutType( ( Sprout::sprout_type_t ) __combo_box__type->itemData( __combo_box__type->currentIndex() ).toInt() );
-        
-        QList < Sprout * > suitableSprouts = selectedTask->sutiableSproutsFor( __sproutItem->sprout() );
-        if ( suitableSprouts.count() > 0 ) {
-            for ( int i=0; i<suitableSprouts.count(); i++ ) {
-                Sprout * sprout = suitableSprouts.at(i);
-                __table_sprouts->setRowCount( i+1 );
-                QTableWidgetItem * item = new QTableWidgetItem();
-                item->setFlags(item->flags() ^ Qt::ItemIsEditable);
-                item->setData( Qt::UserRole, QVariant::fromValue< Sprout * >( sprout ) );
-                item->setText( sprout->getHumanName() );
-                __table_sprouts->setItem( i, 0, item );
-            };
+    if ( __table_processes->selectedItems().count() > 0 ) {
+        QTableWidgetItem * selectedItem = __table_processes->selectedItems().at(0);
+        if ( selectedItem ) {
+            selectedProcess = qvariant_cast< Process * >( selectedItem->data( Qt::UserRole ) );
         };
     };
+    
+    return selectedProcess;
+    
 }
-
+*/
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                            Get processor which was selected in the processor's table.                            *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                          Получить процессор, который был выбран в таблице процессоров.                           *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+/*
+tengu::Processor * tengu::DialogPropertiesSprout::__selectedProcessor() {
+    
+    Processor * selectedProcessor = nullptr;
+    if ( __table_processors->selectedItems().count() > 0 ) {
+        QTableWidgetItem * selectedItem = __table_processors->selectedItems().at(0);
+        if ( selectedItem ) {
+            selectedProcessor = qvariant_cast< Processor * > ( selectedItem->data( Qt::UserRole) );
+        };
+    }
+    return selectedProcessor;
+}
+*/
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                    Get the task which was selected in task's table.                              *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                  Получить задачу, которая была выбрана в таблице задач.                          *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+/*
+tengu::Task* tengu::DialogPropertiesSprout::__selectedTask() {
+    
+    Task * selectedTask = nullptr;
+    
+    if ( __table_tasks->selectedItems().count() > 0 ) {
+        QTableWidgetItem * selectedItem = __table_tasks->selectedItems().at(0);
+        if ( selectedItem ) {
+            selectedTask = qvariant_cast< Task * >( selectedItem->data( Qt::UserRole ) );
+        };
+    };
+    
+    return selectedTask;
+    
+}
+*/
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                              Get the sprout which was selected in the sprout's table.                            *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                             Получить "росточек", который был выбран в таблице "ростков".                         *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+/*
+tengu::Sprout* tengu::DialogPropertiesSprout::__selectedSprout() {
+    
+    Sprout * selectedSprout = nullptr;
+    
+    if ( __table_sprouts->selectedItems().count() > 0 ) {
+        QTableWidgetItem * selectedItem = __table_sprouts->selectedItems().at(0);
+        if ( selectedItem ) {
+            selectedSprout = qvariant_cast< Sprout * > ( selectedItem->data( Qt::UserRole ) );
+        };
+    };
+    
+    return selectedSprout;
+}
+*/
 // ********************************************************************************************************************
 // *                                                                                                                  *
 // *                                    Set manual selection of sprout's signal name.                                 *
@@ -751,13 +803,16 @@ void tengu::DialogPropertiesSprout::__setManualSelection ( bool manual ) {
     
     __manual_signal_name->setEnabled( manual );
     
+    __filter_processors->setEnabled( ! manual );
     __filter_processes->setEnabled( ! manual );
     __filter_tasks->setEnabled( ! manual );
     __filter_sprouts    ->setEnabled( ! manual );
     
+    __table_processors->setEnabled( ! manual );
     __table_processes->setEnabled( ! manual );
     __table_tasks->setEnabled( ! manual );
     __table_sprouts->setEnabled( ! manual );
+    
 }
 
 // ********************************************************************************************************************
@@ -804,7 +859,26 @@ void tengu::DialogPropertiesSprout::__on__filter_processes_text_changed ( const 
     Q_UNUSED( text );
     
     if ( __do_not_handle_events ) return;
+    __stopListen();
     __fill_processes_list();
+    
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                    Changing the text in processors filter editor.                                *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                       Изменение текста в фильтре процессоров.                                    *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::DialogPropertiesSprout::__on__filter_processors_text_changed ( const QString & text ) {
+    
+    Q_UNUSED( text );
+    
+    if ( __do_not_handle_events ) return;
+    __stopListen();
+    __fill_processors_list();
     
 }
 
@@ -821,11 +895,27 @@ void tengu::DialogPropertiesSprout::__on__table_processes_item_selected ( const 
     Q_UNUSED( selected );
     Q_UNUSED( deselected );
     
-    if ( __do_not_handle_events ) return;    
-    
+    if ( __do_not_handle_events ) return;        
     __stopListen();    
     __fill_tasks_list();
     
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                  The item was selected in the processor's table.                                 *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                    В таблице процессоров был выделен элемент.                                    *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::DialogPropertiesSprout::__on__table_processors_item_selected ( const QItemSelection& selected, const QItemSelection& deselected ) {
+    Q_UNUSED( selected );
+    Q_UNUSED( deselected );
+    
+    if ( __do_not_handle_events ) return;    
+    __stopListen();
+    __fill_processes_list();
 }
 
 // ********************************************************************************************************************
@@ -864,11 +954,12 @@ void tengu::DialogPropertiesSprout::__on__table_sprouts_item_selected ( const QI
     
     __stopListen();
     
-    Process * selectedProcess = __selectedProcess();
-    Task * selectedTask = __selectedTask();
-    Sprout * selectedSprout = __selectedSprout();
+    Processor * selectedProcessor = __selectedAgent < Processor * > ( __table_processors );
+    Process * selectedProcess = __selectedAgent <Process * > ( __table_processes );
+    Task * selectedTask = __selectedAgent < Task * > ( __table_tasks );
+    Sprout * selectedSprout = __selectedAgent < Sprout * > ( __table_sprouts );
         
-    if ( ( selectedProcess != 0 ) & ( selectedTask != 0 ) &  ( selectedSprout != 0 ) ) {
+    if ( ( selectedProcessor != 0 ) && ( selectedProcess != 0 ) && ( selectedTask != 0 ) &&  ( selectedSprout != 0 ) ) {
         
         SproutProxy * proxy = dynamic_cast< SproutProxy * >( selectedSprout );
         QString signalName;

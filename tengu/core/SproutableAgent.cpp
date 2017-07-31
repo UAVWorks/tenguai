@@ -179,6 +179,7 @@ bool tengu::SproutableAgent::fromJSON ( QJsonObject json ) {
     
     bool result = tengu::AbstractAgent::fromJSON ( json );
         
+    /*
     if ( json.contains("sprouts") ) {
         
         __deleteSprouts();
@@ -192,6 +193,7 @@ bool tengu::SproutableAgent::fromJSON ( QJsonObject json ) {
             addSprout( sprout );
         };
     };
+    */
         
     return result;
 }
