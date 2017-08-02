@@ -22,29 +22,13 @@ namespace tengu {
         Q_OBJECT
         
         Q_PROPERTY( Sprout::sprout_type_t sprout_type READ getSproutType WRITE setSproutType );
-        Q_PROPERTY( SproutItem::sprout_orientation_t orientation READ getOrientation WRITE setOrientation );
+        Q_PROPERTY( Sprout::sprout_orientation_t orientation READ getOrientation WRITE setOrientation );
         Q_PROPERTY( QString signal_name READ getSignalName WRITE setSignalName );
         Q_PROPERTY( float minimal_value READ getMinimalValue WRITE setMinimalValue );
         Q_PROPERTY( float maximal_value READ getMaximalValue WRITE setMaximalValue );
         
         public:
-            
-            // Draft orientation agnle for this sprout item
-            // Угол ориентации данного Sprout'а на диаграмме.
-            
-            enum sprout_orientation_t {
-                
-                SPO_0 = 0,
-                SPO_45 = 45,
-                SPO_90 = 90,
-                SPO_135 = 135,
-                SPO_180 = 180,
-                SPO_225 = 225,
-                SPO_270 = 270,
-                SPO_315 = 315
-                
-            };
-            
+                        
             SproutItem ( Sprout * sprout = nullptr, QGraphicsItem * parent = nullptr );
             virtual ~SproutItem();
             
@@ -69,8 +53,8 @@ namespace tengu {
              * "Росточек" может вращаться на диаграмме, чтобы было удобнее и читабельнее.
              */
             
-            sprout_orientation_t getOrientation();
-            void setOrientation( sprout_orientation_t orientation );
+            Sprout::sprout_orientation_t getOrientation();
+            void setOrientation( Sprout::sprout_orientation_t orientation );
             
             QString getSignalName();
             void setSignalName( QString name );
@@ -86,11 +70,9 @@ namespace tengu {
              * @short Manual signal name selection.
              */
             
-            bool manualSignalNameSelection;
+            bool manualSignalNameSelection;                        
             
         private:
-            
-            sprout_orientation_t __orientation;
             
             QTransform __transform();
             

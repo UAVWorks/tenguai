@@ -69,14 +69,14 @@ QWidget * tengu::AgentPropertyDelegate::createEditor ( QWidget* parent, const QS
         case AgentPropertyElement::SproutAngleSelector : {
             QComboBox * editor = new QComboBox( parent );
             editor->setFont( oneElement.font );
-            editor->addItem( tr("0 degrees"), SproutItem::SPO_0 );
-            editor->addItem( tr("45 degrees"), SproutItem::SPO_45 );
-            editor->addItem( tr("90 degrees"), SproutItem::SPO_90 );
-            editor->addItem( tr("135 degrees"), SproutItem::SPO_135 );
-            editor->addItem( tr("180 degrees"), SproutItem::SPO_180 );
-            editor->addItem( tr("225 degrees"), SproutItem::SPO_225 );
-            editor->addItem( tr("270 degrees"), SproutItem::SPO_270 );
-            editor->addItem( tr("315 degrees"), SproutItem::SPO_315 );
+            editor->addItem( tr("0 degrees"), Sprout::SPO_0 );
+            editor->addItem( tr("45 degrees"), Sprout::SPO_45 );
+            editor->addItem( tr("90 degrees"), Sprout::SPO_90 );
+            editor->addItem( tr("135 degrees"), Sprout::SPO_135 );
+            editor->addItem( tr("180 degrees"), Sprout::SPO_180 );
+            editor->addItem( tr("225 degrees"), Sprout::SPO_225 );
+            editor->addItem( tr("270 degrees"), Sprout::SPO_270 );
+            editor->addItem( tr("315 degrees"), Sprout::SPO_315 );
             return editor;
         };
         

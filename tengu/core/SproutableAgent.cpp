@@ -113,7 +113,10 @@ void tengu::SproutableAgent::__on_got_message ( QString channel, QString message
         bool res = sprout->handleMessage( channel, message );
         if ( res ) {
             QString sproutName = sprout->getSystemName();
-            emit signalSproutGotValue( sproutName, sprout->getValue() );
+            // Call sprout's got value callback.
+            // Вызов callback'а получения значения спраутом.
+            _sprout_got_value( sproutName, sprout->getValue() );
+            // emit signalSproutGotValue( sproutName, sprout->getValue() );
             handled = true;
         };
     }    
@@ -121,6 +124,23 @@ void tengu::SproutableAgent::__on_got_message ( QString channel, QString message
     if ( ! handled ) {
         qDebug() << "SproutableAgent::__on_got_message(" << channel << ") was not handled.";
     }
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                          Got some value from some sprout.                                        *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                 Получено некоторое значение от некоторого спраута.                               *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::SproutableAgent::_sprout_got_value ( QString sproutSysName, QVariant value ) {
+    
+    // By default, receiving value from sprout invoke one step of algorythm.
+    // По умолчанию, получение значения от спраута вызывает один шаг алгоритма.
+    
+    _step();
+    
 }
 
 // ********************************************************************************************************************

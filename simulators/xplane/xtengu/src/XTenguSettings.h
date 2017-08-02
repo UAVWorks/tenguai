@@ -14,6 +14,8 @@
 #define AIRCRAFT_CONTROL_PATH                   "xtengu.control_presence."
 #define USER_AIRCRAFT_CONTROL_PING_PATH         AIRCRAFT_CONTROL_PATH"0"
 
+#define XTENGU_PRESENCE_PATH                    "xtengu.presence"
+
 // To avoid difference in config file name
 // Чтобы избежать различия в имени конфигурационного файла.
 

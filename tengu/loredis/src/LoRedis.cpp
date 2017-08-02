@@ -205,7 +205,7 @@ class __LoRedis {
             
             if ( redis ) {
                 redis->__gettedValue = result;
-                redis->__getted = true;
+                redis->__getted = true;                
             };
         };
         
@@ -465,6 +465,7 @@ void __cb_got_value( redisAsyncContext * ctx, void * vreply, void * privdata ) {
     __LoRedis::named_redis_t * named_redis_ptr = static_cast< __LoRedis::named_redis_t * > ( privdata );
     
     if ( reply ) {
+        
         if ( reply->type == REDIS_REPLY_ERROR ) {
             
             QString errorMessage = QString("__cb_got_value(): ") + QString( reply->str );
@@ -478,11 +479,23 @@ void __cb_got_value( redisAsyncContext * ctx, void * vreply, void * privdata ) {
         } else if ( reply->type == REDIS_REPLY_STRING ) {            
             
             // This is the string value.
+            
             QVariant result( reply->str );
             if ( named_redis_ptr ) {
                 // To copy QString from structures which will be deleted soon.
                 QString vName = named_redis_ptr->variableName;
                 __LoRedis::getted( named_redis_ptr->redis, vName, result );                                
+            }
+            
+        } else if ( reply->type == REDIS_REPLY_NIL ) {
+            
+            // We have got the NULL value.
+            // Мы получили значение NULL.
+            
+            qDebug() << "LoRedis::__cb_got_value, got nill, ";
+            if ( named_redis_ptr ) {
+                QString vName = named_redis_ptr->variableName;
+                qDebug() << "-- got null, vName=" << vName;
             }
             
         } else {

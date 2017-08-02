@@ -33,6 +33,11 @@ tengu::XTengu * xtengu = nullptr;
 // ********************************************************************************************************************
 
 float __cb__xplane__observing_movements( float elapsedSinceLastCall, float elapsedTimeSinceLastFlightLoop, int counter, void * refcon ) {
+
+    Q_UNUSED( elapsedSinceLastCall );
+    Q_UNUSED( elapsedTimeSinceLastFlightLoop );
+    Q_UNUSED( counter );
+    Q_UNUSED( refcon );
     
     if ( xtengu ) return ( xtengu->cbObservingMovement() );
     
@@ -80,7 +85,7 @@ void xplugin__log( QString message ) {
     FILE * fd = fopen( XPLUGIN_LOG_FILE, "a" );
     if ( fd ) {
         time_t now;
-        char c_time[128];
+        // char c_time[128];
         time( & now );
         struct tm * now_tm = localtime( &now );
         fprintf( fd, "%4d-%02d-%02d %02d:%02d:%02d  %s\n", 

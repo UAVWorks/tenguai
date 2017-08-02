@@ -297,7 +297,7 @@ bool tengu::AgentPropertyModel::setData( const QModelIndex & index, const QVaria
             case AgentPropertyElement::SproutAngleSelector : {
                 SproutItem * spi = dynamic_cast<SproutItem * > ( __item );
                 if ( spi ) {                    
-                    spi->setOrientation( (SproutItem::sprout_orientation_t) value.toInt() );                    
+                    spi->setOrientation( (Sprout::sprout_orientation_t) value.toInt() );                    
                 };
                 
             }; break;
@@ -305,7 +305,6 @@ bool tengu::AgentPropertyModel::setData( const QModelIndex & index, const QVaria
                 
         __item->recalculate();
         __item->update();
-        qDebug() << "AgentPropertyModel::Something has been changed";
         __item->_somethingChanged();
         __item->show();
         __properties = __item->properties();        

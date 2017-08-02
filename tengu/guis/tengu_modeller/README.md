@@ -6,6 +6,7 @@ This is graphical tool for work with artifical intelligence models. At the momen
 
 # The latest operations.
 
+- **02 aug 2017** XTengu activity.
 - **31 jul 2017** A processor's list in the sprout's dialog. Switching user aircraft's control in X-Plane plugin.
 - **29 jul 2017** A sprouts are in a database.
 - **26 jul 2017** QML in the task execution process. Agent activity highlight on the schema.

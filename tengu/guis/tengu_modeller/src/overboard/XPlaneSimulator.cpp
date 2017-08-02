@@ -58,19 +58,121 @@ tengu::XPlaneSimulator::XPlaneSimulator()
     QString conditionGroup = settings.value("ConditionNameGroup", "xtengu.condition").toString();
     settings.endGroup();
     
+    // Create airplanes.
+    // Создание самолетов.
+    
     for ( int idx = 0; idx < XPlaneSimulator::CONTROL_AIRCRAFTS_UUIDS.size(); idx++ ) {        
         
         XPlaneAircraft * acf_control = new XPlaneAircraft( idx, controlGroup, Sprout::SPT__EXTERNAL_INPUT );
         acf_control->setUUID( XPlaneSimulator::CONTROL_AIRCRAFTS_UUIDS.at( idx ) );
         control->addChild( acf_control );
-        
+                
         XPlaneAircraft * acf_condition = new XPlaneAircraft( idx, conditionGroup, Sprout::SPT__EXTERNAL_OUTPUT );
         acf_condition->setUUID( XPlaneSimulator::CONDITION_AIRCRAFTS_UUIDS.at( idx ) );
         condition->addChild( acf_condition );
+        
+        // Activity of "condition airplanes". Lets make a conclusion about the presence of the simulator.
+        // Активность "самолетов состояния". Позволяет сделать вывод о наличии симулятора.
+        
+        // QList<Sprout * > acf_condition_sprouts = acf_condition->sprouts();
+        // for ( int spIndex=0; spIndex < acf_condition_sprouts.count(); spIndex ++ ) {
+        //    Sprout * sp = acf_condition_sprouts.at( spIndex );
+        //    QObject::connect( sp, SIGNAL(signalGotValue(QVariant)), this, SLOT( __on__some_sprout_got_value() ) );
+        //};        
                 
     };
     
     _changed = false;
+    
+    // Timer for XTengu activity.
+    // Таймер активности XTengu
+    
+    __xtengu_presence_timer = new QTimer( this );
+    QObject::connect( __xtengu_presence_timer, SIGNAL( timeout() ), this, SLOT( __on__xtengu_presence_timer() ) );
+    __xtengu_presence_timer->start( 500 );
+    
+    _activity = false;
+    emit signalActivated( false );
+    
+    // For garanted non-activity state
+    // Для гарантированного не-активного состояния.
+    
+    __last_xtengu_activity = QDateTime::currentDateTime();
+    __last_xtengu_activity.addSecs( -2000 );
+    
+    QObject::connect( _pub_redis, SIGNAL( signalGotValue( QString, QVariant ) ), this, SLOT( __on__redis_got_value( QString, QVariant ) ) );
+    connect();
+    
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                               XTengu presence timer timeout.                                     *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                           Срабатывание таймера присутствия XTengu                                *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::XPlaneSimulator::__on__xtengu_presence_timer() {
+        
+    if ( isPublisherConnected() ) {
+        _pub_redis->get( XTENGU_PRESENCE_PATH );
+    };
+    
+    if ( _activity ) {
+        
+        // De-activation goes only by time.
+        // Деактивация делается только по времени.
+        
+        QDateTime curTime = QDateTime::currentDateTime();
+        qint64 ms = __last_xtengu_activity.msecsTo( curTime );
+        
+        if ( ms > 3000 ) {
+            _activity = false;
+            emit signalActivated( false );
+        };
+        
+    };
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                      A value has been received from the redis.io                                 *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                            От редиса было получено значение.                                     *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::XPlaneSimulator::__on__redis_got_value ( QString channel, QVariant value ) {
+    
+    if ( ( channel == XTENGU_PRESENCE_PATH ) && ( ! value.isNull() ) ) {
+        
+        // May be we can activate a simulator process.
+        // Возможно, мы уже можем активировать процесс симулятора.
+        
+        bool ok = false;
+        double t = value.toDouble( &ok );
+        if ( ok ) {
+            
+            qint64 secs = ( int ) t;
+            int ms = ( t - secs ) * 1000;
+            
+            QDateTime got_dt;
+            got_dt.setTime_t( secs );
+            got_dt.addMSecs( ms );
+            
+            __last_xtengu_activity = got_dt;
+            
+            if ( ! _activity ) {
+                qint64 delta = __last_xtengu_activity.msecsTo( QDateTime::currentDateTime() );
+                if ( delta < XTENGU_ACTIVATION_MS ) {
+                    _activity = true;
+                    emit signalActivated( true );
+                };
+            };
+        };
+        
+    };
 }
 
 // ********************************************************************************************************************

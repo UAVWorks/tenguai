@@ -50,7 +50,7 @@ namespace tengu {
             
             int __aircraft_index;
             
-            void __init_sprout( QString settingsGroup, Sprout::sprout_type_t type, QString name, float min = MINIMUM_CONSTRAINT, float max = MAXIMUM_CONSTRAINT );
+            void __init_sprout( QString settingsGroup, Sprout::sprout_type_t type, QString humanName, float min = MINIMUM_CONSTRAINT, float max = MAXIMUM_CONSTRAINT );
             
     };
 };

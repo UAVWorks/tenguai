@@ -178,6 +178,8 @@ namespace tengu {
             int __totalAircrafts, __activeAircrafts;
             
             bool __in_observation;
+            
+            void __confirm_of_presence();
                         
     }; // end of class
     

@@ -34,7 +34,10 @@ tengu::XPlaneAircraft::XPlaneAircraft( int acf_index, QString group, Sprout::spr
     AbstractEntity::setSystemName( sName );
     AbstractEntity::setHumanName( hName );    
     AbstractEntity::setExecutionMode( AbstractEntity::EM_XPLANE );
-            
+
+    __init_sprout("GroundSpeed", sproutsType, tr("Ground speed"), 0 );
+    __init_sprout("IAS", sproutsType, tr("Instrumental Air Speed"), 0 );
+    
     __init_sprout( "Longitude", sproutsType, tr("Longitude"), -180.0, 180.0 );
     __init_sprout( "Latitude", sproutsType, tr("Latitude"), -180.0, 180.0 );
     
@@ -55,6 +58,16 @@ tengu::XPlaneAircraft::XPlaneAircraft( int acf_index, QString group, Sprout::spr
     __init_sprout( "RightRudder", Sprout::EXTERNAL_OUTPUT, tr("Right rudder" ) );
     __init_sprout( "RightBrake", Sprout::EXTERNAL_OUTPUT, tr("Right brake" ) );
     */
+    
+    // ------------------------------------------------------------------------------
+    // Connect the aircraft class with the redis right after creation.
+    // It is pointless, hi is proxy only.
+    
+    // Соединяем класс "самолета" с редисом сразу же после создания.
+    // - Нет смысла. Он всего лишь proxy.
+    
+    // Task::connect();
+    // ------------------------------------------------------------------------------
         
 }
 
@@ -78,7 +91,7 @@ QString tengu::XPlaneAircraft::_ping_path() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::XPlaneAircraft::__init_sprout ( QString settingsGroup, tengu::Sprout::sprout_type_t type, QString name, float min, float max ) {
+void tengu::XPlaneAircraft::__init_sprout ( QString settingsGroup, tengu::Sprout::sprout_type_t type, QString humanName, float min, float max ) {
     
     
     CREATE_XTENGU_SETTINGS;
@@ -97,7 +110,7 @@ void tengu::XPlaneAircraft::__init_sprout ( QString settingsGroup, tengu::Sprout
     // The whitespace can be replaced to "_" in this procedurer
     // Пробел будет заменен на "_" в данной процедуре.
             
-    sp->setHumanName( name );
+    sp->setHumanName( humanName );
     sp->setSproutType( type );
         
     // Crossing. Because output for sprout is an input for X-Plane.

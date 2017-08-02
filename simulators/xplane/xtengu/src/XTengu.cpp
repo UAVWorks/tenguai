@@ -303,6 +303,11 @@ float tengu::XTengu::cbObservingMovement() {
                     
     };
     
+    // Call the confirmation of XTengu presence 
+    // Вызов подтверждения присутствия XTengu.
+    
+    __confirm_of_presence();
+    
     // For only one from the redis adapters, this is enought 
     // Только для одного из редис-адаптеров, этого будет достаточно.
         
@@ -318,6 +323,27 @@ float tengu::XTengu::cbObservingMovement() {
     
     __in_observation = false;
     return ( 1.0 / __observingAircraftsFrequency );
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                          Confirm the presence of XTengu.                                         *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                        Подтверждение присутствия XTengu.                                         *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::XTengu::__confirm_of_presence() {
+    QDateTime dt = QDateTime::currentDateTime();
+    QTime time = QTime::currentTime();
+        
+    // Time representation with ms.
+    // Представление времени с милисекундами.
+        
+    QString repr = QString::number( dt.toTime_t() ) + "." + QString::number( time.msec() );
+    if ( ( __redis ) && ( __redis__connected ) )  {
+        __redis->set( XTENGU_PRESENCE_PATH, repr );
+    };
 }
 
 // ********************************************************************************************************************

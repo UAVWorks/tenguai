@@ -155,6 +155,31 @@ void tengu::Task::_step() {
 
 // ********************************************************************************************************************
 // *                                                                                                                  *
+// *                                          Got some value from some sprout.                                        *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                 Получение некоторого значения от некоторого спраута.                             *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::Task::_sprout_got_value ( QString sproutSysName, QVariant value ) {
+    
+    qDebug() << "Task::_sprout_got_value, name=" << sproutSysName << ", value=" << value;
+    QString methodName = QString("on__") + sproutSysName + "__got_value";
+    
+    if ( ! __qmlObject ) return;
+    if ( ! __qmlObject__has_method( methodName ) ) {
+        qDebug() << "Task::_sprout_got_value, no such method " << methodName;
+        return;
+    }
+    
+    QMetaObject::invokeMethod( __qmlObject, methodName.toUtf8().data(),
+        Q_ARG( QVariant, value )
+    );
+    
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
 // *                                              Try to activate this task.                                          *
 // * ---------------------------------------------------------------------------------------------------------------- *
 // *                                            Попытка активации данной задачи.                                      *

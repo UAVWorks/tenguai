@@ -11,6 +11,9 @@
 
 #include "TopLevelEntity.h"
 #include "XPlaneProcess.h"
+#include "XTenguSettings.h"
+
+#define XTENGU_ACTIVATION_MS 1500
 
 namespace tengu {
     
@@ -29,6 +32,17 @@ namespace tengu {
             
             XPlaneProcess * condition;
             XPlaneProcess * control;
+            
+        private:
+            
+            QTimer * __xtengu_presence_timer;
+            QDateTime __last_xtengu_activity;
+        
+        private slots:
+            
+            void __on__xtengu_presence_timer();
+            void __on__redis_got_value( QString channel, QVariant value );
+            // void __on__some_sprout_got_value();
             
     };
     

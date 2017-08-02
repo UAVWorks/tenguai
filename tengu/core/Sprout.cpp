@@ -38,6 +38,7 @@ tengu::Sprout::Sprout( AbstractAgent * owner )
     
     __minimal_value = MINIMUM_CONSTRAINT;
     __maximal_value = MAXIMUM_CONSTRAINT;
+    __orientation = SPO_0;
     
     _class_name = "Sprout";
     _entity_type = ET_Sprout;
@@ -94,6 +95,31 @@ tengu::Sprout::sprout_type_t tengu::Sprout::getSproutType() {
 
 void tengu::Sprout::setSproutType ( tengu::Sprout::sprout_type_t type ) {
     __sprout_type = type;
+    _somethingChanged();
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                      Get this sprout orientation on the schema.                                  *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                         Вернуть ориентацию sprout'а на схеме.                                    *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+tengu::Sprout::sprout_orientation_t tengu::Sprout::getOrientation() {
+    return __orientation;
+}
+
+// ********************************************************************************************************************
+// *                                                                                                                  *
+// *                                       Set this sprout orientation on the schema.                                 *
+// * ---------------------------------------------------------------------------------------------------------------- *
+// *                                        Установить ориентацию sprout'а на схеме.                                  *
+// *                                                                                                                  *
+// ********************************************************************************************************************
+
+void tengu::Sprout::setOrientation ( tengu::Sprout::sprout_orientation_t orientation ) {
+    __orientation = orientation;
     _somethingChanged();
 }
 
@@ -200,13 +226,24 @@ void tengu::Sprout::setValue( QVariant val ) {
     bool ok = false;
     ( void ) val.toFloat( & ok );        
     
-    if ( ( ok )
-        && ( ! __signalName.isEmpty() ) 
-        && ( __sprout_type == Sprout::SPT__EXTERNAL_OUTPUT ) 
-        && ( __owner ) 
-        && ( __owner->isPublisherConnected() ) ) 
-    {
-        __owner->_pub_redis->publish( __signalName, val.toString() );
+    if ( ok ) {
+        
+        if ( ( ! __signalName.isEmpty() ) 
+            && ( __sprout_type == Sprout::SPT__EXTERNAL_OUTPUT ) 
+            && ( __owner ) 
+            && ( __owner->isPublisherConnected() ) 
+        ) {
+            // External output sprout. Publish this value.
+            // Внешний выходной sprout. Публикуем это значение.
+            
+            __owner->_pub_redis->publish( __signalName, val.toString() );
+        };
+    
+        // Emit signal in any case. This allows connect sprouts internal the same process without redis.
+        // Эмиссия сигнала - в любом случае. Это позволяет соединять спрауты внутри того же самого процесса, не используя редис.
+        
+        if ( isOutput() ) emit signalGotValue( val );
+        
     };
     
     // This is not the component changes. _changed is not need.
@@ -423,6 +460,9 @@ bool tengu::Sprout::fromJSON ( QJsonObject o ) {
     __maximal_value = MAXIMUM_CONSTRAINT;
     if ( o.contains( "minimal_value" ) ) __minimal_value = (float) o.value( "minimal_value" ).toDouble();
     if ( o.contains( "maximal_value" ) ) __maximal_value = (float) o.value( "maximal_value" ).toDouble();
+    __orientation = SPO_0;    
+    if ( o.contains( "orientation" ) ) __orientation = ( sprout_orientation_t ) o.value("orientation").toInt();
+    
     return result;
 }
 
@@ -446,6 +486,7 @@ QJsonObject tengu::Sprout::toJSON() {
     o["signal_name"] = __signalName;
     if ( __minimal_value > MINIMUM_CONSTRAINT ) o["minimal_value"] = __minimal_value;
     if ( __maximal_value < MAXIMUM_CONSTRAINT ) o["maximal_value"] = __maximal_value;
+    o["orientation"] = ( int ) __orientation;
     
     return o;
 }

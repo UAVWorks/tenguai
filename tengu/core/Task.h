@@ -52,6 +52,7 @@ namespace tengu {
             virtual void _free_after_execution() override;
             virtual bool _tryActivate() override;
             virtual void _step() override;
+            virtual void _sprout_got_value( QString sproutSysName, QVariant value ) override;
             
         private:
             

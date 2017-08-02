@@ -27,7 +27,7 @@ namespace tengu {
                 
         signals:
             
-            void signalSproutGotValue( QString sproutName, QVariant value );
+            // void signalSproutGotValue( QString sproutName, QVariant value );
             
         public:
             
@@ -77,10 +77,10 @@ namespace tengu {
             
             QString _iFocusChannel;
             
+            virtual void _sprout_got_value( QString sproutSysName, QVariant value );
             
             // virtual void _setActivity( bool a );                        
-            
-            
+                        
         private:
             
             /**

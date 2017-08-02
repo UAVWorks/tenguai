@@ -528,20 +528,19 @@ void tengu::DialogPropertiesSprout::fillFrom( tengu::AbstractEntityItem * item )
         __sproutItem = sproutItem;        
         __storeOldSproutParams();
         __sproutItem->checkEntity();
-        
-        // Default band is 0 ... 100
-        // Диапазон по умолчанию 0 ... 100
-        
-        // if ( __sproutItem->sprout()->getMinimalValue() <= MINIMUM_CONSTRAINT ) __sproutItem->sprout()->setMinimalValue( 0 );
-        // if ( __sproutItem->sprout()->getMaximalValue() >= MAXIMUM_CONSTRAINT ) __sproutItem->sprout()->setMaximalValue( 100 );
-        
+                
         QObject::connect( __sproutItem->sprout(), SIGNAL( signalGotValue( QVariant ) ), this, SLOT( __on__got_value( QVariant ) ) );
                 
         // Change widget's looking
         // Изменение внешнего вида виджита.
         
+        // Set sprout type.
+        // Установить тип спраута.
+        int index = __combo_box__type->findData( (int) __sproutItem->getSproutType() );
+        if ( index > 0 ) __combo_box__type->setCurrentIndex( index );
+                
         __do_not_handle_events = true;
-        
+                
         __check_box__manual->setChecked( __sproutItem->manualSignalNameSelection );
         __setManualSelection( sproutItem->manualSignalNameSelection );
         __setSlider();

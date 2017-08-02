@@ -23,7 +23,6 @@ tengu::SproutItem::SproutItem ( tengu::Sprout * sprout, QGraphicsItem* parent )
 {
     __width = 72;
     __height = 33;
-    __orientation = SPO_0;    
     
     // _iAmSprout = true;
     
@@ -344,8 +343,10 @@ void tengu::SproutItem::setSproutType ( tengu::Sprout::sprout_type_t type ) {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-tengu::SproutItem::sprout_orientation_t tengu::SproutItem::getOrientation() {
-    return __orientation;
+tengu::Sprout::sprout_orientation_t tengu::SproutItem::getOrientation() {
+    Sprout * sp = sprout();
+    if ( sp ) return sp->getOrientation();
+    return Sprout::SPO_0;
 }
 
 // ********************************************************************************************************************
@@ -356,9 +357,9 @@ tengu::SproutItem::sprout_orientation_t tengu::SproutItem::getOrientation() {
 // *                                                                                                                  *
 // ********************************************************************************************************************
 
-void tengu::SproutItem::setOrientation ( tengu::SproutItem::sprout_orientation_t orientation ) {
-    __orientation = orientation;
-    _somethingChanged();
+void tengu::SproutItem::setOrientation ( tengu::Sprout::sprout_orientation_t orientation ) {
+    Sprout * sp = sprout();
+    if ( sp ) sp->setOrientation( orientation );    
 }
 
 // ********************************************************************************************************************

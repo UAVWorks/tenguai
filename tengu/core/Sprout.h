@@ -27,7 +27,8 @@ namespace tengu {
         friend class SproutableAgent;
         
         Q_OBJECT
-
+        
+        /*
         Q_PROPERTY( QString system_name READ getSystemName WRITE setSystemName );
         Q_PROPERTY( QString human_name READ getHumanName WRITE setHumanName );
         Q_PROPERTY( QString comment READ getComment WRITE setComment );
@@ -37,6 +38,7 @@ namespace tengu {
         Q_PROPERTY( QString signal_name READ getSignalName WRITE setSignalName );
         Q_PROPERTY( float minimal_value READ getMinimalValue WRITE setMinimalValue );
         Q_PROPERTY( float maximal_value READ getMaximalValue WRITE setMaximalValue );
+        */
         
         Q_PROPERTY( QVariant value READ getValue WRITE setValue );
         
@@ -44,6 +46,10 @@ namespace tengu {
             
             void signalGotValue( QVariant value );
             void signalRemoveMe( Sprout * sprout );
+            
+        public slots:
+            
+            void setValue( QVariant value );            
                     
         public:
             
@@ -57,6 +63,23 @@ namespace tengu {
                 SPT__IN_PROCESS_OUTPUT,
                 SPT__EXTERNAL_OUTPUT
             };
+            
+            // Draft orientation agnle for this sprout item
+            // Угол ориентации данного Sprout'а на диаграмме. 
+            
+            enum sprout_orientation_t {
+                
+                SPO_0 = 0,
+                SPO_45 = 45,
+                SPO_90 = 90,
+                SPO_135 = 135,
+                SPO_180 = 180,
+                SPO_225 = 225,
+                SPO_270 = 270,
+                SPO_315 = 315
+                
+            };
+            
             
             // The name should be unique in the parent (owner) namespace.
             // Имя лучше бы было уникальным в пределах родителя (владельца).
@@ -83,9 +106,7 @@ namespace tengu {
             virtual void unsubscribed( QString channel );
             virtual bool handleMessage( QString channel, QString message );     
             
-            QVariant getValue();
-            void setValue( QVariant value );
-            
+            QVariant getValue();            
             
             float getMinimalValue();
             void setMinimalValue( float min );
@@ -103,6 +124,9 @@ namespace tengu {
             // Преобразование объекта в JSON-форму.
             
             virtual QJsonObject toJSON() override;
+            
+            Sprout::sprout_orientation_t getOrientation();
+            void setOrientation( Sprout::sprout_orientation_t orientation );
             
             
         protected:
@@ -129,6 +153,8 @@ namespace tengu {
             
             float __minimal_value;
             float __maximal_value;
+            
+            sprout_orientation_t __orientation;            
             
     };
     
